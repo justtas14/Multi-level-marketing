@@ -1,0 +1,17 @@
+version: '2'
+services:    
+    prelaunchbuilder:
+        build:
+            context: ./
+            dockerfile: Dockerfile.dev
+        privileged: true
+        environment:
+         - VIRTUAL_HOST=prelaunchbuilder.local
+        volumes:
+         - ./:/var/www/html
+        networks:
+         - default
+         - rmp_default
+networks:
+    rmp_default:
+        external: true
