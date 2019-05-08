@@ -1,0 +1,2 @@
+plum_tree_systems_user:
+  user_class: 'App\Entity\User'

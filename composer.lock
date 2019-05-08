@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0e412a45dcb410df02cee06315d62ba",
+    "content-hash": "651dd98ac2c5b21a0504a597f534068b",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1704,6 +1704,46 @@
                 }
             ],
             "time": "2017-07-14T14:27:02+00:00"
+        },
+        {
+            "name": "plumtreesystems/user-bundle",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PlumTreeSystems/User.git",
+                "reference": "f366c380019174cfe9acbb7a553149acbf8cfe74"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PlumTreeSystems/User/zipball/f366c380019174cfe9acbb7a553149acbf8cfe74",
+                "reference": "f366c380019174cfe9acbb7a553149acbf8cfe74",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/console": "4.2.*",
+                "symfony/form": "^4.2",
+                "symfony/orm-pack": "*",
+                "symfony/security-bundle": "4.2.*",
+                "symfony/serializer-pack": "*",
+                "symfony/twig-bundle": "4.2.*",
+                "symfony/validator": "^4.2"
+            },
+            "require-dev": {
+                "symfony/test-pack": "*"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "PlumTreeSystems\\UserBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "This is a Symfony bundle, that extends the symfony user, without adding too many unnecessary features.",
+            "time": "2019-03-09T16:55:03+00:00"
         },
         {
             "name": "psr/cache",
