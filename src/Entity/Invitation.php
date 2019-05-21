@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @ORM\Entity
@@ -11,11 +12,23 @@ class Invitation
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      * @var integer
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @var string
+     */
+    private $invitationCode = "";
+
+    /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $email = "";
 
     /**
      * @ORM\Column(type="string")
@@ -36,18 +49,30 @@ class Invitation
     private $used = false;
 
     /**
-     * @return int
+     * @ORM\Column(type="integer")
+     * @var integer
      */
-    public function getId(): int
+    private $created;
+
+    public function __construct()
+    {
+        $this->setInvitationCode(md5(time()));
+        $this->setCreated(time());
+    }
+
+    /**
+     * @return Integer
+     */
+    public function getId(): Integer
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
+     * @param Integer $id
      * @return Invitation
      */
-    public function setId(int $id): Invitation
+    public function setId(Integer $id): Invitation
     {
         $this->id = $id;
         return $this;
@@ -68,6 +93,42 @@ class Invitation
     public function setFullName(string $fullName): Invitation
     {
         $this->fullName = $fullName;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return Invitation
+     */
+    public function setEmail(string $email): Invitation
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvitationCode(): string
+    {
+        return $this->invitationCode;
+    }
+
+    /**
+     * @param string $code
+     * @return Invitation
+     */
+    public function setInvitationCode(string $code): Invitation
+    {
+        $this->invitationCode = $code;
         return $this;
     }
 
@@ -110,5 +171,23 @@ class Invitation
     public function getUsed(): ?bool
     {
         return $this->used;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreated() : int
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param mixed $created
+     * @return Invitation
+     */
+    public function setCreated(int $created): Invitation
+    {
+        $this->created = $created;
+        return $this;
     }
 }

@@ -13,8 +13,9 @@ class User extends PTSUser
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="string")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     * @var integer
      */
     private $id;
 

@@ -3,11 +3,21 @@
 
 namespace App\Service;
 
-
 use App\Entity\Associate;
+use Doctrine\ORM\EntityManager;
 
 class AssociateManager
 {
+    /**
+     * @var EntityManager $em
+     */
+    private $em;
+
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
     /**
      * @param $parentAssociateId
      * Returns all direct associates by given parent id.
@@ -16,8 +26,10 @@ class AssociateManager
      *
      * @return Associate[]
      */
-    public function getAllDirectAssociates(string $parentAssociateId): array{
-
+    public function getAllDirectAssociates(string $parentAssociateId): array
+    {
+        $allDirectAssociates = $this->em->getRepository(Associate::class)
+            ->findDirectAssociates($parentAssociateId);
     }
 
     /**
@@ -25,8 +37,10 @@ class AssociateManager
      * Return number of levels based on given associate or from top if null given
      *
      */
-    public function getNumberOfLevels(?string $associateId){
-
+    public function getNumberOfLevels(?string $associateId)
+    {
+        $associate = $this->em->getRepository(Associate::class)->findOneBy(['associateId' => $associateId]);
+        return $associate->getLevel();
     }
 
     /**
@@ -34,7 +48,8 @@ class AssociateManager
      * @param int $level
      * Return number of associates in level of given associate's downline
      */
-    public function getNumberOfAssociatesInDownline(string $associateId, int $level){
+    public function getNumberOfAssociatesInDownline(string $associateId, int $level)
+    {
 
     }
 

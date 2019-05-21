@@ -4,27 +4,29 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Ramsey\Uuid\Uuid;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\AssociateRepository")
  */
 class Associate
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      * @var integer
      */
     private $id;
 
     /**
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="guid", unique=true)
      * @var string
      */
     private $associateId;
 
+    /**
     /**
      * @ORM\Column(type="integer")
      * @var integer
@@ -50,52 +52,60 @@ class Associate
      */
     private $parent;
 
-
-
     /**
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *   message = "The email '{{ value }}' is not a valid email."
+     * )
      * @ORM\Column(type="string")
      * @var string
      */
     private $email = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
     private $fullName = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
     private $country = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
     private $address = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
     private $city = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
     private $postcode = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
     private $mobilePhone = "";
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      * @var string
      */
     private $homePhone = "";
@@ -107,7 +117,7 @@ class Associate
     private $agreedToEmailUpdates = false;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean"))
      * @var boolean
      */
     private $agreedToTextMessageUpdates = false;
@@ -118,22 +128,25 @@ class Associate
      */
     private $agreedToSocialMediaUpdates = false;
 
+    public function __construct()
+    {
+        $this->setAssociateId(Uuid::uuid4());
+    }
+
     /**
-     * @return int
+     * @return string
      */
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
-     * @return Associate
+     * @param mixed $id
      */
-    public function setId(int $id): Associate
+    public function setId(string $id): void
     {
         $this->id = $id;
-        return $this;
     }
 
     /**
@@ -315,7 +328,7 @@ class Associate
     /**
      * @return string
      */
-    public function getHomePhone(): string
+    public function getHomePhone(): ?string
     {
         return $this->homePhone;
     }
@@ -324,7 +337,7 @@ class Associate
      * @param string $homePhone
      * @return Associate
      */
-    public function setHomePhone(string $homePhone): Associate
+    public function setHomePhone(?string $homePhone): Associate
     {
         $this->homePhone = $homePhone;
         return $this;
@@ -436,6 +449,23 @@ class Associate
     {
         $this->email = $email;
         return $this;
+    }
+
+    public function toArray()
+    {
+        return [
+            'fullName' => $this->getFullName(),
+            'email' => $this->getEmail(),
+            'country' => $this->getCountry(),
+            'address' => $this->getAddress(),
+            'city' => $this->getCity(),
+            'postcode' => $this->getPostcode(),
+            'mobilePhone' => $this->getMobilePhone(),
+            'homePhone' => $this->getHomePhone(),
+            'agreedToEmailUpdates' => $this->getAgreedToEmailUpdates()?'Yes':'No',
+            'agreedToTextMessageUpdates' => $this->getAgreedToTextMessageUpdates()?'Yes':'No',
+            'agreedToSocialMediaUpdates' => $this->getAgreedToSocialMediaUpdates()?'Yes':'No'
+        ];
     }
 
 

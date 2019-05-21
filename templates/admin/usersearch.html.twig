@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin{% endblock %}
+
+{% block body %}
+
+    <table>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>More Info</th>
+        </tr>
+        <tr>
+            {{ form_start(usersearch) }}
+            <td>{{ form_widget(usersearch.SearchByFullName, {'attr': {'placeholder': 'Search by full name...'}}) }}</td>
+            <td>{{ form_widget(usersearch.SearchByEmail, {'attr': {'placeholder': 'Search by email...'}}) }}</td>
+            {{ form_end(usersearch) }}
+        </tr>
+        <div id="response"></div>
+    </table>
+
+
+{% endblock %}
