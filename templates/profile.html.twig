@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block body %}
+
+    <div id="flash-messages">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <main id="main">
+        {{ form_start(updateProfile) }}
+        {{ form_row(updateProfile._token) }}
+        {{ form_row(updateProfile.email) }}
+        {{ form_row(updateProfile.oldPassword) }}
+        {{ form_row(updateProfile.newPassword) }}
+        {{ form_row(updateProfile.associate.fullName) }}
+        {{ form_row(updateProfile.associate.country) }}
+        {{ form_row(updateProfile.associate.address) }}
+        {{ form_row(updateProfile.associate.city) }}
+        {{ form_row(updateProfile.associate.postcode) }}
+        {{ form_row(updateProfile.associate.mobilePhone) }}
+        {{ form_row(updateProfile.associate.homePhone) }}
+        {{ form_row(updateProfile.associate.agreedToEmailUpdates) }}
+        {{ form_row(updateProfile.associate.agreedToTextMessageUpdates) }}
+        {{ form_row(updateProfile.associate.agreedToSocialMediaUpdates) }}
+        {{ form_row(updateProfile.associate.submit) }}
+        {{ form_end(updateProfile, {'render_rest': false}) }}
+    </main>
+
+{% endblock %}

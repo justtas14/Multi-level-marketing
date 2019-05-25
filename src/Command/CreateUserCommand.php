@@ -35,7 +35,6 @@ class CreateUserCommand extends Command
             ->addArgument('email', InputArgument::REQUIRED, 'Email of the user')
             ->addArgument('password', InputArgument::REQUIRED, 'Password of the user.')
             ->addArgument('fullName', InputArgument::REQUIRED, 'Full name of the user')
-            // ...
         ;
     }
 

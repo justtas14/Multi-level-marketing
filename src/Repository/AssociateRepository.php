@@ -53,10 +53,30 @@ class AssociateRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findDirectAssociates($parentAssociateId)
-    {
 
+    public function findMaxLevel($ancestors = null) : ?int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('MAX(a.level)')
+            ->where('a.ancestors LIKE :ancestors')
+            ->setParameter('ancestors', $ancestors.'%')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
+
+    public function findAssociatesByLevel($level, $currentAncestor = null) : int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->where('a.level = :level')
+            ->andWhere('a.ancestors LIKE :ancestors')
+            ->setParameter('level', $level)
+            ->setParameter('ancestors', $currentAncestor.'%')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

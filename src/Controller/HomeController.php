@@ -51,6 +51,8 @@ class HomeController extends AbstractController
 
         $user = new User();
         $associate = new Associate();
+        $user->setEmail($invitation->getEmail());
+        $associate->setFullName($invitation->getFullName());
         $user->setAssociate($associate);
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -80,9 +82,7 @@ class HomeController extends AbstractController
         }
 
         return $this->render('home/registration.html.twig', [
-            'registration' => $form->createView(),
-            'email' => $invitation->getEmail(),
-            'fullName' => $invitation->getFullName()
+            'registration' => $form->createView()
         ]);
     }
 }

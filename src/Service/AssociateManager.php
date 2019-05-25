@@ -28,19 +28,26 @@ class AssociateManager
      */
     public function getAllDirectAssociates(string $parentAssociateId): array
     {
-        $allDirectAssociates = $this->em->getRepository(Associate::class)
-            ->findDirectAssociates($parentAssociateId);
+
     }
 
     /**
      * @param $associateId
      * Return number of levels based on given associate or from top if null given
-     *
+     * @return int
      */
-    public function getNumberOfLevels(?string $associateId)
+    public function getNumberOfLevels(?string $associateId = null) : int
     {
-        $associate = $this->em->getRepository(Associate::class)->findOneBy(['associateId' => $associateId]);
-        return $associate->getLevel();
+        $associateRepository = $this->em->getRepository(Associate::class);
+        $levels = $associateRepository->findMaxLevel();
+
+        if ($associateId) {
+            $associate = $associateRepository->findOneBy(['associateId' => $associateId]);
+            $maxLevel = $associateRepository->findMaxLevel($associate->getAncestors().$associate->getId());
+            $levels = ($maxLevel)? ($maxLevel - $associate->getLevel()) : 0;
+        }
+
+        return $levels;
     }
 
     /**

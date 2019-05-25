@@ -8,6 +8,7 @@ use App\Filter\AssociateFilter;
 use App\Form\InvitationType;
 use App\Form\UserSearchType;
 use App\Form\UserType;
+use App\Service\AssociateManager;
 use App\Service\InvitationManager;
 use App\Entity\UpdateProfile;
 use App\Entity\User;
@@ -27,10 +28,21 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin", name="admin")
      */
-    public function index()
+    public function index(AssociateManager $associateManager)
     {
+        $level = $associateManager->getNumberOfLevels();
+
+        $em = $this->getDoctrine()->getManager();
+        $associateRepository = $em->getRepository(Associate::class);
+
+        $associateInLevels = [];
+
+        for ($i = 1; $i <= $level; $i++) {
+            $associateInLevels[$i] = $associateRepository->findAssociatesByLevel($i);
+        }
+
         return $this->render('admin/index.html.twig', [
-            'controller_name' => 'AdminController',
+            'associatesInLevels' => $associateInLevels
         ]);
     }
 
@@ -42,10 +54,13 @@ class AdminController extends AbstractController
      */
     public function adminProfile(UserPasswordEncoderInterface $encoder, Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
         /**
          * @var User $user
          */
         $user = $this->getUser();
+
+        $currentEmail = $user->getEmail();
 
         $form = $this->createForm(UserType::class, $user);
 
@@ -53,7 +68,12 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form['oldPassword']->getData();
-            if (!$encoder->isPasswordValid($user, $plainPassword)) {
+            $email = $user->getEmail();
+            $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
+
+            if ($checkEmailExist && $currentEmail !== $email) {
+                $this->addFlash('error', 'This email already exist');
+            } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
                 $this->addFlash('error', 'Old password is not correct');
             } else {
                 $user->setPlainPassword($form['newPassword']->getData());
@@ -67,7 +87,8 @@ class AdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/profile.html.twig', [
+        $em->refresh($user);
+        return $this->render('profile.html.twig', [
             'updateProfile' => $form->createView()
         ]);
     }
@@ -80,6 +101,7 @@ class AdminController extends AbstractController
      */
     public function adminInvitation(Request $request, InvitationManager $invitationManager)
     {
+        $em = $this->getDoctrine()->getManager();
         /**
          * @var User $user
          */
@@ -108,7 +130,7 @@ class AdminController extends AbstractController
             }
         }
 
-        return $this->render('admin/invitation.html.twig', [
+        return $this->render('invitation.html.twig', [
             'invitation' => $form->createView()
         ]);
     }

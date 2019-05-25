@@ -51,8 +51,14 @@ class AddAdminRoleCommand extends Command
         if (!$user) {
             $output->writeln('User not found');
         } else {
-            $user->setRoles(['ROLE_ADMIN']);
-            $output->writeln('Admin role successfully added');
+            if (in_array('ROLE_ADMIN', $user->getRoles())) {
+                $output->writeln('User is already admin!');
+            } else {
+                $user->addRole('ROLE_ADMIN');
+                $this->em->persist($user);
+                $this->em->flush();
+                $output->writeln('Admin role successfully added');
+            }
         }
     }
 }

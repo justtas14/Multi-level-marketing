@@ -60,7 +60,7 @@ class InvitationManager
             ->setBody(
                 $this->twig->render(
                     'emails/registration.html.twig',
-                    ['link' => $link]
+                    ['link' => $link, 'senderName' => $invitation->getSender()->getFullName()]
                 ),
                 'text/html'
             );
@@ -78,7 +78,7 @@ class InvitationManager
         $invitation = $invitationRepo->findOneBy(['invitationCode' => $invitationCode]);
 
         if (!$invitation) {
-            throw new NotFoundHttpException('Invitation not found');
+            return null;
         }
 
         if ($invitation->getUsed() || time() - $invitation->getCreated() > self::secondsUntilExpired) {
