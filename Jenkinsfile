@@ -50,7 +50,7 @@ pipeline {
                 sh 'rm -rf var/cache/test && echo "removed test cache" || echo no test cache'
                 sh 'phpcs'
                 sh 'ls vendor'
-                sh 'vendor/bin/phpunit --configuration phpunit.xml.dist'
+                sh 'php vendor/bin/simple-phpunit'
             }
         }
         stage('deploy-staging') {
