@@ -22,7 +22,8 @@ class AdminControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->fixtures = $this->loadFixtures([
-            "App\DataFixtures\ORM\LoadUsers"
+            "App\DataFixtures\ORM\LoadUsers",
+            "App\DataFixtures\ORM\LoadEmailTemplates"
         ])->getReferenceRepository();
     }
 
@@ -49,6 +50,7 @@ class AdminControllerTest extends WebTestCase
 
         /** @var User $user */
         $user = $this->fixtures->getReference('user1');
+
         $em->refresh($user);
         $this->loginAs($user, 'main');
 
@@ -83,7 +85,7 @@ class AdminControllerTest extends WebTestCase
         $message = $collectedMessages[0];
 
         $this->assertInstanceOf('Swift_Message', $message);
-        $this->assertSame('Invitation', $message->getSubject());
+        $this->assertSame('You got invited by Justas. ', $message->getSubject());
         $this->assertSame($user->getEmail(), key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
     }

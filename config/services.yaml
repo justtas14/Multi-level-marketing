@@ -47,6 +47,9 @@ services:
             $entityManager: '@doctrine.orm.entity_manager'
             $tokenStorage: '@security.token_storage'
 
+    App\Service\EmailTemplateManager:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
 
 
 

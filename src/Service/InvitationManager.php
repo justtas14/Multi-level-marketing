@@ -3,9 +3,9 @@
 
 namespace App\Service;
 
+use App\Entity\EmailTemplate;
 use App\Entity\Invitation;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig_Environment;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -50,17 +50,32 @@ class InvitationManager
         $link = $this->getInvitationUrl($invitation);
 
         $message = new \Swift_Message('Invitation');
+
+        $emailTemplateEntity = $this->em->getRepository(EmailTemplate::class)
+            ->findOneBy(['emailType' => 'INVITATION']);
+
+        $emailTemplateSubject = $emailTemplateEntity->getEmailSubject();
+
+        $emailTemplateBody = $emailTemplateEntity->getEmailBody();
+
+        $templateSubject = $this->twig->createTemplate($emailTemplateSubject);
+
+        $templateBody = $this->twig->createTemplate($emailTemplateBody);
+
         $message
+            ->setSubject(
+                $templateSubject->render(
+                    ['link' => $link, 'senderName' => $invitation->getSender()->getFullName()]
+                )
+            )
             ->setFrom($invitation->getSender()->getEmail())
             ->setTo($invitation->getEmail())
             ->setBody(
-                $this->twig->render(
-                    'emails/registration.html.twig',
+                $templateBody->render(
                     ['link' => $link, 'senderName' => $invitation->getSender()->getFullName()]
                 ),
                 'text/html'
             );
-
         $this->mailer->send($message);
     }
 
