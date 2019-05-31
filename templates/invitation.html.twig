@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invitation{% endblock %}
+
+{% block body %}
+
+    <div id="flash-messages">
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    <main id="main">
+    {{ form_start(invitation) }}
+        {{ form_widget(invitation) }}
+        {{ form_end(invitation) }}
+
+    </main>
+
+{% endblock %}

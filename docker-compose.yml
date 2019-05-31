@@ -11,7 +11,7 @@ services:
          - ./:/var/www/html
         networks:
          - default
-         - rmp_default
+         - dev_net
 networks:
-    rmp_default:
+    dev_net:
         external: true
