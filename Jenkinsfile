@@ -32,8 +32,6 @@ pipeline {
                 }
             }
             steps {
-                sh "rm .env && echo 'removed old .env file' || echo 'no .env file found'"
-                sh "rm .env.php && echo 'removed old .env.php file' || echo 'no .env.php file found'"
                 sh 'composer install --verbose --prefer-dist --optimize-autoloader --no-progress --no-interaction'
                 sh 'chmod u+x bin/console'
                 sh 'bin/console cache:clear --no-warmup --env=prod'
