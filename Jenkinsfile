@@ -77,7 +77,7 @@ pipeline {
             environment {
                 MAILER_URL = 'smtp://smtp'
                 VIRTUAL_PATH_NAME = "${BUILD_ID}"
-                APP_ENV = 'prod'
+                APP_ENV = 'dev'
                 NAME = "${BUILD_ID}"
             }
             steps {
