@@ -45,6 +45,7 @@ services:
     App\Service\AssociateManager:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
+            $tokenStorage: '@security.token_storage'
 
 
 

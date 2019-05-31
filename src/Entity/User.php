@@ -58,8 +58,4 @@ class User extends PTSUser
         $this->associate = $associate;
         return $this;
     }
-
-
-
-
 }

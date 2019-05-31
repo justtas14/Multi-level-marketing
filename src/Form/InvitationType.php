@@ -16,6 +16,6 @@ class InvitationType extends AbstractType
         $builder
             ->add('fullName', TextType::class)
             ->add('email', EmailType::class)
-            ->add('submit', SubmitType::class);
+            ->add('Send', SubmitType::class, ['label' => 'Send']);
     }
 }

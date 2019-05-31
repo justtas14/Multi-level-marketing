@@ -467,7 +467,4 @@ class Associate
             'agreedToSocialMediaUpdates' => $this->getAgreedToSocialMediaUpdates()?'Yes':'No'
         ];
     }
-
-
-
 }
