@@ -3,7 +3,6 @@
 
 namespace App\Command;
 
-
 use App\Entity\Associate;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;

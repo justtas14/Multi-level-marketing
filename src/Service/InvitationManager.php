@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class InvitationManager
 {
-    const secondsUntilExpired = 86400;
+    const SECONDSUNTILEXPIRED = 86400;
     /**
      * @var EntityManager $em
      */
@@ -81,7 +81,7 @@ class InvitationManager
             return null;
         }
 
-        if ($invitation->getUsed() || time() - $invitation->getCreated() > self::secondsUntilExpired) {
+        if ($invitation->getUsed() || time() - $invitation->getCreated() > self::SECONDSUNTILEXPIRED) {
             return null;
         }
 

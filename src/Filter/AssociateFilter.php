@@ -3,7 +3,6 @@
 
 namespace App\Filter;
 
-
 class AssociateFilter
 {
     /**

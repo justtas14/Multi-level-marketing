@@ -28,7 +28,6 @@ class AssociateManager
      */
     public function getAllDirectAssociates(string $parentAssociateId): array
     {
-
     }
 
     /**
@@ -57,10 +56,5 @@ class AssociateManager
      */
     public function getNumberOfAssociatesInDownline(string $associateId, int $level)
     {
-
     }
-
-
-
-
 }
