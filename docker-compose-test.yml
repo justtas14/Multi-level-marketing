@@ -1,0 +1,13 @@
+version: '2'
+services:    
+    prelaunchbuilder:
+        build:
+            context: ./
+            dockerfile: Dockerfile.dev
+        privileged: true
+        volumes:
+            - flex_phpunit:/var/www/html/bin/.phpunit
+
+volumes:
+    flex_phpunit:
+        external: true
