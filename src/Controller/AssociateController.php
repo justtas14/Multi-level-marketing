@@ -28,17 +28,12 @@ class AssociateController extends AbstractController
 
         $level = $associateManager->getNumberOfLevels($user->getAssociate()->getAssociateId());
 
-        $em = $this->getDoctrine()->getManager();
-        $associateRepository = $em->getRepository(Associate::class);
-
         $associateInLevels = [];
 
-        $currentAncestor = $user->getAssociate()->getAncestors().$user->getAssociate()->getId();
-
         for ($i = 1; $i <= $level; $i++) {
-            $associateInLevels[$i] = $associateRepository->findAssociatesByLevel(
-                $i + $user->getAssociate()->getLevel(),
-                $currentAncestor
+            $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
+                $user->getAssociate()->getAssociateId(),
+                $i
             );
         }
 

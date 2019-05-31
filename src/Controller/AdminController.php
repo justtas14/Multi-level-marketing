@@ -30,15 +30,20 @@ class AdminController extends AbstractController
      */
     public function index(AssociateManager $associateManager)
     {
-        $level = $associateManager->getNumberOfLevels();
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
 
-        $em = $this->getDoctrine()->getManager();
-        $associateRepository = $em->getRepository(Associate::class);
+        $level = $associateManager->getNumberOfLevels();
 
         $associateInLevels = [];
 
         for ($i = 1; $i <= $level; $i++) {
-            $associateInLevels[$i] = $associateRepository->findAssociatesByLevel($i);
+            $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
+                $user->getAssociate()->getAssociateId(),
+                $i
+            );
         }
 
         return $this->render('admin/index.html.twig', [
@@ -101,7 +106,6 @@ class AdminController extends AbstractController
      */
     public function adminInvitation(Request $request, InvitationManager $invitationManager)
     {
-        $em = $this->getDoctrine()->getManager();
         /**
          * @var User $user
          */
