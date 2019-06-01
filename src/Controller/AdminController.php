@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Associate;
 use App\Entity\Invitation;
 use App\Filter\AssociateFilter;
+use App\Form\EmailTemplateType;
 use App\Form\InvitationType;
 use App\Form\UserSearchType;
 use App\Form\UserType;
 use App\Service\AssociateManager;
+use App\Service\EmailTemplateManager;
 use App\Service\InvitationManager;
 use App\Entity\UpdateProfile;
 use App\Entity\User;
@@ -48,6 +50,31 @@ class AdminController extends AbstractController
 
         return $this->render('admin/index.html.twig', [
             'associatesInLevels' => $associateInLevels
+        ]);
+    }
+
+    /**
+     * @Route("/admin/emailtemplates", name="email_template")
+     */
+    public function emailTemplate(Request $request, EmailTemplateManager $emailTemplateManager)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $emailTemplate = $emailTemplateManager->getEmailTemplate('INVITATION');
+
+        $form = $this->createForm(EmailTemplateType::class, $emailTemplate);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($emailTemplate);
+            $em->flush();
+
+            $this->addFlash('success', 'Template updated');
+        }
+
+        return $this->render('admin/emailTemplate.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
