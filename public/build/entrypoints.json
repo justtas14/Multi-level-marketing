@@ -1,0 +1,20 @@
+{
+  "entrypoints": {
+    "app": {
+      "css": [
+        "/build/app.css"
+      ],
+      "js": [
+        "/build/app.js"
+      ]
+    },
+    "treewidget": {
+      "css": [
+        "/build/treewidget.css"
+      ],
+      "js": [
+        "/build/treewidget.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+version: '2'
+services:    
+    prelaunchbuilder:
+        build:
+            context: ./
+            dockerfile: Dockerfile.dev
+        privileged: true
+        environment:
+            - VIRTUAL_PATH_NAME
+            - APP_ENV
+            - MAILER_URL
+            - DATABASE_URL=mysql://root:root@mysql/prelaunchbuilder_review
+        container_name: ${NAME}
+        networks:
+            default:
+                aliases:
+                    - prelaunch
+            dockernet:
+                aliases:
+                    - ${NAME}
+    mysql:
+        image: mysql:5.7
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+        networks:
+            - default
+
+networks:
+    dockernet:
+        external: true
