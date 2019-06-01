@@ -16,6 +16,7 @@
 ###< symfony/web-server-bundle ###
 
 ###> phpunit/phpunit ###
+/coverage
 /phpunit.xml
 ###< phpunit/phpunit ###
 
