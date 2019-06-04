@@ -1,0 +1,87 @@
+.admin-mainContainer {
+    flex:1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.admin-sidebar {
+    width: 30%;
+    min-width: 319px;
+    height: 100vh;
+    overflow-y: scroll;
+    border-right: 2px solid #3ab54a;
+}
+
+.admin-searchContainer {
+    padding-left: 20px;
+    width: 63%;
+}
+
+.admin-titleContainer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 48px;
+    font-weight: 100;
+    cursor: default
+}
+
+.admin-pictureContainer {
+    margin-top:20px;
+    padding: 20px 0 20px 0;
+    width:100%;
+    flex:1;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #fff;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.admin-picture {
+    width:80%;
+}
+
+.admin-item, .admin-itemLast {
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.admin-itemLast {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    margin-bottom: 100px;
+}
+
+.admin-item:hover {
+    background-color: #f2f2f2;
+}
+
+.admin-itemLast:hover {
+    background-color: #f2f2f2;
+    box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-logo {
+    width:140px;
+    height:40px;
+    border-radius:25px 25px 25px 25px;
+}
+
+.sidebar-logoContainer {
+    padding: 20px 0 20px 0;
+    width:100%;
+    flex:1;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #fff;
+    border-bottom: 1px solid #f2f2f2;
+}

@@ -1,0 +1,7 @@
+<div class="header">
+    <img class="header-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+    {% if is_granted('ROLE_USER') %}
+        <div id="header-logout" class="header-logout"><a href="{{ logout_path() }}">{{ 'Logout'}}</a></div>
+        <div class="header-logout">{{ app.user.username }}</div>
+    {% endif %}
+</div>

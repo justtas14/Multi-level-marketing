@@ -14,8 +14,21 @@ class InvitationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fullName', TextType::class)
-            ->add('email', EmailType::class)
-            ->add('Send', SubmitType::class, ['label' => 'Send']);
+            ->add('fullName', TextType::class, [
+                'attr' => [
+                    'class' => 'validate'
+                ]
+            ])
+            ->add('email', EmailType::class, [
+                'attr' => [
+                    'class' => 'validate'
+                ]
+            ])
+            ->add('submit', SubmitType::class, [
+                    'label' => 'Send',
+                'attr' => [
+                    'class' => 'waves-effect waves-light btn'
+                ]
+            ]);
     }
 }

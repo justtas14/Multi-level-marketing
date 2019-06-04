@@ -3,8 +3,67 @@
 {% block title %}Update Profile{% endblock %}
 
 {% block body %}
-
-    <div id="flash-messages">
+    {% if not is_granted('ROLE_ADMIN') %}    
+        {{ include('includes/header.html.twig') }}
+    {% endif %}
+    <div class="invitation">
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ include('includes/sidebar.html.twig') }}
+    {% endif %}
+<div class="profile-container">
+        {{ form_start(updateProfile) }}
+        {{ form_row(updateProfile._token) }}
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.email) }}
+        {{ form_label(updateProfile.email) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.oldPassword) }}
+        {{ form_label(updateProfile.oldPassword) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.newPassword) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.fullName) }}
+        {{ form_label(updateProfile.associate.fullName) }}      
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.country) }}
+        {{ form_label(updateProfile.associate.country) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.address) }}
+        {{ form_label(updateProfile.associate.address) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.city) }}
+        {{ form_label(updateProfile.associate.city) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.postcode) }}
+        {{ form_label(updateProfile.associate.country) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.mobilePhone) }}
+        {{ form_label(updateProfile.associate.mobilePhone) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_widget(updateProfile.associate.homePhone) }}
+        {{ form_label(updateProfile.associate.homePhone) }}
+</div>
+<div class="input-field col s12">  
+        {{ form_row(updateProfile.associate.agreedToEmailUpdates) }}
+<div class="input-field col s12">  
+        {{ form_row(updateProfile.associate.agreedToTextMessageUpdates) }}
+<div class="input-field col s12">  
+        {{ form_row(updateProfile.associate.agreedToSocialMediaUpdates) }}
+<div class="profile-buttonWrap">
+        {{ form_row(updateProfile.associate.submit, { 'attr': {'style': 'background-color:#3ab54a'} }) }}
+</div>
+        {{ form_end(updateProfile, {'render_rest': false}) }}
+        <div class="profile-errorMessageContainer">
+            <div id="flash-messages">
         {% for message in app.flashes('error') %}
             <div class="alert alert-error">
                 {{ message }}
@@ -16,24 +75,8 @@
             </div>
         {% endfor %}
     </div>
-    <main id="main">
-        {{ form_start(updateProfile) }}
-        {{ form_row(updateProfile._token) }}
-        {{ form_row(updateProfile.email) }}
-        {{ form_row(updateProfile.oldPassword) }}
-        {{ form_row(updateProfile.newPassword) }}
-        {{ form_row(updateProfile.associate.fullName) }}
-        {{ form_row(updateProfile.associate.country) }}
-        {{ form_row(updateProfile.associate.address) }}
-        {{ form_row(updateProfile.associate.city) }}
-        {{ form_row(updateProfile.associate.postcode) }}
-        {{ form_row(updateProfile.associate.mobilePhone) }}
-        {{ form_row(updateProfile.associate.homePhone) }}
-        {{ form_row(updateProfile.associate.agreedToEmailUpdates) }}
-        {{ form_row(updateProfile.associate.agreedToTextMessageUpdates) }}
-        {{ form_row(updateProfile.associate.agreedToSocialMediaUpdates) }}
-        {{ form_row(updateProfile.associate.submit) }}
-        {{ form_end(updateProfile, {'render_rest': false}) }}
-    </main>
+        </div>
+        </div>
+        </div>
 
 {% endblock %}

@@ -3,14 +3,47 @@
 {% block title %}Admin{% endblock %}
 
 {% block body %}
-    <main>
-        <a href="{{ path('csv') }}" target="_blank"><button>Download CSV</button></a>
 
+ {{ include('includes/header.html.twig') }}
+
+    <main>
+        <div class="admin-mainContainer">
+            <div class="admin-sidebar">
+                <div class="admin-titleContainer">
+                    Hello, 
+                    <div>
+                        John Stevens
+                    </div>
+                </div>
+                <div class="admin-pictureContainer">
+                        <img class="admin-picture" src="{{ asset('assets/images/profile.png') }}" />
+                </div>
+                <div class="admin-item">
+                    User Search
+                </div>
+                <div class="admin-item">
+                    My Team
+                </div>
+                <div class="admin-item">
+                    Invite Associate
+                </div>
+                <div class="admin-item">
+                    Download CSV
+                </div>
+                <div class="admin-itemLast">
+                    My Profile
+                </div>
+            </div>
+            <div class="admin-searchContainer">
+            </div>
+        <a href="{{ path('csv') }}" target="_blank"><button>Download CSV</button></a>
         <ul>
         {% for key, associateCount in associatesInLevels %}
             <li style="list-style-type:none;">Level {{ key }}: <strong>{{ associateCount }}</strong></li>
         {% endfor %}
         </ul>
+            
+        </div>
     </main>
 
 {% endblock %}

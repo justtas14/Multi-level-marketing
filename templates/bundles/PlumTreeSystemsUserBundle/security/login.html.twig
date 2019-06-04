@@ -1,4 +1,44 @@
-{% if error %}
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+
+<div class="login-container">
+    <div class="login-logoContainer">
+        <img src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+    </div>
+
+    <div class="login-title">
+        Login
+    </div>
+    <div class="login-inputContainer">
+        <form action="{{ path('login') }}" method="post">
+        <div class="login-item">
+            <div class="input-field col s12">
+                <label for="username">E-mail</label>
+                <input class="validate" type="text" id="username" name="_username" value="{{ last_username }}"/>
+            </div>
+        </div>    
+        <div class="login-item">    
+            <div class="input-field col s12">
+                <label for="password">Password:</label>
+                <input class="validate" type="password" id="password" name="_password"/>
+                <input type="hidden" name="_target_path" value="/"/>
+            </div>
+        </div>        
+    </div>  
+    {#
+        If you want to control the URL the user
+        is redirected to on success (more details below)
+        <input type="hidden" name="_target_path" value="/account" />
+    #}
+    <div class="login-buttonWrap">
+    <button class="waves-effect waves-light btn" style="background-color:#3ab54a" type="submit">Login</button>
+    </div>
+</form>
+    <div class="login-errorMessageContainer">
+        {% if error %}
     <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
 
@@ -14,19 +54,7 @@
         </div>
     {% endfor %}
 </div>
+    </div>
+</div>
 
-<form action="{{ path('login') }}" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="_username" value="{{ last_username }}"/>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="_password"/>
-    <input type="hidden" name="_target_path" value="/"/>
-    {#
-        If you want to control the URL the user
-        is redirected to on success (more details below)
-        <input type="hidden" name="_target_path" value="/account" />
-    #}
-
-    <button type="submit">login</button>
-</form>
+{% endblock %}

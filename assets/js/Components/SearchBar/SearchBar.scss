@@ -1,0 +1,70 @@
+.searchBar-container {
+    border-bottom : 5px solid #3ab54a;
+}
+
+.searchBar-inputContainer {
+    width:21%;
+    overflow-x: hidden;
+    margin-top:10px;
+    padding:0 0 0 15px;
+    display:inline-block;
+    text-align: left;
+}
+
+.searchBar-inputEmailContainer {
+    width:21%;
+    overflow-x: hidden;
+    margin-top:10px;
+    padding:0 10px 0 20px;
+    display:inline-block;
+    text-align: left;
+}
+
+.searchBar-inputPhoneContainer {
+    width:21%;
+    overflow-x: hidden;
+    margin-top:10px;
+    padding:0 20px 0 10px;
+    display:inline-block;
+    text-align: left;
+}
+
+.searchBar-inputLevelContainer {
+    width:10%;
+    overflow-x: hidden;
+    margin-top:10px;
+    padding:0 0 5px 15px;
+    display:inline-block;
+    text-align: left;
+    font-size: 16px;
+    color: grey;
+    overflow-x: hidden;
+}
+
+.searchBar-inputDateContainer {
+    width:10%;
+    overflow-x: hidden;
+    margin-top:10px;
+    padding:0 20px 5px 0;
+    display:inline-block;
+    text-align: left;
+    font-size: 16px;
+    color: grey;
+    overflow-x: hidden;
+}
+
+
+.searchBar-input {
+    padding: 0;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    height: 25px;
+    text-indent: 5px;
+}
+
+.searchBar-item {
+    width: 20%;
+    text-align: left;
+    display: none;
+}

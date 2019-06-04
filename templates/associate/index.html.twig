@@ -1,22 +1,62 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Associate{% endblock %}
+ {% block javascripts %}
+    <script type="text/javascript" src="{{ asset('/build/app.js') }}"></script>
+{% endblock %}
+
+{% set maxLevel = max(associatesInLevels) %}
 
 {% block body %}
+
+  {{ include('includes/header.html.twig') }}
     <main>
-
-        <ul>
-            {% for key, associateCount in associatesInLevels %}
-                <li style="list-style-type:none;">Level {{ key }}: <strong>{{ associateCount }}</strong></li>
-            {% endfor %}
-        </ul>
-
-        <div>
-            <h2>My enroller</h2>
-            <p>Email: {{ parent.email }}</p>
-            <p>Full name: {{ parent.fullName }}</p>
-            <p>Mobile phone: {{ parent.mobilePhone }}</p>
+    <div class="associate-mainContainer">
+        <div class="associate-levelContainer">
+            <div class="associate-title">
+                My Team
+            </div>
+            <div class="associate-buttonContainer">
+                <a 
+                    class="waves-effect waves-light btn-large" 
+                    style="width:45%; background-color:#3ab54a"
+                    href="{{ path('associate_invite') }}">
+                        Invite Associate
+                </a>
+                <a 
+                    class="waves-effect waves-light btn-large" 
+                    style="margin-left:5%; width:45%; background-color:#3ab54a">
+                        My Team Viewer
+                </a>
+            </div>
+            <div class="associate-levelConainer">
+                <ul class="associate-levelBarList">
+                    {% for key, associateCount in associatesInLevels %}
+                <li class="associate-levelBarListItem" style="list-style-type:none;">
+                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+                    </div>
+                </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-
+        <div class="associate-enrollerContainer">
+                <div class="associate-title">
+                    My Enroller
+                </div>
+                <div class="associate-enrollerPictureContainer">
+                    <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
+                </div>
+                <div class="associate-enrollerDetailsContainer">
+                    <p>Email: {{ parent.email }}</p>
+                    <p>Full name: {{ parent.fullName }}</p>
+                    <p>Mobile phone: {{ parent.mobilePhone }}</p>
+                </div>
+        </div>
+    </div>
+    <div class="associate-searchContainer">
+            <div id="root"></div>
+    </div>
     </main>
 {% endblock %}

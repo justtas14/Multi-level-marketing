@@ -18,7 +18,7 @@ class AssociateType extends AbstractType
     {
         $builder
             ->add('fullName', TextType::class)
-            ->add('country', CountryType::class)
+            ->add('country', TextType::class)
             ->add('address', TextType::class)
             ->add('city', TextType::class)
             ->add('postcode', TextType::class)
@@ -35,8 +35,12 @@ class AssociateType extends AbstractType
             ->add('agreedToSocialMediaUpdates', CheckboxType::class, [
                 'required' => false
             ])
-            ->add('submit', SubmitType::class);
-        ;
+            ->add('submit', SubmitType::class, [
+                'label' => 'Save',
+                'attr' => [
+                    'class' => 'waves-effect waves-light btn'
+                ]
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
