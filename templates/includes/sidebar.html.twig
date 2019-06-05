@@ -12,22 +12,22 @@
                         <img class="sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
                 </div>
                 <div class="sidebar-item">
-                    User Search
+                   <a>User Search</a>
                 </div>
                 <div class="sidebar-item">
-                    My Team
+                    <a>My Team</a>
                 </div>
                 <div class="sidebar-item">
-                    Invite Associate
+                    <a>Invite Associate</a>
                 </div>
                 <div class="sidebar-item">
-                    Download CSV
+                   <a href="{{ path('csv') }}" target="_blank">Download CSV</a>
                 </div>
                 <div class="sidebar-item">
-                    My Profile
+                    <a>My Profile</a>
                 </div>
                 <div class="sidebar-itemLast">
-                    Logout
+                    <a href="{{ logout_path() }}">{{ 'Logout' }}>Logout</a>
                 </div>
 
             </div>

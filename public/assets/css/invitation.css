@@ -1,0 +1,33 @@
+.invitation {
+    flex: 1; 
+    display: flex;
+    flex-direction: row;
+}
+
+.invitation-container {
+    margin: 100px auto 20px auto;
+    height: 20%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    background-color:#fff;
+    padding:100px 20px 50px 20px;
+    border-radius:5px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.invitation-item, .profile-item {
+    margin: auto;
+    width: 80%;
+}
+
+.invitation-messageContainer {
+    margin: auto;
+    color: #3ab54a;
+}
+
+@media screen and (max-width: 668px) {
+    .invitation-container {
+        width: 80%;
+    }
+}

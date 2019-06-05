@@ -2,39 +2,27 @@
 
 {% block title %}Admin{% endblock %}
 
+{% set maxLevel = max(associatesInLevels) %}
+
 {% block body %}
 
- {{ include('includes/header.html.twig') }}
+ {{ include('includes/sidebar.html.twig') }}
 
     <main>
         <div class="admin-mainContainer">
-            <div class="admin-sidebar">
-                <div class="admin-titleContainer">
-                    Hello, 
-                    <div>
-                        John Stevens
+        
+            <div class="admin-levelContainer">
+            <div class="associate-levelConainer">
+                <ul class="associate-levelBarList">
+                    {% for key, associateCount in associatesInLevels %}
+                <li class="associate-levelBarListItem" style="list-style-type:none;">
+                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                        Level {{ key }}: <strong>{{ associateCount }}</strong>
                     </div>
-                </div>
-                <div class="admin-pictureContainer">
-                        <img class="admin-picture" src="{{ asset('assets/images/profile.png') }}" />
-                </div>
-                <div class="admin-item">
-                    User Search
-                </div>
-                <div class="admin-item">
-                    My Team
-                </div>
-                <div class="admin-item">
-                    Invite Associate
-                </div>
-                <div class="admin-item">
-                    Download CSV
-                </div>
-                <div class="admin-itemLast">
-                    My Profile
-                </div>
+                </li>
+                    {% endfor %}
+                </ul>
             </div>
-            <div class="admin-searchContainer">
             </div>
         <a href="{{ path('csv') }}" target="_blank"><button>Download CSV</button></a>
         <ul>
