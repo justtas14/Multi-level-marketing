@@ -2,17 +2,29 @@
 
 {% block title %}Admin{% endblock %}
 
+{% set maxLevel = max(associatesInLevels) %}
+
 {% block body %}
+
+ {{ include('includes/sidebar.html.twig') }}
+
     <main>
-        {% if logo is not null %}
-         <img style="max-width: 100px; max-height: 100px" src="{{ logo|downloadUrlParser }}" />
-            {% else%}
-                <img style="max-width: 100px; max-height: 100px"
-                     src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" />
-        {% endif %}
-
+        <div class="admin-mainContainer">
+        
+            <div class="admin-levelContainer">
+            <div class="associate-levelConainer">
+                <ul class="associate-levelBarList">
+                    {% for key, associateCount in associatesInLevels %}
+                <li class="associate-levelBarListItem" style="list-style-type:none;">
+                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+                    </div>
+                </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            </div>
         <a href="{{ path('csv') }}" target="_blank"><button>Download CSV</button></a>
-
         <ul>
         {% for key, associateCount in associatesInLevels %}
             <li style="list-style-type:none;">Level {{ key }}: <strong>{{ associateCount }}</strong></li>
@@ -25,6 +37,8 @@
                  src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" />
         {% endif %}
         </ul>
+            
+        </div>
     </main>
 
 {% endblock %}

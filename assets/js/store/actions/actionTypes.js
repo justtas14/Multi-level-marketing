@@ -1,0 +1,10 @@
+export const NAME_SEARCH = 'NAME_SEARCH';
+export const LEVEL_SEARCH = 'LEVEL_SEARCH';
+export const EMAIL_SEARCH = 'EMAIL_SEARCH';
+export const PHONE_SEARCH = 'PHONE_SEARCH';
+export const DATE_SEARCH = 'DATE_SEARCH';
+export const ADD_CURRENT_PAGINATION = 'ADD_CURRENT_PAGINATION';
+export const SCROLL_DOWN = 'SCROLL_DOWN';
+export const ADD_MODAL = 'ADD_MODAL';
+export const CLOSE_MODAL = 'CLOSE_MODAL';
+export const LOAD_DATA = 'LOAD_DATA';

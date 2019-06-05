@@ -1,28 +1,79 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Associate{% endblock %}
+ {% block javascripts %}
+    <script type="text/javascript" src="{{ asset('/build/app.js') }}"></script>
+{% endblock %}
+
+{% set maxLevel = max(associatesInLevels) %}
 
 {% block body %}
+
+  {{ include('includes/header.html.twig') }}
     <main>
+    <div class="associate-mainContainer">
+        <div class="associate-levelContainer">
+            <div class="associate-title">
+                My Team
+            </div>
+            <div class="associate-buttonContainer">
+                <a 
+                    class="waves-effect waves-light btn-large" 
+                    style="width:45%; background-color:#3ab54a"
+                    href="{{ path('associate_invite') }}">
+                        Invite Associate
+                </a>
+                <a 
+                    class="waves-effect waves-light btn-large" 
+                    style="margin-left:5%; width:45%; background-color:#3ab54a">
+                        My Team Viewer
+                </a>
+            </div>
+            <div class="associate-levelConainer">
+                <ul class="associate-levelBarList">
+                    {% for key, associateCount in associatesInLevels %}
+                <li class="associate-levelBarListItem" style="list-style-type:none;">
+                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+                    </div>
+                </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="associate-enrollerContainer">
+                <div class="associate-title">
+                    My Enroller
+                </div>
+                {% if parent is not null %}
+                    <div class="associate-enrollerPictureContainer">
+                        {% if parent.profilePicture is not null %}
+                            <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
+                        {% else %}
+                            <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
+                        {% endif %}
+                    </div>
+                <div class="associate-enrollerDetailsContainer">
+                    <p>Email: {{ parent.email }}</p>
+                    <p>Full name: {{ parent.fullName }}</p>
+                    <p>Mobile phone: {{ parent.mobilePhone }}</p>
+                </div>
+                {% else %}
+                <div>Company
+
+                </div>
+                {% endif %}
+        </div>
+    </div>
+    <div class="associate-searchContainer">
+            <div id="root"></div>
+    </div>
+    {% endblock %}
+{#
         {% if profilePicture is not null %}
             <img style="max-width: 200px; max-height: 200px" src="{{ profilePicture|downloadUrlParser }}" />
         {% else%}
             <img style="max-width: 100px; max-height: 100px"
                  src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" />
         {% endif %}
-        <ul>
-            {% for key, associateCount in associatesInLevels %}
-                <li style="list-style-type:none;">Level {{ key }}: <strong>{{ associateCount }}</strong></li>
-            {% endfor %}
-        </ul>
-
-        {% if parent is not null %}
-        <div>
-            <h2>My enroller</h2>
-            <p>Email: {{ parent.email }}</p>
-            <p>Full name: {{ parent.fullName }}</p>
-            <p>Mobile phone: {{ parent.mobilePhone }}</p>
-        </div>
-        {% endif %}
-    </main>
-{% endblock %}
+#}

@@ -1,0 +1,38 @@
+<div class="sidebar">
+                <div class="sidebar-logoContainer">
+                {% set logo = getLogo() %}
+                {% if logo is not null %}
+                <img style="max-width: 100px; max-height: 100px" src="{{ logo|downloadUrlParser }}" />
+            {% else%}
+                <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+            {% endif %}
+                </div>
+                <div class="sidebar-titleContainer">
+                    Hello, 
+                    <div>
+                        John Stevens
+                    </div>
+                </div>
+                <div class="sidebar-pictureContainer">
+                        <img class="sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
+                </div>
+                <div class="sidebar-item">
+                   <a>User Search</a>
+                </div>
+                <div class="sidebar-item">
+                    <a>My Team</a>
+                </div>
+                <div class="sidebar-item">
+                    <a>Invite Associate</a>
+                </div>
+                <div class="sidebar-item">
+                   <a href="{{ path('csv') }}" target="_blank">Download CSV</a>
+                </div>
+                <div class="sidebar-item">
+                    <a>My Profile</a>
+                </div>
+                <div class="sidebar-itemLast">
+                    <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
+                </div>
+
+            </div>

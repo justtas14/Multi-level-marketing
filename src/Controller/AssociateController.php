@@ -25,8 +25,6 @@ class AssociateController extends AbstractController
          */
         $user = $this->getUser();
 
-        $profilePicture = $user->getAssociate()->getProfilePicture();
-
         $level = $associateManager->getNumberOfLevels($user->getAssociate()->getAssociateId());
 
         $associateInLevels = [];
@@ -45,8 +43,7 @@ class AssociateController extends AbstractController
 
         return $this->render('associate/index.html.twig', [
             'associatesInLevels' => $associateInLevels,
-            'parent' => $userParent,
-            'profilePicture' => $profilePicture
+            'parent' => $userParent
         ]);
     }
 

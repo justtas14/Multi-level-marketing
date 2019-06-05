@@ -1,0 +1,43 @@
+body {
+    margin: 0;
+    background-image: linear-gradient(90deg, #eee, #f2f2f2, #fafafa);
+}
+
+
+
+.profile-buttonWrap {
+    margin: 40px auto 20px auto;
+    width: 75px;   
+}
+
+
+.profile-container {
+    margin: 50px auto 50px auto;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    background-color:#fff;
+    padding:100px 40px 50px 40px;
+    border-radius:5px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.input-field.is-focused label {
+    color: #3ab54a;
+}
+
+.userSearch-container {
+    margin: 50px auto 50px auto;
+    height: 20%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    background-color:#fff;
+    padding:100px 20px 50px 20px;
+    border-radius:5px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+
+
+

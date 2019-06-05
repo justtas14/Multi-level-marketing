@@ -58,7 +58,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('vanagas');
@@ -100,7 +100,7 @@ class AssociateControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/profile');
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue("justtas14@gmail.com");
         $form->get('user_update')['oldPassword']->setValue('justtas14');
@@ -129,7 +129,7 @@ class AssociateControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/profile');
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('somepasw');
@@ -158,7 +158,7 @@ class AssociateControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/profile');
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('justtas');
@@ -215,7 +215,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('justtas14');
@@ -257,7 +257,7 @@ class AssociateControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/profile');
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue("vanagas@gmail.com");
         $form->get('user_update')['oldPassword']->setValue('justtas14');
@@ -286,7 +286,7 @@ class AssociateControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/profile');
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('somepasw');
@@ -315,7 +315,7 @@ class AssociateControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/profile');
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('justtas');

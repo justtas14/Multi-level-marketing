@@ -2,8 +2,25 @@
 
 {% block title %}User Search{% endblock %}
 
-{% block body %}
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('/build/app.js') }}"></script>
+{% endblock %}
 
+{% block body %}
+    <div class="invitation">
+    {% if is_granted('ROLE_ADMIN') %}
+    {{ include('includes/sidebar.html.twig') }}
+    {% endif %}
+    <div class="userSearch-container">
+            <div id="root"></div>
+        <div>
+    </div>
+
+{% endblock %}
+
+
+
+{#
     <table>
         <tr>
             <th>Full Name</th>
@@ -19,5 +36,4 @@
         <div id="response"></div>
     </table>
 
-
-{% endblock %}
+#}

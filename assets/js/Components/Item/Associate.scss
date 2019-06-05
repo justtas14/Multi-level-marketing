@@ -1,0 +1,40 @@
+.associate-itemContainer, .associate-itemLevelContainer, 
+.associate-itemDateContainer  {
+    width:21%;
+    overflow-x: hidden;
+    margin-top:10px;
+    padding:0 10px 0 10px;
+    display:inline-block;
+    text-align: left;
+    cursor: default;
+}
+
+.associate-itemLevelContainer, .associate-itemDateContainer   {
+    width: 10%;
+}
+
+.associate-container, .associate-containerNew  {
+    background-color: #fff;
+    margin: 7px 5px 7px 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+    border-left: 2px solid #f2f2f2; 
+    border-bottom: 1px solid #f2f2f2;
+    &:hover {
+    border-left: 2px solid#7f06c4; 
+    background-color: #f2f2f2;
+    }
+}
+
+.associate-containerNew {
+    animation : first 5s ease-out forwards;
+}
+
+@keyframes first {
+    0% {
+        color: #7f06c4
+    }
+    100% {
+        color: black;
+    }
+}
