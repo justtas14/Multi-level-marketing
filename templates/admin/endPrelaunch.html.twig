@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Email Template{% endblock %}
+{% block title %}End Prelaunch{% endblock %}
 
 {% block body %}
 
@@ -19,18 +19,7 @@
 
     <main id="main">
         {{ form_start(form) }}
-        {{ form_label(form.emailSubject) }}
-        <br>
-        {{ form_errors(form.emailSubject) }}
-        <br>
-        {{ form_widget(form.emailSubject) }}
-        <br>
-        {{ form_label(form.emailBody) }}
-        <Br>
-        {{ form_errors(form.emailBody) }}
-        <br>
-        {{ form_widget(form.emailBody) }}
-        <br>
+        {{ form_widget(form) }}
         {{ form_end(form) }}
     </main>
 

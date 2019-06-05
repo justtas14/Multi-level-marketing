@@ -1,0 +1,5 @@
+App\Entity\User:
+  properties:
+    plainPassword:
+      - NotBlank:
+          groups: [registration]

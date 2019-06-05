@@ -20,7 +20,7 @@
         {{ form_start(registration) }}
         {{ form_row(registration._token) }}
         {{ form_row(registration.email) }}
-        {{ form_row(registration.newPassword) }}
+        {{ form_row(registration.plainPassword) }}
         {{ form_row(registration.associate.fullName) }}
         {{ form_row(registration.associate.country) }}
         {{ form_row(registration.associate.address) }}
@@ -31,8 +31,13 @@
         {{ form_row(registration.associate.agreedToEmailUpdates) }}
         {{ form_row(registration.associate.agreedToTextMessageUpdates) }}
         {{ form_row(registration.associate.agreedToSocialMediaUpdates) }}
+        {{ form_row(registration.associate.profilePicture) }}
+        {% if termsOfServices is not null  %}
+            <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
+        {% endif %}
         {{ form_row(registration.associate.submit) }}
         {{ form_end(registration, {'render_rest': false}) }}
+
     </main>
 
 {% endblock %}

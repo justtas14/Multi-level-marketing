@@ -56,29 +56,31 @@ class AssociateRepository extends ServiceEntityRepository
 
     public function findMaxLevel($ancestors = null) : ?int
     {
-        if (!$ancestors) {
-            $ancestors = '|';
+        $qb = $this->createQueryBuilder('a')
+            ->select('MAX(a.level)');
+
+        if ($ancestors) {
+            $qb->where('a.ancestors LIKE :ancestors')
+                ->setParameter('ancestors', $ancestors.'%');
         }
-        return $this->createQueryBuilder('a')
-            ->select('MAX(a.level)')
-            ->where('a.ancestors LIKE :ancestors')
-            ->setParameter('ancestors', $ancestors.'%')
-            ->getQuery()
+
+        return $qb->getQuery()
             ->getSingleScalarResult();
     }
 
     public function findAssociatesByLevel($level, $currentAncestor = null) : int
     {
-        if (!$currentAncestor) {
-            $currentAncestor = '|';
-        }
-        return $this->createQueryBuilder('a')
+        $qb = $this->createQueryBuilder('a')
             ->select('COUNT(a)')
             ->where('a.level = :level')
-            ->andWhere('a.ancestors LIKE :ancestors')
-            ->setParameter('level', $level)
-            ->setParameter('ancestors', $currentAncestor.'%')
-            ->getQuery()
+            ->andWhere()
+            ->setParameter('level', $level);
+
+        if ($currentAncestor) {
+            $qb->andWhere('a.ancestors LIKE :ancestors')
+                ->setParameter('ancestors', $currentAncestor.'%');
+        }
+        return $qb->getQuery()
             ->getSingleScalarResult();
     }
 

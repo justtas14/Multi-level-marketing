@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
+use App\Entity\Configuration;
 use App\Entity\User;
-use App\Form\UserType;
+use App\Form\UserRegistrationType;
 use App\Service\InvitationManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,9 +30,7 @@ class HomeController extends AbstractController
             return $this->redirectToRoute('associate');
         }
 
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
+        return $this->render('home/index.html.twig');
     }
 
     /**
@@ -49,12 +48,20 @@ class HomeController extends AbstractController
             return $this->render('home/linkstate.html.twig');
         }
 
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+        $termsOfServices = null;
+        if ($configuration && $configuration->getTermsOfServices()) {
+            $termsOfServices = $configuration->getTermsOfServices();
+        }
+
         $user = new User();
         $associate = new Associate();
         $user->setEmail($invitation->getEmail());
         $associate->setFullName($invitation->getFullName());
         $user->setAssociate($associate);
-        $form = $this->createForm(UserType::class, $user);
+
+        $form = $this->createForm(UserRegistrationType::class, $user);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -66,7 +73,6 @@ class HomeController extends AbstractController
                 $associate->setParent($invitation->getSender());
                 $associate->setEmail($email);
 
-                $user->setPlainPassword($form['newPassword']->getData());
                 $user->setRoles(['ROLE_USER']);
                 $user->setAssociate($associate);
                 $invitationManager->discardInvitation($invitation);
@@ -82,7 +88,28 @@ class HomeController extends AbstractController
         }
 
         return $this->render('home/registration.html.twig', [
-            'registration' => $form->createView()
+            'registration' => $form->createView(),
+            'termsOfServices' => $termsOfServices
+        ]);
+    }
+
+    /**
+     * @Route("/landingpage", name="landingpage")
+     */
+    public function landingPage()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        if (!$configuration || !$configuration->hasPrelaunchEnded()) {
+            return $this->redirectToRoute('home');
+        }
+
+        $landingContent = $configuration->getLandingContent();
+
+        return $this->render('home/landingPage.html.twig', [
+            'landingContent' => $landingContent
         ]);
     }
 }

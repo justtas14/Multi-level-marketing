@@ -3,15 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
-use App\Entity\Invitation;
+use App\Entity\Configuration;
 use App\Filter\AssociateFilter;
+use App\Form\ChangeContentType;
 use App\Form\EmailTemplateType;
-use App\Form\InvitationType;
+use App\Form\EndPrelaunchType;
 use App\Form\UserSearchType;
-use App\Form\UserType;
 use App\Service\AssociateManager;
 use App\Service\EmailTemplateManager;
-use App\Service\InvitationManager;
 use App\Entity\UpdateProfile;
 use App\Entity\User;
 use App\Form\UpdateProfileType;
@@ -20,7 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -35,7 +33,19 @@ class AdminController extends AbstractController
         /**
          * @var User $user
          */
+
+        $em = $this->getDoctrine()->getManager();
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $logo = null;
+        if ($configuration) {
+            $logo = $configuration->getMainLogo();
+        }
+
         $user = $this->getUser();
+
+        $profilePicture = $user->getAssociate()->getProfilePicture();
 
         $level = $associateManager->getNumberOfLevels();
 
@@ -43,13 +53,14 @@ class AdminController extends AbstractController
 
         for ($i = 1; $i <= $level; $i++) {
             $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
-                $user->getAssociate()->getAssociateId(),
                 $i
             );
         }
 
         return $this->render('admin/index.html.twig', [
-            'associatesInLevels' => $associateInLevels
+            'associatesInLevels' => $associateInLevels,
+            'logo' => $logo,
+            'profilePicture' => $profilePicture
         ]);
     }
 
@@ -60,7 +71,7 @@ class AdminController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
 
-        $emailTemplate = $emailTemplateManager->getEmailTemplate('INVITATION');
+        $emailTemplate = $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
 
         $form = $this->createForm(EmailTemplateType::class, $emailTemplate);
 
@@ -77,92 +88,66 @@ class AdminController extends AbstractController
             'form' => $form->createView()
         ]);
     }
-
     /**
-     * @Route("/admin/profile", name="admin_profile")
-     * @param UserPasswordEncoderInterface $encoder
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("/admin/endprelaunch", name="end_prelaunch")
      */
-    public function adminProfile(UserPasswordEncoderInterface $encoder, Request $request)
+    public function endPrelaunch(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
 
-        $currentEmail = $user->getEmail();
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
-        $form = $this->createForm(UserType::class, $user);
+        if (!$configuration) {
+            $configuration = new Configuration();
+            $configuration->setLandingContent("<h1>Prelaunch has ended!</h1>");
+            $configuration->setMainLogo(null);
+        }
+
+        $form = $this->createForm(EndPrelaunchType::class, $configuration);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form['oldPassword']->getData();
-            $email = $user->getEmail();
-            $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
-
-            if ($checkEmailExist && $currentEmail !== $email) {
-                $this->addFlash('error', 'This email already exist');
-            } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
-                $this->addFlash('error', 'Old password is not correct');
-            } else {
-                $user->setPlainPassword($form['newPassword']->getData());
-
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($user);
-                $em->persist($user->getAssociate());
-                $em->flush();
-
-                $this->addFlash('success', 'Fields updated');
+            $em->persist($configuration);
+            $em->flush();
+            if ($configuration->isPrelaunchEnded()) {
+                $this->addFlash('success', 'Prelaunch ended');
             }
         }
 
-        $em->refresh($user);
-        return $this->render('profile.html.twig', [
-            'updateProfile' => $form->createView()
+        return $this->render('admin/endPrelaunch.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/admin/invite", name="admin_invite")
-     * @param Request $request
-     * @param InvitationManager $invitationManager
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("/admin/changecontent", name="change_content")
      */
-    public function adminInvitation(Request $request, InvitationManager $invitationManager)
+    public function changeContent(Request $request)
     {
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
 
-        $form = $this->createForm(InvitationType::class);
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        if (!$configuration) {
+            $configuration = new Configuration();
+            $configuration->setLandingContent("<h1>Prelaunch has ended!</h1>");
+            $configuration->setMainLogo(null);
+            $configuration->setTermsOfServices(null);
+        }
+
+        $form = $this->createForm(ChangeContentType::class, $configuration);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $invitation = new Invitation();
-            $email = trim($form['email']->getData());
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $this->addFlash('error', 'Invalid email');
-            } else {
-                $invitation->setSender($user->getAssociate());
-                $invitation->setEmail($email);
-                $invitation->setFullName($form['fullName']->getData());
-
-                $invitationManager->send($invitation);
-
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($invitation);
-                $em->flush();
-
-                $this->addFlash('success', 'Email sent');
-            }
+            $em->persist($configuration);
+            $em->flush();
+            $this->addFlash('success', 'Content changed');
         }
 
-        return $this->render('invitation.html.twig', [
-            'invitation' => $form->createView()
+        return $this->render('admin/changeContent.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 

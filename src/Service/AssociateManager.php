@@ -6,22 +6,20 @@ namespace App\Service;
 use App\Entity\Associate;
 use App\Entity\User;
 use App\Exception\GetAllDirectAssociatesException;
-use Doctrine\ORM\EntityManager;
-use mysql_xdevapi\Exception;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AssociateManager
 {
     /**
-     * @var EntityManager $em
+     * @var EntityManagerInterface $em
      */
     private $em;
 
-    /** @var TokenStorage $tokenStorage */
+    /** @var TokenStorageInterface $tokenStorage */
     private $tokenStorage;
 
-    public function __construct(EntityManager $entityManager, TokenStorage $tokenStorage)
+    public function __construct(EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage)
     {
         $this->em = $entityManager;
         $this->tokenStorage = $tokenStorage;
@@ -101,29 +99,23 @@ class AssociateManager
      * Return number of associates in level of given associate's downline
      * @return int
      */
-    public function getNumberOfAssociatesInDownline(string $associateId, int $level) : int
+    public function getNumberOfAssociatesInDownline(int $level, string $associateId = null) : int
     {
-        $token = $this->tokenStorage->getToken();
-
-        /** @var User $user */
-        $user = $token->getUser();
-
         $associateRepository = $this->em->getRepository(Associate::class);
 
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            $numberOfAssociates = $associateRepository->findAssociatesByLevel(
-                $level
-            );
-        } else {
-            $associate = $associateRepository->findOneBy(['associateId' => $associateId]);
+        $associate = $associateRepository->findOneBy(['associateId' => $associateId]);
 
+        $currentAncestor = null;
+        $levelToBeginWith = 0;
+        if ($associate) {
             $currentAncestor = $associate->getAncestors().$associate->getId();
-
-            $numberOfAssociates = $associateRepository->findAssociatesByLevel(
-                $level + $associate->getLevel(),
-                $currentAncestor
-            );
+            $levelToBeginWith = $associate->getLevel();
         }
+
+        $numberOfAssociates = $associateRepository->findAssociatesByLevel(
+            $level + $levelToBeginWith,
+            $currentAncestor
+        );
 
         return $numberOfAssociates;
     }
