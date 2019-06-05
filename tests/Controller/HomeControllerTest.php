@@ -164,7 +164,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_registration')['email']->setValue('justtas14@gmail.com');
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
@@ -199,7 +199,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_registration')['email']->setValue($invitation->getEmail());
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
@@ -234,7 +234,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_registration')['email']->setValue($invitation->getEmail());
         $form->get('user_registration')['plainPassword']['first']->setValue('');

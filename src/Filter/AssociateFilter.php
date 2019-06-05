@@ -23,7 +23,7 @@ class AssociateFilter
     /**
      * @return string
      */
-    public function getFullName(): string
+    public function getFullName(): ?string
     {
         return $this->fullName;
     }
@@ -32,7 +32,7 @@ class AssociateFilter
      * @param string $fullName
      * @return AssociateFilter
      */
-    public function setFullName(string $fullName): AssociateFilter
+    public function setFullName(?string $fullName): AssociateFilter
     {
         $this->fullName = $fullName;
         return $this;
@@ -41,7 +41,7 @@ class AssociateFilter
     /**
      * @return string
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -50,7 +50,7 @@ class AssociateFilter
      * @param string $email
      * @return AssociateFilter
      */
-    public function setEmail(string $email): AssociateFilter
+    public function setEmail(?string $email): AssociateFilter
     {
         $this->email = $email;
         return $this;
@@ -59,7 +59,7 @@ class AssociateFilter
     /**
      * @return string
      */
-    public function getTelephone(): string
+    public function getTelephone(): ?string
     {
         return $this->telephone;
     }
@@ -68,7 +68,7 @@ class AssociateFilter
      * @param string $telephone
      * @return AssociateFilter
      */
-    public function setTelephone(string $telephone): AssociateFilter
+    public function setTelephone(?string $telephone): AssociateFilter
     {
         $this->telephone = $telephone;
         return $this;

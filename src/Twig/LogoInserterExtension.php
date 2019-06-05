@@ -15,10 +15,11 @@ class LogoInserterExtension extends AbstractExtension
     private $cm;
 
     /**
-     * @param ConfigurationManager 
+     * @param ConfigurationManager
      */
 
-    public function __construct(ConfigurationManager $cm) {
+    public function __construct(ConfigurationManager $cm)
+    {
         $this->cm = $cm;
     }
 

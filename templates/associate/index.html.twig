@@ -45,10 +45,14 @@
                 <div class="associate-title">
                     My Enroller
                 </div>
-                <div class="associate-enrollerPictureContainer">
-                    <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
-                </div>
                 {% if parent is not null %}
+                    <div class="associate-enrollerPictureContainer">
+                        {% if parent.profilePicture is not null %}
+                            <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
+                        {% else %}
+                            <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
+                        {% endif %}
+                    </div>
                 <div class="associate-enrollerDetailsContainer">
                     <p>Email: {{ parent.email }}</p>
                     <p>Full name: {{ parent.fullName }}</p>
@@ -56,11 +60,7 @@
                 </div>
                 {% else %}
                 <div>Company
-                 {% if parent.profilePicture is not null %}
-                <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
-            {% else %}
-                 <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
-            {% endif %}  
+
                 </div>
                 {% endif %}
         </div>
