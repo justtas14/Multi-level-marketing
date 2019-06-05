@@ -80,7 +80,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_registration')['email']->setValue($invitation->getEmail());
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');

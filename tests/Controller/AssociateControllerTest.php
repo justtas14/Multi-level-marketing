@@ -58,7 +58,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('vanagas');
@@ -215,7 +215,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('justtas14');
