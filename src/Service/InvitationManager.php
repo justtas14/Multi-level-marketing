@@ -3,9 +3,8 @@
 
 namespace App\Service;
 
-use App\Entity\EmailTemplate;
 use App\Entity\Invitation;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Twig_Environment;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -13,7 +12,7 @@ class InvitationManager
 {
     const SECONDS_UNTIL_EXPIRED = 86400;
     /**
-     * @var EntityManager $em
+     * @var EntityManagerInterface $em
      */
     private $em;
 
@@ -32,17 +31,21 @@ class InvitationManager
      */
     private $twig;
 
+    /** @var EmailTemplateManager $emailTemplateManager */
+    private $emailTemplateManager;
 
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         Twig_Environment $twig,
         \Swift_Mailer $mailer,
-        UrlGeneratorInterface $router
+        UrlGeneratorInterface $router,
+        EmailTemplateManager $emailTemplateManager
     ) {
         $this->em = $entityManager;
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->router = $router;
+        $this->emailTemplateManager = $emailTemplateManager;
     }
 
     public function send(Invitation $invitation)
@@ -51,8 +54,8 @@ class InvitationManager
 
         $message = new \Swift_Message('Invitation');
 
-        $emailTemplateEntity = $this->em->getRepository(EmailTemplate::class)
-            ->findOneBy(['emailType' => 'INVITATION']);
+        $emailTemplateEntity = $this
+            ->emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
 
         $emailTemplateSubject = $emailTemplateEntity->getEmailSubject();
 
@@ -97,7 +100,8 @@ class InvitationManager
         $invitationRepo = $this->em->getRepository(Invitation::class);
         $invitation = $invitationRepo->findOneBy(['invitationCode' => $invitationCode]);
 
-        if ($invitation || $invitation->getUsed() || time() - $invitation->getCreated() > self::SECONDS_UNTIL_EXPIRED) {
+        if (!$invitation || $invitation->getUsed()
+            || time() - $invitation->getCreated() > self::SECONDS_UNTIL_EXPIRED) {
             return null;
         }
 

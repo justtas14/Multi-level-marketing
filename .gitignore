@@ -35,3 +35,4 @@
 ###< squizlabs/php_codesniffer ###
 /node_modules/
 .DS_Store
+/public/files/

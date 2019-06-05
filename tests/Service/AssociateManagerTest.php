@@ -6,10 +6,8 @@ namespace App\Tests\Service;
 use App\Entity\Associate;
 use App\Entity\User;
 use App\Exception\GetAllDirectAssociatesException;
-use App\Service\AssociateManager;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -124,53 +122,38 @@ class AssociateManagerTest extends WebTestCase
 
         $associate = $em->find(Associate::class, 1);
 
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user1');
-        $this->login($user);
-
         $assertExpectedValues = [2,4,6,5,4];
 
         for ($i = 1; $i <= sizeof($assertExpectedValues); $i++) {
-            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($associate->getAssociateId(), $i);
+            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($i);
             $this->assertEquals($assertExpectedValues[$i-1], $numberOfAssociates);
         }
 
         $associate = $em->find(Associate::class, 7);
 
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user7');
-        $this->login($user);
 
         $assertExpectedValues = [3,2,2];
 
         for ($i = 1; $i <= sizeof($assertExpectedValues); $i++) {
-            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($associate->getAssociateId(), $i);
+            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($i, $associate->getAssociateId());
             $this->assertEquals($assertExpectedValues[$i-1], $numberOfAssociates);
         }
 
         $associate = $em->find(Associate::class, 6);
 
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user6');
-        $this->login($user);
-
         $assertExpectedValues = [1];
 
         for ($i = 1; $i <= sizeof($assertExpectedValues); $i++) {
-            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($associate->getAssociateId(), $i);
+            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($i, $associate->getAssociateId());
             $this->assertEquals($assertExpectedValues[$i-1], $numberOfAssociates);
         }
-
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user9');
-        $this->login($user);
 
         $associate = $em->find(Associate::class, 9);
 
         $assertExpectedValues = [];
 
         for ($i = 1; $i <= sizeof($assertExpectedValues); $i++) {
-            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($associate->getAssociateId(), $i);
+            $numberOfAssociates = $associateManager->getNumberOfAssociatesInDownline($i, $associate->getAssociateId());
             $this->assertEquals($assertExpectedValues[$i-1], $numberOfAssociates);
         }
     }

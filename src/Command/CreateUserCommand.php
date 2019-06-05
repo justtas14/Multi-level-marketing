@@ -4,7 +4,6 @@ namespace App\Command;
 
 use App\Entity\Associate;
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,7 +15,7 @@ class CreateUserCommand extends Command
     protected static $defaultName = 'app:create:admin';
 
     /**
-     * @var EntityManager $em
+     * @var EntityManagerInterface $em
      */
     private $em;
 

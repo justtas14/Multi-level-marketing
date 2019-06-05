@@ -53,6 +53,9 @@
         {{ form_label(updateProfile.associate.homePhone) }}
 </div>
 <div class="input-field col s12">  
+        {{ form_row(updateProfile.associate.profilePicture) }}
+</div>
+<div class="input-field col s12">  
         {{ form_row(updateProfile.associate.agreedToEmailUpdates) }}
 <div class="input-field col s12">  
         {{ form_row(updateProfile.associate.agreedToTextMessageUpdates) }}
@@ -78,5 +81,4 @@
         </div>
         </div>
         </div>
-
 {% endblock %}

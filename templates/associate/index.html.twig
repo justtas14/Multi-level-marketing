@@ -48,15 +48,32 @@
                 <div class="associate-enrollerPictureContainer">
                     <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
                 </div>
+                {% if parent is not null %}
                 <div class="associate-enrollerDetailsContainer">
                     <p>Email: {{ parent.email }}</p>
                     <p>Full name: {{ parent.fullName }}</p>
                     <p>Mobile phone: {{ parent.mobilePhone }}</p>
                 </div>
+                {% else %}
+                <div>Company
+                 {% if parent.profilePicture is not null %}
+                <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
+            {% else %}
+                 <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
+            {% endif %}  
+                </div>
+                {% endif %}
         </div>
     </div>
     <div class="associate-searchContainer">
             <div id="root"></div>
     </div>
-    </main>
-{% endblock %}
+    {% endblock %}
+{#
+        {% if profilePicture is not null %}
+            <img style="max-width: 200px; max-height: 200px" src="{{ profilePicture|downloadUrlParser }}" />
+        {% else%}
+            <img style="max-width: 100px; max-height: 100px"
+                 src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" />
+        {% endif %}
+#}

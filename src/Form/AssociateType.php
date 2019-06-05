@@ -4,6 +4,7 @@
 namespace App\Form;
 
 use App\Entity\Associate;
+use PlumTreeSystems\FileBundle\Form\Type\PTSFileType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
@@ -35,6 +36,7 @@ class AssociateType extends AbstractType
             ->add('agreedToSocialMediaUpdates', CheckboxType::class, [
                 'required' => false
             ])
+            ->add('profilePicture', PTSFileType::class, ['multiple' => false, 'required' => false])
             ->add('submit', SubmitType::class, [
                 'label' => 'Save',
                 'attr' => [
