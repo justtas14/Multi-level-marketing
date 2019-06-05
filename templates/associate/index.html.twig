@@ -4,19 +4,25 @@
 
 {% block body %}
     <main>
-
+        {% if profilePicture is not null %}
+            <img style="max-width: 200px; max-height: 200px" src="{{ profilePicture|downloadUrlParser }}" />
+        {% else%}
+            <img style="max-width: 100px; max-height: 100px"
+                 src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" />
+        {% endif %}
         <ul>
             {% for key, associateCount in associatesInLevels %}
                 <li style="list-style-type:none;">Level {{ key }}: <strong>{{ associateCount }}</strong></li>
             {% endfor %}
         </ul>
 
+        {% if parent is not null %}
         <div>
             <h2>My enroller</h2>
             <p>Email: {{ parent.email }}</p>
             <p>Full name: {{ parent.fullName }}</p>
             <p>Mobile phone: {{ parent.mobilePhone }}</p>
         </div>
-
+        {% endif %}
     </main>
 {% endblock %}

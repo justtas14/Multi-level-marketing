@@ -114,7 +114,7 @@ class LoadUsers extends Fixture
             '12',
             'priesas@gmail.com',
             'priesas',
-            ['ROLE_USER'],
+            ['ROLE_ADMIN','ROLE_USER'],
             'Priesas',
             $manager,
             $user7

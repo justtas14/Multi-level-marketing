@@ -5,19 +5,19 @@ namespace App\Service;
 
 use App\Entity\EmailTemplate;
 use App\Exception\UnsupportedEmailTypeException;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class EmailTemplateManager
 {
     const EMAIL_TYPE_INVITATION = 'INVITATION';
 
     /**
-     * @var EntityManager $em
+     * @var EntityManagerInterface $em
      */
     private $em;
 
     public function __construct(
-        EntityManager $entityManager
+        EntityManagerInterface $entityManager
     ) {
         $this->em = $entityManager;
     }

@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Associate;
 use App\Entity\Invitation;
 use App\Entity\User;
 use App\Form\InvitationType;
-use App\Form\UserType;
+use App\Form\UserUpdateType;
 use App\Service\AssociateManager;
 use App\Service\InvitationManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,22 +25,28 @@ class AssociateController extends AbstractController
          */
         $user = $this->getUser();
 
+        $profilePicture = $user->getAssociate()->getProfilePicture();
+
         $level = $associateManager->getNumberOfLevels($user->getAssociate()->getAssociateId());
 
         $associateInLevels = [];
 
         for ($i = 1; $i <= $level; $i++) {
             $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
-                $user->getAssociate()->getAssociateId(),
-                $i
+                $i,
+                $user->getAssociate()->getAssociateId()
             );
         }
 
         $userParent = $user->getAssociate()->getParent();
+        if ($userParent->getId() == -1) {
+            $userParent = null;
+        }
 
         return $this->render('associate/index.html.twig', [
             'associatesInLevels' => $associateInLevels,
-            'parent' => $userParent
+            'parent' => $userParent,
+            'profilePicture' => $profilePicture
         ]);
     }
 
@@ -95,7 +100,6 @@ class AssociateController extends AbstractController
     public function associateProfile(UserPasswordEncoderInterface $encoder, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-
         /**
          * @var User $user
          */
@@ -103,7 +107,7 @@ class AssociateController extends AbstractController
 
         $currentEmail = $user->getEmail();
 
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserUpdateType::class, $user);
 
         $form->handleRequest($request);
 
@@ -117,7 +121,10 @@ class AssociateController extends AbstractController
             } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
                 $this->addFlash('error', 'Old password is not correct');
             } else {
-                $user->setPlainPassword($form['newPassword']->getData());
+                $newPassword = $form['newPassword']->getData();
+                if ($newPassword) {
+                    $user->setPlainPassword($newPassword);
+                }
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
@@ -127,8 +134,8 @@ class AssociateController extends AbstractController
                 $this->addFlash('success', 'Fields updated');
             }
         }
-        $em->refresh($user);
 
+        $em->refresh($user);
         return $this->render('profile.html.twig', [
             'updateProfile' => $form->createView()
         ]);

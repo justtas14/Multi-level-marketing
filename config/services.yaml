@@ -41,6 +41,7 @@ services:
             $twig: '@twig'
             $mailer: '@swiftmailer.mailer'
             $router: '@router'
+            $emailTemplateManager: '@App\Service\EmailTemplateManager'
 
     App\Service\AssociateManager:
         arguments:
@@ -50,6 +51,14 @@ services:
     App\Service\EmailTemplateManager:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
+
+    App\EventListener\AssociateRequestListener:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $router: '@router'
+            $configurationManager: '@App\Service\ConfigurationManager'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, connection: default }
 
 
 

@@ -70,6 +70,13 @@ class Associate
     private $fullName = "";
 
     /**
+     * @var File
+     * @ORM\OneToOne(targetEntity="File", cascade={"persist"})
+     * @ORM\JoinColumn(name="target_file_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    private $profilePicture;
+
+    /**
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -232,6 +239,25 @@ class Associate
     public function setFullName(string $fullName): Associate
     {
         $this->fullName = $fullName;
+        return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getProfilePicture(): ?File
+    {
+        return $this->profilePicture;
+    }
+
+    /**
+     * @param File|null $profilePicture
+     * @return Associate
+     */
+    public function setProfilePicture(?File $profilePicture): Associate
+    {
+        $this->profilePicture = $profilePicture;
+
         return $this;
     }
 

@@ -56,7 +56,7 @@ class AdminControllerTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $crawler = $client->request('GET', '/admin/invite');
+        $crawler = $client->request('GET', '/associate/invite');
 
         $form = $crawler->selectButton('Send')->form();
 

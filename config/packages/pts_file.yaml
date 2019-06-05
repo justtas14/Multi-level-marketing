@@ -1,0 +1,6 @@
+plum_tree_systems_file:
+  provider: local
+  provider_configs:
+    local:
+      directory: '%kernel.root_dir%/../public/files'
+  file_class: 'App\Entity\File'
