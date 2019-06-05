@@ -56,6 +56,7 @@ services:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
             $router: '@router'
+            $configurationManager: '@App\Service\ConfigurationManager'
         tags:
             - { name: kernel.event_listener, event: kernel.controller, connection: default }
 

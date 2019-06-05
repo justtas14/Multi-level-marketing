@@ -5,6 +5,7 @@ namespace App\EventListener;
 
 use App\Entity\Configuration;
 use App\Entity\User;
+use App\Service\ConfigurationManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -14,23 +15,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AssociateRequestListener
 {
-    /** @var EntityManagerInterface $em */
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
-    /** @var UrlGeneratorInterface $router */
+    /**
+     * @var UrlGeneratorInterface
+     */
     private $router;
 
-    /** @var TokenStorageInterface $tokenStorage */
+    /**
+     * @var TokenStorageInterface
+     */
     private $tokenStorage;
+
+    /**
+     * @var ConfigurationManager
+     */
+    private $cm;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $router,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        ConfigurationManager $configurationManager
     ) {
         $this->em = $entityManager;
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
+        $this->cm = $configurationManager;
     }
 
     public function onKernelController(FilterControllerEvent $event)
@@ -51,10 +65,7 @@ class AssociateRequestListener
             return;
         }
 
-        $configuration = $this->em->getRepository(Configuration::class)->findOneBy([]);
-        if (!$configuration) {
-            return;
-        }
+        $configuration = $this->cm->getConfiguration();
 
         if ($configuration->hasPrelaunchEnded() && !in_array('ROLE_ADMIN', $user->getRoles())) {
             $redirectUrl = $this->router->generate("landingpage");

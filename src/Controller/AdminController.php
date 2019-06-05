@@ -10,6 +10,7 @@ use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
 use App\Form\UserSearchType;
 use App\Service\AssociateManager;
+use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
 use App\Entity\UpdateProfile;
 use App\Entity\User;
@@ -17,18 +18,24 @@ use App\Form\UpdateProfileType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 20;
+
     /**
      * @Route("/admin", name="admin")
+     * @param AssociateManager $associateManager
+     * @param ConfigurationManager $cm
+     * @return Response
      */
-    public function index(AssociateManager $associateManager)
+    public function index(AssociateManager $associateManager, ConfigurationManager $cm)
     {
         /**
          * @var User $user
@@ -36,7 +43,7 @@ class AdminController extends AbstractController
 
         $em = $this->getDoctrine()->getManager();
 
-        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+        $configuration = $cm->getConfiguration();
 
         $logo = null;
         if ($configuration) {
@@ -88,20 +95,18 @@ class AdminController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
     /**
      * @Route("/admin/endprelaunch", name="end_prelaunch")
+     * @param Request $request
+     * @param ConfigurationManager $cm
+     * @return Response
      */
-    public function endPrelaunch(Request $request)
+    public function endPrelaunch(Request $request, ConfigurationManager $cm)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
-
-        if (!$configuration) {
-            $configuration = new Configuration();
-            $configuration->setLandingContent("<h1>Prelaunch has ended!</h1>");
-            $configuration->setMainLogo(null);
-        }
+        $configuration = $cm->getConfiguration();
 
         $form = $this->createForm(EndPrelaunchType::class, $configuration);
 
@@ -122,19 +127,15 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/admin/changecontent", name="change_content")
+     * @param Request $request
+     * @param ConfigurationManager $cm
+     * @return Response
      */
-    public function changeContent(Request $request)
+    public function changeContent(Request $request, ConfigurationManager $cm)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
-
-        if (!$configuration) {
-            $configuration = new Configuration();
-            $configuration->setLandingContent("<h1>Prelaunch has ended!</h1>");
-            $configuration->setMainLogo(null);
-            $configuration->setTermsOfServices(null);
-        }
+        $configuration = $cm->getConfiguration();
 
         $form = $this->createForm(ChangeContentType::class, $configuration);
 
@@ -193,7 +194,7 @@ class AdminController extends AbstractController
      * @param int $page
      * @param Request $request
      * @return JsonResponse
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @throws ExceptionInterface
      */
     public function findAssociates(Request $request)
     {
@@ -241,7 +242,7 @@ class AdminController extends AbstractController
     }
     /**
      * @Route("/admin/usersearch", name="user_search")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function userSearch()
     {

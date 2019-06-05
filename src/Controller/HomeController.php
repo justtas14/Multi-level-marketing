@@ -6,9 +6,12 @@ use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\User;
 use App\Form\UserRegistrationType;
+use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -37,10 +40,16 @@ class HomeController extends AbstractController
      * @Route("/register/{code}", name="registration")
      * @param $code
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param InvitationManager $invitationManager
+     * @param ConfigurationManager $cm
+     * @return Response
      */
-    public function registration($code, Request $request, InvitationManager $invitationManager)
-    {
+    public function registration(
+        $code,
+        Request $request,
+        InvitationManager $invitationManager,
+        ConfigurationManager $cm
+    ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
 
@@ -48,7 +57,7 @@ class HomeController extends AbstractController
             return $this->render('home/linkstate.html.twig');
         }
 
-        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+        $configuration = $cm->getConfiguration();
         $termsOfServices = null;
         if ($configuration && $configuration->getTermsOfServices()) {
             $termsOfServices = $configuration->getTermsOfServices();
@@ -95,12 +104,14 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/landingpage", name="landingpage")
+     * @param ConfigurationManager $cm
+     * @return RedirectResponse|Response
      */
-    public function landingPage()
+    public function landingPage(ConfigurationManager $cm)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+        $configuration = $cm->getConfiguration();
 
         if (!$configuration || !$configuration->hasPrelaunchEnded()) {
             return $this->redirectToRoute('home');
