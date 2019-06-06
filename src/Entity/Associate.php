@@ -135,9 +135,16 @@ class Associate
      */
     private $agreedToSocialMediaUpdates = false;
 
+    /**
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $joinDate;
+
     public function __construct()
     {
         $this->setAssociateId(Uuid::uuid4());
+        $this->joinDate = new \DateTime();
     }
 
     /**
@@ -480,6 +487,7 @@ class Associate
     public function toArray()
     {
         return [
+            'level' => $this->getLevel(),
             'fullName' => $this->getFullName(),
             'email' => $this->getEmail(),
             'country' => $this->getCountry(),
@@ -490,7 +498,16 @@ class Associate
             'homePhone' => $this->getHomePhone(),
             'agreedToEmailUpdates' => $this->getAgreedToEmailUpdates()?'Yes':'No',
             'agreedToTextMessageUpdates' => $this->getAgreedToTextMessageUpdates()?'Yes':'No',
-            'agreedToSocialMediaUpdates' => $this->getAgreedToSocialMediaUpdates()?'Yes':'No'
+            'agreedToSocialMediaUpdates' => $this->getAgreedToSocialMediaUpdates()?'Yes':'No',
+            'joinDate' => $this->getJoinDate()->format('Y-m-d')
         ];
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getJoinDate(): \DateTime
+    {
+        return $this->joinDate;
     }
 }

@@ -17,19 +17,25 @@
                         <img class="sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
                 </div>
                 <div class="sidebar-item">
-                   <a>User Search</a>
+                    <a href="{{ path('admin') }}">{{ 'Downline explorer' }}</a>
                 </div>
                 <div class="sidebar-item">
-                    <a>My Team</a>
+                    <a href="{{ path('user_search') }}">{{ 'User search' }}</a>
                 </div>
                 <div class="sidebar-item">
-                    <a>Invite Associate</a>
+                   <a href="{{ path('csv') }}" target="_blank">Export associates to CSV</a>
                 </div>
                 <div class="sidebar-item">
-                   <a href="{{ path('csv') }}" target="_blank">Download CSV</a>
+                    <a href="{{ path('change_content') }}">{{ 'Asset store' }}</a>
                 </div>
                 <div class="sidebar-item">
-                    <a>My Profile</a>
+                    <a href="{{ path('email_template') }}">{{ 'Email templates' }}</a>
+                </div>
+                <div class="sidebar-item">
+                    <a href="{{ path('end_prelaunch') }}">{{ 'End prelaunch' }}</a>
+                </div>
+                <div class="sidebar-item">
+                    <a href="{{ path('associate') }}">{{ 'Associate dashboard' }}</a>
                 </div>
                 <div class="sidebar-itemLast">
                     <a href="{{ logout_path() }}">{{ 'Logout' }}</a>

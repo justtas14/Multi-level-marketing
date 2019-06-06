@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -181,13 +182,13 @@ class AdminController extends AbstractController
         return $response->send();
     }
     /**
-     * @Route("/admin/api/associates/{id}", name="get_associate")
+     * @Route("/admin/associates/{id}", name="get_associate")
      */
     public function getAssociate($id)
     {
         $associateRepository = $this->getDoctrine()->getRepository(Associate::class);
         $associate = $associateRepository->find($id);
-        return $this->render('admin/usersearch.html.twig', ['associate' => $associate]);
+        return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
     }
     /**
      * @Route("/admin/api/associates", name="user_search_associates")
@@ -221,12 +222,11 @@ class AdminController extends AbstractController
             self::ASSOCIATE_LIMIT * ($page-1)
         );
 
-        $serializer = new Serializer([new ObjectNormalizer()]);
-
+        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer()]);
         $serializedAssociates = $serializer->normalize(
             $limitedAssociates,
             null,
-            ['attributes' => ['fullName', 'email', 'telephone']]
+            ['attributes' => ['fullName', 'email', 'mobilePhone', 'level', 'joinDate', 'id']]
         );
 
         $data = [

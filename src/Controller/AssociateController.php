@@ -83,7 +83,7 @@ class AssociateController extends AbstractController
             }
         }
 
-        return $this->render('invitation.html.twig', [
+        return $this->render('associate/invitation.html.twig', [
             'invitation' => $form->createView()
         ]);
     }

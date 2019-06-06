@@ -3,7 +3,7 @@
 {% block title %}User Search{% endblock %}
 
 {% block javascripts %}
-    <script type="text/javascript" src="{{ asset('/build/app.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -11,29 +11,8 @@
     {% if is_granted('ROLE_ADMIN') %}
     {{ include('includes/sidebar.html.twig') }}
     {% endif %}
-    <div class="userSearch-container">
-            <div id="root"></div>
-        <div>
+    <div class="associate-searchContainer">
+        <div id="root"></div>
     </div>
 
 {% endblock %}
-
-
-
-{#
-    <table>
-        <tr>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>More Info</th>
-        </tr>
-        <tr>
-            {{ form_start(usersearch) }}
-            <td>{{ form_widget(usersearch.SearchByFullName, {'attr': {'placeholder': 'Search by full name...'}}) }}</td>
-            <td>{{ form_widget(usersearch.SearchByEmail, {'attr': {'placeholder': 'Search by email...'}}) }}</td>
-            {{ form_end(usersearch) }}
-        </tr>
-        <div id="response"></div>
-    </table>
-
-#}

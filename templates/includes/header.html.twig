@@ -4,4 +4,7 @@
         <div id="header-logout" class="header-logout"><a href="{{ logout_path() }}">{{ 'Logout'}}</a></div>
         <div class="header-logout">{{ app.user.username }}</div>
     {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="header-logout"><a href="{{ path('admin') }}">{{ 'Admin dashboard'}}</a></div>
+    {% endif %}
 </div>

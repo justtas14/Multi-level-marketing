@@ -61,10 +61,12 @@ export const closeModal = () => {
     };
 };
 
-export const loadData = (associates) => {
+export const loadData = (data) => {
     return {
         type: LOAD_DATA,
-        associates
+        associates: data.associates,
+        pages: data.pages,
+        currentPage: data.currentPage,
     }
 }
 

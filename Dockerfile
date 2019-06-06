@@ -25,3 +25,4 @@ RUN sed -i "/<\/VirtualHost>/ i\SetEnv MAILER_URL $mailer_url" /etc/apache2/site
 RUN sed -i "/<\/VirtualHost>/ i\SetEnv DATABASE_URL $db_url" /etc/apache2/sites-available/000-default.conf
 COPY ./ /var/www/html
 RUN chmod -R 777 /var/www/html/var
+RUN chmod -R 777 /var/www/html/public/files
