@@ -9,6 +9,8 @@ class Associate extends Component {
     }
 
     render() {
+        const d = new Date(this.props.date);
+        const dateString = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
         return (
             <div onClick={() => this.props.showModal(this.props.id)} className={"associate-container"}>
                 <div className="associate-itemContainer" style={{'flex': 3}}>
@@ -24,7 +26,7 @@ class Associate extends Component {
                     {this.props.phone || '-'}
                 </div>
                 <div className="associate-itemDateContainer" style={{'flex': 2}}>
-                    {this.props.date}
+                    {dateString}
                 </div>
             </div>
         );
