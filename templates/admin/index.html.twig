@@ -1,44 +1,31 @@
-{% extends 'base.html.twig' %}
+{% extends 'bodyBase.html.twig' %}
 
 {% block title %}Admin{% endblock %}
 
 {% set maxLevel = max(associatesInLevels) %}
 
-{% block body %}
-
- {{ include('includes/sidebar.html.twig') }}
-
-    <main>
-        <div class="admin-mainContainer">
-        
-            <div class="admin-levelContainer">
-            <div class="associate-levelConainer">
-                <ul class="associate-levelBarList">
-                    {% for key, associateCount in associatesInLevels %}
-                <li class="associate-levelBarListItem" style="list-style-type:none;">
-                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                        Level {{ key }}: <strong>{{ associateCount }}</strong>
-                    </div>
-                </li>
-                    {% endfor %}
-                </ul>
+{% block content %}
+    <div class="card__container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Business Shape</span>
+                <div class="associate-levelConainer">
+                    <ul class="associate-levelBarList">
+                        {% for key, associateCount in associatesInLevels %}
+                            <li class="associate-levelBarListItem" style="list-style-type:none;">
+                                <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                                    Level {{ key }}: <strong>{{ associateCount }}</strong>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="adminBusinessShape__buttonContainer">
+                    <a class="waves-effect waves-light btn" href="{{ path('csv') }}" target="_blank">Download CSV</a>
+                </div>
             </div>
-            </div>
-        <a href="{{ path('csv') }}" target="_blank"><button>Download CSV</button></a>
-        <ul>
-        {% for key, associateCount in associatesInLevels %}
-            <li style="list-style-type:none;">Level {{ key }}: <strong>{{ associateCount }}</strong></li>
-        {% endfor %}
-
-        {% if profilePicture is not null %}
-            <img style="max-width: 200px; max-height: 200px" src="{{ profilePicture|downloadUrlParser }}" />
-        {% else%}
-            <img style="max-width: 100px; max-height: 100px"
-                 src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/512/user-male-icon.png" />
-        {% endif %}
-        </ul>
-            
         </div>
-    </main>
+
+    </div>
 
 {% endblock %}

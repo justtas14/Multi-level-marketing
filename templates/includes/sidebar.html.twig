@@ -1,44 +1,5 @@
-<div class="sidebar">
-                <div class="sidebar-logoContainer">
-                {% set logo = getLogo() %}
-                {% if logo is not null %}
-                <img style="max-width: 100px; max-height: 100px" src="{{ logo|downloadUrlParser }}" />
-            {% else%}
-                <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
-            {% endif %}
-                </div>
-                <div class="sidebar-titleContainer">
-                    Hello, 
-                    <div>
-                        John Stevens
-                    </div>
-                </div>
-                <div class="sidebar-pictureContainer">
-                        <img class="sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
-                </div>
-                <div class="sidebar-item">
-                    <a href="{{ path('admin') }}">{{ 'Downline explorer' }}</a>
-                </div>
-                <div class="sidebar-item">
-                    <a href="{{ path('user_search') }}">{{ 'User search' }}</a>
-                </div>
-                <div class="sidebar-item">
-                   <a href="{{ path('csv') }}" target="_blank">Export associates to CSV</a>
-                </div>
-                <div class="sidebar-item">
-                    <a href="{{ path('change_content') }}">{{ 'Asset store' }}</a>
-                </div>
-                <div class="sidebar-item">
-                    <a href="{{ path('email_template') }}">{{ 'Email templates' }}</a>
-                </div>
-                <div class="sidebar-item">
-                    <a href="{{ path('end_prelaunch') }}">{{ 'End prelaunch' }}</a>
-                </div>
-                <div class="sidebar-item">
-                    <a href="{{ path('associate') }}">{{ 'Associate dashboard' }}</a>
-                </div>
-                <div class="sidebar-itemLast">
-                    <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
-                </div>
-
-            </div>
+<div class="sidebar" style="position: fixed; top: 0; bottom: 0; left: 0; width: 300px!important">
+    {% include 'includes/sidebar/logo.html.twig' %}
+    {% include 'includes/sidebar/profile.html.twig' %}
+    {% include 'includes/sidebar/menuItems.html.twig' %}
+</div>

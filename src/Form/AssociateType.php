@@ -28,13 +28,22 @@ class AssociateType extends AbstractType
                 'required' => false
             ])
             ->add('agreedToEmailUpdates', CheckboxType::class, [
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'class' => 'filled-in'
+                ]
             ])
             ->add('agreedToTextMessageUpdates', CheckboxType::class, [
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'class' => 'filled-in'
+                ]
             ])
             ->add('agreedToSocialMediaUpdates', CheckboxType::class, [
-                'required' => false
+                'required' => false,
+                'attr' => [
+                    'class' => 'filled-in'
+                ]
             ])
             ->add('profilePicture', PTSFileType::class, ['multiple' => false, 'required' => false])
             ->add('submit', SubmitType::class, [

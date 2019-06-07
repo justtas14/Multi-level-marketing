@@ -14,8 +14,18 @@ class EndPrelaunchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('prelaunchEnded', CheckboxType::class, ['required' => false])
+            ->add('prelaunchEnded', CheckboxType::class, [
+                'required' => false,
+                'attr' => [
+                    'class' => 'filled-in'
+                ]
+            ])
             ->add('landingContent', TextareaType::class)
-            ->add('Submit', SubmitType::class, ['label' => 'End prelaunch']);
+            ->add('Submit', SubmitType::class, [
+                'label' => 'Save',
+                'attr' => [
+                    'class' => 'waves-effect waves-light btn'
+                ]
+            ]);
     }
 }
