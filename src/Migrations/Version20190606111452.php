@@ -23,8 +23,6 @@ final class Version20190606111452 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE associate ADD join_date DATETIME NOT NULL');
-        $this->addSql('ALTER TABLE prelaunch_file CHANGE name name VARCHAR(255) NOT NULL, CHANGE context context VARCHAR(255) NOT NULL, CHANGE original_name original_name VARCHAR(255) NOT NULL');
-        $this->addSql('ALTER TABLE invitation CHANGE invitation_code invitation_code VARCHAR(255) NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -33,7 +31,5 @@ final class Version20190606111452 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE associate DROP join_date');
-        $this->addSql('ALTER TABLE invitation CHANGE invitation_code invitation_code VARCHAR(191) NOT NULL COLLATE utf8mb4_unicode_ci');
-        $this->addSql('ALTER TABLE prelaunch_file CHANGE name name VARCHAR(191) NOT NULL COLLATE utf8mb4_unicode_ci, CHANGE context context VARCHAR(191) NOT NULL COLLATE utf8mb4_unicode_ci, CHANGE original_name original_name VARCHAR(191) NOT NULL COLLATE utf8mb4_unicode_ci');
     }
 }
