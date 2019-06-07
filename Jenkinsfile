@@ -37,7 +37,7 @@ pipeline {
                 sh 'bin/console cache:clear --no-warmup --env=prod'
             }
         }
-        stage('build') {
+        stage('build-js') {
             agent {
                 docker {
                     image 'node:11.15.0-stretch'
