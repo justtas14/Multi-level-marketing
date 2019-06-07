@@ -102,5 +102,22 @@ pipeline {
                 sh "echo build deployed at ${BUILD_URL}"
             }
         }
+        stage('push-dev-to-aws') {
+            when {
+                branch 'dev'
+            }
+            environment {
+                APP_ENV = 'prod'
+                APP_DEBUG = '0'
+                URL_BASEPATH = '/'
+                DOCKER_TAG = "dev-${GIT_COMMIT}"
+            }
+            steps {
+                sh "docker build --rm -f Dockerfile --build-arg app_version=${GIT_COMMIT} --build-arg app_env=${APP_ENV} --build-arg app_debug=${APP_DEBUG} --build-arg url_basepath=${URL_BASEPATH} -t 643652872181.dkr.ecr.eu-west-2.amazonaws.com/prelaunchbuilder:${DOCKER_TAG} ."
+                withDockerRegistry([credentialsId: 'ecr:eu-west-2:plumtree_aws', url: 'https://643652872181.dkr.ecr.eu-west-2.amazonaws.com']) {
+                    sh "docker push 643652872181.dkr.ecr.eu-west-2.amazonaws.com/prelaunchbuilder:${DOCKER_TAG}"
+                }
+            }
+        }
     }
 }
