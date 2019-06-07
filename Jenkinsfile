@@ -37,6 +37,18 @@ pipeline {
                 sh 'bin/console cache:clear --no-warmup --env=prod'
             }
         }
+        stage('build-js') {
+            agent {
+                docker {
+                    image 'node:11.15.0-stretch'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
         stage('test') {
             steps {
                 sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID build"
@@ -65,7 +77,7 @@ pipeline {
             steps {
                 sh "docker build --rm -t prelaunchbuilder --build-arg app_env=${APP_ENV} --build-arg db_url=${DATABASE_URL} --build-arg mailer_url=${MAILER_URL} ."
                 sh "docker rm -f prelaunchbuilder && echo 'removed old container' || echo 'old container does not exist'"
-                sh "docker run -dit -e DATABASE_URL=${DATABASE_URL} -e VIRTUAL_HOST=${VIRTUAL_HOST} --net dockernet --restart unless-stopped --name prelaunchbuilder prelaunchbuilder"
+                sh "docker run -dit -v prelaunch_staging_media:/var/www/html/public/files -e DATABASE_URL=${DATABASE_URL} -e VIRTUAL_HOST=${VIRTUAL_HOST} --net dockernet --restart unless-stopped --name prelaunchbuilder prelaunchbuilder"
                 sh "docker exec prelaunchbuilder bash -c 'bin/console doctrine:migration:migrate'"
             }
         }

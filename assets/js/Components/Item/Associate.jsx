@@ -9,16 +9,8 @@ class Associate extends Component {
     }
 
     render() {
-
-        
-        return <div onClick={() => this.props.showModal(this.props.id,
-            this.props.name,
-            this.props.level,
-            this.props.email,
-            this.props.phone,
-            this.props.date)} 
-                className={this.props.firstNewAssociate === this.props.index ?
-                    "associate-containerNew" : "associate-container"}>
+        return <div onClick={() => this.props.showModal(this.props.id)}
+                className={"associate-container"}>
             <div className="associate-itemContainer">
                 {this.props.name}
             </div>
@@ -29,7 +21,7 @@ class Associate extends Component {
                 {this.props.email}
             </div>
             <div className="associate-itemContainer">
-                {this.props.phone}
+                {this.props.phone || '-'}
             </div>
             <div className="associate-itemDateContainer">
                 {this.props.date}

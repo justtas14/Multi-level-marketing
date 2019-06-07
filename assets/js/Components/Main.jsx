@@ -6,55 +6,35 @@ import { nameSearch, levelSearch, emailSearch,
 import Associate from './Item/Associate';
 import SearchBar from './SearchBar/SearchBar';
 import Modal from './Modal/Modal';
-import axios from 'axios';
-
+import { findAll, findBy } from '../services/AssociateSearchService';
+import PageBar from './PageBar/PageBar';
 import './Main.scss';
 
 class Main extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            scrolldown:'',
-        };
+        this.changePage = this.changePage.bind(this);
+        this.handleNameSearch = this.handleNameSearch.bind(this);
+        this.handleEmailSearch = this.handleEmailSearch.bind(this);
     }
 
     componentDidMount () {
-        axios.get('/admin/api/associates/1')
-        .then(response => {
-            //const associates = response.data.slice(0, 10);
-            this.props.onLoadData(response.data);
-            console.log(response.data);
-        });  
+        findAll().then(response => {
+            this.props.onLoadData(response);
+        });
     }
 
     handleNameSearch(text) {
-        let name = this.props.nameSearch
-        name = text.substr(0, 20)
+        let name = this.props.nameSearch;
+        name = text.substr(0, 20);
         this.props.onNameSearch(name);
     }
 
-    handleLevelSearch(text) {
-        let level = this.props.levelSearch
-        level = text.substr(0, 20)
-        this.props.onLevelSearch(level);
-    }
 
     handleEmailSearch(text) {
-        let email = this.props.emailSearch
-        email = text.substr(0, 20)
+        let email = this.props.emailSearch;
+        email = text.substr(0, 20);
         this.props.onEmailSearch(email);
-    }
-
-    handlePhoneSearch(text) {
-        let phone = this.props.phoneSearch
-        phone = text.substr(0, 20)
-        this.props.onPhoneSearch(phone);
-    }
-
-    handleDateSearch(text) {
-        let date= this.props.dateSearch
-        date = text.substr(0, 20)
-        this.props.onDateSearch(date);
     }
 
     handleLoadAssociates() {
@@ -68,20 +48,19 @@ class Main extends Component {
             this.scrollToBottom();
     }
 
-    showModal(id, name, level, email, phone, date, photo) {
-        let modalData;
-        axios.get('https://jsonplaceholder.typicode.com/posts/' + id)
-            .then(response => {
-                modalData = response.data;
-            });
-        let modal = {
-            name,
-            level,
-            email,
-            phone,
-            date,
-            photo,
-        }
+    changePage(page){
+        const params = {
+            page,
+            nameField: this.props.nameSearch,
+            emailField: this.props.emailSearch,
+        };
+        findBy(params).then(response => {
+            this.props.onLoadData(response);
+        });
+    }
+
+    showModal(id) {
+        const modal = '/admin/associates/' + id;
         this.props.onAddModal(modal);
     }
 
@@ -89,121 +68,52 @@ class Main extends Component {
         this.props.onCloseModal();
     }
 
-    scrollToBottom() {  
-       this.state.scrolldown.scrollIntoView({ behavior: 'smooth' });
-    }
-
     render() {
-
-    let people = this.props.people;
-
-    const indexOfLastAssociate = this.props.currentPagination * this.props.paginationIndex;
-    const currentAssociates = people.slice(0, indexOfLastAssociate);
-
-    let paginationButton;
-
-    if (this.props.people.length > currentAssociates.length) {
-        paginationButton = <div className="main-paginationButton" 
-        onClick={()=>this.handleLoadAssociates()}>
-            Load More Associates
-            </div>
-    }
-
-        let filteredAssociates;
-        if (this.props.currentPagination > 1) 
-        filteredAssociates = this.props.currentAssociates.filter(
-            (person) => {
-                if (this.props.nameSearch !=='') {
-                  return  person.name.toLowerCase().indexOf(this.props.nameSearch.toLowerCase()) !== -1;
-                }
-                if (this.props.levelSearch !=='') {
-                    return  person.invitedBy.toLowerCase().indexOf(this.props.levelSearch.toLowerCase()) !== -1;
-                }
-                if (this.props.emailSearch !=='') {
-                    return  person.email.toLowerCase().indexOf(this.props.emailSearch.toLowerCase()) !== -1;
-                }
-                if (this.props.phoneSearch !=='') {
-                    return  person.tel.toLowerCase().indexOf(this.props.phoneSearch.toLowerCase()) !== -1;
-                }
-                else {
-                    return  person.enrolmentDate.toLowerCase().indexOf(this.props.dateSearch.toLowerCase()) !== -1;
-            }
-        }
-        );
-        if (this.props.currentPagination === 1) {
-            filteredAssociates = currentAssociates.filter(
-                (person) => {
-                    if (this.props.nameSearch !=='') {
-                      return  person.name.toLowerCase().indexOf(this.props.nameSearch.toLowerCase()) !== -1;
-                    }
-                    if (this.props.levelSearch !=='') {
-                        return  person.invitedBy.toLowerCase().indexOf(this.props.levelSearch.toLowerCase()) !== -1;
-                    }
-                    if (this.props.emailSearch !=='') {
-                        return  person.email.toLowerCase().indexOf(this.props.emailSearch.toLowerCase()) !== -1;
-                    }
-                    if (this.props.phoneSearch !=='') {
-                        return  person.tel.toLowerCase().indexOf(this.props.phoneSearch.toLowerCase()) !== -1;
-                    }
-                    else {
-                        return  person.enrolmentDate.toLowerCase().indexOf(this.props.dateSearch.toLowerCase()) !== -1;
-                }
-            }
-            );  
-        }
-    
-        let associates;
-            associates = filteredAssociates.map((associates, index) => {
-                return <Associate 
-                                        key={associates.id}
-                                        id={associates.id}
-                                        name={associates.name}
-                                        level={associates.invitedBy}
-                                        email={associates.email}
-                                        phone={associates.tel}
-                                        date={associates.enrolmentDate}
-                                        index={index}
-                                        firstNewAssociate={this.props.firstNewAssociate}
-                                        showModal={this.showModal.bind(this)}
-                                        />;
+        const { associates, pages, currentPage } = this.props;
+        const associateRows = associates.map((associate, index) => {
+            return <Associate
+                        key={associate.id}
+                        id={associate.id}
+                        name={associate.fullName}
+                        level={associate.level}
+                        email={associate.email}
+                        phone={associate.mobilePhone}
+                        date={associate.joinDate}
+                        index={index}
+                        firstNewAssociate={this.props.firstNewAssociate}
+                        showModal={this.showModal.bind(this)}
+                    />;
         });
+        console.log(this.props.modal);
         return (
             <div className="main-searchContainer">
                 <SearchBar
-                handleNameSearchInput={this.handleNameSearch}
-                handleLevelSearchInput={this.handleLevelSearch}
-                handleEmailSearchInput={this.handleEmailSearch}
-                handlePhoneSearchInput={this.handlePhoneSearch}
-                handleDateSearchInput={this.handleDateSearch}
+                    handleNameSearchInput={this.handleNameSearch}
+                    handleEmailSearchInput={this.handleEmailSearch}
                 />
                 <div className="main-associatesContainer">
-                    {associates}
-                    <div className="main-scrollDown" style={{ float:"left", clear: "both" }}
-                        ref={(el) => { this.state.scrolldown = el; }}>
-                    </div>
+                    {associateRows}
+
                 </div>
-                {paginationButton}
-                <Modal modal={this.props.modal}
-                        showModal={this.props.showModal}
-                        modalClosed={this.closeModal}/>
+                <PageBar pages={pages} currentPage={currentPage} onClick={this.changePage} />
+
+                <Modal
+                    modal={this.props.modal}
+                    showModal={this.props.showModal}
+                    modalClosed={this.closeModal}
+                />
             </div>
-            );
-        }
+        );
     }
+}
 
 const mapStateToProps = state => {
     return {
-        people: state.widget.people,
         associates: state.widget.associates,
-        currentAssociates: state.widget.currentAssociates,
-        firstNewAssociate: state.widget.firstNewAssociate,
         nameSearch: state.widget.nameSearch,
-        levelSearch: state.widget.levelSearch,
         emailSearch: state.widget.emailSearch,
-        phoneSearch: state.widget.phoneSearch,
-        dateSearch: state.widget.dateSearch,
-        paginationIndex: state.widget.paginationIndex,
-        currentPagination: state.widget.currentPagination,
+        pages: state.widget.pages,
+        currentPage: state.widget.currentPage,
         scrollDown: state.widget.scrollDown,
         modal: state.widget.modal,
         showModal: state.widget.showModal,
@@ -213,15 +123,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onNameSearch: (name) => dispatch(nameSearch(name)),
-        onLevelSearch: (level) => dispatch(levelSearch(level)),
         onEmailSearch: (email) => dispatch(emailSearch(email)),
-        onPhoneSearch: (phone) => dispatch(phoneSearch(phone)),
-        onDateSearch: (date) => dispatch(dateSearch(date)),
-        onAddCurrentPagination: (count, currentAssociates) => dispatch(addCurrentPagination(count, currentAssociates)),
         onScrollDown: (position) => dispatch(scrollDown(position)),
         onAddModal: (modal) => dispatch(addModal(modal)),
         onCloseModal: () => dispatch(closeModal()),
-        onLoadData: (associates) => dispatch(loadData(associates)),
+        onLoadData: (data) => dispatch(loadData(data)),
     };
 };
 

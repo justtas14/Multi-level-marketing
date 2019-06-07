@@ -11,17 +11,10 @@ const initialState = {
     emailSearch: '',
     phoneSearch: '',
     dateSearch: '',
-    paginationIndex: 10,
-    currentPagination: 1,
+    pages: 1,
+    currentPages: 1,
     scrollDown: '',
-    modal: {
-        name: '',
-        level: '',
-        email: '',
-        phone: '',
-        date: '',
-        photo: '',
-    },
+    modal: "",
     showModal: false,
     currentAssociates: [],
     firstNewAssociate: 0,
@@ -54,18 +47,6 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 dateSearch: action.date,  
             };
-            case ADD_CURRENT_PAGINATION:
-                return { 
-                    ...state,
-                    currentPagination: action.count,
-                    currentAssociates: action.currentAssociates,
-                    firstNewAssociate: action.currentAssociates.length - state.paginationIndex 
-                };
-            case SCROLL_DOWN:
-                return { 
-                    ...state,
-                    scrollDown: action.position,  
-                };
             case ADD_MODAL:
                 return { 
                     ...state,
@@ -81,6 +62,8 @@ const reducer = (state = initialState, action) => {
                 return { 
                     ...state,
                     associates: action.associates,
+                    pages: action.pages,
+                    currentPage: action.currentPage,
                 };
         default:
             return state;

@@ -1,9 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Associate{% endblock %}
- {% block javascripts %}
-    <script type="text/javascript" src="{{ asset('/build/app.js') }}"></script>
-{% endblock %}
 
 {% set maxLevel = max(associatesInLevels) %}
 
@@ -65,9 +62,7 @@
                 {% endif %}
         </div>
     </div>
-    <div class="associate-searchContainer">
-            <div id="root"></div>
-    </div>
+
     {% endblock %}
 {#
         {% if profilePicture is not null %}
