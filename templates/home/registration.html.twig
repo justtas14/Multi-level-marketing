@@ -3,41 +3,83 @@
 {% block title %}Registration{% endblock %}
 
 {% block body %}
-
-    <div id="flash-messages">
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-error">
-                {{ message }}
+    <div class="card__container">
+        <div class="card" style="margin: 0 auto; width: 60vw; min-width: 300px">
+            <div class="card-content">
+                <span class="card-title">Registration</span>
+                <div id="flash-messages">
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-error">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <main id="main">
+                    {{ form_start(registration) }}
+                    {{ form_row(registration._token) }}
+                    <div class="input-field">
+                        {{ form_row(registration.email) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.plainPassword) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.fullName) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.country) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.address) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.city) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.postcode) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.mobilePhone) }}
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.homePhone) }}
+                    </div>
+                    <div class="input-field">
+                        <label style="position: unset!important;">
+                            {{ form_widget(registration.associate.agreedToEmailUpdates) }}
+                            <span>I agree to receive email updates</span>
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        <label style="position: unset!important;">
+                            {{ form_widget(registration.associate.agreedToTextMessageUpdates) }}
+                            <span>I agree to receive text message updates</span>
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        <label style="position: unset!important;">
+                            {{ form_widget(registration.associate.agreedToSocialMediaUpdates) }}
+                            <span>I agree to receive social media updates</span>
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        {{ form_row(registration.associate.profilePicture) }}
+                    </div>
+                    {% if termsOfServices is not null  %}
+                        <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
+                    {% endif %}
+                    <div class="input-field">
+                        {{ form_row(registration.associate.submit) }}
+                    </div>
+                    {{ form_end(registration, {'render_rest': false}) }}
+                </main>
             </div>
-        {% endfor %}
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
+        </div>
     </div>
-    <main id="main">
-        {{ form_start(registration) }}
-        {{ form_row(registration._token) }}
-        {{ form_row(registration.email) }}
-        {{ form_row(registration.plainPassword) }}
-        {{ form_row(registration.associate.fullName) }}
-        {{ form_row(registration.associate.country) }}
-        {{ form_row(registration.associate.address) }}
-        {{ form_row(registration.associate.city) }}
-        {{ form_row(registration.associate.postcode) }}
-        {{ form_row(registration.associate.mobilePhone) }}
-        {{ form_row(registration.associate.homePhone) }}
-        {{ form_row(registration.associate.agreedToEmailUpdates) }}
-        {{ form_row(registration.associate.agreedToTextMessageUpdates) }}
-        {{ form_row(registration.associate.agreedToSocialMediaUpdates) }}
-        {{ form_row(registration.associate.profilePicture) }}
-        {% if termsOfServices is not null  %}
-            <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
-        {% endif %}
-        {{ form_row(registration.associate.submit) }}
-        {{ form_end(registration, {'render_rest': false}) }}
-
-    </main>
 
 {% endblock %}

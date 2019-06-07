@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Modal from 'react-responsive-modal';
 import { nameSearch, levelSearch, emailSearch, 
     phoneSearch, dateSearch, addCurrentPagination,
-     scrollDown, addModal, closeModal, loadData } from '../store/actions/widget';
+     scrollDown, addModal, closeModal, loadData, openModal } from '../store/actions/widget';
 import Associate from './Item/Associate';
 import SearchBar from './SearchBar/SearchBar';
-import Modal from './Modal/Modal';
 import { findAll, findBy } from '../services/AssociateSearchService';
 import PageBar from './PageBar/PageBar';
 import './Main.scss';
@@ -85,8 +85,7 @@ class Main extends Component {
     }
 
     showModal(id) {
-        const modal = '/admin/associates/' + id;
-        this.props.onAddModal(modal);
+        this.props.onOpenModal(id);
     }
 
     closeModal() {
@@ -121,19 +120,15 @@ class Main extends Component {
 
                 </div>
                 <PageBar pages={pages} currentPage={currentPage} onClick={this.changePage} />
-
-                <Modal
-                    modal={this.props.modal}
-                    showModal={this.props.showModal}
-                    modalClosed={this.closeModal}
-                />
+                <Modal onClose={this.props.onCloseModal} open={this.props.modalOpen}>
+                    <iframe src={`/associates/${this.props.modalId}`} style={{width: "60vw", height: "50vw", border: '0px'}}/>
+                </Modal>
             </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    return {
+const mapStateToProps = state => ({
         associates: state.widget.associates,
         nameSearch: state.widget.nameSearch,
         emailSearch: state.widget.emailSearch,
@@ -142,8 +137,9 @@ const mapStateToProps = state => {
         scrollDown: state.widget.scrollDown,
         modal: state.widget.modal,
         showModal: state.widget.showModal,
-    };
-};
+        modalOpen: state.widget.modalOpen,
+        modalId: state.widget.modalId
+});
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -152,6 +148,7 @@ const mapDispatchToProps = dispatch => {
         onScrollDown: (position) => dispatch(scrollDown(position)),
         onAddModal: (modal) => dispatch(addModal(modal)),
         onCloseModal: () => dispatch(closeModal()),
+        onOpenModal: (id) => dispatch(openModal(id)),
         onLoadData: (data) => dispatch(loadData(data)),
     };
 };
