@@ -116,7 +116,7 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($configuration);
             $em->flush();
-            if ($configuration->isPrelaunchEnded()) {
+            if ($configuration->hasPrelaunchEnded()) {
                 $this->addFlash('success', 'Prelaunch ended');
             }
         }
@@ -181,15 +181,7 @@ class AdminController extends AbstractController
 
         return $response->send();
     }
-    /**
-     * @Route("/admin/associates/{id}", name="get_associate")
-     */
-    public function getAssociate($id)
-    {
-        $associateRepository = $this->getDoctrine()->getRepository(Associate::class);
-        $associate = $associateRepository->find($id);
-        return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
-    }
+
     /**
      * @Route("/admin/api/associates", name="user_search_associates")
      * @param int $page

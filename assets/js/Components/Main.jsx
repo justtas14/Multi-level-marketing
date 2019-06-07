@@ -1,14 +1,29 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Modal from 'react-responsive-modal';
 import { nameSearch, levelSearch, emailSearch, 
     phoneSearch, dateSearch, addCurrentPagination,
-     scrollDown, addModal, closeModal, loadData } from '../store/actions/widget';
+     scrollDown, addModal, closeModal, loadData, openModal } from '../store/actions/widget';
 import Associate from './Item/Associate';
 import SearchBar from './SearchBar/SearchBar';
-import Modal from './Modal/Modal';
 import { findAll, findBy } from '../services/AssociateSearchService';
 import PageBar from './PageBar/PageBar';
 import './Main.scss';
+
+function debounce(func, wait, immediate) {
+    let timeout;
+    return function() {
+        let context = this, args = arguments;
+        let later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        let callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
 
 class Main extends Component {
     constructor(props) {
@@ -16,6 +31,8 @@ class Main extends Component {
         this.changePage = this.changePage.bind(this);
         this.handleNameSearch = this.handleNameSearch.bind(this);
         this.handleEmailSearch = this.handleEmailSearch.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handleSearchDebounced = debounce(this.handleSearch, 2000);
     }
 
     componentDidMount () {
@@ -24,17 +41,25 @@ class Main extends Component {
         });
     }
 
+    handleSearch() {
+        const params = {
+            nameField: this.props.nameSearch,
+            emailField: this.props.emailSearch,
+        };
+        findBy(params).then(response => {
+            this.props.onLoadData(response);
+        });
+    };
+
     handleNameSearch(text) {
-        let name = this.props.nameSearch;
-        name = text.substr(0, 20);
-        this.props.onNameSearch(name);
+        this.props.onNameSearch(text);
+        this.handleSearchDebounced();
     }
 
 
     handleEmailSearch(text) {
-        let email = this.props.emailSearch;
-        email = text.substr(0, 20);
-        this.props.onEmailSearch(email);
+        this.props.onEmailSearch(text);
+        this.handleSearchDebounced();
     }
 
     handleLoadAssociates() {
@@ -60,8 +85,7 @@ class Main extends Component {
     }
 
     showModal(id) {
-        const modal = '/admin/associates/' + id;
-        this.props.onAddModal(modal);
+        this.props.onOpenModal(id);
     }
 
     closeModal() {
@@ -96,19 +120,15 @@ class Main extends Component {
 
                 </div>
                 <PageBar pages={pages} currentPage={currentPage} onClick={this.changePage} />
-
-                <Modal
-                    modal={this.props.modal}
-                    showModal={this.props.showModal}
-                    modalClosed={this.closeModal}
-                />
+                <Modal onClose={this.props.onCloseModal} open={this.props.modalOpen}>
+                    <iframe src={`/associates/${this.props.modalId}`} style={{width: "60vw", height: "50vw", border: '0px'}}/>
+                </Modal>
             </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    return {
+const mapStateToProps = state => ({
         associates: state.widget.associates,
         nameSearch: state.widget.nameSearch,
         emailSearch: state.widget.emailSearch,
@@ -117,8 +137,9 @@ const mapStateToProps = state => {
         scrollDown: state.widget.scrollDown,
         modal: state.widget.modal,
         showModal: state.widget.showModal,
-    };
-};
+        modalOpen: state.widget.modalOpen,
+        modalId: state.widget.modalId
+});
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -127,6 +148,7 @@ const mapDispatchToProps = dispatch => {
         onScrollDown: (position) => dispatch(scrollDown(position)),
         onAddModal: (modal) => dispatch(addModal(modal)),
         onCloseModal: () => dispatch(closeModal()),
+        onOpenModal: (id) => dispatch(openModal(id)),
         onLoadData: (data) => dispatch(loadData(data)),
     };
 };

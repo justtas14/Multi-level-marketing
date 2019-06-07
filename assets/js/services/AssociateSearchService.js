@@ -2,8 +2,8 @@ import axios from 'axios';
 
 const searchUrl = '/admin/api/associates';
 
-
-export async function findAll(){
+export async function findAll()
+{
     return axios.get(searchUrl)
         .then(response => {
             return {
@@ -14,7 +14,8 @@ export async function findAll(){
         });
 }
 
-export function findBy(params){
+export async function findBy(params)
+{
     return axios.get(searchUrl, { params })
         .then(response => {
 

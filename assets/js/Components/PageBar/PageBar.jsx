@@ -8,19 +8,19 @@ const PageBar = ( props ) => {
     for(let i = 1; i <= pages; i++){
         if (i == currentPage){
             numbers.push(
-                <button disabled={true} key={i}>{i}</button>
+                <li className={"active"} key={i}><a disabled={true}>{i}</a></li>
             );
         } else {
             numbers.push(
-                <button className={"selected"} key={i} onClick={() => props.onClick(i)}>{i}</button>
+                <li className={"waves-effect"} key={i}><a onClick={() => props.onClick(i)}>{i}</a></li>
             );
         }
 
     }
     return (
-        <div>
+        <ul className="pagination">
             { numbers }
-        </div>
+        </ul>
     );
 };
 

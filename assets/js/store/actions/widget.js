@@ -1,6 +1,8 @@
-import { NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH, 
-    PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION, 
-    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA } from './actionTypes';
+import {
+    NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH,
+    PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION,
+    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA, OPEN_MODAL
+} from './actionTypes';
 
 export const nameSearch = (name) => {
     return {
@@ -68,7 +70,14 @@ export const loadData = (data) => {
         pages: data.pages,
         currentPage: data.currentPage,
     }
-}
+};
+
+export const openModal = (id) => {
+    return {
+        type: OPEN_MODAL,
+        modalId: id
+    }
+};
 
 
 

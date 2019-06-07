@@ -1,69 +1,103 @@
-{% extends 'base.html.twig' %}
+{% extends 'bodyBase.html.twig' %}
 
 {% block title %}Associate{% endblock %}
 
 {% set maxLevel = max(associatesInLevels) %}
 
-{% block body %}
-
-  {{ include('includes/header.html.twig') }}
+{% block content %}
     <main>
-    <div class="associate-mainContainer">
-        <div class="associate-levelContainer">
-            <div class="associate-title">
-                My Team
-            </div>
-            <div class="associate-buttonContainer">
-                <a 
-                    class="waves-effect waves-light btn-large" 
-                    style="width:45%; background-color:#3ab54a"
-                    href="{{ path('associate_invite') }}">
-                        Invite Associate
-                </a>
-                <a 
-                    class="waves-effect waves-light btn-large" 
-                    style="margin-left:5%; width:45%; background-color:#3ab54a">
-                        My Team Viewer
-                </a>
-            </div>
-            <div class="associate-levelConainer">
-                <ul class="associate-levelBarList">
-                    {% for key, associateCount in associatesInLevels %}
-                <li class="associate-levelBarListItem" style="list-style-type:none;">
-                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+        <div class="card__container">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">My Team</span>
+                    <div class="associate-buttonContainer">
+                        <a
+                                class="waves-effect waves-light btn-large"
+                                style="width:45%; background-color:#3ab54a"
+                                href="{{ path('associate_invite') }}">
+                            Invite Associate
+                        </a>
+                        <a
+                                class="waves-effect waves-light btn-large"
+                                style="margin-left:5%; width:45%; background-color:#3ab54a">
+                            My Team Viewer
+                        </a>
                     </div>
-                </li>
-                    {% endfor %}
-                </ul>
+                    <div class="associate-levelConainer">
+                        <ul class="associate-levelBarList">
+                            {% for key, associateCount in associatesInLevels %}
+                                <li class="associate-levelBarListItem" style="list-style-type:none;">
+                                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="associate-enrollerContainer">
-                <div class="associate-title">
-                    My Enroller
+        <div class="card__container">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">My Enroller</span>
+                    {% if parent is not null %}
+                        <div class="associate-enrollerPictureContainer">
+                            {% if parent.profilePicture is not null %}
+                                <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
+                            {% else %}
+                                <img class="associate-enrollerPicture" style="max-width: 100px; max-height: 100px" src="{{ asset('assets/images/profile.jpg') }}" />
+                            {% endif %}
+                        </div>
+                        <div class="associate-enrollerDetailsContainer">
+                            <p>Email: {{ parent.email }}</p>
+                            <p>Full name: {{ parent.fullName }}</p>
+                            <p>Mobile phone: {{ parent.mobilePhone }}</p>
+                        </div>
+                    {% else %}
+                        <div>Company</div>
+                    {% endif %}
                 </div>
-                {% if parent is not null %}
-                    <div class="associate-enrollerPictureContainer">
-                        {% if parent.profilePicture is not null %}
-                            <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
-                        {% else %}
-                            <img class="associate-enrollerPicture" src="{{ asset('assets/images/profile.jpg') }}" />
-                        {% endif %}
-                    </div>
-                <div class="associate-enrollerDetailsContainer">
-                    <p>Email: {{ parent.email }}</p>
-                    <p>Full name: {{ parent.fullName }}</p>
-                    <p>Mobile phone: {{ parent.mobilePhone }}</p>
-                </div>
-                {% else %}
-                <div>Company
-
-                </div>
-                {% endif %}
+            </div>
         </div>
-    </div>
+        <div class="card__container">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">My Direct Downline</span>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile Phone</th>
+                            <th>Join Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for associate in directAssociates %}
+                            <tr>
+                                <td>{{ associate.fullName }}</td>
+                                <td>{{ associate.email }}</td>
+                                <td>
+                                    {% if associate.mobilePhone == '' %}
+                                        -
+                                    {% else %}
+                                        {{ associate.mobilePhone }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ associate.joinDate|date('d-m-Y') }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
 
-    {% endblock %}
 {#
         {% if profilePicture is not null %}
             <img style="max-width: 200px; max-height: 200px" src="{{ profilePicture|downloadUrlParser }}" />

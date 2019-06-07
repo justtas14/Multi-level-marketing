@@ -9,24 +9,27 @@ class Associate extends Component {
     }
 
     render() {
-        return <div onClick={() => this.props.showModal(this.props.id)}
-                className={"associate-container"}>
-            <div className="associate-itemContainer">
-                {this.props.name}
+        const d = new Date(this.props.date);
+        const dateString = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
+        return (
+            <div onClick={() => this.props.showModal(this.props.id)} className={"associate-container"}>
+                <div className="associate-itemContainer" style={{'flex': 3}}>
+                    {this.props.name}
+                </div>
+                <div className="associate-itemLevelContainer" style={{'flex': 1}}>
+                    {this.props.level}
+                </div>
+                <div className="associate-itemContainer" style={{'flex': 3}}>
+                    {this.props.email}
+                </div>
+                <div className="associate-itemContainer" style={{'flex': 2}}>
+                    {this.props.phone || '-'}
+                </div>
+                <div className="associate-itemDateContainer" style={{'flex': 2}}>
+                    {dateString}
+                </div>
             </div>
-            <div className="associate-itemLevelContainer">
-                {this.props.level}
-            </div>
-            <div className="associate-itemContainer">
-                {this.props.email}
-            </div>
-            <div className="associate-itemContainer">
-                {this.props.phone || '-'}
-            </div>
-            <div className="associate-itemDateContainer">
-                {this.props.date}
-            </div>
-             </div>;
+        );
     }
 }
 

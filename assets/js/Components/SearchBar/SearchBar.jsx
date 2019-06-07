@@ -13,7 +13,7 @@ class SearchBar extends Component {
         return (
             <div>
                 <div className="searchBar-container">
-                    <div className="searchBar-inputContainer">
+                    <div className="searchBar-inputContainer" style={{'flex': 3}}>
                         <TextField
                             id="filled-search"
                             label="Name"
@@ -24,10 +24,10 @@ class SearchBar extends Component {
                             margin="normal"
                         />
                     </div>
-                    <div className="searchBar-inputLevelContainer">
+                    <div className="searchBar-inputLevelContainer" style={{'flex': 1}}>
                         Level
                     </div>
-                    <div className="searchBar-inputEmailContainer">
+                    <div className="searchBar-inputEmailContainer" style={{'flex': 3}}>
                         <TextField
                             id="filled-search"
                             label="E-mail"
@@ -38,10 +38,10 @@ class SearchBar extends Component {
                             margin="normal"
                         />
                     </div>
-                    <div className="searchBar-inputLevelContainer">
+                    <div className="searchBar-inputLevelContainer" style={{'flex': 2}}>
                         Phone
                     </div>
-                    <div className="searchBar-inputLevelContainer">
+                    <div className="searchBar-inputLevelContainer" style={{'flex': 2}}>
                         Date
                     </div>
 

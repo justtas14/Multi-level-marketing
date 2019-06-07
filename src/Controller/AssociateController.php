@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\Associate;
 use App\Entity\Invitation;
 use App\Entity\User;
 use App\Form\InvitationType;
 use App\Form\UserUpdateType;
 use App\Service\AssociateManager;
 use App\Service\InvitationManager;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -17,6 +20,9 @@ class AssociateController extends AbstractController
 {
     /**
      * @Route("/associate", name="associate")
+     * @param AssociateManager $associateManager
+     * @return Response
+     * @throws Exception
      */
     public function index(AssociateManager $associateManager)
     {
@@ -36,6 +42,8 @@ class AssociateController extends AbstractController
             );
         }
 
+        $directAssociates = $associateManager->getAllDirectAssociates($user->getAssociate()->getAssociateId());
+
         $userParent = $user->getAssociate()->getParent();
         if ($userParent->getId() == -1) {
             $userParent = null;
@@ -43,15 +51,28 @@ class AssociateController extends AbstractController
 
         return $this->render('associate/index.html.twig', [
             'associatesInLevels' => $associateInLevels,
-            'parent' => $userParent
+            'parent' => $userParent,
+            'directAssociates' => $directAssociates
         ]);
+    }
+
+    /**
+     * @Route("/associates/{id}", name="get_associate")
+     * @param $id
+     * @return Response
+     */
+    public function getAssociate($id)
+    {
+        $associateRepository = $this->getDoctrine()->getRepository(Associate::class);
+        $associate = $associateRepository->find($id);
+        return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
     }
 
     /**
      * @Route("/associate/invite", name="associate_invite")
      * @param Request $request
      * @param InvitationManager $invitationManager
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function associateInvitation(Request $request, InvitationManager $invitationManager)
     {
@@ -92,7 +113,7 @@ class AssociateController extends AbstractController
      * @Route("/associate/profile", name="associate_profile")
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function associateProfile(UserPasswordEncoderInterface $encoder, Request $request)
     {
