@@ -89,4 +89,71 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame($user->getEmail(), key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
     }
+
+//    public function testEndPrelaunch()
+//    {
+//        /** @var EntityManager $em */
+//        $em = $this->fixtures->getManager();
+//
+//        /** @var User $user */
+//        $user = $this->fixtures->getReference('user1');
+//
+//        $em->refresh($user);
+//        $this->loginAs($user, 'main');
+//
+//        $client = $this->makeClient();
+//
+//        $crawler = $client->request('GET', '/admin/endprelaunch');
+//
+//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//
+//        $form = $crawler->selectButton('End prelaunch')->form();
+//
+//        $form->get('end_prelaunch')['hasPrelaunchEnded']->setValue(false);
+//
+//        $client->submit($form);
+//
+//        $user = $this->fixtures->getReference('user4');
+//
+//        $em->refresh($user);
+//        $this->loginAs($user, 'main');
+//
+//        $client->request('GET', '/');
+//
+//        $targetUrl = $client->getResponse()->isRedirect("/associate");
+//
+//        $this->assertTrue($targetUrl);
+//
+//        $client->request('GET', '/landingpage');
+//
+//        $targetUrl = $client->getResponse()->isRedirect("/");
+//
+//        $this->assertTrue($targetUrl);
+//
+//        $user = $this->fixtures->getReference('user1');
+//
+//        $em->refresh($user);
+//        $this->loginAs($user, 'main');
+//
+//        $crawler = $client->request('GET', '/admin/endprelaunch');
+//
+//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//
+//        $form = $crawler->selectButton('End prelaunch')->form();
+//
+//        $form->get('end_prelaunch')['hasPrelaunchEnded']->setValue(true);
+//
+//        $client->submit($form);
+//
+//        $user = $this->fixtures->getReference('user4');
+//
+//        $em->refresh($user);
+//        $this->loginAs($user, 'main');
+//
+//        $client->request('GET', '/');
+//
+//        $client->followRedirect();
+//
+//        $this->assertTrue($targetUrl);
+//    }
 }
