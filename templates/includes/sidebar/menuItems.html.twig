@@ -1,0 +1,27 @@
+{% block menuItems %}
+    {% set currentRoute = app.request.get('_route') %}
+    {% set allRoutes = getMenu() %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="sidebar-item sidebar__sectionLabel" style="color: purple">
+            <h5>Admin</h5>
+        </div>
+        {% for route in allRoutes.adminRoutes %}
+            <div class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">
+                <a href="{{ path(route.route) }}">{{ route.label }}</a>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if is_granted('ROLE_USER') %}
+        <div class="sidebar-item sidebar__sectionLabel" style="color: purple">
+            <h5>Associate</h5>
+        </div>
+        {% for route in allRoutes.associateRoutes %}
+            <div class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">
+                <a href="{{ path(route.route) }}">{{ route.label }}</a>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="sidebar-itemLast">
+        <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
+    </div>
+{% endblock %}

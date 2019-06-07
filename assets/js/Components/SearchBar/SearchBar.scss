@@ -1,5 +1,8 @@
 .searchBar-container {
     border-bottom : 5px solid #3ab54a;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .searchBar-inputContainer {
@@ -31,7 +34,6 @@
 
 .searchBar-inputLevelContainer {
     width:10%;
-    overflow-x: hidden;
     margin-top:10px;
     padding:0 0 5px 15px;
     display:inline-block;
@@ -43,7 +45,6 @@
 
 .searchBar-inputDateContainer {
     width:10%;
-    overflow-x: hidden;
     margin-top:10px;
     padding:0 20px 5px 0;
     display:inline-block;

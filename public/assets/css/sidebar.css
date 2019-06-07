@@ -1,11 +1,15 @@
 .sidebar {
     width: 30%;
-    min-width: 319px;
+    /*min-width: 319px;*/
     display: flex;
     flex-flow: column;
     flex: 0 1 auto;
     height: 100%;
     overflow-y: auto;
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
+    -moz-box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
+    box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
 }
 
 .sidebar-pictureContainer {
@@ -19,10 +23,6 @@
     justify-content: center;
     background-color: #fff;
     border-bottom: 1px solid #f2f2f2;
-}
-
-.sidebar-picture {
-    width:80%;
 }
 
 .sidebar-titleContainer {
@@ -55,13 +55,6 @@
     height: 50px;
 }
 
-.sidebar-itemLast {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
-    margin-bottom: 100px;
-}
-
 .sidebar-item:hover {
     background-color: #f2f2f2;
     border-right: 2px solid #7f06c4;
@@ -70,7 +63,6 @@
 .sidebar-itemLast:hover {
     background-color: #f2f2f2;
     border-right: 2px solid #7f06c4;
-    box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-logo {
@@ -79,15 +71,50 @@
     border-radius:25px 25px 25px 25px;
 }
 
+.sidebar--active {
+    border-right: 4px solid #7f06c4
+}
+
 .sidebar-logoContainer {
-    padding: 20px 0 20px 0;
+    padding: 12px 0 12px 0;
     width:100%;
-    flex:1;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
     display: flex;
     flex-direction: row;
     justify-content: center;
     background-color: #fff;
     border-bottom: 1px solid #f2f2f2;
+    -webkit-box-shadow: 0 0 4px 0 rgba(0,0,0,0.75);
+    -moz-box-shadow: 0 0 4px 0 rgba(0,0,0,0.75);
+    box-shadow: 0 0 4px 0 rgba(0,0,0,0.75);
+}
+
+.sidebarProfile__container {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.sidebarProfile__pictureContainer {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.sidebar-picture {
+    display: inline;
+    height: 100%;
+    width: auto;
+}
+
+.sidebar__sectionLabel {
+    border-right: 0 solid #7f06c4;
+}
+
+.sidebar-itemLast {
+    align-self: flex-end;
 }

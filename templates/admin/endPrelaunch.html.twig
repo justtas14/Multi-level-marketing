@@ -1,26 +1,39 @@
-{% extends 'base.html.twig' %}
+{% extends 'bodyBase.html.twig' %}
 
 {% block title %}End Prelaunch{% endblock %}
 
-{% block body %}
-
-    <div id="flash-messages">
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-error">
-                {{ message }}
+{% block content %}
+    <div class="card__container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">End Prelaunch</span>
+                <div id="flash-messages">
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-error">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <main id="main">
+                    {{ form_start(form) }}
+                    <div class="input-field">
+                        <label style="position: unset!important;">
+                            {{ form_widget(form.prelaunchEnded) }}
+                            <span>End Prelaunch</span>
+                        </label>
+                    </div>
+                    <div class="input-field">
+                        {{ form_label(form.landingContent) }}
+                        {{ form_widget(form.landingContent) }}
+                    </div>
+                    {{ form_end(form) }}
+                </main>
             </div>
-        {% endfor %}
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
-                {{ message }}
-            </div>
-        {% endfor %}
+        </div>
     </div>
-
-    <main id="main">
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        {{ form_end(form) }}
-    </main>
-
 {% endblock %}

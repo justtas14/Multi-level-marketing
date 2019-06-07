@@ -15,6 +15,11 @@ class ChangeContentType extends AbstractType
         $builder
             ->add('mainLogo', PTSFileType::class, ['multiple' => false, 'required' => false])
             ->add('termsOfServices', PTSFileType::class, ['multiple' => false, 'required' => false])
-            ->add('Submit', SubmitType::class, ['label' => 'Change content']);
+            ->add('Submit', SubmitType::class, [
+                'label' => 'Change content',
+                'attr' => [
+                    'class' => 'waves-effect waves-light btn'
+                ]
+            ]);
     }
 }

@@ -15,6 +15,11 @@ class EmailTemplateType extends AbstractType
         $builder
             ->add('emailSubject', TextareaType::class)
             ->add('emailBody', TextareaType::class)
-            ->add('Submit', SubmitType::class, ['label' => 'Change Template']);
+            ->add('Submit', SubmitType::class, [
+                'label' => 'Change Template',
+                'attr' => [
+                    'class' => 'waves-effect waves-light btn'
+                ]
+            ]);
     }
 }

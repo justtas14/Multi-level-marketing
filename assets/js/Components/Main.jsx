@@ -10,12 +10,29 @@ import { findAll, findBy } from '../services/AssociateSearchService';
 import PageBar from './PageBar/PageBar';
 import './Main.scss';
 
+function debounce(func, wait, immediate) {
+    let timeout;
+    return function() {
+        let context = this, args = arguments;
+        let later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        let callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
+
 class Main extends Component {
     constructor(props) {
         super(props);
         this.changePage = this.changePage.bind(this);
         this.handleNameSearch = this.handleNameSearch.bind(this);
         this.handleEmailSearch = this.handleEmailSearch.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handleSearchDebounced = debounce(this.handleSearch, 2000);
     }
 
     componentDidMount () {
@@ -24,17 +41,25 @@ class Main extends Component {
         });
     }
 
+    handleSearch() {
+        const params = {
+            nameField: this.props.nameSearch,
+            emailField: this.props.emailSearch,
+        };
+        findBy(params).then(response => {
+            this.props.onLoadData(response);
+        });
+    };
+
     handleNameSearch(text) {
-        let name = this.props.nameSearch;
-        name = text.substr(0, 20);
-        this.props.onNameSearch(name);
+        this.props.onNameSearch(text);
+        this.handleSearchDebounced();
     }
 
 
     handleEmailSearch(text) {
-        let email = this.props.emailSearch;
-        email = text.substr(0, 20);
-        this.props.onEmailSearch(email);
+        this.props.onEmailSearch(text);
+        this.handleSearchDebounced();
     }
 
     handleLoadAssociates() {

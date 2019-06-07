@@ -89,6 +89,7 @@ class AssociateRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('a')
             ->where('a.parentId = :parentId')
             ->setParameter('parentId', $parentId)
+            ->orderBy('a.joinDate', 'DESC')
             ->getQuery()
             ->getArrayResult();
     }
