@@ -138,6 +138,12 @@ class AdminController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
+        $savedMainLogo = null;
+        if ($configuration->getMainLogo() !== null) {
+            $savedMainLogo = $configuration->getMainLogo();
+            $configuration->setMainLogo(null);
+        }
+
         $form = $this->createForm(ChangeContentType::class, $configuration);
 
         $form->handleRequest($request);
@@ -148,6 +154,11 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Content changed');
         }
 
+        if ($form->getErrors()) {
+
+        }
+
+        $em->refresh($configuration);
         return $this->render('admin/changeContent.html.twig', [
             'form' => $form->createView()
         ]);

@@ -23,31 +23,49 @@
                     {{ form_start(registration) }}
                     {{ form_row(registration._token) }}
                     <div class="input-field">
-                        {{ form_row(registration.email) }}
+                        {{ form_label(registration.email) }}
+                        {{ form_widget(registration.email) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.email } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.plainPassword) }}
+                        {{ form_label(registration.plainPassword) }}
+                        {{ form_widget(registration.plainPassword) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.plainPassword } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.fullName) }}
+                        {{ form_label(registration.associate.fullName) }}
+                        {{ form_widget(registration.associate.fullName) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.fullName } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.country) }}
+                        {{ form_label(registration.associate.country) }}
+                        {{ form_widget(registration.associate.country) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.country } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.address) }}
+                        {{ form_label(registration.associate.address) }}
+                        {{ form_widget(registration.associate.address) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.address } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.city) }}
+                        {{ form_label(registration.associate.city) }}
+                        {{ form_widget(registration.associate.city) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.city } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.postcode) }}
+                        {{ form_label(registration.associate.postcode) }}
+                        {{ form_widget(registration.associate.postcode) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.postcode } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.mobilePhone) }}
+                        {{ form_label(registration.associate.mobilePhone) }}
+                        {{ form_widget(registration.associate.mobilePhone) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.mobilePhone } %}
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.homePhone) }}
+                        {{ form_label(registration.associate.homePhone) }}
+                        {{ form_widget(registration.associate.homePhone) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.homePhone } %}
                     </div>
                     <div class="input-field">
                         <label style="position: unset!important;">
@@ -68,7 +86,9 @@
                         </label>
                     </div>
                     <div class="input-field">
-                        {{ form_row(registration.associate.profilePicture) }}
+                        {{ form_label(registration.associate.profilePicture) }}
+                        {{ form_widget(registration.associate.profilePicture) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.profilePicture } %}
                     </div>
                     {% if termsOfServices is not null  %}
                         <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>

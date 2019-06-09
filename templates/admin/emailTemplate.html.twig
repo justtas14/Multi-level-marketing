@@ -23,13 +23,13 @@
                     {{ form_start(form) }}
                     {{ form_label(form.emailSubject) }}
                     <br>
-                    {{ form_errors(form.emailSubject) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: form.emailSubject } %}
                     <br>
                     {{ form_widget(form.emailSubject) }}
                     <br>
                     {{ form_label(form.emailBody) }}
                     <Br>
-                    {{ form_errors(form.emailBody) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: form.emailBody } %}
                     <br>
                     {{ form_widget(form.emailBody) }}
                     <br>

@@ -25,10 +25,12 @@
                     <div class="input-field">
                         {{ form_label(form.mainLogo) }}
                         {{ form_widget(form.mainLogo) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.mainLogo } %}
                     </div>
                     <div class="input-field">
                         {{ form_label(form.termsOfServices) }}
                         {{ form_widget(form.termsOfServices) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                     </div>
                     <div class="input-field">
                         {{ form_label(form.Submit) }}

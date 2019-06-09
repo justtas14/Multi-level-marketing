@@ -123,8 +123,7 @@ class AssociateController extends AbstractController
      */
     public function associateProfile(
         UserPasswordEncoderInterface $encoder,
-        Request $request,
-        ValidatorInterface $validator
+        Request $request
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -134,13 +133,13 @@ class AssociateController extends AbstractController
 
         $currentEmail = $user->getEmail();
 
-        $form = $this->createForm(UserUpdateType::class, $user);
-
         $savedProfilePicture = null;
         if ($user->getAssociate()->getProfilePicture() !== null) {
             $savedProfilePicture = $user->getAssociate()->getProfilePicture();
             $user->getAssociate()->setProfilePicture(null);
         }
+
+        $form = $this->createForm(UserUpdateType::class, $user);
 
         $form->handleRequest($request);
 
@@ -149,36 +148,15 @@ class AssociateController extends AbstractController
             $email = $user->getEmail();
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
 
-            $errors = $validator->validate($user->getAssociate());
             if ($checkEmailExist && $currentEmail !== $email) {
                 $this->addFlash('error', 'This email already exist');
             } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
                 $this->addFlash('error', 'Old password is not correct');
-            } elseif (sizeof($errors)) {
-                foreach ($errors as $error) {
-                    $this->addFlash('error', $error->getMessage());
-                    if ($error->getPropertyPath() === 'profilePicture') {
-                        if ($savedProfilePicture) {
-                            $user->getAssociate()->setProfilePicture($savedProfilePicture);
-                        } else {
-                            $user->getAssociate()->setProfilePicture(null);
-                        }
-                    }
-                }
             } else {
                 $newPassword = $form['newPassword']->getData();
                 if ($newPassword) {
                     $user->setPlainPassword($newPassword);
                 }
-
-                if ($user->getAssociate()->getProfilePicture() === null) {
-                    if ($savedProfilePicture) {
-                        $user->getAssociate()->setProfilePicture($savedProfilePicture);
-                    } else {
-                        $user->getAssociate()->setProfilePicture(null);
-                    }
-                }
-
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->persist($user->getAssociate());
@@ -189,6 +167,7 @@ class AssociateController extends AbstractController
         }
 
         $em->refresh($user);
+        $em->refresh($user->getAssociate());
         return $this->render('profile.html.twig', [
             'updateProfile' => $form->createView()
         ]);

@@ -27,9 +27,11 @@
                             <span>End Prelaunch</span>
                         </label>
                     </div>
+                    {% include 'includes/errorBlock.html.twig' with { field: form.prelaunchEnded } %}
                     <div class="input-field">
                         {{ form_label(form.landingContent) }}
                         {{ form_widget(form.landingContent) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.landingContent } %}
                     </div>
                     {{ form_end(form) }}
                 </main>

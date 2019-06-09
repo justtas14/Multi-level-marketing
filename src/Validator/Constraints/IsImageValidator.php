@@ -20,15 +20,17 @@ class IsImageValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof File) {
-            throw new UnexpectedTypeException($value, File::class);
-        }
+        if ($value) {
+            if (!$value instanceof File) {
+                throw new UnexpectedTypeException($value, File::class);
+            }
 
-        $uploadedFile = $value->getUploadedFileReference();
-        if ($uploadedFile !== null &&
-            (!in_array($uploadedFile->getClientMimeType(), $this->getAllowedImageTypes()))
-        ) {
-            $this->context->buildViolation($constraint->message)->addViolation();
+            $uploadedFile = $value->getUploadedFileReference();
+            if ($uploadedFile !== null &&
+                (!in_array($uploadedFile->getClientMimeType(), $this->getAllowedImageTypes()))
+            ) {
+                $this->context->buildViolation($constraint->message)->addViolation();
+            }
         }
     }
 
