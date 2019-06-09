@@ -184,4 +184,14 @@ class AssociateController extends AbstractController
         $id = $request->get('id');
         return new JsonResponse($associateManager->getDirectDownlineAssociates($id), JsonResponse::HTTP_OK);
     }
+
+    /**
+     * @Route("/associate/viewer", name="team_viewer")
+     * @param Request $request
+     * @return Response
+     */
+    public function teamViewer(Request $request)
+    {
+        return $this->render('associate/teamViewer.html.twig');
+    }
 }

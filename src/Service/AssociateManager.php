@@ -154,15 +154,20 @@ class AssociateManager
     {
         $user = $this->tokenStorage->getToken()->getUser();
         $userAssociateId = $user->getAssociate()->getId();
+        /** @var AssociateRepository $associateRepo */
+        $associateRepo = $this->em->getRepository(Associate::class);
         if (!$parentId) {
-            $parentId = $userAssociateId;
+            return [
+                'id' => $userAssociateId,
+                'title' => $user->getAssociate()->getFullName(),
+                'parentId' => $user->getAssociate()->getParentId(),
+                'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($userAssociateId)
+            ];
         } elseif (!$this->isAncestor($parentId, $userAssociateId, false) && !$user->isAdmin()) {
             throw new NotAncestorException(
                 'Attempted to get direct downline of an associate that is not in your downline'
             );
         }
-        /** @var AssociateRepository $associateRepo */
-        $associateRepo = $this->em->getRepository(Associate::class);
         $directAssociates = $associateRepo->findAllDirectAssociates($parentId);
         return array_map(
             function ($downlineNode) use ($associateRepo, $parentId) {

@@ -1,0 +1,21 @@
+{% extends 'bodyBase.html.twig' %}
+
+{% block content %}
+    <link href="{{ asset('assets/css/explorer_main.css') }}" rel="stylesheet">
+    <div class="card__container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Viewer</span>
+                <div>
+                    <div id="root"
+                         data-source="/associate/downline"
+                         data-details="/associate/info"
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>
+    <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>
+    <script src="{{ asset('assets/js/explorer_main.js') }}" async></script>
+{% endblock %}
