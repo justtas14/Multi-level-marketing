@@ -61,4 +61,5 @@ services:
             - { name: kernel.event_listener, event: kernel.controller, connection: default }
 
 
-
+    PlumTreeSystems\FileBundle\Service\GaufretteFileManager:
+        alias: 'pts_file.manager'

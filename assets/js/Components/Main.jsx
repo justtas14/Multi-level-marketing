@@ -121,7 +121,7 @@ class Main extends Component {
                 </div>
                 <PageBar pages={pages} currentPage={currentPage} onClick={this.changePage} />
                 <Modal onClose={this.props.onCloseModal} open={this.props.modalOpen}>
-                    <iframe src={`/associates/${this.props.modalId}`} style={{width: "60vw", height: "50vw", border: '0px'}}/>
+                    <iframe src={`/associate/info/${this.props.modalId}`} style={{width: "60vw", height: "50vw", border: '0px'}}/>
                 </Modal>
             </div>
         );

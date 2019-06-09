@@ -58,4 +58,9 @@ class User extends PTSUser
         $this->associate = $associate;
         return $this;
     }
+
+    public function isAdmin()
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
 }
