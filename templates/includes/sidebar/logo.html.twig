@@ -1,8 +1,10 @@
-<div class="sidebar-logoContainer">
-    {% set logo = getLogo() %}
-    {% if logo is not null %}
-        <img style="max-width: 100px; max-height: 100px" src="{{ logo|downloadUrlParser }}" />
-    {% else%}
-        <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
-    {% endif %}
-</div>
+<a href="{{ path('home') }}">
+    <div class="sidebar-logoContainer">
+        {% set logo = getLogo() %}
+        {% if logo is not null %}
+            <img class="sidebar-logo" src="{{ logo|downloadUrlParser }}" />
+        {% else%}
+            <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+        {% endif %}
+    </div>
+</a>
