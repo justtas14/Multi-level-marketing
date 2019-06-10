@@ -89,12 +89,13 @@
 }
 
 .sidebarProfile__container {
-    background-color: #fff;
+    background-color: #3ab54a;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 4px;
     padding-bottom: 4px;
+    color: #fff;
 }
 
 .sidebarProfile__pictureContainer {
@@ -112,7 +113,9 @@
 }
 
 .sidebar__sectionLabel {
-    border-right: 0 solid #7f06c4;
+    border-right: 0;
+    color: #7f06c4;
+    font-size: 1.2em;
 }
 
 .sidebar-itemLast {

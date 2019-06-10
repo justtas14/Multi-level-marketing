@@ -50,14 +50,14 @@ body {
     color: red;
     background-color: rgba(255, 214, 214, 0.5);
     padding: .5em;
-    margin: .25em;
+    margin: .25em 0;
 }
 
 .error__block>ul {
     margin: 0;
 }
 
-.btn {
+.btn, button:focus {
     background-color: #7f06c4;
 }
 
@@ -83,6 +83,25 @@ input:focus, input:focus+label {
 input:focus+label {
     border-bottom: 0!important;
     box-shadow: unset!important;
+}
+
+.SVG_Line {
+    stroke: #3ab54a;
+}
+
+.Node__Container {
+    border: 2px solid #7f06c4;
+    background-color: #7f06c421;
+    border-radius: 17px;
+}
+
+@media only screen and (max-width: 900px) {
+    .NodeMatrix__Container {
+        display: none;
+    }
+    div#rootExplorer::after {
+        content: "Currently, the team viewer is only available to desktop users."
+    }
 }
 
 

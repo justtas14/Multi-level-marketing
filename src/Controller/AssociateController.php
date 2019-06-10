@@ -7,8 +7,10 @@ use App\Entity\File;
 use App\Entity\Invitation;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
+use App\Filter\AssociateFilter;
 use App\Form\InvitationType;
 use App\Form\UserUpdateType;
+use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\InvitationManager;
 use Exception;
@@ -80,8 +82,10 @@ class AssociateController extends AbstractController
      * @param InvitationManager $invitationManager
      * @return Response
      */
-    public function associateInvitation(Request $request, InvitationManager $invitationManager)
-    {
+    public function associateInvitation(
+        Request $request,
+        InvitationManager $invitationManager
+    ) {
         /**
          * @var User $user
          */
@@ -91,10 +95,15 @@ class AssociateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             $invitation = new Invitation();
             $email = trim($form['email']->getData());
+            /** @var AssociateRepository $associateRepo */
+            $associateRepo = $em->getRepository(Associate::class);
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
+            } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
+                $this->addFlash('error', 'Associate already exists');
             } else {
                 $invitation->setSender($user->getAssociate());
                 $invitation->setEmail($email);
@@ -102,7 +111,6 @@ class AssociateController extends AbstractController
 
                 $invitationManager->send($invitation);
 
-                $em = $this->getDoctrine()->getManager();
                 $em->persist($invitation);
                 $em->flush();
 

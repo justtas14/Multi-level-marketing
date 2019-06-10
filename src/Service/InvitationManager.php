@@ -34,18 +34,25 @@ class InvitationManager
     /** @var EmailTemplateManager $emailTemplateManager */
     private $emailTemplateManager;
 
+    /**
+     * @var string
+     */
+    private $sender;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         Twig_Environment $twig,
         \Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
-        EmailTemplateManager $emailTemplateManager
+        EmailTemplateManager $emailTemplateManager,
+        string $invitationSender
     ) {
         $this->em = $entityManager;
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->router = $router;
         $this->emailTemplateManager = $emailTemplateManager;
+        $this->sender = $invitationSender;
     }
 
     public function send(Invitation $invitation)
@@ -71,7 +78,7 @@ class InvitationManager
                     ['link' => $link, 'senderName' => $invitation->getSender()->getFullName()]
                 )
             )
-            ->setFrom($invitation->getSender()->getEmail())
+            ->setFrom($this->sender)
             ->setTo($invitation->getEmail())
             ->setBody(
                 $templateBody->render(
@@ -79,6 +86,8 @@ class InvitationManager
                 ),
                 'text/html'
             );
+        $headers = $message->getHeaders();
+        $headers->addTextHeader('X-Mailer', 'PHP v'.phpversion());
         $this->mailer->send($message);
     }
 

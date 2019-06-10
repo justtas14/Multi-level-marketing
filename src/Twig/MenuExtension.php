@@ -61,6 +61,10 @@ class MenuExtension extends AbstractExtension
                 'label' => 'Associate Home'
             ],
             [
+                'route' => 'team_viewer',
+                'label' => 'Team Viewer'
+            ],
+            [
                 'route' => 'associate_invite',
                 'label' => 'Invite Associates'
             ],

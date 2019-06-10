@@ -9,7 +9,7 @@
                 <span class="card-title">Email Template</span>
                 <div id="flash-messages">
                     {% for message in app.flashes('error') %}
-                        <div class="alert alert-error">
+                        <div class="error__block">
                             {{ message }}
                         </div>
                     {% endfor %}

@@ -154,10 +154,6 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Content changed');
         }
 
-        if ($form->getErrors()) {
-
-        }
-
         $em->refresh($configuration);
         return $this->render('admin/changeContent.html.twig', [
             'form' => $form->createView()

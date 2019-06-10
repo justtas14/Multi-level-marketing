@@ -54,7 +54,13 @@
                         <div class="associate-enrollerDetailsContainer">
                             <p>Email: {{ parent.email }}</p>
                             <p>Full name: {{ parent.fullName }}</p>
-                            <p>Mobile phone: {{ parent.mobilePhone }}</p>
+                            <p>Mobile phone:
+                                {% if parent.mobilePhone == '' %}
+                                    -
+                                {% else %}
+                                    {{ parent.mobilePhone }}
+                                {% endif %}
+                            </p>
                         </div>
                     {% else %}
                         <div>Company</div>

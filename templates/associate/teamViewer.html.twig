@@ -1,15 +1,14 @@
 {% extends 'bodyBase.html.twig' %}
 
 {% block content %}
-    <link href="{{ asset('assets/css/explorer_main.css') }}" rel="stylesheet">
     <div class="card__container">
         <div class="card">
             <div class="card-content">
-                <span class="card-title">Viewer</span>
+                <span class="card-title">Team Viewer</span>
                 <div>
-                    <div id="root"
+                    <div id="rootExplorer"
                          data-source="/associate/downline"
-                         data-details="/associate/info"
+                         data-details=""
                     ></div>
                 </div>
             </div>

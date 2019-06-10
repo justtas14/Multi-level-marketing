@@ -1,7 +1,8 @@
 import {
     NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH,
     PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION,
-    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA, OPEN_MODAL
+    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA,
+    OPEN_MODAL, SHOW_SPINNER, HIDE_SPINNER
 } from './actionTypes';
 
 export const nameSearch = (name) => {
@@ -79,6 +80,16 @@ export const openModal = (id) => {
     }
 };
 
+export const showSpinner = () => {
+    return {
+        type: SHOW_SPINNER
+    }
+};
 
+export const hideSpinner = () => {
+    return {
+        type: HIDE_SPINNER
+    }
+};
 
 
