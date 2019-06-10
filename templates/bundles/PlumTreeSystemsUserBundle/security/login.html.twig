@@ -6,7 +6,12 @@
 
 <div class="login-container">
     <div class="login-logoContainer">
-        <img src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+        {% set logo = getLogo() %}
+        {% if logo is not null %}
+            <img src="{{ logo|downloadUrlParser }}" />
+        {% else%}
+            <img src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+        {% endif %}
     </div>
 
     <div class="login-title">
