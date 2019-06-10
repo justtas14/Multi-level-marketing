@@ -69,6 +69,7 @@
     width: 100%;
     max-height: 100px;
     border-radius:25px 25px 25px 25px;
+    object-fit: contain;
 }
 
 .sidebar--active {
