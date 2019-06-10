@@ -120,7 +120,7 @@ class AssociateManagerTest extends WebTestCase
 
         $em = $this->fixtures->getManager();
 
-        $associate = $em->find(Associate::class, 1);
+        $em->find(Associate::class, 1);
 
         $assertExpectedValues = [2,4,6,5,4];
 

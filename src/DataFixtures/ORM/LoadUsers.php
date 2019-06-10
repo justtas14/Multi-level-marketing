@@ -126,8 +126,8 @@ class LoadUsers extends Fixture
             'SkyeReid@dayrep.com',
             '1234',
             ['ROLE_ADMIN','ROLE_USER'],
-            '2152',
             'Skye Reid',
+            '2152',
             $manager,
             $user7
         );
@@ -146,8 +146,8 @@ class LoadUsers extends Fixture
             'MichaelWard@dayrep.com',
             '1234',
             ['ROLE_USER'],
-            '54578',
             'Michael Ward',
+            '54578',
             $manager,
             $user8
         );
@@ -166,8 +166,8 @@ class LoadUsers extends Fixture
             'AimeeWells@armyspy.com',
             '1234',
             ['ROLE_USER'],
-            '144114',
             'Aimee Wells',
+            '144114',
             $manager,
             $user8
         );
@@ -176,8 +176,8 @@ class LoadUsers extends Fixture
             'AaronBull@rhyta.com',
             '1234',
             ['ROLE_USER'],
-            '25412423',
             'Aaron Bull',
+            '25412423',
             $manager,
             $user12
         );
@@ -186,8 +186,8 @@ class LoadUsers extends Fixture
             'AbbieBarker@armyspy.com',
             '1234',
             ['ROLE_USER'],
-            '254123',
             'Abbie Barker',
+            '254123',
             $manager,
             $user12
         );
@@ -196,8 +196,8 @@ class LoadUsers extends Fixture
             'HaydenPower@teleworm.us',
             '1234',
             ['ROLE_USER'],
-            '14214',
             'Hayden Power',
+            '14214',
             $manager,
             $user15
         );
@@ -206,8 +206,8 @@ class LoadUsers extends Fixture
             'ElizabethLeonard@dayrep.com',
             '1234',
             ['ROLE_USER'],
-            '1447214',
             'Elizabeth Leonard',
+            '1447214',
             $manager,
             $user16
         );
@@ -216,8 +216,8 @@ class LoadUsers extends Fixture
             'ArchieWatts@rhyta.com',
             '1234',
             ['ROLE_USER'],
-            '14414',
             'Archie Watts',
+            '14414',
             $manager,
             $user17
         );

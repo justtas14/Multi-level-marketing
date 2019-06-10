@@ -3,6 +3,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\EmailTemplate;
 use App\Entity\Invitation;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
@@ -85,8 +86,8 @@ class AdminControllerTest extends WebTestCase
         $message = $collectedMessages[0];
 
         $this->assertInstanceOf('Swift_Message', $message);
-        $this->assertSame('You got invited by Justas. ', $message->getSubject());
-        $this->assertSame($user->getEmail(), key($message->getFrom()));
+        $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
     }
 
@@ -134,7 +135,7 @@ class AdminControllerTest extends WebTestCase
         $client->request(
             'POST',
             '/login',
-            ['submit' => true, '_username' => 'draustinis@gmail.com', '_password' => 'draustinis']
+            ['submit' => true, '_username' => 'associate@example.com', '_password' => '1234']
         );
 
         $client->request('GET', '/');
@@ -160,7 +161,7 @@ class AdminControllerTest extends WebTestCase
         $client->request(
             'POST',
             '/login',
-            ['submit' => true, '_username' => 'justtas14@gmail.com', '_password' => 'justtas14']
+            ['submit' => true, '_username' => 'admin@example.com', '_password' => '1234']
         );
 
         $crawler = $client->request('GET', '/admin/endprelaunch');
@@ -184,7 +185,7 @@ class AdminControllerTest extends WebTestCase
         $client->request(
             'POST',
             '/login',
-            ['submit' => true, '_username' => 'draustinis@gmail.com', '_password' => 'draustinis']
+            ['submit' => true, '_username' => 'associate@example.com', '_password' => '1234']
         );
 
         $client->request('GET', '/');
@@ -202,5 +203,49 @@ class AdminControllerTest extends WebTestCase
         $targetUrl = $client->getResponse()->isRedirection();
 
         $this->assertFalse($targetUrl);
+    }
+
+    /**
+     *  Testing email template form functionality
+     *
+     * - Request to email templates page when logged in as admin and expected to find one emailTemplate with
+     * appropriate params. Change form values and submit.
+     * - Expected that emailTemplate values have updated in database.
+     */
+    public function testEmailTemplate()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/admin/emailtemplates');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy([]);
+
+        $this->assertEquals("You got invited by {{senderName}}. ", $emailTemplate->getEmailSubject());
+        $this->assertEquals("<br/> Here is your link {{link}} <br/><br/>", $emailTemplate->getEmailBody());
+        $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
+
+        $form = $crawler->selectButton('Change Template')->form();
+
+        $form->get('email_template')['emailSubject']->setValue("You got invited by {{senderName}}!!! ");
+        $form->get('email_template')['emailBody']->setValue("<br/> Here is your link {{link}}!!!<br/><br/>");
+
+        $client->submit($form);
+
+        $em->refresh($emailTemplate);
+
+        $this->assertEquals("You got invited by {{senderName}}!!!", $emailTemplate->getEmailSubject());
+        $this->assertEquals("<br/> Here is your link {{link}}!!!<br/><br/>", $emailTemplate->getEmailBody());
+        $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
     }
 }

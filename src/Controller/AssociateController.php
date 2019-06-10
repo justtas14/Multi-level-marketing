@@ -59,7 +59,8 @@ class AssociateController extends AbstractController
         return $this->render('associate/index.html.twig', [
             'associatesInLevels' => $associateInLevels,
             'parent' => $userParent,
-            'directAssociates' => $directAssociates
+            'directAssociates' => $directAssociates,
+            'maxLevel' => $level
         ]);
     }
 

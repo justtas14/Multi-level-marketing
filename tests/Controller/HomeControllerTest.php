@@ -166,7 +166,7 @@ class HomeControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $form->get('user_registration')['email']->setValue('justtas14@gmail.com');
+        $form->get('user_registration')['email']->setValue('BaileyBrookes@dayrep.com');
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
         $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
         $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
@@ -185,7 +185,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.alert-error')->html()
+            $crawler->filter('div.error__block')->html()
         );
 
         /** @var Invitation $invitation */

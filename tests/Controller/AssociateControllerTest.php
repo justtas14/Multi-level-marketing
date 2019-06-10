@@ -61,9 +61,9 @@ class AssociateControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
-        $form->get('user_update')['oldPassword']->setValue('vanagas');
-        $form->get('user_update')['newPassword']['first']->setValue('justtas');
-        $form->get('user_update')['newPassword']['second']->setValue('justtas');
+        $form->get('user_update')['oldPassword']->setValue('1234');
+        $form->get('user_update')['newPassword']['first']->setValue('123456789');
+        $form->get('user_update')['newPassword']['second']->setValue('123456789');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -80,10 +80,10 @@ class AssociateControllerTest extends WebTestCase
 
         $em->refresh($user);
 
-        $this->assertEquals('vanagas@gmail.com', $user->getEmail());
+        $this->assertEquals('associate@example.com', $user->getEmail());
 
         $encoder = $container->get('security.user_password_encoder.generic');
-        $this->assertTrue($encoder->isPasswordValid($user, 'justtas'));
+        $this->assertTrue($encoder->isPasswordValid($user, '123456789'));
 
         $this->assertEquals('Justas', $user->getAssociate()->getFullName());
         $this->assertEquals('LT', $user->getAssociate()->getCountry());
@@ -102,7 +102,7 @@ class AssociateControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $form->get('user_update')['email']->setValue("justtas14@gmail.com");
+        $form->get('user_update')['email']->setValue("admin@example.com");
         $form->get('user_update')['oldPassword']->setValue('justtas14');
         $form->get('user_update')['newPassword']['first']->setValue('justtas');
         $form->get('user_update')['newPassword']['second']->setValue('justtas');
@@ -124,7 +124,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.alert-error')->html()
+            $crawler->filter('div.error__block')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -153,7 +153,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'Old password is not correct',
-            $crawler->filter('div.alert-error')->html()
+            $crawler->filter('div.error__block')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -161,7 +161,7 @@ class AssociateControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
-        $form->get('user_update')['oldPassword']->setValue('justtas');
+        $form->get('user_update')['oldPassword']->setValue('123456789');
         $form->get('user_update')['newPassword']['first']->setValue('');
         $form->get('user_update')['newPassword']['second']->setValue('');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
@@ -181,7 +181,7 @@ class AssociateControllerTest extends WebTestCase
         $em->refresh($user);
 
         $encoder = $container->get('security.user_password_encoder.generic');
-        $this->assertTrue($encoder->isPasswordValid($user, 'justtas'));
+        $this->assertTrue($encoder->isPasswordValid($user, '123456789'));
     }
 
     /**
@@ -218,9 +218,9 @@ class AssociateControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
-        $form->get('user_update')['oldPassword']->setValue('justtas14');
-        $form->get('user_update')['newPassword']['first']->setValue('justtas');
-        $form->get('user_update')['newPassword']['second']->setValue('justtas');
+        $form->get('user_update')['oldPassword']->setValue('1234');
+        $form->get('user_update')['newPassword']['first']->setValue('12345');
+        $form->get('user_update')['newPassword']['second']->setValue('12345');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -237,10 +237,10 @@ class AssociateControllerTest extends WebTestCase
 
         $em->refresh($user);
 
-        $this->assertEquals('justtas14@gmail.com', $user->getEmail());
+        $this->assertEquals('admin@example.com', $user->getEmail());
 
         $encoder = $container->get('security.user_password_encoder.generic');
-        $this->assertTrue($encoder->isPasswordValid($user, 'justtas'));
+        $this->assertTrue($encoder->isPasswordValid($user, '12345'));
 
         $this->assertEquals('Justas', $user->getAssociate()->getFullName());
         $this->assertEquals('LT', $user->getAssociate()->getCountry());
@@ -259,10 +259,10 @@ class AssociateControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $form->get('user_update')['email']->setValue("vanagas@gmail.com");
-        $form->get('user_update')['oldPassword']->setValue('justtas14');
-        $form->get('user_update')['newPassword']['first']->setValue('justtas');
-        $form->get('user_update')['newPassword']['second']->setValue('justtas');
+        $form->get('user_update')['email']->setValue("BaileyBrookes@dayrep.com");
+        $form->get('user_update')['oldPassword']->setValue('12345');
+        $form->get('user_update')['newPassword']['first']->setValue('123456789');
+        $form->get('user_update')['newPassword']['second']->setValue('123456789');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -281,7 +281,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.alert-error')->html()
+            $crawler->filter('div.error__block')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -310,7 +310,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'Old password is not correct',
-            $crawler->filter('div.alert-error')->html()
+            $crawler->filter('div.error__block')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -318,7 +318,7 @@ class AssociateControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
-        $form->get('user_update')['oldPassword']->setValue('justtas');
+        $form->get('user_update')['oldPassword']->setValue('12345');
         $form->get('user_update')['newPassword']['first']->setValue('');
         $form->get('user_update')['newPassword']['second']->setValue('');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
@@ -338,6 +338,6 @@ class AssociateControllerTest extends WebTestCase
         $em->refresh($user);
 
         $encoder = $container->get('security.user_password_encoder.generic');
-        $this->assertTrue($encoder->isPasswordValid($user, 'justtas'));
+        $this->assertTrue($encoder->isPasswordValid($user, '12345'));
     }
 }
