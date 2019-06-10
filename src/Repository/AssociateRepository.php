@@ -27,13 +27,20 @@ class AssociateRepository extends ServiceEntityRepository
      */
     private function getAssociateFilterQuerryBuilder(AssociateFilter $filter) : QueryBuilder
     {
-        return $this->createQueryBuilder('a')
-            ->where('a.fullName LIKE :fullName')
-            ->andWhere('a.email LIKE :email')
-            ->andWhere('a.mobilePhone LIKE :telephone')
-            ->setParameter('fullName', '%'.$filter->getFullName().'%')
-            ->setParameter('email', '%'.$filter->getEmail().'%')
-            ->setParameter('telephone', '%'.$filter->getTelephone().'%');
+        $qb = $this->createQueryBuilder('a');
+        if ($filter->getFullName()) {
+            $qb->where('a.fullName LIKE :fullName')
+                ->setParameter('fullName', '%'.$filter->getFullName().'%');
+        }
+        if ($filter->getEmail()) {
+            $qb->andWhere('a.email LIKE :email')
+                ->setParameter('email', '%'.$filter->getEmail().'%');
+        }
+        if ($filter->getTelephone()) {
+            $qb->andWhere('a.mobilePhone LIKE :telephone')
+                ->setParameter('telephone', '%'.$filter->getTelephone().'%');
+        }
+        return $qb;
     }
 
     public function findAssociatesByFilter(AssociateFilter $filter, $limit, $offset)

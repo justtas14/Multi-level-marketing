@@ -90,70 +90,117 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
     }
 
-//    public function testEndPrelaunch()
-//    {
-//        /** @var EntityManager $em */
-//        $em = $this->fixtures->getManager();
-//
-//        /** @var User $user */
-//        $user = $this->fixtures->getReference('user1');
-//
-//        $em->refresh($user);
-//        $this->loginAs($user, 'main');
-//
-//        $client = $this->makeClient();
-//
-//        $crawler = $client->request('GET', '/admin/endprelaunch');
-//
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-//
-//        $form = $crawler->selectButton('End prelaunch')->form();
-//
-//        $form->get('end_prelaunch')['hasPrelaunchEnded']->setValue(false);
-//
-//        $client->submit($form);
-//
-//        $user = $this->fixtures->getReference('user4');
-//
-//        $em->refresh($user);
-//        $this->loginAs($user, 'main');
-//
-//        $client->request('GET', '/');
-//
-//        $targetUrl = $client->getResponse()->isRedirect("/associate");
-//
-//        $this->assertTrue($targetUrl);
-//
-//        $client->request('GET', '/landingpage');
-//
-//        $targetUrl = $client->getResponse()->isRedirect("/");
-//
-//        $this->assertTrue($targetUrl);
-//
-//        $user = $this->fixtures->getReference('user1');
-//
-//        $em->refresh($user);
-//        $this->loginAs($user, 'main');
-//
-//        $crawler = $client->request('GET', '/admin/endprelaunch');
-//
-//        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-//
-//        $form = $crawler->selectButton('End prelaunch')->form();
-//
-//        $form->get('end_prelaunch')['hasPrelaunchEnded']->setValue(true);
-//
-//        $client->submit($form);
-//
-//        $user = $this->fixtures->getReference('user4');
-//
-//        $em->refresh($user);
-//        $this->loginAs($user, 'main');
-//
-//        $client->request('GET', '/');
-//
-//        $client->followRedirect();
-//
-//        $this->assertTrue($targetUrl);
-//    }
+
+    /**
+     *  Testing end prelaunch feature
+     *
+     *  - Login as admin and go to end prelaunch form, set end prelaunch to false and submit. Then login with
+     * different not admin user.
+     *  - Expected to be redirected in associate page after requests to '/' and '/associate' pages. Also expected
+     * redirection then requested to '/landingpage' because landing page is not ended.
+     *
+     *  - Login as admin and go to end prelaunch form, set end prelaunch to true and submit. Admin isn't redirected
+     * to landing page. Then login with different not admin user.
+     *  - Expected to be redirected in landing page after requests to '/' and '/associate' pages. Also expected not
+     * to be redirected then requested to '/landingpage' because prelaunch is ended.
+     */
+    public function testEndPrelaunch()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/admin/endprelaunch');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('Save')->form();
+
+        $form->get('end_prelaunch')['prelaunchEnded']->setValue(false);
+
+        $client->submit($form);
+
+        $client->request('GET', '/logout');
+
+        $client->enableProfiler();
+
+        $client->request(
+            'POST',
+            '/login',
+            ['submit' => true, '_username' => 'draustinis@gmail.com', '_password' => 'draustinis']
+        );
+
+        $client->request('GET', '/');
+
+        $targetUrl = $client->getResponse()->isRedirect("/associate");
+
+        $this->assertTrue($targetUrl);
+
+        $client->request('GET', '/associate');
+
+        $isRedirection = $client->getResponse()->isRedirection();
+
+        $this->assertFalse($isRedirection);
+
+        $client->request('GET', '/landingpage');
+
+        $targetUrl = $client->getResponse()->isRedirect("/");
+
+        $this->assertTrue($targetUrl);
+
+        $client->request('GET', '/logout');
+
+        $client->request(
+            'POST',
+            '/login',
+            ['submit' => true, '_username' => 'justtas14@gmail.com', '_password' => 'justtas14']
+        );
+
+        $crawler = $client->request('GET', '/admin/endprelaunch');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('Save')->form();
+
+        $form->get('end_prelaunch')['prelaunchEnded']->setValue(true);
+
+        $client->submit($form);
+
+        $client->request('GET', '/');
+
+        $targetUrl = $client->getResponse()->isRedirect("/admin");
+
+        $this->assertTrue($targetUrl);
+
+        $client->request('GET', '/logout');
+
+        $client->request(
+            'POST',
+            '/login',
+            ['submit' => true, '_username' => 'draustinis@gmail.com', '_password' => 'draustinis']
+        );
+
+        $client->request('GET', '/');
+
+        $client->getResponse()->isRedirect("/landingpage");
+
+        $client->request('GET', '/associate');
+
+        $targetUrl = $client->getResponse()->isRedirect("/landingpage");
+
+        $this->assertTrue($targetUrl);
+
+        $client->request('GET', '/landingpage');
+
+        $targetUrl = $client->getResponse()->isRedirection();
+
+        $this->assertFalse($targetUrl);
+    }
 }

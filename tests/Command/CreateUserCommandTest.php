@@ -38,13 +38,15 @@ class CreateUserCommandTest extends WebTestCase
         $email = 'email@gmail.com';
         $fullName = 'name';
         $password = 'pass';
+        $mobilePhone = '4848648';
 
         $this->runCommand(
             'app:create:admin',
             [
                 'email' => $email,
                 'fullName' => $fullName,
-                'password' => $password
+                'password' => $password,
+                'mobilePhone' => $mobilePhone
             ]
         );
 
@@ -71,5 +73,6 @@ class CreateUserCommandTest extends WebTestCase
         $this->assertNotNull($associate);
         $this->assertEquals('name', $associate->getFullName());
         $this->assertEquals('email@gmail.com', $associate->getEmail());
+        $this->assertEquals('4848648', $associate->getMobilePhone());
     }
 }

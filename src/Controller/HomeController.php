@@ -58,10 +58,7 @@ class HomeController extends AbstractController
         }
 
         $configuration = $cm->getConfiguration();
-        $termsOfServices = null;
-        if ($configuration && $configuration->getTermsOfServices()) {
-            $termsOfServices = $configuration->getTermsOfServices();
-        }
+        $termsOfServices = $configuration->getTermsOfServices();
 
         $user = new User();
         $associate = new Associate();
@@ -113,7 +110,7 @@ class HomeController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
-        if (!$configuration || !$configuration->hasPrelaunchEnded()) {
+        if (!$configuration->hasPrelaunchEnded()) {
             return $this->redirectToRoute('home');
         }
 

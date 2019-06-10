@@ -17,6 +17,7 @@ class LoadUsers extends Fixture
             'justtas14',
             ['ROLE_ADMIN', 'ROLE_USER'],
             'Justas',
+            '12455412',
             $manager
         );
         $user2 = $this->createUser(
@@ -25,6 +26,7 @@ class LoadUsers extends Fixture
             'vanagas',
             ['ROLE_USER'],
             'Vanagas',
+            '44864',
             $manager,
             $user1
         );
@@ -35,6 +37,7 @@ class LoadUsers extends Fixture
             'paukstis',
             ['ROLE_USER'],
             'Paukstis',
+            '254345',
             $manager,
             $user1
         );
@@ -44,6 +47,7 @@ class LoadUsers extends Fixture
             'draustinis',
             ['ROLE_USER'],
             'Draustinis',
+            '14546',
             $manager,
             $user2
         );
@@ -53,6 +57,7 @@ class LoadUsers extends Fixture
             'dangus',
             ['ROLE_USER'],
             'Dangus',
+            '45454',
             $manager,
             $user2
         );
@@ -62,6 +67,7 @@ class LoadUsers extends Fixture
             'rankena',
             ['ROLE_USER'],
             'Rankena',
+            '865483621',
             $manager,
             $user3
         );
@@ -71,6 +77,7 @@ class LoadUsers extends Fixture
             'lempa',
             ['ROLE_USER'],
             'Lempa',
+            '122545',
             $manager,
             $user3
         );
@@ -80,6 +87,7 @@ class LoadUsers extends Fixture
             'uzuolaida',
             ['ROLE_USER'],
             'Uzuolaida',
+            '24534543',
             $manager,
             $user5
         );
@@ -89,6 +97,7 @@ class LoadUsers extends Fixture
             'skritulys',
             ['ROLE_USER'],
             'Skritulys',
+            '152543',
             $manager,
             $user5
         );
@@ -98,6 +107,7 @@ class LoadUsers extends Fixture
             'puodas',
             ['ROLE_USER'],
             'Puodas',
+            '21524152',
             $manager,
             $user6
         );
@@ -107,6 +117,7 @@ class LoadUsers extends Fixture
             'draugas',
             ['ROLE_USER'],
             'Draugas',
+            '214152',
             $manager,
             $user7
         );
@@ -116,6 +127,7 @@ class LoadUsers extends Fixture
             'priesas',
             ['ROLE_ADMIN','ROLE_USER'],
             'Priesas',
+            '2152',
             $manager,
             $user7
         );
@@ -125,6 +137,7 @@ class LoadUsers extends Fixture
             'kompas',
             ['ROLE_USER'],
             'Kompas',
+            '1441',
             $manager,
             $user7
         );
@@ -134,6 +147,7 @@ class LoadUsers extends Fixture
             'wifi',
             ['ROLE_USER'],
             'Wifi',
+            '54578',
             $manager,
             $user8
         );
@@ -143,6 +157,7 @@ class LoadUsers extends Fixture
             'penktadienis',
             ['ROLE_USER'],
             'Penktadienis',
+            '12453',
             $manager,
             $user8
         );
@@ -152,6 +167,7 @@ class LoadUsers extends Fixture
             'veidrodis',
             ['ROLE_USER'],
             'Veidrodis',
+            '144114',
             $manager,
             $user8
         );
@@ -161,6 +177,7 @@ class LoadUsers extends Fixture
             'ekecia',
             ['ROLE_USER'],
             'Ekecia',
+            '25412423',
             $manager,
             $user12
         );
@@ -170,6 +187,7 @@ class LoadUsers extends Fixture
             'baterija',
             ['ROLE_USER'],
             'Baterija',
+            '254123',
             $manager,
             $user12
         );
@@ -179,6 +197,7 @@ class LoadUsers extends Fixture
             'suva',
             ['ROLE_USER'],
             'Suva',
+            '14214',
             $manager,
             $user15
         );
@@ -188,6 +207,7 @@ class LoadUsers extends Fixture
             'kate',
             ['ROLE_USER'],
             'kate',
+            '1447214',
             $manager,
             $user16
         );
@@ -197,6 +217,7 @@ class LoadUsers extends Fixture
             'diena',
             ['ROLE_USER'],
             'diena',
+            '14414',
             $manager,
             $user17
         );
@@ -206,13 +227,14 @@ class LoadUsers extends Fixture
             'horizontas',
             ['ROLE_USER'],
             'horizontas',
+            '144147',
             $manager,
             $user17
         );
 
         $manager->flush();
     }
-    private function createUser($nr, $email, $plainPassword, $roles, $fullName, $manager, $parent = null)
+    private function createUser($nr, $email, $plainPassword, $roles, $fullName, $telephone, $manager, $parent = null)
     {
         $user = new User();
         $associate = new Associate();
@@ -225,6 +247,7 @@ class LoadUsers extends Fixture
         $associate->setId($nr);
         $associate->setFullName($fullName);
         $associate->setEmail($email);
+        $associate->setMobilePhone($telephone);
         /** @var User $parent */
         if ($parent) {
             $associate->setParent($parent->getAssociate());
