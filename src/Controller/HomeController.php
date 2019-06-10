@@ -63,6 +63,7 @@ class HomeController extends AbstractController
         $user = new User();
         $associate = new Associate();
         $user->setEmail($invitation->getEmail());
+        $associate->setEmail($invitation->getEmail());
         $associate->setFullName($invitation->getFullName());
         $user->setAssociate($associate);
 

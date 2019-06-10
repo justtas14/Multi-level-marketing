@@ -13,19 +13,19 @@ class LoadUsers extends Fixture
     {
         $user1 = $this->createUser(
             '1',
-            'justtas14@gmail.com',
-            'justtas14',
+            'admin@example.com',
+            '1234',
             ['ROLE_ADMIN', 'ROLE_USER'],
-            'Justas',
+            'Connor Vaughan',
             '12455412',
             $manager
         );
         $user2 = $this->createUser(
             '2',
-            'vanagas@gmail.com',
-            'vanagas',
+            'associate@example.com',
+            '1234',
             ['ROLE_USER'],
-            'Vanagas',
+            'Lucy Tomlinson',
             '44864',
             $manager,
             $user1
@@ -33,200 +33,200 @@ class LoadUsers extends Fixture
 
         $user3 = $this->createUser(
             '3',
-            'paukstis@gmail.com',
-            'paukstis',
+            'SarahCunningham@dayrep.com',
+            '1234',
             ['ROLE_USER'],
-            'Paukstis',
+            'Sarah Cunningham',
             '254345',
             $manager,
             $user1
         );
         $user4 = $this->createUser(
             '4',
-            'draustinis@gmail.com',
-            'draustinis',
+            'BaileyBrookes@dayrep.com',
+            '1234',
             ['ROLE_USER'],
-            'Draustinis',
+            'Bailey Brookes',
             '14546',
             $manager,
             $user2
         );
         $user5 = $this->createUser(
             '5',
-            'dangus@gmail.com',
-            'dangus',
+            'AidanNewman@dayrep.com',
+            '1234',
             ['ROLE_USER'],
-            'Dangus',
+            'Aidan Newman',
             '45454',
             $manager,
             $user2
         );
         $user6 = $this->createUser(
             '6',
-            'rankena@gmail.com',
-            'rankena',
+            'NatashaHutchinson@rhyta.com',
+            '1234',
             ['ROLE_USER'],
-            'Rankena',
+            'Natasha Hutchinson',
             '865483621',
             $manager,
             $user3
         );
         $user7 = $this->createUser(
             '7',
-            'lempa@gmail.com',
-            'lempa',
+            'JayPrice@rhyta.com',
+            '1234',
             ['ROLE_USER'],
-            'Lempa',
+            'Jay Price',
             '122545',
             $manager,
             $user3
         );
         $user8 = $this->createUser(
             '8',
-            'uzuolaida@gmail.com',
-            'uzuolaida',
+            'AaliyahLees@armyspy.com',
+            '1234',
             ['ROLE_USER'],
-            'Uzuolaida',
+            'Aaliyah Lees',
             '24534543',
             $manager,
             $user5
         );
         $user9 = $this->createUser(
             '9',
-            'skritulys@gmail.com',
-            'skritulys',
+            'LewisBenson@jourrapide.com',
+            '1234',
             ['ROLE_USER'],
-            'Skritulys',
+            'Lewis Benson',
             '152543',
             $manager,
             $user5
         );
         $user10 = $this->createUser(
             '10',
-            'puodas@gmail.com',
-            'puodas',
+            'JoeChan@jourrapide.com',
+            '1234',
             ['ROLE_USER'],
-            'Puodas',
+            'Joe Chan',
             '21524152',
             $manager,
             $user6
         );
         $user11 = $this->createUser(
             '11',
-            'draugas@gmail.com',
-            'draugas',
+            'JenniferGreen@jourrapide.com',
+            '1234',
             ['ROLE_USER'],
-            'Draugas',
+            'Jennifer Green',
             '214152',
             $manager,
             $user7
         );
         $user12 = $this->createUser(
             '12',
-            'priesas@gmail.com',
-            'priesas',
+            'SkyeReid@dayrep.com',
+            '1234',
             ['ROLE_ADMIN','ROLE_USER'],
-            'Priesas',
             '2152',
+            'Skye Reid',
             $manager,
             $user7
         );
         $user13 = $this->createUser(
             '13',
-            'kompas@gmail.com',
-            'kompas',
+            'TobyBarker@teleworm.us',
+            '1234',
             ['ROLE_USER'],
-            'Kompas',
+            'Toby Barker',
             '1441',
             $manager,
             $user7
         );
         $user14 = $this->createUser(
             '14',
-            'wifi@gmail.com',
-            'wifi',
+            'MichaelWard@dayrep.com',
+            '1234',
             ['ROLE_USER'],
-            'Wifi',
             '54578',
+            'Michael Ward',
             $manager,
             $user8
         );
         $user15 = $this->createUser(
             '15',
-            'penktadienis@gmail.com',
-            'penktadienis',
+            'SamanthaFaulkner@dayrep.com',
+            '1234',
             ['ROLE_USER'],
-            'Penktadienis',
+            'Samantha Faulkner',
             '12453',
             $manager,
             $user8
         );
         $user16 = $this->createUser(
             '16',
-            'veidrodis@gmail.com',
-            'veidrodis',
+            'AimeeWells@armyspy.com',
+            '1234',
             ['ROLE_USER'],
-            'Veidrodis',
             '144114',
+            'Aimee Wells',
             $manager,
             $user8
         );
         $user17 = $this->createUser(
             '17',
-            'ekecia@gmail.com',
-            'ekecia',
+            'AaronBull@rhyta.com',
+            '1234',
             ['ROLE_USER'],
-            'Ekecia',
             '25412423',
+            'Aaron Bull',
             $manager,
             $user12
         );
         $user18 = $this->createUser(
             '18',
-            'baterija@gmail.com',
-            'baterija',
+            'AbbieBarker@armyspy.com',
+            '1234',
             ['ROLE_USER'],
-            'Baterija',
             '254123',
+            'Abbie Barker',
             $manager,
             $user12
         );
         $user19 = $this->createUser(
             '19',
-            'suva@gmail.com',
-            'suva',
+            'HaydenPower@teleworm.us',
+            '1234',
             ['ROLE_USER'],
-            'Suva',
             '14214',
+            'Hayden Power',
             $manager,
             $user15
         );
         $user20 = $this->createUser(
             '20',
-            'kate@gmail.com',
-            'kate',
+            'ElizabethLeonard@dayrep.com',
+            '1234',
             ['ROLE_USER'],
-            'kate',
             '1447214',
+            'Elizabeth Leonard',
             $manager,
             $user16
         );
         $user21 = $this->createUser(
             '21',
-            'diena@gmail.com',
-            'diena',
+            'ArchieWatts@rhyta.com',
+            '1234',
             ['ROLE_USER'],
-            'diena',
             '14414',
+            'Archie Watts',
             $manager,
             $user17
         );
         $user22 = $this->createUser(
             '22',
-            'horizontas@gmail.com',
-            'horizontas',
+            'IsabelleMoran@jourrapide.com',
+            '1234',
             ['ROLE_USER'],
-            'horizontas',
+            'Isabelle Moran',
             '144147',
             $manager,
             $user17

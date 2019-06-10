@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use PlumTreeSystems\UserBundle\Entity\User as PTSUser;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -22,6 +23,7 @@ class User extends PTSUser
     /**
      * @ORM\ManyToOne(targetEntity="Associate")
      * @var Associate
+     * @Assert\Valid
      */
     private $associate;
 
@@ -57,5 +59,10 @@ class User extends PTSUser
     {
         $this->associate = $associate;
         return $this;
+    }
+
+    public function isAdmin()
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
     }
 }

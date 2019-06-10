@@ -34,6 +34,7 @@ class UserUpdateType extends AbstractType
     {
         $resolver->setDefaults([
             'validation_groups' => ['Default'],
+            'cascade_validation' => true
         ]);
     }
 }

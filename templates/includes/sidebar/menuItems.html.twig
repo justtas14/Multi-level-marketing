@@ -2,8 +2,8 @@
     {% set currentRoute = app.request.get('_route') %}
     {% set allRoutes = getMenu() %}
     {% if is_granted('ROLE_ADMIN') %}
-        <div class="sidebar-item sidebar__sectionLabel" style="color: purple">
-            <h5>Admin</h5>
+        <div class="sidebar-item sidebar__sectionLabel">
+            Admin
         </div>
         {% for route in allRoutes.adminRoutes %}
             <div class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">
@@ -12,8 +12,8 @@
         {% endfor %}
     {% endif %}
     {% if is_granted('ROLE_USER') %}
-        <div class="sidebar-item sidebar__sectionLabel" style="color: purple">
-            <h5>Associate</h5>
+        <div class="sidebar-item sidebar__sectionLabel">
+            Associate
         </div>
         {% for route in allRoutes.associateRoutes %}
             <div class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">

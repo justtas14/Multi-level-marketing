@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as AssertApp;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -73,6 +74,7 @@ class Associate
      * @var File
      * @ORM\OneToOne(targetEntity="File", cascade={"persist"})
      * @ORM\JoinColumn(name="target_file_id", referencedColumnName="id", onDelete="SET NULL")
+     * @AssertApp\IsImage(message="Only images are allowed")
      */
     private $profilePicture;
 

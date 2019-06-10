@@ -45,6 +45,65 @@ body {
     position: unset!important;
 }
 
+.error__block {
+    border: red 1px solid;
+    color: red;
+    background-color: rgba(255, 214, 214, 0.5);
+    padding: .5em;
+    margin: .25em 0;
+}
+
+.error__block>ul {
+    margin: 0;
+}
+
+.btn, button:focus {
+    background-color: #7f06c4;
+}
+
+.btn:hover, .btn-large:hover, .btn-small:hover {
+    background-color: #6B06AD;
+}
+
+.btn:focus, .btn-large:focus, .btn-small:focus, .btn-floating:focus {
+    background-color: #330459;
+}
+
+[type="checkbox"].filled-in:checked+span:not(.lever):after {
+    border: 2px solid #7f06c4;
+    background-color: #7f06c4;
+}
+
+input:focus, input:focus+label {
+    color: #3ab54a!important;
+    border-bottom-color: #3ab54a!important;
+    box-shadow: 0 1px 0 0 #3ab54a!important;
+}
+
+input:focus+label {
+    border-bottom: 0!important;
+    box-shadow: unset!important;
+}
+
+.SVG_Line {
+    stroke: #3ab54a;
+}
+
+.Node__Container {
+    border: 2px solid #7f06c4;
+    background-color: #7f06c421;
+    border-radius: 17px;
+}
+
+@media only screen and (max-width: 900px) {
+    .NodeMatrix__Container {
+        display: none;
+    }
+    div#rootExplorer::after {
+        content: "Currently, the team viewer is only available to desktop users."
+    }
+}
+
 
 
 

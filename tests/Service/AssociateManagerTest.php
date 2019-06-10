@@ -5,7 +5,7 @@ namespace App\Tests\Service;
 
 use App\Entity\Associate;
 use App\Entity\User;
-use App\Exception\GetAllDirectAssociatesException;
+use App\Exception\NotAncestorException;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -232,7 +232,7 @@ class AssociateManagerTest extends WebTestCase
         $user = $this->fixtures->getReference('user5');
         $this->login($user);
 
-        $this->expectException(GetAllDirectAssociatesException::class);
+        $this->expectException(NotAncestorException::class);
 
         $associateManager->getAllDirectAssociates($associate->getAssociateId());
     }

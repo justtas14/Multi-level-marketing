@@ -9,7 +9,7 @@
                 <span class="card-title">End Prelaunch</span>
                 <div id="flash-messages">
                     {% for message in app.flashes('error') %}
-                        <div class="alert alert-error">
+                        <div class="error__block">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -27,9 +27,11 @@
                             <span>End Prelaunch</span>
                         </label>
                     </div>
+                    {% include 'includes/errorBlock.html.twig' with { field: form.prelaunchEnded } %}
                     <div class="input-field">
                         {{ form_label(form.landingContent) }}
                         {{ form_widget(form.landingContent) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.landingContent } %}
                     </div>
                     {{ form_end(form) }}
                 </main>

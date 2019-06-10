@@ -3,18 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
+use App\Entity\File;
 use App\Entity\Invitation;
 use App\Entity\User;
+use App\Exception\NotAncestorException;
+use App\Filter\AssociateFilter;
 use App\Form\InvitationType;
 use App\Form\UserUpdateType;
+use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\InvitationManager;
 use Exception;
+use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AssociateController extends AbstractController
 {
@@ -57,14 +64,15 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associates/{id}", name="get_associate")
+     * @Route("/associate/info/{id}", name="get_associate")
      * @param $id
+     * @param AssociateManager $associateManager
      * @return Response
+     * @throws NotAncestorException
      */
-    public function getAssociate($id)
+    public function getAssociate($id, AssociateManager $associateManager)
     {
-        $associateRepository = $this->getDoctrine()->getRepository(Associate::class);
-        $associate = $associateRepository->find($id);
+        $associate = $associateManager->getAssociate($id);
         return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
     }
 
@@ -74,8 +82,10 @@ class AssociateController extends AbstractController
      * @param InvitationManager $invitationManager
      * @return Response
      */
-    public function associateInvitation(Request $request, InvitationManager $invitationManager)
-    {
+    public function associateInvitation(
+        Request $request,
+        InvitationManager $invitationManager
+    ) {
         /**
          * @var User $user
          */
@@ -85,10 +95,15 @@ class AssociateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             $invitation = new Invitation();
             $email = trim($form['email']->getData());
+            /** @var AssociateRepository $associateRepo */
+            $associateRepo = $em->getRepository(Associate::class);
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
+            } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
+                $this->addFlash('error', 'Associate already exists');
             } else {
                 $invitation->setSender($user->getAssociate());
                 $invitation->setEmail($email);
@@ -96,7 +111,6 @@ class AssociateController extends AbstractController
 
                 $invitationManager->send($invitation);
 
-                $em = $this->getDoctrine()->getManager();
                 $em->persist($invitation);
                 $em->flush();
 
@@ -115,8 +129,10 @@ class AssociateController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function associateProfile(UserPasswordEncoderInterface $encoder, Request $request)
-    {
+    public function associateProfile(
+        UserPasswordEncoderInterface $encoder,
+        Request $request
+    ) {
         $em = $this->getDoctrine()->getManager();
         /**
          * @var User $user
@@ -124,6 +140,12 @@ class AssociateController extends AbstractController
         $user = $this->getUser();
 
         $currentEmail = $user->getEmail();
+
+        $savedProfilePicture = null;
+        if ($user->getAssociate()->getProfilePicture() !== null) {
+            $savedProfilePicture = $user->getAssociate()->getProfilePicture();
+            $user->getAssociate()->setProfilePicture(null);
+        }
 
         $form = $this->createForm(UserUpdateType::class, $user);
 
@@ -143,7 +165,6 @@ class AssociateController extends AbstractController
                 if ($newPassword) {
                     $user->setPlainPassword($newPassword);
                 }
-
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($user);
                 $em->persist($user->getAssociate());
@@ -154,8 +175,31 @@ class AssociateController extends AbstractController
         }
 
         $em->refresh($user);
+        $em->refresh($user->getAssociate());
         return $this->render('profile.html.twig', [
             'updateProfile' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/associate/downline", name="direct_downline")
+     * @param Request $request
+     * @param AssociateManager $associateManager
+     * @return JsonResponse
+     */
+    public function directDownline(Request $request, AssociateManager $associateManager)
+    {
+        $id = $request->get('id');
+        return new JsonResponse($associateManager->getDirectDownlineAssociates($id), JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * @Route("/associate/viewer", name="team_viewer")
+     * @param Request $request
+     * @return Response
+     */
+    public function teamViewer(Request $request)
+    {
+        return $this->render('associate/teamViewer.html.twig');
     }
 }
