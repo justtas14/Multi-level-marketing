@@ -91,6 +91,9 @@ class HomeController extends AbstractController
                 $em->flush();
                 $em->persist($user);
                 $em->flush();
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->container->get('security.token_storage')->setToken($token);
+                $this->container->get('session')->set('_security_main', serialize($token));
 
                 $this->addFlash('success', 'Registration completed successfully');
                 return $this->redirectToRoute('home');
