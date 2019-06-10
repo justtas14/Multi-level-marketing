@@ -2,8 +2,6 @@
 
 {% block title %}Associate{% endblock %}
 
-{#{% set maxLevel = max(associatesInLevels) %}#}
-
 {% block content %}
     <main>
         <div class="card__container">
@@ -27,13 +25,16 @@
                     </div>
                     <div class="associate-levelConainer">
                         <ul class="associate-levelBarList">
-                            {% for key, associateCount in associatesInLevels %}
-                                <li class="associate-levelBarListItem" style="list-style-type:none;">
-                                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                                        Level {{ key }}: <strong>{{ associateCount }}</strong>
-                                    </div>
-                                </li>
-                            {% endfor %}
+                            {% if associatesInLevels is not empty %}
+                                {% set maxLevel = max(associatesInLevels) %}
+                                {% for key, associateCount in associatesInLevels %}
+                                    <li class="associate-levelBarListItem" style="list-style-type:none;">
+                                        <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                                            Level {{ key }}: <strong>{{ associateCount }}</strong>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
                         </ul>
                     </div>
                 </div>
