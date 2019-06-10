@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Modal from 'react-responsive-modal';
-import { nameSearch, levelSearch, emailSearch, 
+import {
+    nameSearch, levelSearch, emailSearch,
     phoneSearch, dateSearch, addCurrentPagination,
-     scrollDown, addModal, closeModal, loadData, openModal } from '../store/actions/widget';
+    scrollDown, addModal, closeModal, loadData, openModal,
+    showSpinner, hideSpinner
+} from '../store/actions/widget';
 import Associate from './Item/Associate';
 import SearchBar from './SearchBar/SearchBar';
 import { findAll, findBy } from '../services/AssociateSearchService';
@@ -32,13 +35,20 @@ class Main extends Component {
         this.handleNameSearch = this.handleNameSearch.bind(this);
         this.handleEmailSearch = this.handleEmailSearch.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
-        this.handleSearchDebounced = debounce(this.handleSearch, 2000);
+        this.handleLoadData = this.handleLoadData.bind(this);
+        this.handleSearchDebounced = debounce(this.handleSearch, 1000);
     }
 
     componentDidMount () {
+        this.props.onShowSpinner();
         findAll().then(response => {
-            this.props.onLoadData(response);
+            this.handleLoadData(response);
         });
+    }
+
+    handleLoadData (response) {
+        this.props.onLoadData(response);
+        this.props.onHideSpinner();
     }
 
     handleSearch() {
@@ -46,8 +56,9 @@ class Main extends Component {
             nameField: this.props.nameSearch,
             emailField: this.props.emailSearch,
         };
+        this.props.onShowSpinner();
         findBy(params).then(response => {
-            this.props.onLoadData(response);
+            this.handleLoadData(response);
         });
     };
 
@@ -79,8 +90,9 @@ class Main extends Component {
             nameField: this.props.nameSearch,
             emailField: this.props.emailSearch,
         };
+        this.props.onShowSpinner();
         findBy(params).then(response => {
-            this.props.onLoadData(response);
+            this.handleLoadData(response);
         });
     }
 
@@ -110,7 +122,7 @@ class Main extends Component {
         });
         console.log(this.props.modal);
         return (
-            <div className="main-searchContainer">
+            <div className="main-searchContainer" style={{'position': 'relative'}}>
                 <SearchBar
                     handleNameSearchInput={this.handleNameSearch}
                     handleEmailSearchInput={this.handleEmailSearch}
@@ -119,9 +131,17 @@ class Main extends Component {
                     {associateRows}
 
                 </div>
+                {this.props.spinner ? (
+                    <div className="Spinner__Container" style={{'top': 0, 'z-index': '9999'}}>
+                        <div className="lds-dual-ring"/>
+                    </div>
+                ): ''}
                 <PageBar pages={pages} currentPage={currentPage} onClick={this.changePage} />
                 <Modal onClose={this.props.onCloseModal} open={this.props.modalOpen}>
-                    <iframe src={`/associates/${this.props.modalId}`} style={{width: "60vw", height: "50vw", border: '0px'}}/>
+                    <iframe
+                        src={`/associate/info/${this.props.modalId}`}
+                        style={{width: "400px", height: "200px", border: '0px'}}
+                    />
                 </Modal>
             </div>
         );
@@ -138,7 +158,8 @@ const mapStateToProps = state => ({
         modal: state.widget.modal,
         showModal: state.widget.showModal,
         modalOpen: state.widget.modalOpen,
-        modalId: state.widget.modalId
+        modalId: state.widget.modalId,
+        spinner: state.widget.spinner
 });
 
 const mapDispatchToProps = dispatch => {
@@ -150,6 +171,8 @@ const mapDispatchToProps = dispatch => {
         onCloseModal: () => dispatch(closeModal()),
         onOpenModal: (id) => dispatch(openModal(id)),
         onLoadData: (data) => dispatch(loadData(data)),
+        onShowSpinner: () => dispatch(showSpinner()),
+        onHideSpinner: () => dispatch(hideSpinner()),
     };
 };
 

@@ -9,12 +9,14 @@ use App\Form\ChangeContentType;
 use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
 use App\Form\UserSearchType;
+use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
 use App\Entity\UpdateProfile;
 use App\Entity\User;
 use App\Form\UpdateProfileType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -138,6 +140,12 @@ class AdminController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
+        $savedMainLogo = null;
+        if ($configuration->getMainLogo() !== null) {
+            $savedMainLogo = $configuration->getMainLogo();
+            $configuration->setMainLogo(null);
+        }
+
         $form = $this->createForm(ChangeContentType::class, $configuration);
 
         $form->handleRequest($request);
@@ -148,6 +156,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Content changed');
         }
 
+        $em->refresh($configuration);
         return $this->render('admin/changeContent.html.twig', [
             'form' => $form->createView()
         ]);
@@ -243,5 +252,35 @@ class AdminController extends AbstractController
         return $this->render('admin/usersearch.html.twig', [
             'usersearch' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/admin/api/explorer", name="api_admin_explorer")
+     * @param Request $request
+     * @param AssociateManager $associateManager
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
+    public function getCompanyRoot(
+        Request $request,
+        AssociateManager $associateManager,
+        EntityManagerInterface $em
+    ) {
+        $id = $request->get('id');
+        /** @var AssociateRepository $associateRepo */
+        $associateRepo = $em->getRepository(Associate::class);
+        if ($id) {
+            return new JsonResponse($associateManager->getDirectDownlineAssociates($id), JsonResponse::HTTP_OK);
+        } else {
+            return new JsonResponse(
+                [
+                    'id' => '-1',
+                    'title' => 'Company',
+                    'parentId' => '-2',
+                    'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount(-1)
+                ],
+                JsonResponse::HTTP_OK
+            );
+        }
     }
 }

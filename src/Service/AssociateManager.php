@@ -5,7 +5,8 @@ namespace App\Service;
 
 use App\Entity\Associate;
 use App\Entity\User;
-use App\Exception\GetAllDirectAssociatesException;
+use App\Exception\NotAncestorException;
+use App\Repository\AssociateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -43,7 +44,7 @@ class AssociateManager
 
         if (!$this->isAncestor($parentAssociateId, $user->getAssociate()->getAssociateId())
             && !in_array('ROLE_ADMIN', $user->getRoles())) {
-            throw new GetAllDirectAssociatesException('Given parent is not in user downline');
+            throw new NotAncestorException('Given parent is not in user downline');
         }
 
         $associateRepository = $this->em->getRepository(Associate::class);
@@ -76,13 +77,20 @@ class AssociateManager
         return $levels;
     }
 
-    public function isAncestor($associateChildId, $parentAssociateId)
+    public function isAncestor($associateChildId, $parentAssociateId, $searchByAssociateId = true)
     {
         $associateRepository = $this->em->getRepository(Associate::class);
 
-        $parentAssociate = $associateRepository->findOneBy(['associateId' => $parentAssociateId]);
+        $parentAssociate = $associateRepository->findOneBy([
+            ($searchByAssociateId ? 'associateId' : 'id') => $parentAssociateId
+        ]);
 
-        $childAssociate = $associateRepository->findOneBy(['associateId' => $associateChildId]);
+        $childAssociate = $associateRepository->findOneBy([
+            ($searchByAssociateId ? 'associateId' : 'id') => $associateChildId
+        ]);
+        if (!$childAssociate) {
+            return false;
+        }
 
         $ancestor = $parentAssociate->getAncestors().$parentAssociate->getId();
 
@@ -91,6 +99,23 @@ class AssociateManager
             return true;
         }
         return false;
+    }
+
+    public function getAssociate($id)
+    {
+        $associateRepository = $this->em->getRepository(Associate::class);
+
+        $token = $this->tokenStorage->getToken();
+
+        /** @var User $user */
+        $user = $token->getUser();
+
+        if (!$this->isAncestor($id, $user->getAssociate()->getId(), false)
+            && !in_array('ROLE_ADMIN', $user->getRoles())) {
+            throw new NotAncestorException('The target associate, is not in user\'s downline');
+        }
+
+        return $associateRepository->findOneBy(['id' => $id]);
     }
 
     /**
@@ -118,5 +143,42 @@ class AssociateManager
         );
 
         return $numberOfAssociates;
+    }
+
+    /**
+     * @param null $parentId
+     * @return array
+     * @throws NotAncestorException
+     */
+    public function getDirectDownlineAssociates($parentId = null)
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+        $userAssociateId = $user->getAssociate()->getId();
+        /** @var AssociateRepository $associateRepo */
+        $associateRepo = $this->em->getRepository(Associate::class);
+        if (!$parentId) {
+            return [
+                'id' => $userAssociateId,
+                'title' => $user->getAssociate()->getFullName(),
+                'parentId' => $user->getAssociate()->getParentId(),
+                'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($userAssociateId)
+            ];
+        } elseif (!$this->isAncestor($parentId, $userAssociateId, false) && !$user->isAdmin()) {
+            throw new NotAncestorException(
+                'Attempted to get direct downline of an associate that is not in your downline'
+            );
+        }
+        $directAssociates = $associateRepo->findAllDirectAssociates($parentId);
+        return array_map(
+            function ($downlineNode) use ($associateRepo, $parentId) {
+                return [
+                    'id' => $downlineNode['id'],
+                    'title' => $downlineNode['fullName'],
+                    'parentId' => $parentId,
+                    'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($downlineNode['id'])
+                ];
+            },
+            $directAssociates
+        );
     }
 }

@@ -1,6 +1,8 @@
-import { NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH,
-     PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION,
-     SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA, OPEN_MODAL } from '../actions/actionTypes';
+import {
+    NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH,
+    PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION,
+    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA, OPEN_MODAL, SHOW_SPINNER, HIDE_SPINNER
+} from '../actions/actionTypes';
 import { peopleData } from './peopleData';
 
 const initialState = {
@@ -19,7 +21,8 @@ const initialState = {
     currentAssociates: [],
     firstNewAssociate: 0,
     modalOpen: false,
-    modalId: ''
+    modalId: '',
+    spinner: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -72,6 +75,16 @@ const reducer = (state = initialState, action) => {
             associates: action.associates,
             pages: action.pages,
             currentPage: action.currentPage,
+        };
+        case SHOW_SPINNER:
+        return {
+            ...state,
+            spinner: true
+        };
+        case HIDE_SPINNER:
+        return {
+            ...state,
+            spinner: false
         };
         default:
             return state;

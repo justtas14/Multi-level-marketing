@@ -12,12 +12,14 @@
                         <div class="input-field col s12">
                             {{ form_widget(invitation.fullName) }}
                             {{ form_label(invitation.fullName)}}
+                            {% include 'includes/errorBlock.html.twig' with { field: invitation.fullName } %}
                         </div>
                     </div>
                     <div class="invitation-item" >
                         <div class="input-field col s12">
                             {{ form_widget(invitation.email) }}
                             {{ form_label(invitation.email) }}
+                            {% include 'includes/errorBlock.html.twig' with { field: invitation.email } %}
                         </div>
                     </div>
                     <div class="invitation-buttonWrap">
@@ -27,7 +29,7 @@
                 <div class="invitation-messageContainer">
                     <div id="flash-messages">
                         {% for message in app.flashes('error') %}
-                            <div class="alert alert-error">
+                            <div class="error__block">
                                 {{ message }}
                             </div>
                         {% endfor %}

@@ -45,7 +45,10 @@ class AssociateType extends AbstractType
                     'class' => 'filled-in'
                 ]
             ])
-            ->add('profilePicture', PTSFileType::class, ['multiple' => false, 'required' => false])
+            ->add('profilePicture', PTSFileType::class, [
+                'multiple' => false,
+                'required' => false
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Save',
                 'attr' => [
@@ -58,6 +61,7 @@ class AssociateType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Associate::class,
+            'cascade_validation' => true
         ]);
     }
 }

@@ -2,7 +2,7 @@
 
 {% block title %}Associate{% endblock %}
 
-{% set maxLevel = max(associatesInLevels) %}
+{#{% set maxLevel = max(associatesInLevels) %}#}
 
 {% block content %}
     <main>
@@ -19,7 +19,9 @@
                         </a>
                         <a
                                 class="waves-effect waves-light btn-large"
-                                style="margin-left:5%; width:45%; background-color:#3ab54a">
+                                style="margin-left:5%; width:45%; background-color:#3ab54a"
+                                href="{{ path('team_viewer') }}"
+                        >
                             My Team Viewer
                         </a>
                     </div>
@@ -37,29 +39,35 @@
                 </div>
             </div>
         </div>
-        <div class="card__container">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">My Enroller</span>
-                    {% if parent is not null %}
-                        <div class="associate-enrollerPictureContainer">
-                            {% if parent.profilePicture is not null %}
-                                <img style="max-width: 100px; max-height: 100px" src="{{ parent.profilePicture|downloadUrlParser }}" />
-                            {% else %}
-                                <img class="associate-enrollerPicture" style="max-width: 100px; max-height: 100px" src="{{ asset('assets/images/profile.jpg') }}" />
-                            {% endif %}
+        {% if parent is not null %}
+            <div class="card__container">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="card-title">My Enroller</span>
+                        <div style="display: flex; justify-content: center; flex-direction: row; align-items: center">
+                            <div class="associate-enrollerPictureContainer sidebarProfile__pictureContainer">
+                                {% if parent.profilePicture is not null %}
+                                    <img class="associate-enrollerPicture sidebar-picture" src="{{ parent.profilePicture|downloadUrlParser }}" />
+                                {% else %}
+                                    <img class="associate-enrollerPicture sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
+                                {% endif %}
+                            </div>
+                            <div class="associate-enrollerDetailsContainer" style="padding-left:0.5em">
+                                <p><b>Email</b>: {{ parent.email }}</p>
+                                <p><b>Full name</b>: {{ parent.fullName }}</p>
+                                <p><b>Mobile phone</b>:
+                                    {% if parent.mobilePhone == '' %}
+                                        -
+                                    {% else %}
+                                        {{ parent.mobilePhone }}
+                                    {% endif %}
+                                </p>
+                            </div>
                         </div>
-                        <div class="associate-enrollerDetailsContainer">
-                            <p>Email: {{ parent.email }}</p>
-                            <p>Full name: {{ parent.fullName }}</p>
-                            <p>Mobile phone: {{ parent.mobilePhone }}</p>
-                        </div>
-                    {% else %}
-                        <div>Company</div>
-                    {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
         <div class="card__container">
             <div class="card">
                 <div class="card-content">
@@ -74,6 +82,9 @@
                         </tr>
                         </thead>
                         <tbody>
+                        {% if directAssociates is empty %}
+                            <tr><td colspan="4">You do not have any associates in your direct downline</td></tr>
+                        {% endif %}
                         {% for associate in directAssociates %}
                             <tr>
                                 <td>{{ associate.fullName }}</td>

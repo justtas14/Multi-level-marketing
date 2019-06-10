@@ -9,7 +9,7 @@
                 <span class="card-title">Change Content</span>
                 <div id="flash-messages">
                     {% for message in app.flashes('error') %}
-                        <div class="alert alert-error">
+                        <div class="error__block">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -25,16 +25,18 @@
                     <div class="input-field">
                         {{ form_label(form.mainLogo) }}
                         {{ form_widget(form.mainLogo) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.mainLogo } %}
                     </div>
                     <div class="input-field">
                         {{ form_label(form.termsOfServices) }}
                         {{ form_widget(form.termsOfServices) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                     </div>
                     <div class="input-field">
                         {{ form_label(form.Submit) }}
                         {{ form_widget(form.Submit) }}
                     </div>
-                    {{ form_widget(form) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: form } %}
                     {{ form_end(form) }}
                 </main>
             </div>

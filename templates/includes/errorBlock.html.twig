@@ -1,0 +1,5 @@
+{% if field.vars.errors|length %}
+    <div class="error__block">
+        {{ form_errors(field) }}
+    </div>
+{% endif %}

@@ -12,49 +12,62 @@
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.email) }}
                     {{ form_label(updateProfile.email) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.email } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.oldPassword) }}
                     {{ form_label(updateProfile.oldPassword) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.oldPassword } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.newPassword.first) }}
                     {{ form_label(updateProfile.newPassword.first) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.newPassword.first } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.newPassword.second) }}
                     {{ form_label(updateProfile.newPassword.second) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.newPassword.second } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.fullName) }}
                     {{ form_label(updateProfile.associate.fullName) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.fullName } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.country) }}
                     {{ form_label(updateProfile.associate.country) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.country } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.address) }}
                     {{ form_label(updateProfile.associate.address) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.address } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.city) }}
                     {{ form_label(updateProfile.associate.city) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.city } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.postcode) }}
                     {{ form_label(updateProfile.associate.country) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.country } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.mobilePhone) }}
                     {{ form_label(updateProfile.associate.mobilePhone) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.mobilePhone } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.homePhone) }}
                     {{ form_label(updateProfile.associate.homePhone) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.homePhone } %}
                 </div>
                 <div class="input-field col s12">
-                    {{ form_row(updateProfile.associate.profilePicture) }}
+                    {{ form_widget(updateProfile.associate.profilePicture) }}
+                    {{ form_label(updateProfile.associate.profilePicture) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.profilePicture } %}
                 </div>
                 <div class="input-field">
                     <label style="position: unset!important;">
@@ -81,7 +94,7 @@
                 <div class="profile-errorMessageContainer">
                     <div id="flash-messages">
                         {% for message in app.flashes('error') %}
-                            <div class="alert alert-error">
+                            <div class="error__block">
                                 {{ message }}
                             </div>
                         {% endfor %}

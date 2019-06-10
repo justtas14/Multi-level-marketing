@@ -84,43 +84,26 @@ class AssociateRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findAllDirectAssociates($parentId) : array
+    private function buildDirectAssociateQuery($parentId)
     {
         return $this->createQueryBuilder('a')
             ->where('a.parentId = :parentId')
             ->setParameter('parentId', $parentId)
-            ->orderBy('a.joinDate', 'DESC')
+            ->orderBy('a.joinDate', 'DESC');
+    }
+
+    public function findAllDirectAssociates($parentId) : array
+    {
+        return $this->buildDirectAssociateQuery($parentId)
             ->getQuery()
             ->getArrayResult();
     }
 
-
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findAllDirectAssociatesCount($parentId)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->buildDirectAssociateQuery($parentId)
+            ->select('COUNT(a)')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getSingleScalarResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

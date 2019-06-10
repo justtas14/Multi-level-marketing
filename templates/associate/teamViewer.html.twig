@@ -1,0 +1,20 @@
+{% extends 'bodyBase.html.twig' %}
+
+{% block content %}
+    <div class="card__container">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Team Viewer</span>
+                <div>
+                    <div id="rootExplorer"
+                         data-source="/associate/downline"
+                         data-details=""
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>
+    <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>
+    <script src="{{ asset('assets/js/explorer_main.js') }}" async></script>
+{% endblock %}
