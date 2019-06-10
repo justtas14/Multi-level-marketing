@@ -73,6 +73,9 @@ class AssociateController extends AbstractController
     public function getAssociate($id, AssociateManager $associateManager)
     {
         $associate = $associateManager->getAssociate($id);
+        if (!$associate) {
+            return $this->render('admin/associateInfo.html.twig', ['isCompany' => true]);
+        }
         return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
     }
 
