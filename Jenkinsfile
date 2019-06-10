@@ -73,11 +73,12 @@ pipeline {
                 DATABASE_URL = credentials('prelaunchbuilder_pts')
                 MAILER_URL = 'smtp://smtp'
                 APP_ENV = 'prod'
+                INVITATION_SENDER = 'noreply@plumtreesystems.com'
             }
             steps {
                 sh "docker build --rm -t prelaunchbuilder --build-arg app_env=${APP_ENV} --build-arg db_url=${DATABASE_URL} --build-arg mailer_url=${MAILER_URL} ."
                 sh "docker rm -f prelaunchbuilder && echo 'removed old container' || echo 'old container does not exist'"
-                sh "docker run -dit -v prelaunch_staging_media:/var/www/html/public/files -e DATABASE_URL=${DATABASE_URL} -e VIRTUAL_HOST=${VIRTUAL_HOST} --net dockernet --restart unless-stopped --name prelaunchbuilder prelaunchbuilder"
+                sh "docker run -dit -v prelaunch_staging_media:/var/www/html/public/files -e INVITATION_SENDER=${INVITATION_SENDER} -e DATABASE_URL=${DATABASE_URL} -e VIRTUAL_HOST=${VIRTUAL_HOST} --net dockernet --restart unless-stopped --name prelaunchbuilder prelaunchbuilder"
                 sh "docker exec prelaunchbuilder bash -c 'bin/console doctrine:migration:migrate'"
             }
         }
