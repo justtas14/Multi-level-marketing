@@ -104,13 +104,13 @@ pipeline {
         }
         stage('push-dev-to-aws') {
             when {
-                branch 'dev'
+                branch 'master'
             }
             environment {
                 APP_ENV = 'prod'
                 APP_DEBUG = '0'
                 URL_BASEPATH = '/'
-                DOCKER_TAG = "dev-${GIT_COMMIT}"
+                DOCKER_TAG = "master-${GIT_COMMIT}"
             }
             steps {
                 sh "docker build --rm -f Dockerfile --build-arg app_version=${GIT_COMMIT} --build-arg app_env=${APP_ENV} --build-arg app_debug=${APP_DEBUG} --build-arg url_basepath=${URL_BASEPATH} -t 643652872181.dkr.ecr.eu-west-2.amazonaws.com/prelaunchbuilder:${DOCKER_TAG} ."
