@@ -52,6 +52,9 @@ class AssociateRequestListener
         if ($event->getController()[1] == 'landingPage') {
             return;
         }
+        if ($event->getController()[1] == 'downloadAction') {
+            return;
+        }
 
         $token = $this->tokenStorage->getToken();
 

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Associate;
 use App\Entity\File;
 use App\Entity\Invitation;
+use App\Entity\InvitationBlacklist;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
 use App\Filter\AssociateFilter;
@@ -12,11 +13,13 @@ use App\Form\InvitationType;
 use App\Form\UserUpdateType;
 use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
+use App\Service\BlacklistManager;
 use App\Service\InvitationManager;
 use DateTime;
 use Exception;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,11 +87,13 @@ class AssociateController extends AbstractController
      * @Route("/associate/invite", name="associate_invite")
      * @param Request $request
      * @param InvitationManager $invitationManager
+     * @param BlacklistManager $blacklistManager
      * @return Response
      */
     public function associateInvitation(
         Request $request,
-        InvitationManager $invitationManager
+        InvitationManager $invitationManager,
+        BlacklistManager $blacklistManager
     ) {
         /**
          * @var User $user
@@ -108,6 +113,10 @@ class AssociateController extends AbstractController
                 $this->addFlash('error', 'Invalid email');
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
                 $this->addFlash('error', 'Associate already exists');
+            } elseif ($blacklistManager->existsInBlacklist($email)) {
+                $form
+                    ->get('email')
+                    ->addError(new FormError('The person with this email has opted out of this service'));
             } else {
                 $invitation->setSender($user->getAssociate());
                 $invitation->setEmail($email);
