@@ -39,7 +39,7 @@
                     {% include 'includes/errorBlock.html.twig' with { field: form } %}
                     {{ form_end(form) }}
                 </main>
-                {% if configuration.termsOfServices is defined %}
+                {% if configuration.termsOfServices is defined and configuration.termsOfServices is not null %}
                     <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download terms of service</a>
                 {% endif %}
             </div>
