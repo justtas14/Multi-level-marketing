@@ -4,7 +4,7 @@
 
 {% block body %}
     <div style="background-color: #fff; width: 100%; height: 100%; display: flex; justify-content: space-around">
-        {% if isCompany != true %}
+        {% if isCompany is not defined or (isCompany is defined and isCompany != true) %}
         <div class="sidebarProfile__pictureContainer">
             {% if associate.profilePicture is not null %}
                 <img class="sidebar-picture" src="{{ associate.profilePicture|downloadUrlParser }}" />
@@ -23,6 +23,13 @@
                 {% endif %}
             </p>
             <p><b>Join Date</b>: {{ associate.joinDate|date('d-m-Y') }}</p>
+            <p><b>Date of birth</b>:
+                {% if associate.dateOfBirth is not null %}
+                    {{ associate.dateOfBirth|date('d-m-Y') }}
+                {% else %}
+                    -
+                {% endif %}
+            </p>
         </div>
         {% else %}
             <div class="sidebarProfile__pictureContainer">
