@@ -72,11 +72,12 @@ pipeline {
                 VIRTUAL_HOST = "prelaunchbuilder.*"
                 DATABASE_URL = credentials('prelaunchbuilder_pts')
                 MAILER_URL = 'smtp://smtp'
+                MAILER_ENCRYPTION = 'null'
                 APP_ENV = 'prod'
                 INVITATION_SENDER = 'noreply@plumtreesystems.com'
             }
             steps {
-                sh "docker build --rm -t prelaunchbuilder --build-arg app_env=${APP_ENV} --build-arg db_url=${DATABASE_URL} ."
+                sh "docker build --rm -t prelaunchbuilder --build-arg mailer_encryption=${MAILER_ENCRYPTION} --build-arg app_env=${APP_ENV} --build-arg db_url=${DATABASE_URL} ."
                 sh "docker rm -f prelaunchbuilder && echo 'removed old container' || echo 'old container does not exist'"
                 sh "docker run -dit -v prelaunch_staging_media:/var/www/html/public/files -e MAILER_URL=${MAILER_URL} -e INVITATION_SENDER=${INVITATION_SENDER} -e DATABASE_URL=${DATABASE_URL} -e VIRTUAL_HOST=${VIRTUAL_HOST} --net dockernet --restart unless-stopped --name prelaunchbuilder prelaunchbuilder"
                 sh "docker exec prelaunchbuilder bash -c 'bin/console doctrine:migration:migrate'"
@@ -114,7 +115,7 @@ pipeline {
                 DOCKER_TAG = "master-${GIT_COMMIT}"
             }
             steps {
-                sh "docker build --rm -f Dockerfile --build-arg app_version=${GIT_COMMIT} --build-arg app_env=${APP_ENV} --build-arg app_debug=${APP_DEBUG} --build-arg url_basepath=${URL_BASEPATH} -t 643652872181.dkr.ecr.eu-west-2.amazonaws.com/prelaunchbuilder:${DOCKER_TAG} ."
+                sh "docker build --rm -f Dockerfile --build-arg mailer_encryption=${MAILER_ENCRYPTION} --build-arg app_version=${GIT_COMMIT} --build-arg app_env=${APP_ENV} --build-arg app_debug=${APP_DEBUG} --build-arg url_basepath=${URL_BASEPATH} -t 643652872181.dkr.ecr.eu-west-2.amazonaws.com/prelaunchbuilder:${DOCKER_TAG} ."
                 withDockerRegistry([credentialsId: 'ecr:eu-west-2:plumtree_aws', url: 'https://643652872181.dkr.ecr.eu-west-2.amazonaws.com']) {
                     sh "docker push 643652872181.dkr.ecr.eu-west-2.amazonaws.com/prelaunchbuilder:${DOCKER_TAG}"
                 }

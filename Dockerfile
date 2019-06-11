@@ -15,10 +15,12 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo \
     && docker-php-ext-install pdo_mysql
 ARG app_env=''
+ARG mailer_encryption=''
 RUN a2enmod rewrite
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN sed -i 's@html@html/public@g' /etc/apache2/sites-available/000-default.conf
 RUN sed -i "/<\/VirtualHost>/ i\SetEnv APP_ENV $app_env" /etc/apache2/sites-available/000-default.conf
+RUN sed -i "/<\/VirtualHost>/ i\SetEnv MAILER_ENCRYPTION $mailer_encryption" /etc/apache2/sites-available/000-default.conf
 RUN sed -i "/<\/VirtualHost>/ i\PassEnv MAILER_URL" /etc/apache2/sites-available/000-default.conf
 RUN sed -i "/<\/VirtualHost>/ i\PassEnv DATABASE_URL" /etc/apache2/sites-available/000-default.conf
 RUN sed -i "/<\/VirtualHost>/ i\PassEnv INVITATION_SENDER" /etc/apache2/sites-available/000-default.conf
