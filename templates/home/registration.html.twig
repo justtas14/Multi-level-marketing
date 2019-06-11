@@ -37,6 +37,11 @@
                         {{ form_widget(registration.associate.fullName) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.fullName } %}
                     </div>
+                    <div class="input-field col s12">
+                        <input type="text" class="datepicker" id="user_registration_associate_dateOfBirth" name="user_registration[associate][dateOfBirth]">
+                        {{ form_label(registration.associate.dateOfBirth) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.dateOfBirth } %}
+                    </div>
                     <div class="input-field">
                         {{ form_label(registration.associate.country) }}
                         {{ form_widget(registration.associate.country) }}
@@ -85,6 +90,9 @@
                             <span>I agree to receive social media updates</span>
                         </label>
                     </div>
+                    {% if termsOfServices is not null  %}
+                        <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
+                    {% endif %}
                     <div class="input-field">
                         <label style="position: unset!important;">
                             {{ form_widget(registration.associate.agreedToTermsOfService) }}
@@ -96,14 +104,6 @@
                         {{ form_widget(registration.associate.profilePicture) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.profilePicture } %}
                     </div>
-                    <div class="input-field col s12">
-                        <input type="text" class="datepicker" id="user_registration_associate_dateOfBirth" name="user_registration[associate][dateOfBirth]">
-                        {{ form_label(registration.associate.dateOfBirth) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.dateOfBirth } %}
-                    </div>
-                    {% if termsOfServices is not null  %}
-                        <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
-                    {% endif %}
                     <div class="input-field">
                         {{ form_row(registration.associate.submit) }}
                     </div>
