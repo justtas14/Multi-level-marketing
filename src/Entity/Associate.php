@@ -3,6 +3,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as AssertApp;
@@ -139,14 +140,27 @@ class Associate
 
     /**
      * @ORM\Column(type="datetime")
-     * @var \DateTime
+     * @var DateTime
      */
     private $joinDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var DateTime
+     */
+    private $dateOfBirth;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     * @Assert\IsTrue
+     */
+    private $agreedToTermsOfService = false;
 
     public function __construct()
     {
         $this->setAssociateId(Uuid::uuid4());
-        $this->joinDate = new \DateTime();
+        $this->joinDate = new DateTime();
     }
 
     /**
@@ -486,6 +500,42 @@ class Associate
         return $this;
     }
 
+    /**
+     * @return DateTime
+     */
+    public function getDateOfBirth(): ?DateTime
+    {
+        return $this->dateOfBirth;
+    }
+
+    /**
+     * @param DateTime $dateOfBirth
+     * @return Associate
+     */
+    public function setDateOfBirth(?DateTime $dateOfBirth): Associate
+    {
+        $this->dateOfBirth = $dateOfBirth;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAgreedToTermsOfService(): ?bool
+    {
+        return $this->agreedToTermsOfService;
+    }
+
+    /**
+     * @param bool $agreedToTermsOfService
+     * @return Associate
+     */
+    public function setAgreedToTermsOfService(?bool $agreedToTermsOfService): Associate
+    {
+        $this->agreedToTermsOfService = $agreedToTermsOfService;
+        return $this;
+    }
+
     public function toArray()
     {
         return [
@@ -501,14 +551,18 @@ class Associate
             'agreedToEmailUpdates' => $this->getAgreedToEmailUpdates()?'Yes':'No',
             'agreedToTextMessageUpdates' => $this->getAgreedToTextMessageUpdates()?'Yes':'No',
             'agreedToSocialMediaUpdates' => $this->getAgreedToSocialMediaUpdates()?'Yes':'No',
-            'joinDate' => $this->getJoinDate()->format('Y-m-d')
+            'agreedToTermsOfService' => $this->getAgreedToTermsOfService()?'Yes':'No',
+            'joinDate' => $this->getJoinDate()->format('Y-m-d'),
+            'dateOfBirth' => ($this->getDateOfBirth() instanceof DateTime)
+                ? $this->getDateOfBirth()->format('Y-m-d')
+                : '-'
         ];
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getJoinDate(): \DateTime
+    public function getJoinDate(): DateTime
     {
         return $this->joinDate;
     }

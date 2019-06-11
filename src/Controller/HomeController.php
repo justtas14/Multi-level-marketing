@@ -8,6 +8,8 @@ use App\Entity\User;
 use App\Form\UserRegistrationType;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
+use DateTime;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,6 +45,7 @@ class HomeController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param ConfigurationManager $cm
      * @return Response
+     * @throws \Exception
      */
     public function registration(
         $code,
@@ -77,9 +80,16 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $user->getEmail();
             $checkEmailExist = $em->getRepository(User::class)->findOneBy(['email' => $email]);
+            $dob = $form->get('associate')->get('dateOfBirth');
             if ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
+            } elseif (!$dob->getData() || (is_string($dob->getData()) && $dob->getData() === '')) {
+                $dob->addError(new FormError('Date of birth cannot be empty'));
             } else {
+                $dob = $form->get('associate')->get('dateOfBirth')->getData();
+                if ($dob && is_string($dob) && $dob !== '') {
+                    $user->getAssociate()->setDateOfBirth(new DateTime($dob));
+                }
                 $associate->setParent($invitation->getSender());
                 $associate->setEmail($email);
 

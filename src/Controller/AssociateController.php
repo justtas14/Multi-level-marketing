@@ -13,6 +13,7 @@ use App\Form\UserUpdateType;
 use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\InvitationManager;
+use DateTime;
 use Exception;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -131,6 +132,7 @@ class AssociateController extends AbstractController
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
      * @return Response
+     * @throws Exception
      */
     public function associateProfile(
         UserPasswordEncoderInterface $encoder,
@@ -158,7 +160,6 @@ class AssociateController extends AbstractController
             $plainPassword = $form['oldPassword']->getData();
             $email = $user->getEmail();
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
-
             if ($checkEmailExist && $currentEmail !== $email) {
                 $this->addFlash('error', 'This email already exist');
             } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
