@@ -8,6 +8,7 @@ use PlumTreeSystems\FileBundle\Form\Type\PTSFileType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -44,6 +45,16 @@ class AssociateType extends AbstractType
                 'attr' => [
                     'class' => 'filled-in'
                 ]
+            ])
+            ->add('agreedToTermsOfService', CheckboxType::class, [
+                'required' => true,
+                'attr' => [
+                    'class' => 'filled-in'
+                ]
+            ])
+            ->add('dateOfBirth', TextType::class, [
+                'mapped' => false,
+                'required' => false,
             ])
             ->add('profilePicture', PTSFileType::class, [
                 'multiple' => false,

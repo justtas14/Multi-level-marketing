@@ -87,6 +87,12 @@
                         <span>I agree to receive social media updates</span>
                     </label>
                 </div>
+                <div class="input-field">
+                    <label style="position: unset!important;">
+                        {{ form_widget(updateProfile.associate.agreedToTermsOfService) }}
+                        <span>I agree to the terms of service</span>
+                    </label>
+                </div>
                 <div class="profile-buttonWrap">
                     {{ form_row(updateProfile.associate.submit, { 'attr': {'style': 'background-color:#3ab54a'} }) }}
                 </div>
