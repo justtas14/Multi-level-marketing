@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Entity\Invitation;
 use Doctrine\ORM\EntityManagerInterface;
+use Swift_Mailer;
 use Twig_Environment;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -17,7 +18,7 @@ class InvitationManager
     private $em;
 
     /**
-     * @var \Swift_Mailer $mailer
+     * @var Swift_Mailer $mailer
      */
     private $mailer;
 
@@ -42,7 +43,7 @@ class InvitationManager
     public function __construct(
         EntityManagerInterface $entityManager,
         Twig_Environment $twig,
-        \Swift_Mailer $mailer,
+        Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
         string $invitationSender
@@ -82,7 +83,15 @@ class InvitationManager
             ->setTo($invitation->getEmail())
             ->setBody(
                 $templateBody->render(
-                    ['link' => $link, 'senderName' => $invitation->getSender()->getFullName()]
+                    [
+                        'link' => $link,
+                        'senderName' => $invitation->getSender()->getFullName(),
+                        'optOutUrl' => $this->router->generate(
+                            'opt_out_email',
+                            ['invitationCode' => $invitation->getInvitationCode()],
+                            UrlGeneratorInterface::ABSOLUTE_URL
+                        )
+                    ]
                 ),
                 'text/html'
             );

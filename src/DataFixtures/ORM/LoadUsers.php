@@ -13,8 +13,8 @@ class LoadUsers extends Fixture
     {
         $user1 = $this->createUser(
             '1',
-            'admin@example.com',
-            '1234',
+            'admin@plumtreesystems.com',
+            '123456789',
             ['ROLE_ADMIN', 'ROLE_USER'],
             'Connor Vaughan',
             '12455412',

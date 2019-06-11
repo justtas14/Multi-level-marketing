@@ -14,9 +14,7 @@ use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
-use App\Entity\UpdateProfile;
 use App\Entity\User;
-use App\Form\UpdateProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -123,6 +121,18 @@ class AdminController extends AbstractController
         ]);
     }
 
+    private function createTempConfiguration(Configuration $configuration)
+    {
+        $tempConfiguration = new Configuration();
+//        if ($configuration->getTermsOfServices()) {
+//            $tempConfiguration->setTermsOfServices($configuration->getTermsOfServices());
+//        }
+//        if ($configuration->getMainLogo()) {
+//            $tempConfiguration->setMainLogo($configuration->getMainLogo());
+//        }
+        return $tempConfiguration;
+    }
+
     /**
      * @Route("/admin/changecontent", name="change_content")
      * @param Request $request
@@ -135,17 +145,19 @@ class AdminController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
-        $savedMainLogo = null;
-        if ($configuration->getMainLogo() !== null) {
-            $savedMainLogo = $configuration->getMainLogo();
-            $configuration->setMainLogo(null);
-        }
+        $tempConfiguration = $this->createTempConfiguration($configuration);
 
-        $form = $this->createForm(ChangeContentType::class, $configuration);
+        $form = $this->createForm(ChangeContentType::class, $tempConfiguration);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($tempConfiguration->getMainLogo()) {
+                $configuration->setMainLogo($tempConfiguration->getMainLogo());
+            }
+            if ($tempConfiguration->getTermsOfServices()) {
+                $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
+            }
             $em->persist($configuration);
             $em->flush();
             $this->addFlash('success', 'Content changed');
@@ -153,7 +165,8 @@ class AdminController extends AbstractController
 
         $em->refresh($configuration);
         return $this->render('admin/changeContent.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'configuration' => $configuration
         ]);
     }
 

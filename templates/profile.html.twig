@@ -51,8 +51,8 @@
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.postcode) }}
-                    {{ form_label(updateProfile.associate.country) }}
-                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.country } %}
+                    {{ form_label(updateProfile.associate.postcode) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.postcode } %}
                 </div>
                 <div class="input-field col s12">
                     {{ form_widget(updateProfile.associate.mobilePhone) }}
@@ -85,6 +85,12 @@
                     <label style="position: unset!important;">
                         {{ form_widget(updateProfile.associate.agreedToSocialMediaUpdates) }}
                         <span>I agree to receive social media updates</span>
+                    </label>
+                </div>
+                <div class="input-field">
+                    <label style="position: unset!important;">
+                        {{ form_widget(updateProfile.associate.agreedToTermsOfService) }}
+                        <span>I agree to the terms of service</span>
                     </label>
                 </div>
                 <div class="profile-buttonWrap">
