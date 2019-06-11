@@ -33,6 +33,7 @@ services:
     App\Command\CreateUserCommand:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
+            $createAdmin: '@App\Service\CreateAdmin'
 
     App\Command\AddAdminRoleCommand:
         arguments:

@@ -20,9 +20,17 @@ class CreateUserCommand extends Command
      */
     private $em;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /**
+     * @var CreateAdmin $createAdmin
+     */
+    private $createAdmin;
+
+
+    public function __construct(EntityManagerInterface $entityManager, CreateAdmin $createAdmin)
     {
         $this->em = $entityManager;
+
+        $this->createAdmin = $createAdmin;
 
         parent::__construct();
     }
@@ -39,7 +47,7 @@ class CreateUserCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $adminService = new CreateAdmin($this->em);
+        $adminService = $this->createAdmin;
         $adminService->createAdmin(
             $input->getArgument('email'),
             $input->getArgument('password'),

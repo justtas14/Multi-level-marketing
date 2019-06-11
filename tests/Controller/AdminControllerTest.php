@@ -3,12 +3,16 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Configuration;
 use App\Entity\EmailTemplate;
 use App\Entity\Invitation;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
+use Gaufrette\Filesystem;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\FileFormField;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class AdminControllerTest extends WebTestCase
 {
@@ -102,8 +106,9 @@ class AdminControllerTest extends WebTestCase
      *
      *  - Login as admin and go to end prelaunch form, set end prelaunch to true and submit. Admin isn't redirected
      * to landing page. Then login with different not admin user.
-     *  - Expected to be redirected in landing page after requests to '/' and '/associate' pages. Also expected not
-     * to be redirected then requested to '/landingpage' because prelaunch is ended.
+     *  - Expected to be redirected in landing page after requests to '/' and '/associate' pages and
+     * expected appropriate set landing page content. Also expected not to be redirected then requested
+     * to '/landingpage' because prelaunch is ended.
      */
     public function testEndPrelaunch()
     {
@@ -125,6 +130,7 @@ class AdminControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('end_prelaunch')['prelaunchEnded']->setValue(false);
+        $form->get('end_prelaunch')['landingContent']->setValue("<h1>Prelaunch has ended!!!</h1>");
 
         $client->submit($form);
 
@@ -192,6 +198,13 @@ class AdminControllerTest extends WebTestCase
 
         $client->getResponse()->isRedirect("/landingpage");
 
+        $client->followRedirect();
+
+        $this->assertContains(
+            "<h1>Prelaunch has ended!!!</h1>",
+            $client->getResponse()->getContent()
+        );
+
         $client->request('GET', '/associate');
 
         $targetUrl = $client->getResponse()->isRedirect("/landingpage");
@@ -247,5 +260,65 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals("You got invited by {{senderName}}!!!", $emailTemplate->getEmailSubject());
         $this->assertEquals("<br/> Here is your link {{link}}!!!<br/><br/>", $emailTemplate->getEmailBody());
         $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
+    }
+
+    /**
+     *  Testing change content form functionality
+     *
+     * - Request to change content page when logged in as admin and expected to find one configuration with
+     * appropriate params. Change form values and submit.
+     * - Expected that configuration values have updated in database.
+     */
+    public function testChangeContent()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $this->assertEquals(null, $configuration->getMainLogo());
+        $this->assertEquals(null, $configuration->getTermsOfServices());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/profile.jpg');
+
+        $fileInput = $form->get('change_content')['termsOfServices'];
+        $fileInput->upload($path.'/profile2.jpg');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'image/jpeg';
+        $files['change_content']['termsOfServices']['type'] = 'image/jpeg';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => ['_token' => $csrf_protection->getValue(), 'Submit' => true]
+            ],
+            $files
+        );
+
+        $em->refresh($configuration);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
     }
 }

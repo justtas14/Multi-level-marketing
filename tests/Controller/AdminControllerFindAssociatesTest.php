@@ -84,11 +84,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
      */
     public function testFindAssociates()
     {
-        $container = $this->getContainer();
+        self::bootKernel();
+
+        $container = self::$container;
 
         $em = $container->get('doctrine.orm.entity_manager');
 
-        $createAdmin = new CreateAdmin($em);
+        $createAdmin = $container->get('App\Service\CreateAdmin');
 
         $user1 = $createAdmin->createAdmin(
             'justtas14@gmail.com',
