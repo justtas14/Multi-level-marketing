@@ -29,8 +29,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Lucy Tomlinson',
-            '44864',
             '1957-06-01',
+            '44864',
             $manager,
             $user1
         );
@@ -52,8 +52,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Bailey Brookes',
-            '14546',
             '1957-06-01',
+            '14546',
             $manager,
             $user2
         );
@@ -63,8 +63,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Aidan Newman',
-            '45454',
             '1957-06-01',
+            '45454',
             $manager,
             $user2
         );
@@ -74,8 +74,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Natasha Hutchinson',
-            '865483621',
             '1957-06-01',
+            '865483621',
             $manager,
             $user3
         );
@@ -85,8 +85,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Jay Price',
-            '122545',
             '1957-06-01',
+            '122545',
             $manager,
             $user3
         );
@@ -96,8 +96,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Aaliyah Lees',
-            '24534543',
             '1957-06-01',
+            '24534543',
             $manager,
             $user5
         );
@@ -107,8 +107,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Lewis Benson',
-            '152543',
             '1957-06-01',
+            '152543',
             $manager,
             $user5
         );
@@ -118,8 +118,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Joe Chan',
-            '21524152',
             '1957-06-01',
+            '21524152',
             $manager,
             $user6
         );
@@ -129,8 +129,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Jennifer Green',
-            '214152',
             '1957-06-01',
+            '214152',
             $manager,
             $user7
         );
@@ -140,8 +140,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_ADMIN','ROLE_USER'],
             'Skye Reid',
-            '2152',
             '1957-06-01',
+            '2152',
             $manager,
             $user7
         );
@@ -151,8 +151,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Toby Barker',
-            '1441',
             '1957-06-01',
+            '1441',
             $manager,
             $user7
         );
@@ -162,8 +162,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Michael Ward',
-            '54578',
             '1957-06-01',
+            '54578',
             $manager,
             $user8
         );
@@ -173,8 +173,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Samantha Faulkner',
-            '12453',
             '1957-06-01',
+            '12453',
             $manager,
             $user8
         );
@@ -184,8 +184,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Aimee Wells',
-            '144114',
             '1957-06-01',
+            '144114',
             $manager,
             $user8
         );
@@ -195,8 +195,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Aaron Bull',
-            '25412423',
             '1957-06-01',
+            '25412423',
             $manager,
             $user12
         );
@@ -206,8 +206,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Abbie Barker',
-            '254123',
             '1957-06-01',
+            '254123',
             $manager,
             $user12
         );
@@ -217,8 +217,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Hayden Power',
-            '14214',
             '1957-06-01',
+            '14214',
             $manager,
             $user15
         );
@@ -228,8 +228,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Elizabeth Leonard',
-            '1447214',
             '1957-06-01',
+            '1447214',
             $manager,
             $user16
         );
@@ -239,8 +239,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Archie Watts',
-            '14414',
             '1957-06-01',
+            '14414',
             $manager,
             $user17
         );
@@ -250,8 +250,8 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Isabelle Moran',
-            '144147',
             '1957-06-01',
+            '144147',
             $manager,
             $user17
         );
@@ -278,6 +278,7 @@ class LoadUsers extends Fixture
         $roles,
         $fullName,
         $birthDate,
+        $telephone,
         $manager,
         $parent = null
     ) {
