@@ -146,7 +146,8 @@ class AssociateController extends AbstractController
      */
     public function associateProfile(
         UserPasswordEncoderInterface $encoder,
-        Request $request
+        Request $request,
+        GaufretteFileManager $fileManager
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -175,6 +176,13 @@ class AssociateController extends AbstractController
             } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
                 $this->addFlash('error', 'Old password is not correct');
             } else {
+                if ($savedProfilePicture) {
+                    if ($user->getAssociate()->getProfilePicture() === null) {
+                        $user->getAssociate()->setProfilePicture($savedProfilePicture);
+                    } else {
+                        $fileManager->removeEntity($savedProfilePicture);
+                    }
+                }
                 $newPassword = $form['newPassword']->getData();
                 if ($newPassword) {
                     $user->setPlainPassword($newPassword);

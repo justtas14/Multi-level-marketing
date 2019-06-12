@@ -17,6 +17,7 @@ use App\Service\EmailTemplateManager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -139,7 +140,7 @@ class AdminController extends AbstractController
      * @param ConfigurationManager $cm
      * @return Response
      */
-    public function changeContent(Request $request, ConfigurationManager $cm)
+    public function changeContent(Request $request, ConfigurationManager $cm, GaufretteFileManager $fileManager)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -153,9 +154,19 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($tempConfiguration->getMainLogo()) {
+                if ($configuration->getMainLogo()) {
+                    $logo = $configuration->getMainLogo();
+                    $configuration->setMainLogo(null);
+                    $fileManager->removeEntity($logo);
+                }
                 $configuration->setMainLogo($tempConfiguration->getMainLogo());
             }
             if ($tempConfiguration->getTermsOfServices()) {
+                if ($configuration->getTermsOfServices()) {
+                    $temp = $configuration->getTermsOfServices();
+                    $configuration->setTermsOfServices(null);
+                    $fileManager->removeEntity($temp);
+                }
                 $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
             }
             $em->persist($configuration);

@@ -4,8 +4,10 @@ namespace App\DataFixtures\ORM;
 
 use App\Entity\User;
 use App\Entity\Associate;
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
 
 class LoadUsers extends Fixture
 {
@@ -17,6 +19,7 @@ class LoadUsers extends Fixture
             '123456789',
             ['ROLE_ADMIN', 'ROLE_USER'],
             'Connor Vaughan',
+            '1957-06-01',
             '12455412',
             $manager
         );
@@ -27,6 +30,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Lucy Tomlinson',
             '44864',
+            '1957-06-01',
             $manager,
             $user1
         );
@@ -37,6 +41,7 @@ class LoadUsers extends Fixture
             '1234',
             ['ROLE_USER'],
             'Sarah Cunningham',
+            '1957-06-01',
             '254345',
             $manager,
             $user1
@@ -48,6 +53,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Bailey Brookes',
             '14546',
+            '1957-06-01',
             $manager,
             $user2
         );
@@ -58,6 +64,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Aidan Newman',
             '45454',
+            '1957-06-01',
             $manager,
             $user2
         );
@@ -68,6 +75,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Natasha Hutchinson',
             '865483621',
+            '1957-06-01',
             $manager,
             $user3
         );
@@ -78,6 +86,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Jay Price',
             '122545',
+            '1957-06-01',
             $manager,
             $user3
         );
@@ -88,6 +97,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Aaliyah Lees',
             '24534543',
+            '1957-06-01',
             $manager,
             $user5
         );
@@ -98,6 +108,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Lewis Benson',
             '152543',
+            '1957-06-01',
             $manager,
             $user5
         );
@@ -108,6 +119,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Joe Chan',
             '21524152',
+            '1957-06-01',
             $manager,
             $user6
         );
@@ -118,6 +130,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Jennifer Green',
             '214152',
+            '1957-06-01',
             $manager,
             $user7
         );
@@ -128,6 +141,7 @@ class LoadUsers extends Fixture
             ['ROLE_ADMIN','ROLE_USER'],
             'Skye Reid',
             '2152',
+            '1957-06-01',
             $manager,
             $user7
         );
@@ -138,6 +152,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Toby Barker',
             '1441',
+            '1957-06-01',
             $manager,
             $user7
         );
@@ -148,6 +163,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Michael Ward',
             '54578',
+            '1957-06-01',
             $manager,
             $user8
         );
@@ -158,6 +174,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Samantha Faulkner',
             '12453',
+            '1957-06-01',
             $manager,
             $user8
         );
@@ -168,6 +185,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Aimee Wells',
             '144114',
+            '1957-06-01',
             $manager,
             $user8
         );
@@ -178,6 +196,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Aaron Bull',
             '25412423',
+            '1957-06-01',
             $manager,
             $user12
         );
@@ -188,6 +207,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Abbie Barker',
             '254123',
+            '1957-06-01',
             $manager,
             $user12
         );
@@ -198,6 +218,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Hayden Power',
             '14214',
+            '1957-06-01',
             $manager,
             $user15
         );
@@ -208,6 +229,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Elizabeth Leonard',
             '1447214',
+            '1957-06-01',
             $manager,
             $user16
         );
@@ -218,6 +240,7 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Archie Watts',
             '14414',
+            '1957-06-01',
             $manager,
             $user17
         );
@@ -228,14 +251,36 @@ class LoadUsers extends Fixture
             ['ROLE_USER'],
             'Isabelle Moran',
             '144147',
+            '1957-06-01',
             $manager,
             $user17
         );
 
         $manager->flush();
     }
-    private function createUser($nr, $email, $plainPassword, $roles, $fullName, $telephone, $manager, $parent = null)
-    {
+
+    /**
+     * @param $nr
+     * @param $email
+     * @param $plainPassword
+     * @param $roles
+     * @param $fullName
+     * @param $birthDate
+     * @param $manager
+     * @param null $parent
+     * @return User
+     * @throws Exception
+     */
+    private function createUser(
+        $nr,
+        $email,
+        $plainPassword,
+        $roles,
+        $fullName,
+        $birthDate,
+        $manager,
+        $parent = null
+    ) {
         $user = new User();
         $associate = new Associate();
 
@@ -247,6 +292,7 @@ class LoadUsers extends Fixture
         $associate->setId($nr);
         $associate->setFullName($fullName);
         $associate->setEmail($email);
+        $associate->setDateOfBirth(new DateTime($birthDate));
         $associate->setMobilePhone($telephone);
         /** @var User $parent */
         if ($parent) {
