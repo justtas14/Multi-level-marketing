@@ -69,6 +69,14 @@ class AssociateController extends AbstractController
     }
 
     /**
+     * @Route("/associate/info", name="get_associate_broken")
+     */
+    public function getBrokenAssociate()
+    {
+        return new Response("");
+    }
+
+    /**
      * @Route("/associate/info/{id}", name="get_associate")
      * @param $id
      * @param AssociateManager $associateManager
