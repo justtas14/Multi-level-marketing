@@ -23,6 +23,7 @@ final class Version20190611115329 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE associate ADD date_of_birth DATETIME DEFAULT NULL, ADD agreed_to_terms_of_service TINYINT(1) NOT NULL');
+        $this->addSql('UPDATE associate SET date_of_birth="1980-01-01" WHERE TRUE');
     }
 
     public function down(Schema $schema) : void
