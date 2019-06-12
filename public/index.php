@@ -12,6 +12,7 @@ if ($_SERVER['APP_DEBUG']) {
     Debug::enable();
 }
 
+
 if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? $_ENV['TRUSTED_HOSTS'] ?? false) {
     Request::setTrustedHosts([$trustedHosts]);
 }
