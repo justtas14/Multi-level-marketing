@@ -167,7 +167,7 @@ class AdminControllerTest extends WebTestCase
         $client->request(
             'POST',
             '/login',
-            ['submit' => true, '_username' => 'admin@example.com', '_password' => '1234']
+            ['submit' => true, '_username' => 'admin@plumtreesystems.com', '_password' => '123456789']
         );
 
         $crawler = $client->request('GET', '/admin/endprelaunch');
@@ -245,7 +245,8 @@ class AdminControllerTest extends WebTestCase
         $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy([]);
 
         $this->assertEquals("You got invited by {{senderName}}. ", $emailTemplate->getEmailSubject());
-        $this->assertEquals("<br/> Here is your link {{link}} <br/><br/>", $emailTemplate->getEmailBody());
+        $this->assertEquals("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
+            "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link", $emailTemplate->getEmailBody());
         $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
 
         $form = $crawler->selectButton('Change Template')->form();

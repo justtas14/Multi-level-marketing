@@ -62,8 +62,8 @@ class AssociateControllerTest extends WebTestCase
 
         $form->get('user_update')['email']->setValue($user->getEmail());
         $form->get('user_update')['oldPassword']->setValue('1234');
-        $form->get('user_update')['newPassword']['first']->setValue('123456789');
-        $form->get('user_update')['newPassword']['second']->setValue('123456789');
+        $form->get('user_update')['newPassword']['first']->setValue('12345');
+        $form->get('user_update')['newPassword']['second']->setValue('12345');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -74,6 +74,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);
@@ -83,7 +84,7 @@ class AssociateControllerTest extends WebTestCase
         $this->assertEquals('associate@example.com', $user->getEmail());
 
         $encoder = $container->get('security.user_password_encoder.generic');
-        $this->assertTrue($encoder->isPasswordValid($user, '123456789'));
+        $this->assertTrue($encoder->isPasswordValid($user, '12345'));
 
         $this->assertEquals('Justas', $user->getAssociate()->getFullName());
         $this->assertEquals('LT', $user->getAssociate()->getCountry());
@@ -102,8 +103,8 @@ class AssociateControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $form->get('user_update')['email']->setValue("admin@example.com");
-        $form->get('user_update')['oldPassword']->setValue('justtas14');
+        $form->get('user_update')['email']->setValue("admin@plumtreesystems.com");
+        $form->get('user_update')['oldPassword']->setValue('12345');
         $form->get('user_update')['newPassword']['first']->setValue('justtas');
         $form->get('user_update')['newPassword']['second']->setValue('justtas');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
@@ -161,7 +162,7 @@ class AssociateControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
-        $form->get('user_update')['oldPassword']->setValue('123456789');
+        $form->get('user_update')['oldPassword']->setValue('12345');
         $form->get('user_update')['newPassword']['first']->setValue('');
         $form->get('user_update')['newPassword']['second']->setValue('');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
@@ -181,7 +182,7 @@ class AssociateControllerTest extends WebTestCase
         $em->refresh($user);
 
         $encoder = $container->get('security.user_password_encoder.generic');
-        $this->assertTrue($encoder->isPasswordValid($user, '123456789'));
+        $this->assertTrue($encoder->isPasswordValid($user, '12345'));
     }
 
     /**
@@ -218,7 +219,7 @@ class AssociateControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form->get('user_update')['email']->setValue($user->getEmail());
-        $form->get('user_update')['oldPassword']->setValue('1234');
+        $form->get('user_update')['oldPassword']->setValue('123456789');
         $form->get('user_update')['newPassword']['first']->setValue('12345');
         $form->get('user_update')['newPassword']['second']->setValue('12345');
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
@@ -231,13 +232,14 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);
 
         $em->refresh($user);
 
-        $this->assertEquals('admin@example.com', $user->getEmail());
+        $this->assertEquals('admin@plumtreesystems.com', $user->getEmail());
 
         $encoder = $container->get('security.user_password_encoder.generic');
         $this->assertTrue($encoder->isPasswordValid($user, '12345'));

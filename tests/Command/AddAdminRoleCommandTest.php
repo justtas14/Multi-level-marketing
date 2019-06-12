@@ -73,7 +73,7 @@ class AddAdminRoleCommandTest extends WebTestCase
 
         $this->assertContains('User not found', $output);
 
-        $email = 'admin@example.com';
+        $email = 'admin@plumtreesystems.com';
 
         $user = $em->getRepository(User::class)->findOneBy([
             'email' => $email

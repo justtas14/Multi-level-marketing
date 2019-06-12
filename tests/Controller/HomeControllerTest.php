@@ -86,6 +86,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
         $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
         $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
+        $form->get('user_registration')['associate']['dateOfBirth']->setValue("2019-06-24 00:00:00");
         $form->get('user_registration')['associate']['country']->setValue('LT');
         $form->get('user_registration')['associate']['address']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
@@ -95,21 +96,19 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);
-
-        $client->followRedirect();
-
-        $session = $client->getContainer()->get('session');
-        $messages = $session->getFlashBag()->get('success');
-
-        $this->assertEquals(1, sizeof($messages));
 
         $userRepository = $em->getRepository(User::class);
 
         $addedUser = $userRepository->findOneBy(['email' => $invitation->getEmail()]);
         $this->assertEquals($invitation->getFullName(), $addedUser->getAssociate()->getFullName());
+        $this->assertEquals(
+            "2019-06-24 00:00:00",
+            date_format($addedUser->getAssociate()->getDateOfBirth(), "Y-m-d H:i:s")
+        );
         $this->assertEquals('LT', $addedUser->getAssociate()->getCountry());
         $this->assertEquals('blaha', $addedUser->getAssociate()->getAddress());
         $this->assertEquals('kretinga', $addedUser->getAssociate()->getCity());
@@ -170,6 +169,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
         $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
         $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
+        $form->get('user_registration')['associate']['dateOfBirth']->setValue("2019-06-24 00:00:00");
         $form->get('user_registration')['associate']['country']->setValue('LT');
         $form->get('user_registration')['associate']['address']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
@@ -179,6 +179,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
         $crawler = $client->submit($form);
