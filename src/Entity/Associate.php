@@ -539,6 +539,8 @@ class Associate
     public function toArray()
     {
         return [
+            'id' => $this->getId(),
+            'parentId' => $this->getParentId(),
             'level' => $this->getLevel(),
             'fullName' => $this->getFullName(),
             'email' => $this->getEmail(),
