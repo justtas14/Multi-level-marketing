@@ -17,6 +17,7 @@ class UserRegistrationType extends AbstractType
         $builder
             ->add('email', EmailType::class)
             ->add('plainPassword', RepeatedType::class, [
+                'label' => 'Password',
                 'type' => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
                 'options' => ['attr' => ['class' => 'password-field']],

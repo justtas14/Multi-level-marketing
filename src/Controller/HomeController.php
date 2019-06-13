@@ -6,6 +6,7 @@ use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\User;
 use App\Form\UserRegistrationType;
+use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
@@ -46,6 +47,7 @@ class HomeController extends AbstractController
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param ConfigurationManager $cm
+     * @param AssociateManager $associateManager
      * @return Response
      * @throws \Exception
      */
@@ -53,7 +55,8 @@ class HomeController extends AbstractController
         $code,
         Request $request,
         InvitationManager $invitationManager,
-        ConfigurationManager $cm
+        ConfigurationManager $cm,
+        AssociateManager $associateManager
     ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
@@ -112,9 +115,11 @@ class HomeController extends AbstractController
             }
         }
 
+        $recruiter = $associateManager->getAssociate($invitation->getSender());
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
-            'termsOfServices' => $termsOfServices
+            'termsOfServices' => $termsOfServices,
+            'recruiter' => $recruiter
         ]);
     }
 

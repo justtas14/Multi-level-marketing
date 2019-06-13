@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Intl\Intl;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as AssertApp;
 use Ramsey\Uuid\Uuid;
@@ -538,13 +539,17 @@ class Associate
 
     public function toArray()
     {
+        $displayCountry = '';
+        if ($this->country && strlen($this->country) === 2) {
+            $displayCountry = Intl::getRegionBundle()->getCountryName($this->country);
+        }
         return [
             'id' => $this->getId(),
             'parentId' => $this->getParentId(),
             'level' => $this->getLevel(),
             'fullName' => $this->getFullName(),
             'email' => $this->getEmail(),
-            'country' => $this->getCountry(),
+            'country' => $displayCountry,
             'address' => $this->getAddress(),
             'city' => $this->getCity(),
             'postcode' => $this->getPostcode(),
