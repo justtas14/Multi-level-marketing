@@ -7,6 +7,12 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Invitation</span>
+                {% if sent is defined and sent.completed is defined and sent.completed == true %}
+                    <div style="padding: 20px 0">
+                        Invitation has been sent successfully to the "{{ sent.address }}" email address
+                    </div>
+                    <a class="waves-effect waves-light btn" href="{{ path('associate_invite') }}">Send another one</a>
+                {% else %}
                     {{ form_start(invitation) }}
                     <div class="invitation-item" >
                         <div class="input-field col s12">
@@ -26,20 +32,21 @@
                         {{ form_widget(invitation.submit, { 'attr': {'style': 'background-color:#3ab54a'} }) }}
                     </div>
                     {{ form_end(invitation) }}
-                <div class="invitation-messageContainer">
-                    <div id="flash-messages">
-                        {% for message in app.flashes('error') %}
-                            <div class="error__block">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                        {% for message in app.flashes('success') %}
-                            <div class="alert alert-success">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
+                    <div class="invitation-messageContainer">
+                        <div id="flash-messages">
+                            {% for message in app.flashes('error') %}
+                                <div class="error__block">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                            {% for message in app.flashes('success') %}
+                                <div class="alert alert-success">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

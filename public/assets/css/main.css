@@ -104,6 +104,17 @@ input:focus+label {
     }
 }
 
+.registration__input--forceBorder input {
+    border: 1px solid lightgrey!important;
+    padding-left: 0.5em!important;
+}
 
+.registration__input--forceSelectDisplay select {
+    display: unset!important;
+}
 
-
+label.required::after {
+    content: "*";
+    margin-left: 0.3em;
+    color: red;
+}

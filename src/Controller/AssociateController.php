@@ -134,8 +134,14 @@ class AssociateController extends AbstractController
 
                 $em->persist($invitation);
                 $em->flush();
-
-                $this->addFlash('success', 'Email sent');
+//                $this->addFlash('success', 'Email sent');
+                return $this->render('associate/invitation.html.twig', [
+                    'invitation' => $form->createView(),
+                    'sent' => [
+                        'completed' => true,
+                        'address' => $invitation->getEmail()
+                    ]
+                ]);
             }
         }
 
