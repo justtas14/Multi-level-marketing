@@ -12,8 +12,9 @@ class Configuration
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
+     * @var integer
      */
     private $id;
 
@@ -43,10 +44,14 @@ class Configuration
      */
     private $hasPrelaunchEnded = false;
 
-
-    public function getId(): ?int
+    /**
+     * @param int $id
+     * @return Configuration
+     */
+    public function setId(?int $id): Configuration
     {
-        return $this->id;
+        $this->id = $id;
+        return $this;
     }
 
     /**

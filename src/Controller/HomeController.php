@@ -146,9 +146,7 @@ class HomeController extends AbstractController
     public function optOutAction($invitationCode, BlacklistManager $blacklistManager)
     {
         $message = 'You have already opted out of the service';
-        if (!$invitationCode) {
-            $message = 'No code';
-        } elseif (!$blacklistManager->existsInBlacklistByCode($invitationCode)) {
+        if (!$blacklistManager->existsInBlacklistByCode($invitationCode)) {
             $blacklistManager->addToBlacklist($invitationCode);
             $message = 'Successfully opted out of the service';
         }

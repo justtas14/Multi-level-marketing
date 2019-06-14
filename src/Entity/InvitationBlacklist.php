@@ -27,14 +27,6 @@ class InvitationBlacklist
     private $email;
 
     /**
-     * @return int
-     */
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    /**
      * @param int $id
      * @return InvitationBlacklist
      */

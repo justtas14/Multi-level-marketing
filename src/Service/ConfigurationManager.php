@@ -33,6 +33,7 @@ class ConfigurationManager
     private function createConfiguration(): Configuration
     {
         $configuration = new Configuration();
+        $configuration->setId(null);
         $configuration->setLandingContent("<h1>Prelaunch has ended!</h1>");
         $configuration->setMainLogo(null);
         $configuration->setTermsOfServices(null);

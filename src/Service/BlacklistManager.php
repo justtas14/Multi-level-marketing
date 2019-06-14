@@ -4,6 +4,7 @@
 namespace App\Service;
 
 use App\Entity\InvitationBlacklist;
+use App\Exception\NotFoundInvitationException;
 use App\Repository\InvitationBlacklistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -39,15 +40,15 @@ class BlacklistManager
     public function existsInBlacklist(string $email): bool
     {
         $results = $this->repo->findBy(['email' => $email]);
-        if (is_array($results)) {
-            return sizeof($results);
-        }
-        return false;
+        return sizeof($results);
     }
 
     public function existsInBlacklistByCode(string $invitationCode): bool
     {
         $invitation = $this->invitationManager->findInvitation($invitationCode);
+        if (!$invitation) {
+            throw new NotFoundInvitationException();
+        }
         return $this->existsInBlacklist($invitation->getEmail());
     }
 

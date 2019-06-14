@@ -23,8 +23,7 @@ class HomeControllerTest extends WebTestCase
     {
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
-            "App\DataFixtures\ORM\LoadInvitations",
-
+            "App\DataFixtures\ORM\LoadInvitations"
         ])->getReferenceRepository();
     }
 
@@ -189,6 +188,34 @@ class HomeControllerTest extends WebTestCase
             $crawler->filter('div.error__block')->html()
         );
 
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('Save')->form();
+
+        $form->get('user_registration')['email']->setValue($invitation->getEmail());
+        $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
+        $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
+        $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
+        $form->get('user_registration')['associate']['dateOfBirth']->setValue(null);
+        $form->get('user_registration')['associate']['country']->setValue('LT');
+        $form->get('user_registration')['associate']['address']->setValue('blaha');
+        $form->get('user_registration')['associate']['city']->setValue('kretinga');
+        $form->get('user_registration')['associate']['postcode']->setValue('12345');
+        $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_registration')['associate']['homePhone']->setValue('23543');
+        $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
+        $form->get('user_registration')['associate']['profilePicture']->setValue(null);
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Date of birth cannot be empty',
+            $crawler->filter('div.error__block')->html()
+        );
+
         /** @var Invitation $invitation */
         $invitation = $this->fixtures->getReference('invitation6');
 
@@ -257,6 +284,98 @@ class HomeControllerTest extends WebTestCase
         $this->assertContains(
             'This value should not be blank.',
             $client->getResponse()->getContent()
+        );
+    }
+
+    /**
+     *  Testing main page redirection when not logged in
+     */
+    public function testRedirectToLogin()
+    {
+        $client = $this->makeClient();
+
+        $client->request('GET', '/');
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+
+        $client->followRedirect();
+
+        $this->assertEquals('/login', $client->getRequest()->getRequestUri());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     *  Testing opt out controller functionality
+     *
+     *  - Request to /optOut controller with a slug of invitation code of invitation with id 2.
+     *  - Expected to go to the page and success message to be appeared that user is opt out of the service.
+     *
+     *  - Request to /optOut controller with a slug of invitation code of invitation with id 2.
+     *  - Expected to go to the page and message to be appeared that user has already been opt out of the service.
+     *
+     *  - Request to /optOut controller with a slug of wrong invitation code.
+     *  - Expected to get 404 status code and error message that invitation was not found.
+     */
+    public function testOptOutAction()
+    {
+        $client = $this->makeClient();
+
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var Invitation $invitation*/
+        $invitation = $this->fixtures->getReference('invitation2');
+
+        $em->refresh($invitation);
+
+        $client->request('GET', '/optOut/'.$invitation->getInvitationCode());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'Successfully opted out of the service',
+            $client->getResponse()->getContent()
+        );
+
+        $client->request('GET', '/optOut/'.$invitation->getInvitationCode());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'You have already opted out of the service',
+            $client->getResponse()->getContent()
+        );
+
+        $client->request('GET', '/optOut/wrongInvitation');
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     *  Testing case when wrong token is sent.
+     */
+    public function testWrongToken()
+    {
+        $client = $this->makeClient();
+
+        $tokenStorage = $client->getContainer()->get('security.token_storage');
+
+        $tokenStorage->setToken(null);
+
+        $crawler = $client->request(
+            'POST',
+            '/login',
+            ['headers' => [
+                'Authorization' => $tokenStorage->getToken()
+            ]]
+        );
+
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'Bad Request',
+            $crawler->filter('h2.exception-http')->html()
         );
     }
 }

@@ -241,9 +241,9 @@ class Associate
     public function setParent(Associate $parent): Associate
     {
         $this->parent = $parent;
-        $this->parentId = $parent->getId();
-        $this->ancestors = $parent->getAncestors().$parent->getId().'|';
-        $this->level = $parent->getLevel() + 1;
+        $this->setParentId($parent->getId());
+        $this->setAncestors($parent->getAncestors().$parent->getId().'|');
+        $this->setLevel($parent->getLevel() + 1);
         return $this;
     }
 

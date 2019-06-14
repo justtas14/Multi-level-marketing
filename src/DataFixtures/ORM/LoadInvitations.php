@@ -32,6 +32,7 @@ class LoadInvitations extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < 6; $i++) {
             $invitation = new Invitation();
+            $invitation->setId(null);
             $invitation->setFullName($fullNames[$i]);
             $invitation->setEmail($emails[$i]);
             $invitation->setSender($senders[$i]->getAssociate());

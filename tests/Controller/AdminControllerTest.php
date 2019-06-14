@@ -6,6 +6,7 @@ namespace App\Tests\Controller;
 use App\Entity\Configuration;
 use App\Entity\EmailTemplate;
 use App\Entity\Invitation;
+use App\Entity\InvitationBlacklist;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
@@ -28,7 +29,8 @@ class AdminControllerTest extends WebTestCase
     {
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
-            "App\DataFixtures\ORM\LoadEmailTemplates"
+            "App\DataFixtures\ORM\LoadEmailTemplates",
+            "App\DataFixtures\ORM\LoadBlackListEmails"
         ])->getReferenceRepository();
     }
 
@@ -45,6 +47,9 @@ class AdminControllerTest extends WebTestCase
      * Email expected to sent to invitation set email.
      * Email expected to contain in body this text: 'You got invited by', sender full name
      * and generated link with appropriate invitation code.
+     *
+     *  - Send invitation but with invalid email address.
+     *  - Expected to get error message that email is invalid.
      *
      *
      */
@@ -93,6 +98,55 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
         $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
+
+
+        $crawler = $client->request('GET', '/associate/invite');
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('invitation')['email']->setValue('myemaifa');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Invalid email',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $crawler = $client->request('GET', '/associate/invite');
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('invitation')['email']->setValue('AidanNewman@dayrep.com');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Associate already exists',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $crawler = $client->request('GET', '/associate/invite');
+
+        $form = $crawler->selectButton('Send')->form();
+
+        /** @var InvitationBlacklist $invitationBlackList */
+        $invitationBlackList = $this->fixtures->getReference('invitationBlackListEmail');
+        $em->refresh($invitationBlackList);
+
+        $form->get('invitation')['email']->setValue($invitationBlackList->getEmail());
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'The person with this email has opted out of this service',
+            $crawler->filter('div.error__block')->html()
+        );
     }
 
 
@@ -267,8 +321,17 @@ class AdminControllerTest extends WebTestCase
      *  Testing change content form functionality
      *
      * - Request to change content page when logged in as admin and expected to find one configuration with
-     * appropriate params. Change form values and submit.
-     * - Expected that configuration values have updated in database.
+     * null main logo and termsOfServices params. Upload correct files and submit.
+     * - Expected that configuration values have been uploaded in database. Also expected that user can download
+     * uploaded image with /download/{id} api.
+     *
+     * - Request to change content page when logged in as admin and expected to find one configuration with
+     * appropriate params. Change form values, upload correct files and submit.
+     * - Expected that configuration values have been updated in database.
+     *
+     * - Request to change content page when logged in as admin and expected to find one configuration with
+     * appropriate params. Change form values, upload incorrect files and submit.
+     * - Expected to get error message that only images are allowed.
      */
     public function testChangeContent()
     {
@@ -321,5 +384,310 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertNotNull($configuration->getMainLogo());
         $this->assertNotNull($configuration->getMainLogo());
+
+        $client->request('HEAD', '/download/1');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            'attachment; filename="profile.jpg";',
+            $client->getResponse()->headers->all()['content-disposition']['0']
+        );
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/profile.jpg');
+
+        $fileInput = $form->get('change_content')['termsOfServices'];
+        $fileInput->upload($path.'/profile2.jpg');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'image/jpeg';
+        $files['change_content']['termsOfServices']['type'] = 'image/jpeg';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => ['_token' => $csrf_protection->getValue(), 'Submit' => true]
+            ],
+            $files
+        );
+
+        $em->refresh($configuration);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/profile.jpg');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'image/jpeg';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => ['_token' => $csrf_protection->getValue(), 'Submit' => true]
+            ],
+            $files
+        );
+
+        $em->refresh($configuration);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/notimage.txt');
+
+        $fileInput = $form->get('change_content')['termsOfServices'];
+        $fileInput->upload($path.'/notimage.txt');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'text/html';
+        $files['change_content']['termsOfServices']['type'] = 'text/html';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $crawler = $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => ['_token' => $csrf_protection->getValue(), 'Submit' => true]
+            ],
+            $files
+        );
+
+        $this->assertContains(
+            'Only images are allowed',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/notfile');
+
+        $fileInput = $form->get('change_content')['termsOfServices'];
+        $fileInput->upload($path.'/notfile');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'text/html';
+        $files['change_content']['termsOfServices']['type'] = 'text/html';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $crawler = $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => ['_token' => $csrf_protection->getValue(), 'Submit' => true]
+            ],
+            $files
+        );
+    }
+
+    /**
+     *  Testing getCompanyRoot controller if it returns correct json response
+     *
+     *  - Request to /admin/api/explorer.
+     *  - Expect to get json response about company
+     *
+     *  - Request to /admin/api/explorer with parameter id of 3
+     *  - Expected to get 2 associates which has parent id 3 and appropriate values of json response.
+     */
+    public function testGetCompanyRoot()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $client->request('GET', '/admin/api/explorer');
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(4, sizeof($responseArr));
+
+        $this->assertEquals('-1', $responseArr['id']);
+        $this->assertEquals("Company", $responseArr['title']);
+        $this->assertEquals('-2', $responseArr['parentId']);
+        $this->assertEquals('1', $responseArr['numberOfChildren']);
+
+        $client->request('GET', '/admin/api/explorer', ['id' => '3']);
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $user6 = $em->getRepository(User::class)->find(6);
+        $user7 = $em->getRepository(User::class)->find(7);
+
+        $this->assertEquals(2, sizeof($responseArr));
+
+        $usersArray = [
+            [
+                'id' => $user6->getId(),
+                'title' => $user6->getAssociate()->getFullName(),
+                'parentId' => $user6->getAssociate()->getParentId(),
+                'numberOfChildren' => '1'
+            ],
+            [
+                'id' => $user7->getId(),
+                'title' => $user7->getAssociate()->getFullName(),
+                'parentId' => $user7->getAssociate()->getParentId(),
+                'numberOfChildren' => '3'
+            ]
+        ];
+
+        $this->assertContains(
+            $usersArray[0],
+            $responseArr
+        );
+
+        $this->assertContains(
+            $usersArray[1],
+            $responseArr
+        );
+    }
+
+    /**
+     *  Testing admin main page
+     *
+     *  - Request to '/' main page and logged in as admin.
+     *  - Expected to get redirection status code and then redirected to admin main page. Also expected to get
+     * appropriate number of levelBarListItem in main admin page.
+     */
+    public function testAdminMainPage()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $client->request('GET', '/');
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+
+        $crawler = $client->followRedirect();
+
+        $this->assertEquals('/admin', $client->getRequest()->getRequestUri());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            5,
+            $crawler->filter('li.associate-levelBarListItem')->count()
+        );
+    }
+
+    /**
+     *  Testing user search admin api if admin can go to /admin/usersearch link and have usersearch in it.
+     */
+    public function testUserSearch()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/admin/usersearch');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            1,
+            $crawler->filter('span.card-title:contains("User search")')->count()
+        );
+    }
+
+    public function testExportToCsv()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('HEAD', '/admin/csv');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            "attachment; filename=associates.csv",
+            $client->getResponse()->headers->all()['content-disposition']['0']
+        );
     }
 }

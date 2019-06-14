@@ -12,6 +12,7 @@ class LoadEmailTemplates extends Fixture
     {
         $emailTemplate = new EmailTemplate();
 
+        $emailTemplate->setId(null);
         $emailTemplate->setEmailType('INVITATION');
         $emailTemplate->setEmailSubject("You got invited by {{senderName}}. ");
         $emailTemplate->setEmailBody("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
