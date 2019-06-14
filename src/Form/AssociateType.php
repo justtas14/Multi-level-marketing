@@ -28,6 +28,11 @@ class AssociateType extends AbstractType
             ])
             ->add('address', TextType::class, [
                 'required' => true,
+                'label' => 'Address Line 1'
+            ])
+            ->add('address2', TextType::class, [
+                'required' => false,
+                'label' => 'Address Line 2'
             ])
             ->add('city', TextType::class, [
                 'required' => true,

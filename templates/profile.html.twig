@@ -10,6 +10,11 @@
                 {{ form_start(updateProfile) }}
                 {{ form_row(updateProfile._token) }}
                 <div class="input-field col s12 registration__input--forceBorder">
+                    {{ form_label(updateProfile.associate.fullName) }}
+                    {{ form_widget(updateProfile.associate.fullName) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.fullName } %}
+                </div>
+                <div class="input-field col s12 registration__input--forceBorder">
                     {{ form_label(updateProfile.email) }}
                     {{ form_widget(updateProfile.email) }}
                     {% include 'includes/errorBlock.html.twig' with { field: updateProfile.email } %}
@@ -30,19 +35,14 @@
                     {% include 'includes/errorBlock.html.twig' with { field: updateProfile.newPassword.second } %}
                 </div>
                 <div class="input-field col s12 registration__input--forceBorder">
-                    {{ form_label(updateProfile.associate.fullName) }}
-                    {{ form_widget(updateProfile.associate.fullName) }}
-                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.fullName } %}
-                </div>
-                <div class="input-field col s12 registration__input--forceSelectDisplay registration__input--forceBorder" >
-                    {{ form_label(updateProfile.associate.country) }}
-                    {{ form_widget(updateProfile.associate.country) }}
-                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.country } %}
-                </div>
-                <div class="input-field col s12 registration__input--forceBorder">
                     {{ form_label(updateProfile.associate.address) }}
                     {{ form_widget(updateProfile.associate.address) }}
                     {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.address } %}
+                </div>
+                <div class="input-field col s12 registration__input--forceBorder">
+                    {{ form_label(updateProfile.associate.address2) }}
+                    {{ form_widget(updateProfile.associate.address2) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.address2 } %}
                 </div>
                 <div class="input-field col s12 registration__input--forceBorder">
                     {{ form_label(updateProfile.associate.city) }}
@@ -53,6 +53,11 @@
                     {{ form_label(updateProfile.associate.postcode) }}
                     {{ form_widget(updateProfile.associate.postcode) }}
                     {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.postcode } %}
+                </div>
+                <div class="input-field col s12 registration__input--forceSelectDisplay registration__input--forceBorder" >
+                    {{ form_label(updateProfile.associate.country) }}
+                    {{ form_widget(updateProfile.associate.country) }}
+                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.country } %}
                 </div>
                 <div class="input-field col s12 registration__input--forceBorder">
                     {{ form_label(updateProfile.associate.mobilePhone) }}

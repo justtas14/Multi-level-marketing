@@ -89,7 +89,7 @@ class HomeController extends AbstractController
             if ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
             } elseif (!$dob->getData() || (is_string($dob->getData()) && $dob->getData() === '')) {
-                $dob->addError(new FormError('Date of birth cannot be empty'));
+                $dob->addError(new FormError('Date of birth is required'));
             } else {
                 $dob = $form->get('associate')->get('dateOfBirth')->getData();
                 if ($dob && is_string($dob) && $dob !== '') {
@@ -110,7 +110,7 @@ class HomeController extends AbstractController
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
 
-                $this->addFlash('success', 'Registration completed successfully');
+//                $this->addFlash('success', 'Registration completed successfully');
                 return $this->redirectToRoute('home');
             }
         }

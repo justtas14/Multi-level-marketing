@@ -95,6 +95,12 @@ class Associate
     private $address = "";
 
     /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $address2 = "";
+
+    /**
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -318,6 +324,26 @@ class Associate
     public function setAddress(string $address): Associate
     {
         $this->address = $address;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress2(): string
+    {
+        return $this->address2;
+    }
+
+    /**
+     * @param string $address2
+     * @return Associate
+     */
+    public function setAddress2(?string $address2): Associate
+    {
+        if ($address2) {
+            $this->address2 = $address2;
+        }
         return $this;
     }
 
