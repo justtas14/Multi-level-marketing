@@ -76,9 +76,10 @@
                         {{ form_widget(registration.associate.country) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.country } %}
                     </div>
-                    <div class="input-field registration__input--forceBorder">
+                    <div class="input-field registration__input--forceBorder registration__datepicker">
                         {{ form_label(registration.associate.dateOfBirth, null, {'label_attr': {'class': 'required'}}) }}
-                        <input type="text" class="datepicker" id="user_registration_associate_dateOfBirth" name="user_registration[associate][dateOfBirth]">
+                        {{ form_widget(registration.associate.dateOfBirth) }}
+{#                        <input type="text" class="datepicker" id="user_registration_associate_dateOfBirth" name="user_registration[associate][dateOfBirth]">#}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.dateOfBirth } %}
                     </div>
                     <div class="input-field registration__input--forceBorder">
@@ -137,11 +138,11 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        $(document).ready(function(){
-            $('.datepicker').datepicker({
-                yearRange: [1900, ((new Date()).getFullYear())],
-                defaultDate: new Date('1980')
-            });
-        });
+        // $(document).ready(function(){
+        //     $('.datepicker').datepicker({
+        //         yearRange: [1900, ((new Date()).getFullYear())],
+        //         defaultDate: new Date('1980')
+        //     });
+        // });
     </script>
 {% endblock %}

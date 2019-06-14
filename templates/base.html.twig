@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
             <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
             <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -17,6 +18,7 @@
             <link href="{{ asset('assets/css/header.css') }}" rel="stylesheet">
             <link href="{{ asset('assets/css/invitation.css') }}" rel="stylesheet">
             <link href="{{ asset('assets/css/login.css') }}" rel="stylesheet">
+            <link href="{{ asset('assets/css/hamburgers.css') }}" rel="stylesheet">
             <link href="{{ asset('build/app.css') }}" rel="stylesheet">
         {% endblock %}
     </head>
@@ -28,5 +30,6 @@
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
             <script src="{{ asset('assets/js/usersearch.js') }}" async></script>
+            <script src="{{ asset('assets/js/sidebar.js') }}" async></script>
         {% endblock %}
 </html>

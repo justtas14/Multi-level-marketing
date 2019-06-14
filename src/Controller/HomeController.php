@@ -85,16 +85,9 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $user->getEmail();
             $checkEmailExist = $em->getRepository(User::class)->findOneBy(['email' => $email]);
-            $dob = $form->get('associate')->get('dateOfBirth');
             if ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
-            } elseif (!$dob->getData() || (is_string($dob->getData()) && $dob->getData() === '')) {
-                $dob->addError(new FormError('Date of birth is required'));
             } else {
-                $dob = $form->get('associate')->get('dateOfBirth')->getData();
-                if ($dob && is_string($dob) && $dob !== '') {
-                    $user->getAssociate()->setDateOfBirth(new DateTime($dob));
-                }
                 $associate->setParent($invitation->getSender());
                 $associate->setEmail($email);
 

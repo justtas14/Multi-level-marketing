@@ -3,11 +3,12 @@
 {% block title %}User Search{% endblock %}
 
 {% block javascripts %}
+    {{ parent() }}
     <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-    <div class="card__container">
+    <div class="admin-contentContainer">
         <div class="card">
             <div class="card-content">
                 <span class="card-title">User search</span>

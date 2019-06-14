@@ -1,14 +1,13 @@
 .sidebar {
-    width: 30%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px;
     /*min-width: 319px;*/
-    display: flex;
-    flex-flow: column;
-    flex: 0 1 auto;
     height: 100%;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     background-color: #fff;
-    -webkit-box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
-    -moz-box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
     box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
 }
 
@@ -42,6 +41,7 @@
 }
 
 .sidebar-item a {
+    margin-left: 20px;
     display: block;
     color: black;
     line-height: 50px;
@@ -49,6 +49,7 @@
 }
 
 .sidebar-itemLast a {
+    margin-left: 20px;
     display: block;
     color: black;
     line-height: 50px;
@@ -58,6 +59,7 @@
 .sidebar-item:hover {
     background-color: #f2f2f2;
     border-right: 2px solid #7f06c4;
+
 }
 
 .sidebar-itemLast:hover {
@@ -66,14 +68,15 @@
 }
 
 .sidebar-logo {
-    width: 100%;
+    /*width: 100%;*/
     max-height: 100px;
     border-radius:25px 25px 25px 25px;
     object-fit: contain;
 }
 
 .sidebar--active {
-    border-right: 4px solid #7f06c4
+    background-color: #f2f2f2;
+    border-right: 2px solid #7f06c4;
 }
 
 .sidebar-logoContainer {
@@ -84,6 +87,7 @@
     justify-content: center;
     background-color: #fff;
     border-bottom: 1px solid #f2f2f2;
+    border-right: 2px solid #f2f2f2;
     -webkit-box-shadow: 0 0 4px 0 rgba(0,0,0,0.75);
     -moz-box-shadow: 0 0 4px 0 rgba(0,0,0,0.75);
     box-shadow: 0 0 4px 0 rgba(0,0,0,0.75);
@@ -91,12 +95,15 @@
 
 .sidebarProfile__container {
     background-color: #3ab54a;
+    border-right: 2px solid #3ab54a;
     display: flex;
+    font-size: 24px;
+    font-weight: 100;
     flex-direction: column;
     align-items: center;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    color: #fff;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: black;
 }
 
 .sidebarProfile__pictureContainer {
@@ -114,11 +121,132 @@
 }
 
 .sidebar__sectionLabel {
-    border-right: 0;
+    padding-left: 40px;
+    height: 50px;
+    line-height: 50px;
     color: #7f06c4;
+    border-right: 2px solid #f2f2f2;
     font-size: 1.2em;
+    cursor: default;
+}
+
+.sidebar__sectionLabel:hover {
+    background-color: #fff;
 }
 
 .sidebar-itemLast {
     align-self: flex-end;
+}
+
+.sidebar-label {
+    float: right;
+    margin-right: 20px;
+    font-size: 26px;
+    line-height: 50px;
+    display: none;
+}
+
+.sidebar-menu, .sidebar-profileContainer {
+    display: none;
+    animation: none;
+}
+
+.sidebar-menu {
+    top : 240px;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.sidebar-menu-active, .sidebar-profileContainer-active {
+    display: block;
+    position: fixed;
+    width: 100%;
+    z-index: 20;
+}
+
+.sidebar-profileContainer-active {
+    animation : adminMenuFade 0.25s ease-out forwards;
+}
+
+.sidebar-menu-active {
+    animation : adminMenuFade 0.25s ease-out forwards;
+    top: 240px;
+}
+
+@keyframes adminMenuFade {
+    from {
+        /*opacity: 0;*/
+        transform: translateX(-100%);
+    }
+    to {
+        /*opacity: 1;*/
+        transform: translateX(0px);
+    }
+}
+
+@keyframes adminMenuFadeBack {
+    from {
+        /*opacity: 1;*/
+        transform: translateX(0px);
+    }
+    to {
+        /*opacity: 0;*/
+        transform: translateX(-100%);
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .sidebar {
+        /*position:relative;*/
+        display:block;
+        margin:auto;
+        top: 0;
+        width: 100%;
+        height: 85px;
+        bottom: auto;
+        z-index: 50;
+    }
+    .sidebar-label {
+        display: inline-block;
+        cursor: pointer;
+    }
+    .sidebar-logo {
+        z-index: 999999;
+        max-height: 50px;
+        margin-left: 40px;
+    }
+    .sidebar-menu-inactive {
+        /*display: block;*/
+        position: fixed;
+        /*width: 100%;*/
+        z-index: 20;
+        width: 100%;
+        display: block;
+        animation : adminMenuFadeBack 0.25s ease-out forwards;
+    }
+
+    .sidebar-profileContainer-inactive {
+        display: block;
+        position: fixed;
+        z-index: 20;
+        width: 100%;
+        animation : adminMenuFadeBack 0.25s ease-out forwards;
+        /*display: none;*/
+    }
+}
+
+@media screen and (min-width: 651px) {
+    .sidebar-menu {
+        display: block;
+        position: relative;
+        width: 100%;
+        top: auto;
+        right: auto
+    }
+    .sidebar-profileContainer {
+        display: block;
+        position: relative;
+        width: 100%;
+        right: auto
+    }
 }

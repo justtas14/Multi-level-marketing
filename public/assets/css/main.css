@@ -1,22 +1,39 @@
 body {
     margin: 0;
+    background-image: -webkit-gradient(linear, left top, right top, from(#eee), color-stop(#f2f2f2), to(#fafafa));
+    background-image: -webkit-linear-gradient(left, #eee, #f2f2f2, #fafafa);
+    background-image: -o-linear-gradient(left, #eee, #f2f2f2, #fafafa);
     background-image: linear-gradient(90deg, #eee, #f2f2f2, #fafafa);
 }
 
 .profile-buttonWrap {
     margin: 40px auto 20px auto;
-    width: 75px;   
+    width: 75px;
 }
 
+.bodyBase-sidebarContainer {
+    display: inline-block;
+}
+
+.bodyBase-contentContainer {
+    position: relative;
+    display: inline-block;
+}
 
 .profile-container {
     margin: 50px auto 50px auto;
     width: 50%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     background-color:#fff;
     padding:100px 40px 50px 40px;
     border-radius:5px;
+    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -28,11 +45,17 @@ body {
     margin: 50px auto 50px auto;
     height: 20%;
     width: 50%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     background-color:#fff;
     padding:100px 20px 50px 20px;
     border-radius:5px;
+    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -77,11 +100,13 @@ body {
 input:focus, input:focus+label {
     color: #3ab54a!important;
     border-bottom-color: #3ab54a!important;
+    -webkit-box-shadow: 0 1px 0 0 #3ab54a!important;
     box-shadow: 0 1px 0 0 #3ab54a!important;
 }
 
 input:focus+label {
     border-bottom: 0!important;
+    -webkit-box-shadow: unset!important;
     box-shadow: unset!important;
 }
 
@@ -95,6 +120,10 @@ input:focus+label {
     border-radius: 17px;
 }
 
+.card {
+    border-radius: 5px;
+}
+
 @media only screen and (max-width: 900px) {
     .NodeMatrix__Container {
         display: none;
@@ -104,9 +133,20 @@ input:focus+label {
     }
 }
 
+@media screen and (max-width: 600px) {
+    .bodyBase-contentWrap {
+
+    }
+}
+.registration__input--forceBorder select {
+    display: unset!important;
+}
+
 .registration__input--forceBorder input {
     border: 1px solid lightgrey!important;
     padding-left: 0.5em!important;
+    -webkit-box-sizing: border-box!important;
+    box-sizing: border-box!important;
 }
 
 .registration__input--forceSelectDisplay select {
@@ -117,4 +157,21 @@ label.required::after {
     content: "*";
     margin-left: 0.3em;
     color: red;
+}
+
+.registration__datepicker>div {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.registration__datepicker>div>select {
+    margin-left: 10px;
+}
+.registration__datepicker>div>select:first-child {
+    margin-left: unset;
+}
+
+select {
+    border-radius: 0;
+    border: 1px solid lightgrey;
 }

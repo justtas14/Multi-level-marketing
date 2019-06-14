@@ -4,111 +4,105 @@
 
 
 {% block content %}
-    <main>
-        <div class="card__container">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">My Team</span>
-                    <div class="associate-buttonContainer">
-                        <a
-                                class="waves-effect waves-light btn-large"
-                                style="width:45%; background-color:#3ab54a"
-                                href="{{ path('associate_invite') }}">
-                            Invite Associate
-                        </a>
-                        <a
-                                class="waves-effect waves-light btn-large"
-                                style="margin-left:5%; width:45%; background-color:#3ab54a"
-                                href="{{ path('team_viewer') }}"
-                        >
-                            My Team Viewer
-                        </a>
-                    </div>
-                    <div class="associate-levelConainer">
-                        <ul class="associate-levelBarList">
-                            {% if associatesInLevels is not empty %}
-                                {% set maxLevel = max(associatesInLevels) %}
-                                {% for key, associateCount in associatesInLevels %}
-                                    <li class="associate-levelBarListItem" style="list-style-type:none;">
-                                        <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                                            Level {{ key }}: <strong>{{ associateCount }}</strong>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            {% endif %}
-                        </ul>
-                    </div>
+    <div class="admin-contentContainer">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">My Team</span>
+                <div class="associate-buttonContainer">
+                    <a
+                            class="waves-effect waves-light btn-large"
+                            style="width:45%; background-color:#3ab54a; flex:1"
+                            href="{{ path('associate_invite') }}">
+                        Invite Associate
+                    </a>
+                    <a
+                            class="waves-effect waves-light btn-large"
+                            style="margin-left:5%; width:45%; background-color:#3ab54a; flex:1"
+                            href="{{ path('team_viewer') }}"
+                    >
+                        My Team Viewer
+                    </a>
+                </div>
+                <div class="associate-levelConainer">
+                    <ul class="associate-levelBarList">
+                        {% if associatesInLevels is not empty %}
+                            {% set maxLevel = max(associatesInLevels) %}
+                            {% for key, associateCount in associatesInLevels %}
+                                <li class="associate-levelBarListItem" style="list-style-type:none;">
+                                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
         </div>
         {% if parent is not null %}
-            <div class="card__container">
-                <div class="card">
-                    <div class="card-content">
-                        <span class="card-title">My Enroller</span>
-                        <div style="display: flex; justify-content: center; flex-direction: row; align-items: center">
-                            <div class="associate-enrollerPictureContainer sidebarProfile__pictureContainer">
-                                {% if parent.profilePicture is not null %}
-                                    <img class="associate-enrollerPicture sidebar-picture" src="{{ parent.profilePicture|downloadUrlParser }}" />
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">My Enroller</span>
+                    <div style="display: flex; justify-content: center; flex-direction: row; align-items: center">
+                        <div class="associate-enrollerPictureContainer sidebarProfile__pictureContainer">
+                            {% if parent.profilePicture is not null %}
+                                <img class="associate-enrollerPicture sidebar-picture" src="{{ parent.profilePicture|downloadUrlParser }}" />
+                            {% else %}
+                                <img class="associate-enrollerPicture sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
+                            {% endif %}
+                        </div>
+                        <div class="associate-enrollerDetailsContainer" style="padding-left:0.5em">
+                            <p><b>Email</b>: {{ parent.email }}</p>
+                            <p><b>Full name</b>: {{ parent.fullName }}</p>
+                            <p><b>Mobile phone</b>:
+                                {% if parent.mobilePhone == '' %}
+                                    -
                                 {% else %}
-                                    <img class="associate-enrollerPicture sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
+                                    {{ parent.mobilePhone }}
                                 {% endif %}
-                            </div>
-                            <div class="associate-enrollerDetailsContainer" style="padding-left:0.5em">
-                                <p><b>Email</b>: {{ parent.email }}</p>
-                                <p><b>Full name</b>: {{ parent.fullName }}</p>
-                                <p><b>Mobile phone</b>:
-                                    {% if parent.mobilePhone == '' %}
-                                        -
-                                    {% else %}
-                                        {{ parent.mobilePhone }}
-                                    {% endif %}
-                                </p>
-                            </div>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         {% endif %}
-        <div class="card__container">
-            <div class="card">
-                <div class="card-content">
-                    <span class="card-title">My Direct Downline</span>
-                    <table>
-                        <thead>
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">My Direct Downline</span>
+                <table>
+                    <thead>
+                    <tr>
+                        <th style="max-width:50px">Name</th>
+                        <th style="max-width:50px">Email</th>
+                        <th style="max-width:50px">Mobile Phone</th>
+                        <th style="max-width:50px">Join Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if directAssociates is empty %}
+                        <tr><td colspan="4">You do not have any associates in your direct downline</td></tr>
+                    {% endif %}
+                    {% for associate in directAssociates %}
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Mobile Phone</th>
-                            <th>Join Date</th>
+                            <td style="max-width:50px; overflow-wrap: break-word">{{ associate.fullName }}</td>
+                            <td style="max-width:50px; overflow-wrap: break-word">{{ associate.email }}</td>
+                            <td style="max-width:50px; overflow-wrap: break-word">
+                                {% if associate.mobilePhone == '' %}
+                                    -
+                                {% else %}
+                                    {{ associate.mobilePhone }}
+                                {% endif %}
+                            </td>
+                            <td style="max-width:50px; overflow-x: hidden">
+                                {{ associate.joinDate|date('d-m-Y') }}
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {% if directAssociates is empty %}
-                            <tr><td colspan="4">You do not have any associates in your direct downline</td></tr>
-                        {% endif %}
-                        {% for associate in directAssociates %}
-                            <tr>
-                                <td>{{ associate.fullName }}</td>
-                                <td>{{ associate.email }}</td>
-                                <td>
-                                    {% if associate.mobilePhone == '' %}
-                                        -
-                                    {% else %}
-                                        {{ associate.mobilePhone }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ associate.joinDate|date('d-m-Y') }}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-    </main>
+    </div>
 {% endblock %}
 
 {#
