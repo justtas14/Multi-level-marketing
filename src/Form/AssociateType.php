@@ -77,7 +77,8 @@ class AssociateType extends AbstractType
                 'widget' => 'choice',
                 'placeholder' => [
                     'year' => 'Year', 'month' => 'Month', 'day' => 'Day',
-                ]
+                ],
+                'format' => 'dd MMMM yyyy',
             ])
             ->add('profilePicture', PTSFileType::class, [
                 'multiple' => false,
