@@ -1,4 +1,5 @@
 {% if app.user.associate is defined %}
+<div class="sidebar-profileContainer">
     <a href="{{ path('associate_profile') }}">
         <div class="sidebarProfile__container">
             {% set associate = app.user.associate %}
@@ -14,4 +15,5 @@
             </div>
         </div>
     </a>
+</div>
 {% endif %}

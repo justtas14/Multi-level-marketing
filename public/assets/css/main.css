@@ -8,6 +8,14 @@ body {
     width: 75px;   
 }
 
+.bodyBase-sidebarContainer {
+    display: inline-block;
+}
+
+.bodyBase-contentContainer {
+    position: relative;
+    display: inline-block; 
+}
 
 .profile-container {
     margin: 50px auto 50px auto;
@@ -95,6 +103,10 @@ input:focus+label {
     border-radius: 17px;
 }
 
+.card {
+    border-radius: 5px;
+}
+
 @media only screen and (max-width: 900px) {
     .NodeMatrix__Container {
         display: none;
@@ -104,6 +116,10 @@ input:focus+label {
     }
 }
 
-
+@media screen and (max-width: 600px) {
+    .bodyBase-contentWrap {
+       
+    }
+}
 
 
