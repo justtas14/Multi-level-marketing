@@ -1,7 +1,16 @@
 .admin-mainContainer {
+    -webkit-box-flex:1;
+    -ms-flex:1;
     flex:1;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -41,11 +50,20 @@
     margin-top:20px;
     padding: 20px 0 20px 0;
     width:100%;
+    -webkit-box-flex:1;
+    -ms-flex:1;
     flex:1;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     background-color: #fff;
     border-bottom: 1px solid #f2f2f2;
@@ -65,6 +83,7 @@
 .admin-itemLast {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
+    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     margin-bottom: 100px;
 }
@@ -75,6 +94,7 @@
 
 .admin-itemLast:hover {
     background-color: #f2f2f2;
+    -webkit-box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -82,11 +102,17 @@
     margin: 100px auto 20px auto;
     height: 20%;
     width: 50%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     background-color:#fff;
     padding: 20px;
     border-radius:5px;
+    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
     box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -95,16 +121,22 @@
 }
 
 .adminBusinessShape__buttonContainer {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
     justify-content: flex-end;
 }
 
 @media screen and (max-width: 650px) {
     .admin-contentContainer {
         margin:auto;
-        width: 80%;
+        padding: 1em;
         position: relative;
+        margin-top: 85px;
     }
+
     .card {
         margin-left: 0;
         margin-right: 0;
