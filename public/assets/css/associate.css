@@ -1,9 +1,23 @@
 .associate-mainContainer {
+    -webkit-box-flex:1;
+    -ms-flex:1;
     flex:1;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
-    
+
+}
+
+.associate-contentContainer {
+    width: 63%;
+    margin-left: 35%;
 }
 
 .associate-title {
@@ -26,7 +40,7 @@
 }
 
 .associate-levelBarList {
-    margin-right:35px;
+    /*margin-right:35px;*/
 }
 
 .associate-levelBarListItem {
@@ -48,6 +62,9 @@
 
 .associate-buttonContainer {
     margin: 20px auto 20px auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     width: 100%;
 }
 
@@ -59,6 +76,9 @@
 
 @media screen and (max-width: 668px) {
     .associate-mainContainer {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
         flex-direction: column;
     }
     .associate-levelContainer {
@@ -66,7 +86,7 @@
         padding: 0 0 20px 20px;
         border-right: none;
         border-bottom: 1px solid #3ab54a;
-    }  
+    }
     .associate-enrollerContainer {
         width: 100%;
         padding-left: 0px;
@@ -74,10 +94,18 @@
     .associate-enrollerPictureContainer {
         margin-left: 0;
         padding-left: 15%;
-        
+
     }
     .associate-enrollerDetailsContainer {
         margin-left: 0;
         padding-left: 15%;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .associate-contentContainer {
+        margin:auto;
+        width: 80%;
+        position: relative;
     }
 }

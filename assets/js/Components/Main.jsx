@@ -132,7 +132,7 @@ class Main extends Component {
 
                 </div>
                 {this.props.spinner ? (
-                    <div className="Spinner__Container" style={{'top': 0, 'z-index': '9999'}}>
+                    <div className="Spinner__Container" style={{'top': 0, 'zIndex': '9999'}}>
                         <div className="lds-dual-ring"/>
                     </div>
                 ): ''}

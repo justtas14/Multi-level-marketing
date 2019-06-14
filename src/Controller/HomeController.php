@@ -6,6 +6,7 @@ use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\User;
 use App\Form\UserRegistrationType;
+use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
@@ -46,6 +47,7 @@ class HomeController extends AbstractController
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param ConfigurationManager $cm
+     * @param AssociateManager $associateManager
      * @return Response
      * @throws \Exception
      */
@@ -53,7 +55,8 @@ class HomeController extends AbstractController
         $code,
         Request $request,
         InvitationManager $invitationManager,
-        ConfigurationManager $cm
+        ConfigurationManager $cm,
+        AssociateManager $associateManager
     ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
@@ -79,16 +82,9 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $user->getEmail();
             $checkEmailExist = $em->getRepository(User::class)->findOneBy(['email' => $email]);
-            $dob = $form->get('associate')->get('dateOfBirth');
             if ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
-            } elseif (!$dob->getData() || (is_string($dob->getData()) && $dob->getData() === '')) {
-                $dob->addError(new FormError('Date of birth cannot be empty'));
             } else {
-                $dob = $form->get('associate')->get('dateOfBirth')->getData();
-                if ($dob && is_string($dob) && $dob !== '') {
-                    $user->getAssociate()->setDateOfBirth(new DateTime($dob));
-                }
                 $associate->setParent($invitation->getSender());
                 $associate->setEmail($email);
 
@@ -104,14 +100,16 @@ class HomeController extends AbstractController
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
 
-                $this->addFlash('success', 'Registration completed successfully');
+//                $this->addFlash('success', 'Registration completed successfully');
                 return $this->redirectToRoute('home');
             }
         }
 
+        $recruiter = $associateManager->getAssociate($invitation->getSender(), true);
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
-            'termsOfServices' => $termsOfServices
+            'termsOfServices' => $termsOfServices,
+            'recruiter' => $recruiter
         ]);
     }
 

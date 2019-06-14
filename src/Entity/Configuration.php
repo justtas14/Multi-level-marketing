@@ -21,7 +21,7 @@ class Configuration
     /**
      * @var File
      * @ORM\OneToOne(targetEntity="File", cascade={"persist"})
-     * @ORM\JoinColumn(name="target_file_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="target_file_id", referencedColumnName="id", onDelete="SET NULL")
      * @AssertApp\IsImage(message="Only images are allowed")
      */
     private $mainLogo;

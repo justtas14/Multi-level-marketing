@@ -1,10 +1,17 @@
-<a href="{{ path('home') }}">
-    <div class="sidebar-logoContainer">
-        {% set logo = getLogo() %}
-        {% if logo is not null %}
-            <img class="sidebar-logo" src="{{ logo|downloadUrlParser }}" />
-        {% else%}
-            <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
-        {% endif %}
+<div class="sidebar-logoContainer">
+    {% set logo = getLogo() %}
+    {#<a href="{{ path('home') }}">#}
+    {% if logo is not null %}
+        <img class="sidebar-logo" src="{{ logo|downloadUrlParser }}" />
+    {% else%}
+        <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+    {% endif %}
+    {#</a>#}
+    <div class="hamburger hamburger--collapse">
+        <div class="hamburger-box">
+            <div class="hamburger-inner"></div>
+        </div>
     </div>
-</a>
+</div>
+
+

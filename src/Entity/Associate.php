@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Intl\Intl;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as AssertApp;
 use Ramsey\Uuid\Uuid;
@@ -94,6 +95,12 @@ class Associate
     private $address = "";
 
     /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $address2 = "";
+
+    /**
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -146,6 +153,7 @@ class Associate
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\NotBlank(groups={"registration"}, message="Date of birth is required")
      * @var DateTime
      */
     private $dateOfBirth;
@@ -317,6 +325,26 @@ class Associate
     public function setAddress(string $address): Associate
     {
         $this->address = $address;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress2(): string
+    {
+        return $this->address2;
+    }
+
+    /**
+     * @param string $address2
+     * @return Associate
+     */
+    public function setAddress2(?string $address2): Associate
+    {
+        if ($address2) {
+            $this->address2 = $address2;
+        }
         return $this;
     }
 
@@ -538,14 +566,19 @@ class Associate
 
     public function toArray()
     {
+        $displayCountry = '';
+        if ($this->country && strlen($this->country) === 2) {
+            $displayCountry = Intl::getRegionBundle()->getCountryName($this->country);
+        }
         return [
             'id' => $this->getId(),
             'parentId' => $this->getParentId(),
             'level' => $this->getLevel(),
             'fullName' => $this->getFullName(),
             'email' => $this->getEmail(),
-            'country' => $this->getCountry(),
+            'country' => $displayCountry,
             'address' => $this->getAddress(),
+            'address2' => $this->getAddress2(),
             'city' => $this->getCity(),
             'postcode' => $this->getPostcode(),
             'mobilePhone' => $this->getMobilePhone(),

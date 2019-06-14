@@ -6,7 +6,16 @@
     <div class="card__container">
         <div class="card" style="margin: 0 auto; width: 60vw; min-width: 300px">
             <div class="card-content">
-                <span class="card-title">Registration</span>
+                <div class="login-logoContainer">
+                    {% set logo = getLogo() %}
+                    {% if logo is not null %}
+                        <img style="max-width:100%; max-height: 100px" src="{{ logo|downloadUrlParser }}" />
+                    {% else%}
+                        <img style="max-width:100%; max-height: 100px" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+                    {% endif %}
+                </div>
+                <span class="card-title">You have been invited by: <b>{{ recruiter.fullName }}</b></span>
+                <span class="card-title">To complete your registration, fill in the form bellow:</span>
                 <div id="flash-messages">
                     {% for message in app.flashes('error') %}
                         <div class="error__block">
@@ -19,55 +28,66 @@
                         </div>
                     {% endfor %}
                 </div>
-                <main id="main">
+                <main id="main registration">
                     {{ form_start(registration) }}
                     {{ form_row(registration._token) }}
-                    <div class="input-field">
-                        {{ form_label(registration.email) }}
-                        {{ form_widget(registration.email) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: registration.email } %}
-                    </div>
-                    <div class="input-field">
-                        {{ form_label(registration.plainPassword) }}
-                        {{ form_widget(registration.plainPassword) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: registration.plainPassword } %}
-                    </div>
-                    <div class="input-field">
+                    <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.fullName) }}
                         {{ form_widget(registration.associate.fullName) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.fullName } %}
                     </div>
-                    <div class="input-field col s12">
-                        <input type="text" class="datepicker" id="user_registration_associate_dateOfBirth" name="user_registration[associate][dateOfBirth]">
-                        {{ form_label(registration.associate.dateOfBirth) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.dateOfBirth } %}
+                    <div class="input-field registration__input--forceBorder">
+                        {{ form_label(registration.email) }}
+                        {{ form_widget(registration.email) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.email } %}
                     </div>
-                    <div class="input-field">
-                        {{ form_label(registration.associate.country) }}
-                        {{ form_widget(registration.associate.country) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.country } %}
+                    <div class="input-field registration__input--forceBorder">
+                        {{ form_label(registration.plainPassword.first) }}
+                        {{ form_widget(registration.plainPassword.first) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.plainPassword.first } %}
                     </div>
-                    <div class="input-field">
+                    <div class="input-field registration__input--forceBorder">
+                        {{ form_label(registration.plainPassword.second) }}
+                        {{ form_widget(registration.plainPassword.second) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.plainPassword.second } %}
+                    </div>
+                    <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.address) }}
                         {{ form_widget(registration.associate.address) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.address } %}
                     </div>
-                    <div class="input-field">
+                    <div class="input-field registration__input--forceBorder">
+                        {{ form_label(registration.associate.address2) }}
+                        {{ form_widget(registration.associate.address2) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.address2 } %}
+                    </div>
+                    <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.city) }}
                         {{ form_widget(registration.associate.city) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.city } %}
                     </div>
-                    <div class="input-field">
+                    <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.postcode) }}
                         {{ form_widget(registration.associate.postcode) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.postcode } %}
                     </div>
-                    <div class="input-field">
+                    <div class="input-field registration__input--forceBorder registration__input--forceSelectDisplay">
+                        {{ form_label(registration.associate.country) }}
+                        {{ form_widget(registration.associate.country) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.country } %}
+                    </div>
+                    <div class="input-field registration__input--forceBorder registration__datepicker">
+                        {{ form_label(registration.associate.dateOfBirth, null, {'label_attr': {'class': 'required'}}) }}
+                        {{ form_widget(registration.associate.dateOfBirth) }}
+{#                        <input type="text" class="datepicker" id="user_registration_associate_dateOfBirth" name="user_registration[associate][dateOfBirth]">#}
+                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.dateOfBirth } %}
+                    </div>
+                    <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.mobilePhone) }}
                         {{ form_widget(registration.associate.mobilePhone) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.mobilePhone } %}
                     </div>
-                    <div class="input-field">
+                    <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.homePhone) }}
                         {{ form_widget(registration.associate.homePhone) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.associate.homePhone } %}
@@ -94,7 +114,7 @@
                         <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
                     {% endif %}
                     <div class="input-field">
-                        <label style="position: unset!important;">
+                        <label class="required" style="position: unset!important;">
                             {{ form_widget(registration.associate.agreedToTermsOfService) }}
                             <span>I agree to the terms of service</span>
                         </label>
@@ -118,8 +138,11 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        $(document).ready(function(){
-            $('.datepicker').datepicker();
-        });
+        // $(document).ready(function(){
+        //     $('.datepicker').datepicker({
+        //         yearRange: [1900, ((new Date()).getFullYear())],
+        //         defaultDate: new Date('1980')
+        //     });
+        // });
     </script>
 {% endblock %}
