@@ -5,6 +5,17 @@
     justify-content: center;
 }
 
+.admin-contentContainer {
+    width: 100%;
+    margin: auto;
+    z-index: 10;
+}
+
+.card {
+    margin-left: 270px;
+    margin-right: 20px;
+}
+
 .admin-sidebar {
     width: 30%;
     min-width: 319px;
@@ -86,4 +97,16 @@
 .adminBusinessShape__buttonContainer {
     display: flex;
     justify-content: flex-end;
+}
+
+@media screen and (max-width: 650px) {
+    .admin-contentContainer {
+        margin:auto;
+        width: 80%;
+        position: relative;
+    }
+    .card {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
