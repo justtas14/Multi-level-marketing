@@ -153,6 +153,7 @@ class Associate
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\NotBlank(groups={"registration"}, message="Date of birth is required")
      * @var DateTime
      */
     private $dateOfBirth;

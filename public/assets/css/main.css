@@ -104,9 +104,14 @@ input:focus+label {
     }
 }
 
+.registration__input--forceBorder select {
+    display: unset!important;
+}
+
 .registration__input--forceBorder input {
     border: 1px solid lightgrey!important;
     padding-left: 0.5em!important;
+    box-sizing: border-box!important;
 }
 
 .registration__input--forceSelectDisplay select {
@@ -117,4 +122,19 @@ label.required::after {
     content: "*";
     margin-left: 0.3em;
     color: red;
+}
+
+.registration__datepicker>div {
+    display: flex;
+}
+.registration__datepicker>div>select {
+    margin-left: 10px;
+}
+.registration__datepicker>div>select:first-child {
+    margin-left: unset;
+}
+
+select {
+    border-radius: 0;
+    border: 1px solid lightgrey;
 }
