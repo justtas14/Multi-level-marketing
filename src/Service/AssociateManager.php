@@ -101,20 +101,21 @@ class AssociateManager
         return false;
     }
 
-    public function getAssociate($id)
+    public function getAssociate($id, $override = false)
     {
         $associateRepository = $this->em->getRepository(Associate::class);
 
-        $token = $this->tokenStorage->getToken();
+        if (!$override) {
+            $token = $this->tokenStorage->getToken();
 
-        /** @var User $user */
-        $user = $token->getUser();
+            /** @var User $user */
+            $user = $token->getUser();
 
-        if (!$this->isAncestor($id, $user->getAssociate()->getId(), false)
-            && !in_array('ROLE_ADMIN', $user->getRoles())) {
-            throw new NotAncestorException('The target associate, is not in user\'s downline');
+            if (!$this->isAncestor($id, $user->getAssociate()->getId(), false)
+                && !in_array('ROLE_ADMIN', $user->getRoles())) {
+                throw new NotAncestorException('The target associate, is not in user\'s downline');
+            }
         }
-
         return $associateRepository->findOneBy(['id' => $id]);
     }
 
