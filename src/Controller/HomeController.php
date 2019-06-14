@@ -115,7 +115,7 @@ class HomeController extends AbstractController
             }
         }
 
-        $recruiter = $associateManager->getAssociate($invitation->getSender());
+        $recruiter = $associateManager->getAssociate($invitation->getSender(), true);
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
             'termsOfServices' => $termsOfServices,
