@@ -577,6 +577,7 @@ class Associate
             'email' => $this->getEmail(),
             'country' => $displayCountry,
             'address' => $this->getAddress(),
+            'address2' => $this->getAddress2(),
             'city' => $this->getCity(),
             'postcode' => $this->getPostcode(),
             'mobilePhone' => $this->getMobilePhone(),
