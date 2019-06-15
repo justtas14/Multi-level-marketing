@@ -37,8 +37,23 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>
-    <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>
-    <script src="{{ asset('assets/js/explorer_main.js') }}" async></script>
+{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function hideViewer(node) {
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+                if (node) {
+                    node.id = 'no';
+                    node.innerHTML = 'Downline explorer not supported in Internet explorer.';
+                }
+            }
+        }
+        var node = document.querySelector('div#rootExplorer');
+        hideViewer(node);
+    </script>
+    <script src="{{ asset('assets/js/explorer_main.js') }}" async></script>
 {% endblock %}

@@ -65,7 +65,7 @@ body {
 }
 
 .input-field>label {
-    position: unset!important;
+    position: static!important;
 }
 
 .error__block {
@@ -139,7 +139,7 @@ input:focus+label {
     }
 }
 .registration__input--forceBorder select {
-    display: unset!important;
+    display: block!important;
 }
 
 .registration__input--forceBorder input {
@@ -150,7 +150,7 @@ input:focus+label {
 }
 
 .registration__input--forceSelectDisplay select {
-    display: unset!important;
+    display: block!important;
 }
 
 label.required::after {
@@ -168,10 +168,15 @@ label.required::after {
     margin-left: 10px;
 }
 .registration__datepicker>div>select:first-child {
-    margin-left: unset;
+    margin-left: 0;
 }
 
 select {
     border-radius: 0;
     border: 1px solid lightgrey;
+}
+
+.input-field>label {
+    -webkit-transform: translateY(0)!important;
+    transform: translateY(0)!important;
 }
