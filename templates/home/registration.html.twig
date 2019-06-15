@@ -104,12 +104,6 @@
                             <span>I agree to receive text message updates</span>
                         </label>
                     </div>
-                    <div class="input-field">
-                        <label style="position: unset!important;">
-                            {{ form_widget(registration.associate.agreedToSocialMediaUpdates) }}
-                            <span>I agree to receive social media updates</span>
-                        </label>
-                    </div>
                     {% if termsOfServices is not null  %}
                         <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
                     {% endif %}
