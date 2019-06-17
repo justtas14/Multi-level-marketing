@@ -236,6 +236,10 @@
 }
 
 @media screen and (min-width: 651px) {
+    .sidebar-logo {
+        width: 100%;
+    }
+
     .sidebar-menu {
         display: block;
         position: relative;
