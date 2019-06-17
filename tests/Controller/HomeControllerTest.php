@@ -34,7 +34,7 @@ class HomeControllerTest extends WebTestCase
      * invitation code of invitation entity. Expected registration form to open.
      *  - Set all correct values in form.
      *  - Expected to get successful registration message and appropriate user and associate to be added in database.
-     * with inputed fields.
+     * with inputed fields. Also expected that new user data is correctly converted to array which is required for csv.
      *
      *  - Get invitation1 entity and request to /register/{invitationCode} with appropriate.
      * invitation code of invitation entity.
@@ -85,9 +85,12 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
         $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
         $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
-        $form->get('user_registration')['associate']['dateOfBirth']->setValue("2019-06-24 00:00:00");
+        $form->get('user_registration')['associate']['dateOfBirth']['day']->setValue('20');
+        $form->get('user_registration')['associate']['dateOfBirth']['month']->setValue('4');
+        $form->get('user_registration')['associate']['dateOfBirth']['year']->setValue('1994');
         $form->get('user_registration')['associate']['country']->setValue('LT');
         $form->get('user_registration')['associate']['address']->setValue('blaha');
+        $form->get('user_registration')['associate']['address2']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
         $form->get('user_registration')['associate']['postcode']->setValue('12345');
         $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
@@ -105,8 +108,8 @@ class HomeControllerTest extends WebTestCase
         $addedUser = $userRepository->findOneBy(['email' => $invitation->getEmail()]);
         $this->assertEquals($invitation->getFullName(), $addedUser->getAssociate()->getFullName());
         $this->assertEquals(
-            "2019-06-24 00:00:00",
-            date_format($addedUser->getAssociate()->getDateOfBirth(), "Y-m-d H:i:s")
+            "1994-04-20",
+            date_format($addedUser->getAssociate()->getDateOfBirth(), "Y-m-d")
         );
         $this->assertEquals('LT', $addedUser->getAssociate()->getCountry());
         $this->assertEquals('blaha', $addedUser->getAssociate()->getAddress());
@@ -118,6 +121,16 @@ class HomeControllerTest extends WebTestCase
         $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToTextMessageUpdates());
         $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToSocialMediaUpdates());
         $this->assertEquals(null, $addedUser->getAssociate()->getProfilePicture());
+
+        $csvAssociateExample = $addedUser->getAssociate()->toArray();
+
+        $this->assertEquals(18, sizeof($csvAssociateExample));
+
+        $this->assertEquals('jonas@gmail.com', $csvAssociateExample['email']);
+        $this->assertEquals('Lithuania', $csvAssociateExample['country']);
+        $this->assertEquals('blaha', $csvAssociateExample['address2']);
+        $this->assertEquals('1994-04-20', $csvAssociateExample['dateOfBirth']);
+
 
         /** @var Invitation $invitation */
         $invitation = $this->fixtures->getReference('invitation1');
@@ -164,39 +177,13 @@ class HomeControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $form->get('user_registration')['email']->setValue('BaileyBrookes@dayrep.com');
-        $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
-        $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
-        $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
-        $form->get('user_registration')['associate']['dateOfBirth']->setValue("2019-06-24 00:00:00");
-        $form->get('user_registration')['associate']['country']->setValue('LT');
-        $form->get('user_registration')['associate']['address']->setValue('blaha');
-        $form->get('user_registration')['associate']['city']->setValue('kretinga');
-        $form->get('user_registration')['associate']['postcode']->setValue('12345');
-        $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
-        $form->get('user_registration')['associate']['homePhone']->setValue('23543');
-        $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
-        $form->get('user_registration')['associate']['profilePicture']->setValue(null);
-
-        $crawler = $client->submit($form);
-
-        $this->assertContains(
-            'This email already exist',
-            $crawler->filter('div.error__block')->html()
-        );
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $form = $crawler->selectButton('Save')->form();
-
         $form->get('user_registration')['email']->setValue($invitation->getEmail());
         $form->get('user_registration')['plainPassword']['first']->setValue('justtas');
         $form->get('user_registration')['plainPassword']['second']->setValue('justtas');
         $form->get('user_registration')['associate']['fullName']->setValue($invitation->getFullName());
-        $form->get('user_registration')['associate']['dateOfBirth']->setValue(null);
+        $form->get('user_registration')['associate']['dateOfBirth']['day']->setValue(null);
+        $form->get('user_registration')['associate']['dateOfBirth']['month']->setValue(null);
+        $form->get('user_registration')['associate']['dateOfBirth']['year']->setValue(null);
         $form->get('user_registration')['associate']['country']->setValue('LT');
         $form->get('user_registration')['associate']['address']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
@@ -212,7 +199,7 @@ class HomeControllerTest extends WebTestCase
         $crawler = $client->submit($form);
 
         $this->assertContains(
-            'Date of birth cannot be empty',
+            'Date of birth is required',
             $crawler->filter('div.error__block')->html()
         );
 
