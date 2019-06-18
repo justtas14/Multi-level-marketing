@@ -5,6 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Validator\Constraints as AssertApp;
 
+use PHP_CodeSniffer\Generators\Text;
+use PhpParser\Node\Scalar\String_;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ConfigurationRepository")
  */
@@ -44,6 +47,16 @@ class Configuration
      */
     private $hasPrelaunchEnded = false;
 
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $tosDisclaimer = '';
+
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
     /**
      * @param int $id
      * @return Configuration
@@ -127,6 +140,24 @@ class Configuration
     {
         $this->hasPrelaunchEnded = $hasPrelaunchEnded;
 
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTosDisclaimer() : string
+    {
+        return $this->tosDisclaimer;
+    }
+
+    /**
+     * @param mixed $tosDisclaimer
+     * @return Configuration
+     */
+    public function setTosDisclaimer($tosDisclaimer): self
+    {
+        $this->tosDisclaimer = $tosDisclaimer;
         return $this;
     }
 }

@@ -554,7 +554,7 @@ class Associate
         }
         return [
             'id' => $this->getId(),
-            'parentId' => $this->getParentId(),
+            'sponsorId' => $this->getParentId(),
             'level' => $this->getLevel(),
             'fullName' => $this->getFullName(),
             'email' => $this->getEmail(),

@@ -31,7 +31,7 @@ class AddAdminRoleCommandTest extends WebTestCase
     /**
      *  Testing adding admin role to user command
      *
-     *  - Execute command with existing email 'ArchieWatts@rhyta.com' with current roles 'ROLE_USER'.
+     *  - Execute command with existing email 'draustinis@gmail.com' with current roles 'ROLE_USER'.
      *  - After command execution expected that user which has email 'draustinis@gmail.com' new set roles are.
      * 'ROLE_ADMIN' and 'ROLE_USER' and expected successful message to appear.
      *  - Execute command with not existing email 'd@gmail.com'.
@@ -43,11 +43,11 @@ class AddAdminRoleCommandTest extends WebTestCase
      */
     public function testAddAdminRole()
     {
-        $email = 'ArchieWatts@rhyta.com';
-
         $em = $this->fixtures->getManager();
 
-        $user = $em->getRepository(User::class)->findOneBy(['email' => 'ArchieWatts@rhyta.com']);
+        $user = $em->find(User::class, 4);
+
+        $email = $user->getEmail();
 
         $output = $this->runCommand(
             'app:add:role_admin',

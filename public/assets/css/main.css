@@ -68,12 +68,18 @@ body {
     position: static!important;
 }
 
-.error__block {
+.error__block, .success__block {
     border: red 1px solid;
     color: red;
     background-color: rgba(255, 214, 214, 0.5);
     padding: .5em;
     margin: .25em 0;
+}
+
+.success__block {
+    border: #047408 1px solid;
+    color: #047408;
+    background-color: rgba(183, 255, 169, 0.5);
 }
 
 .error__block>ul {

@@ -1800,12 +1800,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PlumTreeSystems/FileBundle.git",
-                "reference": "0f9afac7d81f88f2f265e2f1a7422b0ecb2968e5"
+                "reference": "33bbf7dc2df3d62931e14983c34e38035b23425d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PlumTreeSystems/FileBundle/zipball/0f9afac7d81f88f2f265e2f1a7422b0ecb2968e5",
-                "reference": "0f9afac7d81f88f2f265e2f1a7422b0ecb2968e5",
+                "url": "https://api.github.com/repos/PlumTreeSystems/FileBundle/zipball/33bbf7dc2df3d62931e14983c34e38035b23425d",
+                "reference": "33bbf7dc2df3d62931e14983c34e38035b23425d",
                 "shasum": ""
             },
             "require": {
@@ -1838,7 +1838,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2019-06-03T13:55:25+00:00"
+            "time": "2019-06-17T15:11:59+00:00"
         },
         {
             "name": "psr/cache",

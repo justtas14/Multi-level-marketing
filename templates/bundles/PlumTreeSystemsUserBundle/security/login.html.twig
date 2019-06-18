@@ -6,9 +6,9 @@
 
 <div class="login-container">
     <div class="login-logoContainer">
-        {% set logo = getLogo() %}
-        {% if logo is not null %}
-            <img style="max-width:100%; max-height: 100px" src="{{ logo|downloadUrlParser }}" />
+        {% set configuration = getConfiguration() %}
+        {% if configuration.mainLogo is not null %}
+            <img style="max-width:100%; max-height: 100px" src="{{ configuration.mainLogo|downloadUrlParser }}" />
         {% else%}
             <img style="max-width:100%; max-height: 100px" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
         {% endif %}
@@ -33,6 +33,10 @@
             </div>
         </div>
     </div>
+    <div id="resetPassword" style="margin: auto">
+        Forgot your password?
+        <a href="{{ path('forgot_password') }}">Click here</a>
+    </div>
     {#
         If you want to control the URL the user
         is redirected to on success (more details below)
@@ -49,12 +53,12 @@
 
 <div id="flash-messages">
     {% for message in app.flashes('error') %}
-        <div class="alert alert-error">
+        <div class="error__block">
             {{ message }}
         </div>
     {% endfor %}
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
+        <div class="success__block">
             {{ message }}
         </div>
     {% endfor %}

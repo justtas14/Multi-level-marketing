@@ -3,6 +3,7 @@
 
 namespace App\Service;
 
+use App\Entity\Associate;
 use App\Entity\Invitation;
 use Doctrine\ORM\EntityManagerInterface;
 use Swift_Mailer;
@@ -27,11 +28,6 @@ class InvitationManager
      */
     private $router;
 
-    /**
-     * @var Twig_Environment $twig
-     */
-    private $twig;
-
     /** @var EmailTemplateManager $emailTemplateManager */
     private $emailTemplateManager;
 
@@ -42,14 +38,12 @@ class InvitationManager
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        Twig_Environment $twig,
         Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
         string $invitationSender
     ) {
         $this->em = $entityManager;
-        $this->twig = $twig;
         $this->mailer = $mailer;
         $this->router = $router;
         $this->emailTemplateManager = $emailTemplateManager;
@@ -60,41 +54,24 @@ class InvitationManager
     {
         $link = $this->getInvitationUrl($invitation);
 
-        $message = new \Swift_Message('Invitation');
+        $params = [
+            'link' => $link,
+            'receiverName' => $invitation->getFullName(),
+            'senderName' => $invitation->getSender()->getFullName(),
+            'optOutUrl' => $this->router->generate(
+                'opt_out_email',
+                ['invitationCode' => $invitation->getInvitationCode()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        ];
 
-        $emailTemplateEntity = $this
-            ->emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
-
-        $emailTemplateSubject = $emailTemplateEntity->getEmailSubject();
-
-        $emailTemplateBody = $emailTemplateEntity->getEmailBody();
-
-        $templateSubject = $this->twig->createTemplate($emailTemplateSubject);
-
-        $templateBody = $this->twig->createTemplate($emailTemplateBody);
+        $message = $this
+            ->emailTemplateManager->createMessage(EmailTemplateManager::EMAIL_TYPE_INVITATION, $params);
 
         $message
-            ->setSubject(
-                $templateSubject->render(
-                    ['link' => $link, 'senderName' => $invitation->getSender()->getFullName()]
-                )
-            )
             ->setFrom($this->sender)
-            ->setTo($invitation->getEmail())
-            ->setBody(
-                $templateBody->render(
-                    [
-                        'link' => $link,
-                        'senderName' => $invitation->getSender()->getFullName(),
-                        'optOutUrl' => $this->router->generate(
-                            'opt_out_email',
-                            ['invitationCode' => $invitation->getInvitationCode()],
-                            UrlGeneratorInterface::ABSOLUTE_URL
-                        )
-                    ]
-                ),
-                'text/html'
-            );
+            ->setTo($invitation->getEmail());
+
         $headers = $message->getHeaders();
         $headers->addTextHeader('X-Mailer', 'PHP v'.phpversion());
         $this->mailer->send($message);
@@ -132,5 +109,27 @@ class InvitationManager
     public function discardInvitation(Invitation $invitation): void
     {
         $invitation->setUsed(true);
+    }
+
+    /**
+     * @param Associate $associate
+     */
+    public function sendWelcomeEmail(Associate $associate)
+    {
+        $params = [
+            'name' => $associate->getFullName()
+        ];
+
+        $message = $this
+            ->emailTemplateManager->createMessage(EmailTemplateManager::EMAIL_TYPE_WELCOME, $params);
+
+        $message
+            ->setFrom($this->sender)
+            ->addCc($associate->getParent()->getEmail())
+            ->setTo($associate->getEmail());
+
+        $headers = $message->getHeaders();
+        $headers->addTextHeader('X-Mailer', 'PHP v'.phpversion());
+        $this->mailer->send($message);
     }
 }

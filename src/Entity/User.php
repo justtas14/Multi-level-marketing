@@ -28,6 +28,17 @@ class User extends PTSUser
     private $associate;
 
     /**
+     * @ORM\Column(type="string", length=191, unique=true, nullable=true)
+     * @var string
+     */
+    private $resetPasswordCode = null;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastResetAt = null;
+
+    /**
      * @return string
      */
     public function getId(): string
@@ -59,6 +70,39 @@ class User extends PTSUser
     {
         $this->associate = $associate;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResetPasswordCode(): ?string
+    {
+        return $this->resetPasswordCode;
+    }
+
+    /**
+     * @param string $code
+     * @return User
+     */
+    public function setResetPasswordCode(?string $code): self
+    {
+        $this->resetPasswordCode = $code;
+        return $this;
+    }
+
+    /**
+     * @param \DateTime $time
+     * @return User
+     */
+    public function setLastResetAt(\DateTime $time): self
+    {
+        $this->lastResetAt = $time;
+        return $this;
+    }
+
+    public function getLastResetAt(): ?\DateTime
+    {
+        return $this->lastResetAt;
     }
 
     public function isAdmin()

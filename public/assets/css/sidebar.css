@@ -6,7 +6,6 @@
     width: 250px;
     /*min-width: 319px;*/
     height: 100%;
-    /*overflow-y: auto;*/
     background-color: #fff;
     box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
 }
@@ -236,6 +235,10 @@
 }
 
 @media screen and (min-width: 651px) {
+    .sidebar {
+        overflow-y: auto;
+    }
+
     .sidebar-logo {
         width: 100%;
     }
@@ -253,4 +256,7 @@
         width: 100%;
         right: auto
     }
+}
+.sidebar-item--barelyVisible>a {
+    color: lightgrey;
 }

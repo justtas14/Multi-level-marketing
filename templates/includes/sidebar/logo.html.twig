@@ -1,8 +1,8 @@
 <div class="sidebar-logoContainer">
-    {% set logo = getLogo() %}
+    {% set configuration = getConfiguration() %}
     {#<a href="{{ path('home') }}">#}
-    {% if logo is not null %}
-        <img class="sidebar-logo" src="{{ logo|downloadUrlParser }}" />
+    {% if configuration.mainLogo is not null %}
+        <img class="sidebar-logo" src="{{ configuration.mainLogo|downloadUrlParser }}" />
     {% else%}
         <img class="sidebar-logo" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
     {% endif %}

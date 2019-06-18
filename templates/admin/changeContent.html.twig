@@ -14,7 +14,7 @@
                         </div>
                     {% endfor %}
                     {% for message in app.flashes('success') %}
-                        <div class="alert alert-success">
+                        <div class="success__block">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -33,6 +33,11 @@
                         {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                     </div>
                     <div class="input-field">
+                        {{ form_label(form.tosDisclaimer) }}
+                        {{ form_widget(form.tosDisclaimer) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.tosDisclaimer } %}
+                    </div>
+                    <div class="input-field">
                         {{ form_label(form.Submit) }}
                         {{ form_widget(form.Submit) }}
                     </div>
@@ -40,7 +45,7 @@
                     {{ form_end(form) }}
                 </main>
                 {% if configuration.termsOfServices is defined and configuration.termsOfServices is not null %}
-                    <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download terms of service</a>
+                    <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download Terms of service</a>
                 {% endif %}
             </div>
         </div>

@@ -22,8 +22,15 @@
             </div>
         {% endfor %}
     {% endif %}
-    <div class="sidebar-itemLast">
-        <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
-    </div>
+        <div class="sidebar-item">
+            {% set configuration = getConfiguration() %}
+            {% if configuration.termsOfServices is not null  %}
+                <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download Terms of service</a>
+            {% endif %}
+        </div>
+        <div class="sidebar-itemLast">
+            <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
+        </div>
+
     </div>
 {% endblock %}

@@ -31,8 +31,8 @@ class MenuExtension extends AbstractExtension
                 'label' => 'Home'
             ],
             [
-                'route' => 'email_template',
-                'label' => 'Email Template'
+                'route' => 'email_template_list',
+                'label' => 'Email Templates'
             ],
             [
                 'route' => 'end_prelaunch',
