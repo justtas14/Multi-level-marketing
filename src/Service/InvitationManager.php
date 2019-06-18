@@ -3,6 +3,7 @@
 
 namespace App\Service;
 
+use App\Entity\Associate;
 use App\Entity\Invitation;
 use Doctrine\ORM\EntityManagerInterface;
 use Swift_Mailer;
@@ -107,5 +108,27 @@ class InvitationManager
     public function discardInvitation(Invitation $invitation): void
     {
         $invitation->setUsed(true);
+    }
+
+    /**
+     * @param Associate $associate
+     */
+    public function sendWelcomeEmail(Associate $associate)
+    {
+        $params = [
+            'name' => $associate->getFullName()
+        ];
+
+        $message = $this
+            ->emailTemplateManager->createMessage(EmailTemplateManager::EMAIL_TYPE_WELCOME, $params);
+
+        $message
+            ->setFrom($this->sender)
+            ->addCc($associate->getParent()->getEmail())
+            ->setTo($associate->getEmail());
+
+        $headers = $message->getHeaders();
+        $headers->addTextHeader('X-Mailer', 'PHP v'.phpversion());
+        $this->mailer->send($message);
     }
 }

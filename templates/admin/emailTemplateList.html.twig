@@ -1,0 +1,50 @@
+{% extends 'bodyBase.html.twig' %}
+
+{% block title %}Email Template{% endblock %}
+
+{% block content %}
+    <div class="admin-contentContainer">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Email Templates</span>
+                <div id="flash-messages">
+                    {% for message in app.flashes('error') %}
+                        <div class="error__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <main id="main">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Template</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Invitation email template</td>
+                                <td><a href="{{ path('email_template', {'type':'invitation'}) }}" class="btn">EDIT</a></td>
+                            </tr>
+                            <tr>
+                                <td>Reset password email template</td>
+                                <td><a href="{{ path('email_template', {'type':'password'}) }}" class="btn">EDIT</a></td>
+                            </tr>
+                            <tr>
+                                <td>Welcome email template</td>
+                                <td><a href="{{ path('email_template', {'type':'welcome'}) }}" class="btn">EDIT</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </main>
+            </div>
+        </div>
+    </div>
+{% endblock %}

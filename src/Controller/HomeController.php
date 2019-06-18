@@ -75,6 +75,8 @@ class HomeController extends AbstractController
             $termsOfServices = $configuration->getTermsOfServices();
         }
 
+        $disclaimer = $configuration->getTosDisclaimer();
+
         $user = new User();
         $associate = new Associate();
         $user->setEmail($invitation->getEmail());
@@ -98,6 +100,7 @@ class HomeController extends AbstractController
                 $user->setRoles(['ROLE_USER']);
                 $user->setAssociate($associate);
                 $invitationManager->discardInvitation($invitation);
+                $invitationManager->sendWelcomeEmail($associate);
 
                 $em->persist($associate);
                 $em->flush();
@@ -106,7 +109,6 @@ class HomeController extends AbstractController
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
-
 //                $this->addFlash('success', 'Registration completed successfully');
                 return $this->redirectToRoute('home');
             }
@@ -116,7 +118,8 @@ class HomeController extends AbstractController
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
             'termsOfServices' => $termsOfServices,
-            'recruiter' => $recruiter
+            'recruiter' => $recruiter,
+            'disclaimer' => $disclaimer
         ]);
     }
 

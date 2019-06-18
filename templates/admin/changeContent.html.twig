@@ -33,6 +33,11 @@
                         {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                     </div>
                     <div class="input-field">
+                        {{ form_label(form.tosDisclaimer) }}
+                        {{ form_widget(form.tosDisclaimer) }}
+                        {% include 'includes/errorBlock.html.twig' with { field: form.tosDisclaimer } %}
+                    </div>
+                    <div class="input-field">
                         {{ form_label(form.Submit) }}
                         {{ form_widget(form.Submit) }}
                     </div>

@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -74,13 +75,47 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/emailtemplates", name="email_template")
+     * @Route("/admin/emailtemplateslist", name="email_template_list")
      */
-    public function emailTemplate(Request $request, EmailTemplateManager $emailTemplateManager)
+    public function emailTemplateList()
+    {
+        return $this->render('admin/emailTemplateList.html.twig', [
+
+        ]);
+    }
+
+    /**
+     * @Route("/admin/emailtemplate/{type}", name="email_template")
+     * @param Request $request
+     * @param EmailTemplateManager $emailTemplateManager
+     * @return Response
+     * @throws \App\Exception\UnsupportedEmailTypeException
+     */
+    public function emailTemplate($type, Request $request, EmailTemplateManager $emailTemplateManager)
     {
         $em = $this->getDoctrine()->getManager();
+        $title = "";
+        $emailTemplate = [];
 
-        $emailTemplate = $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
+        switch ($type) {
+            case 'invitation':
+                $emailTemplate =
+                    $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
+                $title = 'Invitation email template';
+                break;
+            case 'password':
+                $emailTemplate =
+                    $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_RESET_PASSWORD);
+                $title = 'Reset password email template';
+                break;
+            case 'welcome':
+                $emailTemplate =
+                    $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_WELCOME);
+                $title = 'Welcome email template';
+                break;
+            default:
+                throw new NotFoundHttpException("Email template does not exist!");
+        }
 
         $form = $this->createForm(EmailTemplateType::class, $emailTemplate);
 
@@ -94,7 +129,7 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/emailTemplate.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(), 'title' => $title
         ]);
     }
 
@@ -130,6 +165,7 @@ class AdminController extends AbstractController
     private function createTempConfiguration(Configuration $configuration)
     {
         $tempConfiguration = new Configuration();
+        $tempConfiguration->setTosDisclaimer($configuration->getTosDisclaimer());
 //        if ($configuration->getTermsOfServices()) {
 //            $tempConfiguration->setTermsOfServices($configuration->getTermsOfServices());
 //        }
@@ -173,6 +209,9 @@ class AdminController extends AbstractController
                     $fileManager->removeEntity($temp);
                 }
                 $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
+            }
+            if ($tempConfiguration->getTosDisclaimer()) {
+                $configuration->setTosDisclaimer($tempConfiguration->getTosDisclaimer());
             }
             $em->persist($configuration);
             $em->flush();

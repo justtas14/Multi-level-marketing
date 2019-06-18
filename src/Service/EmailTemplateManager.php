@@ -13,6 +13,7 @@ class EmailTemplateManager
 {
     const EMAIL_TYPE_INVITATION = 'INVITATION';
     const EMAIL_TYPE_RESET_PASSWORD = 'RESET_PASSWORD';
+    const EMAIL_TYPE_WELCOME = 'WELCOME';
 
     /**
      * @var EntityManagerInterface $em
@@ -53,6 +54,13 @@ class EmailTemplateManager
                     $emailTemplate->setEmailSubject("Password Reset");
                     $emailTemplate->setEmailType(self::EMAIL_TYPE_RESET_PASSWORD);
                     break;
+                case self::EMAIL_TYPE_WELCOME:
+                    $emailTemplate->setEmailBody(
+                        'Hello {{ name }}, welcome to prelaunch!'
+                    );
+                    $emailTemplate->setEmailSubject("Welcome");
+                    $emailTemplate->setEmailType(self::EMAIL_TYPE_WELCOME);
+                    break;
             }
             $this->em->persist($emailTemplate);
             $this->em->flush();
@@ -62,7 +70,7 @@ class EmailTemplateManager
 
     private function getSupportedTypes()
     {
-        return [self::EMAIL_TYPE_INVITATION, self::EMAIL_TYPE_RESET_PASSWORD];
+        return [self::EMAIL_TYPE_INVITATION, self::EMAIL_TYPE_RESET_PASSWORD, self::EMAIL_TYPE_WELCOME];
     }
 
     public function getEmailTemplate(string $type)

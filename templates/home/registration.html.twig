@@ -104,6 +104,8 @@
                             <span>I agree to receive text message updates</span>
                         </label>
                     </div>
+                    {{ disclaimer | nl2br}}
+                    <br>
                     {% if termsOfServices is not null  %}
                         <a href="{{ termsOfServices|downloadUrlParser }}">Terms Of Services</a>
                     {% endif %}
