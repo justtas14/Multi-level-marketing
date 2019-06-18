@@ -74,7 +74,6 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
@@ -96,7 +95,6 @@ class AssociateControllerTest extends WebTestCase
         $this->assertEquals('23543', $user->getAssociate()->getHomePhone());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToEmailUpdates());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToTextMessageUpdates());
-        $this->assertEquals(true, $user->getAssociate()->isAgreedToSocialMediaUpdates());
         $this->assertEquals(null, $user->getAssociate()->getProfilePicture());
 
 
@@ -117,7 +115,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $crawler = $client->submit($form);
@@ -146,7 +144,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $crawler = $client->submit($form);
@@ -175,7 +173,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);
@@ -253,7 +251,6 @@ class AssociateControllerTest extends WebTestCase
                         'homePhone' => '23543',
                         'agreedToEmailUpdates' => '1',
                         'agreedToTextMessageUpdates' => '1',
-                        'agreedToSocialMediaUpdates' => '1',
                         'agreedToTermsOfService' => '1'
                     ]
                 ]
@@ -277,7 +274,6 @@ class AssociateControllerTest extends WebTestCase
         $this->assertEquals('23543', $user->getAssociate()->getHomePhone());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToEmailUpdates());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToTextMessageUpdates());
-        $this->assertEquals(true, $user->getAssociate()->isAgreedToSocialMediaUpdates());
         $this->assertNotNull($user->getAssociate()->getProfilePicture());
 
 
@@ -298,7 +294,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $crawler = $client->submit($form);
@@ -327,7 +323,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $crawler = $client->submit($form);
@@ -366,7 +362,6 @@ class AssociateControllerTest extends WebTestCase
                         'homePhone' => '23543',
                         'agreedToEmailUpdates' => '1',
                         'agreedToTextMessageUpdates' => '1',
-                        'agreedToSocialMediaUpdates' => '1',
                         'agreedToTermsOfService' => '1'
                     ]
                 ]
@@ -399,7 +394,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_update')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_update')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_update')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);

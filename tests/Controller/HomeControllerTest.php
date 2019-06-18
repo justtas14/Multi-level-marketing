@@ -97,7 +97,6 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
@@ -119,7 +118,7 @@ class HomeControllerTest extends WebTestCase
         $this->assertEquals('23543', $addedUser->getAssociate()->getHomePhone());
         $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToEmailUpdates());
         $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToTextMessageUpdates());
-        $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToSocialMediaUpdates());
+        $this->assertEquals(true, $addedUser->getAssociate()->getAgreedToTermsOfService());
         $this->assertEquals(null, $addedUser->getAssociate()->getProfilePicture());
 
         $csvAssociateExample = $addedUser->getAssociate()->toArray();
@@ -192,7 +191,6 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
@@ -228,7 +226,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);
@@ -263,7 +261,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
-        $form->get('user_registration')['associate']['agreedToSocialMediaUpdates']->setValue(1);
+        $form->get('user_registration')['associate']['agreedToTermsOfService']->setValue(1);
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);

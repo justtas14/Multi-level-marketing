@@ -456,24 +456,6 @@ class Associate
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAgreedToSocialMediaUpdates(): bool
-    {
-        return $this->agreedToSocialMediaUpdates;
-    }
-
-    /**
-     * @param bool $agreedToSocialMediaUpdates
-     * @return Associate
-     */
-    public function setAgreedToSocialMediaUpdates(bool $agreedToSocialMediaUpdates): Associate
-    {
-        $this->agreedToSocialMediaUpdates = $agreedToSocialMediaUpdates;
-        return $this;
-    }
-
     public function getAgreedToEmailUpdates(): ?bool
     {
         return $this->agreedToEmailUpdates;

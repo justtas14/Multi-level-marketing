@@ -4,12 +4,16 @@ namespace App\Controller;
 
 use App\Entity\Associate;
 use App\Entity\Configuration;
+use App\Entity\ResetPassword;
 use App\Entity\User;
+use App\Form\NewPasswordType;
+use App\Form\ResetPasswordType;
 use App\Form\UserRegistrationType;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
+use App\Service\ResetPasswordManager;
 use DateTime;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -81,28 +85,23 @@ class HomeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $user->getEmail();
-            $checkEmailExist = $em->getRepository(User::class)->findOneBy(['email' => $email]);
-            if ($checkEmailExist) {
-                $this->addFlash('error', 'This email already exist');
-            } else {
-                $associate->setParent($invitation->getSender());
-                $associate->setEmail($email);
+            $associate->setParent($invitation->getSender());
+            $associate->setEmail($email);
 
-                $user->setRoles(['ROLE_USER']);
-                $user->setAssociate($associate);
-                $invitationManager->discardInvitation($invitation);
+            $user->setRoles(['ROLE_USER']);
+            $user->setAssociate($associate);
+            $invitationManager->discardInvitation($invitation);
 
-                $em->persist($associate);
-                $em->flush();
-                $em->persist($user);
-                $em->flush();
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->container->get('security.token_storage')->setToken($token);
-                $this->container->get('session')->set('_security_main', serialize($token));
+            $em->persist($associate);
+            $em->flush();
+            $em->persist($user);
+            $em->flush();
+            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+            $this->container->get('security.token_storage')->setToken($token);
+            $this->container->get('session')->set('_security_main', serialize($token));
 
 //                $this->addFlash('success', 'Registration completed successfully');
-                return $this->redirectToRoute('home');
-            }
+            return $this->redirectToRoute('home');
         }
 
         $recruiter = $associateManager->getAssociate($invitation->getSender(), true);
