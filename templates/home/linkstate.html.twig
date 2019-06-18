@@ -5,7 +5,11 @@
 {% block body %}
     <div class="login-container" style="padding: 20px">
         <main id="main">
+            {% if wrongRestorePassword is not defined %}
             <h1>The link is either expired or already used</h1>
+            {% else %}
+            {{ wrongRestorePassword }}
+            {% endif %}
         </main>
     </div>
 {% endblock %}

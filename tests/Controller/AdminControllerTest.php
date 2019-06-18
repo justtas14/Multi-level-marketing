@@ -85,8 +85,8 @@ class AdminControllerTest extends WebTestCase
         $message = $collectedMessages[0];
 
         $this->assertInstanceOf('Swift_Message', $message);
-        $this->assertSame('You got invited by Justas. ', $message->getSubject());
-        $this->assertSame($user->getEmail(), key($message->getFrom()));
+        $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
+        $this->assertSame('noreply@plumtreesystems.com', key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
     }
 }
