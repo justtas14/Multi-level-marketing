@@ -6,7 +6,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use App\Service\ConfigurationManager;
 
-class LogoInserterExtension extends AbstractExtension
+class ConfigurationInsterterExtension extends AbstractExtension
 {
 
     /**
@@ -15,7 +15,7 @@ class LogoInserterExtension extends AbstractExtension
     private $cm;
 
     /**
-     * @param ConfigurationManager
+     * @param ConfigurationManager $cm
      */
 
     public function __construct(ConfigurationManager $cm)
@@ -26,12 +26,12 @@ class LogoInserterExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('getLogo', [$this, 'getLogo']),
+            new TwigFunction('getConfiguration', [$this, 'getConfiguration']),
         ];
     }
 
-    public function getLogo()
+    public function getConfiguration()
     {
-        return $this->cm->getConfiguration()->getMainLogo();
+        return $this->cm->getConfiguration();
     }
 }
