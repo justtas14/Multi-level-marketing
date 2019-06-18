@@ -43,11 +43,11 @@ class AddAdminRoleCommandTest extends WebTestCase
      */
     public function testAddAdminRole()
     {
-        $email = 'draustinis@gmail.com';
-
         $em = $this->fixtures->getManager();
 
         $user = $em->find(User::class, 4);
+
+        $email = $user->getEmail();
 
         $output = $this->runCommand(
             'app:add:role_admin',
@@ -73,7 +73,7 @@ class AddAdminRoleCommandTest extends WebTestCase
 
         $this->assertContains('User not found', $output);
 
-        $email = 'justtas14@gmail.com';
+        $email = 'admin@plumtreesystems.com';
 
         $user = $em->getRepository(User::class)->findOneBy([
             'email' => $email

@@ -4,12 +4,16 @@ namespace App\Controller;
 
 use App\Entity\Associate;
 use App\Entity\Configuration;
+use App\Entity\ResetPassword;
 use App\Entity\User;
+use App\Form\NewPasswordType;
+use App\Form\ResetPasswordType;
 use App\Form\UserRegistrationType;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
+use App\Service\ResetPasswordManager;
 use DateTime;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -71,6 +75,8 @@ class HomeController extends AbstractController
             $termsOfServices = $configuration->getTermsOfServices();
         }
 
+        $disclaimer = $configuration->getTosDisclaimer();
+
         $user = new User();
         $associate = new Associate();
         $user->setEmail($invitation->getEmail());
@@ -94,6 +100,7 @@ class HomeController extends AbstractController
                 $user->setRoles(['ROLE_USER']);
                 $user->setAssociate($associate);
                 $invitationManager->discardInvitation($invitation);
+                $invitationManager->sendWelcomeEmail($associate);
 
                 $em->persist($associate);
                 $em->flush();
@@ -102,7 +109,6 @@ class HomeController extends AbstractController
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
-
 //                $this->addFlash('success', 'Registration completed successfully');
                 return $this->redirectToRoute('home');
             }
@@ -112,7 +118,8 @@ class HomeController extends AbstractController
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
             'termsOfServices' => $termsOfServices,
-            'recruiter' => $recruiter
+            'recruiter' => $recruiter,
+            'disclaimer' => $disclaimer
         ]);
     }
 
@@ -154,5 +161,81 @@ class HomeController extends AbstractController
             $message = 'Successfully opted out of the service';
         }
         return $this->render('home/optOut.html.twig', ['message' => $message]);
+    }
+
+    /**
+     * @Route("/restorePassword", name="forgot_password")
+     * @param Request $request
+     * @param ResetPasswordManager $resetPasswordManager
+     * @return Response
+     */
+    public function forgotPassword(Request $request, ResetPasswordManager $resetPasswordManager)
+    {
+        $success = false;
+        $email = "";
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(ResetPasswordType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email = trim($form['email']->getData());
+            /** @var User $user */
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $email]);
+            if (!$user) {
+                $this->addFlash('error', 'This email doesnt exist');
+            } else {
+                $resetPasswordManager->resetPassword($user);
+                $success = true;
+                $email = $user->getEmail();
+            }
+        }
+        return $this->render('home/forgotPassword.html.twig', [
+            'form' => $form->createView(), 'success' => $success, 'email' => $email
+        ]);
+    }
+
+    /**
+     * @Route("/restorePassword/{code}", name="restore_password")
+     * @param Request $request
+     * @param ResetPasswordManager $resetPasswordManager
+     * @return Response
+     */
+    public function restorePassword($code, Request $request, ResetPasswordManager $resetPasswordManager)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $resetPasswordManager->findUser($code);
+
+        if (!$user) {
+            return $this->render(
+                'home/linkstate.html.twig',
+                ['wrongRestorePassword' => 'There is no user with this code or its already expired']
+            );
+        }
+
+        $form = $this->createForm(NewPasswordType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+            $newPassword = $form['newPassword']->getData();
+
+            if (!$newPassword) {
+                $this->addFlash('error', 'Passsword cannot be empty');
+            } else {
+                $user->setPlainPassword($newPassword);
+                $em->persist($user);
+                $em->flush();
+                $resetPasswordManager->discardCode($user);
+                $this->addFlash('success', 'Password has been restored!');
+                return $this->redirectToRoute('home');
+            }
+        }
+        return $this->render('home/newPassword.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }
