@@ -56,6 +56,7 @@ class InvitationManager
 
         $params = [
             'link' => $link,
+            'receiverName' => $invitation->getFullName(),
             'senderName' => $invitation->getSender()->getFullName(),
             'optOutUrl' => $this->router->generate(
                 'opt_out_email',
