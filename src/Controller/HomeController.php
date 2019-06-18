@@ -61,8 +61,7 @@ class HomeController extends AbstractController
         InvitationManager $invitationManager,
         ConfigurationManager $cm,
         AssociateManager $associateManager
-    )
-    {
+    ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
 

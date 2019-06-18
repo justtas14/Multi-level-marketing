@@ -30,31 +30,6 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Command\CreateUserCommand:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-
-    App\Command\AddAdminRoleCommand:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-
-    App\Service\InvitationManager:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-            $twig: '@twig'
-            $mailer: '@swiftmailer.mailer'
-            $router: '@router'
-            $emailTemplateManager: '@App\Service\EmailTemplateManager'
-
-    App\Service\AssociateManager:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-            $tokenStorage: '@security.token_storage'
-
-    App\Service\EmailTemplateManager:
-        arguments:
-            $entityManager: '@doctrine.orm.entity_manager'
-
     App\EventListener\AssociateRequestListener:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'

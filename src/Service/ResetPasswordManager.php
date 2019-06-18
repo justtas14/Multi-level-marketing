@@ -29,26 +29,24 @@ class ResetPasswordManager
     private $router;
 
     /**
-     * @var Twig_Environment $twig
-     */
-    private $twig;
-
-    /**
      * @var string
      */
     private $sender;
 
+    /** @var EmailTemplateManager $emailTemplateManager */
+    private $emailTemplateManager;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        Twig_Environment $twig,
         Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
+        EmailTemplateManager $emailTemplateManager,
         string $invitationSender
     ) {
         $this->em = $entityManager;
-        $this->twig = $twig;
         $this->mailer = $mailer;
         $this->router = $router;
+        $this->emailTemplateManager = $emailTemplateManager;
         $this->sender = $invitationSender;
     }
 
@@ -56,19 +54,16 @@ class ResetPasswordManager
     {
         $link = $this->getResetPasswordUrl($resetPasswordCode);
 
-        $message = new \Swift_Message('Reset Password');
+        $params = [
+            'link' => $link
+        ];
+
+        $message = $this
+            ->emailTemplateManager->createMessage(EmailTemplateManager::EMAIL_TYPE_RESET_PASSWORD, $params);
 
         $message
-            ->setSubject("Reset password")
             ->setFrom($this->sender)
-            ->setTo($email)
-            ->setBody(
-                $this->twig->render(
-                    'emails/resetPassword.html.twig',
-                    ['link' => $link]
-                ),
-                'text/html'
-            );
+            ->setTo($email);
         $headers = $message->getHeaders();
         $headers->addTextHeader('X-Mailer', 'PHP v'.phpversion());
         $this->mailer->send($message);
