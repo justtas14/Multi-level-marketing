@@ -135,7 +135,7 @@ class Configuration
     /**
      * @return mixed
      */
-    public function getTosDisclaimer() : string
+    public function getTosDisclaimer() : ?string
     {
         return $this->tosDisclaimer;
     }
@@ -144,7 +144,7 @@ class Configuration
      * @param mixed $tosDisclaimer
      * @return Configuration
      */
-    public function setTosDisclaimer($tosDisclaimer): self
+    public function setTosDisclaimer(?string $tosDisclaimer): self
     {
         $this->tosDisclaimer = $tosDisclaimer;
         return $this;

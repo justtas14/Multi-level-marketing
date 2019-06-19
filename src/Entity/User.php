@@ -57,7 +57,7 @@ class User extends PTSUser
     /**
      * @return Associate
      */
-    public function getAssociate(): Associate
+    public function getAssociate(): ?Associate
     {
         return $this->associate;
     }
@@ -66,7 +66,7 @@ class User extends PTSUser
      * @param Associate $associate
      * @return User
      */
-    public function setAssociate(Associate $associate): User
+    public function setAssociate(?Associate $associate): User
     {
         $this->associate = $associate;
         return $this;
