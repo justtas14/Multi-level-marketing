@@ -154,17 +154,20 @@ class AssociateManager
     public function getDirectDownlineAssociates($parentId = null)
     {
         $user = $this->tokenStorage->getToken()->getUser();
-        $userAssociateId = $user->getAssociate()->getId();
+        $associate = $user->getAssociate();
+
+        $userAssociateId = ($associate)?($associate->getId()):(-1);
+
         /** @var AssociateRepository $associateRepo */
         $associateRepo = $this->em->getRepository(Associate::class);
-        if (!$parentId) {
+        if (!$parentId && $associate) {
             return [
                 'id' => $userAssociateId,
                 'title' => $user->getAssociate()->getFullName(),
                 'parentId' => $user->getAssociate()->getParentId(),
                 'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($userAssociateId)
             ];
-        } elseif (!$this->isAncestor($parentId, $userAssociateId, false) && !$user->isAdmin()) {
+        } elseif (!$user->isAdmin() && !$this->isAncestor($parentId, $userAssociateId, false)) {
             throw new NotAncestorException(
                 'Attempted to get direct downline of an associate that is not in your downline'
             );

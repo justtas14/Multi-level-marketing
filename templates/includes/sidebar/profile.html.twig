@@ -1,17 +1,23 @@
 {% if app.user.associate is defined %}
 <div class="sidebar-profileContainer">
+    {% set associate = app.user.associate %}
+    {% if (associate is not null) %}
     <a href="{{ path('associate_profile') }}">
+        {% endif %}
         <div class="sidebarProfile__container">
-            {% set associate = app.user.associate %}
             <div class="sidebarProfile__pictureContainer">
-                {% if associate.profilePicture is not null %}
+                {% if (associate is not null) and (associate.profilePicture is not null) %}
                     <img class="sidebar-picture" src="{{ associate.profilePicture|downloadUrlParser }}" />
                 {% else%}
                     <img class="sidebar-picture" src="{{ asset('assets/images/profile.jpg') }}" />
                 {% endif %}
             </div>
             <div class="sidebarProfile__labelContainer">
-                {{ associate.fullName}}
+                {% if (associate is not null) %}
+                    {{ associate.fullName}}
+                {% else %}
+                    {{ app.user.email }}
+                {% endif %}
             </div>
         </div>
     </a>

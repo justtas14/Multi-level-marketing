@@ -50,7 +50,10 @@ class AdminController extends AbstractController
 
         $user = $this->getUser();
 
-        $profilePicture = $user->getAssociate()->getProfilePicture();
+        $profilePicture = null;
+        if ($user->getAssociate()) {
+            $profilePicture = $user->getAssociate()->getProfilePicture();
+        }
 
         $level = $associateManager->getNumberOfLevels();
 

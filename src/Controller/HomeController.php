@@ -15,6 +15,7 @@ use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
 use App\Service\ResetPasswordManager;
 use DateTime;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -226,5 +227,32 @@ class HomeController extends AbstractController
         return $this->render('home/newPassword.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/logo", name="main_logo")
+     * @param ConfigurationManager $cm
+     * @param Packages $packages
+     * @return Response
+     */
+    public function mainLogo(ConfigurationManager $cm, Packages $packages)
+    {
+        $configuration = $cm->getConfiguration();
+
+        $image = './assets/images/plum_tree_logo.png';
+        if ($configuration->getMainLogo()) {
+            return $this->forward(
+                'PlumTreeSystemsFileBundle:File:download',
+                ['id' => $configuration->getMainLogo()->getId()]
+            );
+        }
+
+        $file = file_get_contents($image);
+
+        $headers = [
+            'Content-Type'     => 'image/png',
+            'Content-Disposition' => 'inline; filename="plum_tree_logo.png"'
+        ];
+        return new Response($file, 200, $headers);
     }
 }
