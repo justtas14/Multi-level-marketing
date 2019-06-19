@@ -84,6 +84,16 @@ class AssociateRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function findAssociateChildren($currentAncestor) : int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->andWhere('a.ancestors LIKE :ancestors')
+            ->setParameter('ancestors', $currentAncestor.'%')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     private function buildDirectAssociateQuery($parentId)
     {
         return $this->createQueryBuilder('a')

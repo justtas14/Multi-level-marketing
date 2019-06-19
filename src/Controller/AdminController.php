@@ -55,7 +55,10 @@ class AdminController extends AbstractController
 
         $user = $this->getUser();
 
-        $profilePicture = $user->getAssociate()->getProfilePicture();
+        $profilePicture = null;
+        if ($user->getAssociate()) {
+            $profilePicture = $user->getAssociate()->getProfilePicture();
+        }
 
         $level = $associateManager->getNumberOfLevels();
 
@@ -180,6 +183,7 @@ class AdminController extends AbstractController
      * @param Request $request
      * @param ConfigurationManager $cm
      * @return Response
+     * @throws \Exception
      */
     public function changeContent(Request $request, ConfigurationManager $cm, GaufretteFileManager $fileManager)
     {
