@@ -175,6 +175,7 @@ class AdminController extends AbstractController
      * @param Request $request
      * @param ConfigurationManager $cm
      * @return Response
+     * @throws \Exception
      */
     public function changeContent(Request $request, ConfigurationManager $cm, GaufretteFileManager $fileManager)
     {

@@ -19,7 +19,31 @@ class LoadEmailTemplates extends Fixture
             "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link");
 
         $manager->persist($emailTemplate);
-        $this->addReference('emailTemplateDefault', $emailTemplate);
+        $this->addReference('emailTemplateInvitation', $emailTemplate);
+
+        $emailTemplate = new EmailTemplate();
+
+        $emailTemplate->setId(null);
+        $emailTemplate->setEmailType('RESET_PASSWORD');
+        $emailTemplate->setEmailSubject("Password Reset");
+        $emailTemplate->setEmailBody(
+            'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>'
+        );
+
+        $manager->persist($emailTemplate);
+        $this->addReference('emailTemplateResetPassword', $emailTemplate);
+
+        $emailTemplate = new EmailTemplate();
+
+        $emailTemplate->setId(null);
+        $emailTemplate->setEmailType('WELCOME');
+        $emailTemplate->setEmailSubject("Welcome");
+        $emailTemplate->setEmailBody(
+            'Hello {{ name }}, welcome to prelaunch!'
+        );
+
+        $manager->persist($emailTemplate);
+        $this->addReference('emailTemplateWelcome', $emailTemplate);
 
         $manager->flush();
     }

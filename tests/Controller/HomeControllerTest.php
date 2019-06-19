@@ -63,7 +63,7 @@ class HomeControllerTest extends WebTestCase
      */
     public function testRegisterAssociate()
     {
-        $this->getContainer();
+        $container = $this->getContainer();
 
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
@@ -105,6 +105,10 @@ class HomeControllerTest extends WebTestCase
         $userRepository = $em->getRepository(User::class);
 
         $addedUser = $userRepository->findOneBy(['email' => $invitation->getEmail()]);
+
+        $encoder = $container->get('security.user_password_encoder.generic');
+        $this->assertTrue($encoder->isPasswordValid($addedUser, 'justtas'));
+
         $this->assertEquals($invitation->getFullName(), $addedUser->getAssociate()->getFullName());
         $this->assertEquals(
             "1994-04-20",
@@ -361,6 +365,111 @@ class HomeControllerTest extends WebTestCase
         $this->assertContains(
             'Bad Request',
             $crawler->filter('h2.exception-http')->html()
+        );
+    }
+
+    public function testRestorePassword()
+    {
+        $container = $this->getContainer();
+
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/restorePassword');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user2');
+
+        $em->refresh($user);
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('reset_password')['email']->setValue("notexist");
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'This email doesnt exist',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $form->get('reset_password')['email']->setValue($user->getEmail());
+
+        $client->submit($form);
+
+        $em->refresh($user);
+
+        $crawler = $client->request('GET', '/restorePassword/'.$user->getResetPasswordCode());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('Reset Password')->form();
+
+
+        $form->get('new_password')['newPassword']['first']->setValue('');
+        $form->get('new_password')['newPassword']['second']->setValue('');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Passsword cannot be empty',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $form->get('new_password')['newPassword']['first']->setValue('as');
+        $form->get('new_password')['newPassword']['second']->setValue('as');
+
+        $crawler = $client->submit($form);
+
+        $em->refresh($user);
+
+        $client->followRedirect();
+
+        $encoder = $container->get('security.user_password_encoder.generic');
+        $this->assertTrue($encoder->isPasswordValid($user, 'as'));
+
+        $this->assertNull($user->getResetPasswordCode());
+
+        $crawler = $client->request('GET', '/restorePassword/wrong');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'There is no user with this code or its already expired',
+            $client->getResponse()->getContent()
+        );
+
+        $crawler = $client->request('GET', '/restorePassword');
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user2');
+
+        $em->refresh($user);
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('reset_password')['email']->setValue($user->getEmail());
+
+        $client->submit($form);
+
+        $user->setLastResetAt(new \DateTime("2010-04-10"));
+
+        $em->persist($user);
+        $em->flush();
+
+        $em->refresh($user);
+
+        $client->request('GET', '/restorePassword/'.$user->getResetPasswordCode());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'There is no user with this code or its already expired',
+            $client->getResponse()->getContent()
         );
     }
 }

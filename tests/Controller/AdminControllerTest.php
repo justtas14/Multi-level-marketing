@@ -275,9 +275,17 @@ class AdminControllerTest extends WebTestCase
     /**
      *  Testing email template form functionality
      *
-     * - Request to email templates page when logged in as admin and expected to find one emailTemplate with
-     * appropriate params. Change form values and submit.
-     * - Expected that emailTemplate values have updated in database.
+     * - Request to email templates list page when logged in as admin and click on invitation email template.
+     * - Expected to find one invitation emailTemplate with appropriate params. Change form values and submit.
+     * Expected that invitation emailTemplate values have updated in database.
+     *
+     * - Request to email templates list page when logged in as admin and click on reset password email template.
+     * - Expected to find one reset password emailTemplate with appropriate params. Change form values and submit.
+     * Expected that reset password emailTemplate values have updated in database.
+     *
+     * - Request to email templates list page when logged in as admin and click on welcome email template.
+     * - Expected to find one welcome emailTemplate with appropriate params. Change form values and submit.
+     * Expected that welcome emailTemplate values have updated in database.
      */
     public function testEmailTemplate()
     {
@@ -292,11 +300,15 @@ class AdminControllerTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $crawler = $client->request('GET', '/admin/emailtemplates');
+        $crawler = $client->request('GET', '/admin/emailtemplateslist');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy([]);
+        $invitationLink = $crawler->filter('a[href="/admin/emailtemplate/invitation"]')->link();
+
+        $crawler = $client->click($invitationLink);
+
+        $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy(['emailType' => 'INVITATION']);
 
         $this->assertEquals("You got invited by {{senderName}}. ", $emailTemplate->getEmailSubject());
         $this->assertEquals("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
@@ -315,6 +327,68 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals("You got invited by {{senderName}}!!!", $emailTemplate->getEmailSubject());
         $this->assertEquals("<br/> Here is your link {{link}}!!!<br/><br/>", $emailTemplate->getEmailBody());
         $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
+
+        $crawler = $client->request('GET', '/admin/emailtemplateslist');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $invitationLink = $crawler->filter('a[href="/admin/emailtemplate/password"]')->link();
+
+        $crawler = $client->click($invitationLink);
+
+        $emailTemplate = $em->getRepository(EmailTemplate::class)
+            ->findOneBy(['emailType' => 'RESET_PASSWORD']);
+
+        $this->assertEquals("Password Reset", $emailTemplate->getEmailSubject());
+        $this->assertEquals(
+            'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>',
+            $emailTemplate->getEmailBody()
+        );
+        $this->assertEquals("RESET_PASSWORD", $emailTemplate->getEmailType());
+
+        $form = $crawler->selectButton('Change Template')->form();
+
+        $form->get('email_template')['emailSubject']->setValue("Password RESETTT!!!");
+        $form->get('email_template')['emailBody']->setValue("To reset password click <br>");
+
+        $client->submit($form);
+
+        $em->refresh($emailTemplate);
+
+        $this->assertEquals("Password RESETTT!!!", $emailTemplate->getEmailSubject());
+        $this->assertEquals("To reset password click <br>", $emailTemplate->getEmailBody());
+        $this->assertEquals("RESET_PASSWORD", $emailTemplate->getEmailType());
+
+        $crawler = $client->request('GET', '/admin/emailtemplateslist');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $invitationLink = $crawler->filter('a[href="/admin/emailtemplate/welcome"]')->link();
+
+        $crawler = $client->click($invitationLink);
+
+        $emailTemplate = $em->getRepository(EmailTemplate::class)
+            ->findOneBy(['emailType' => 'WELCOME']);
+
+        $this->assertEquals("Welcome", $emailTemplate->getEmailSubject());
+        $this->assertEquals(
+            'Hello {{ name }}, welcome to prelaunch!',
+            $emailTemplate->getEmailBody()
+        );
+        $this->assertEquals("WELCOME", $emailTemplate->getEmailType());
+
+        $form = $crawler->selectButton('Change Template')->form();
+
+        $form->get('email_template')['emailSubject']->setValue("Welcome!!!");
+        $form->get('email_template')['emailBody']->setValue("Welcome <a></a>guest");
+
+        $client->submit($form);
+
+        $em->refresh($emailTemplate);
+
+        $this->assertEquals("Welcome!!!", $emailTemplate->getEmailSubject());
+        $this->assertEquals("Welcome <a></a>guest", $emailTemplate->getEmailBody());
+        $this->assertEquals("WELCOME", $emailTemplate->getEmailType());
     }
 
     /**
@@ -335,6 +409,8 @@ class AdminControllerTest extends WebTestCase
      */
     public function testChangeContent()
     {
+        $this->setOutputCallback(function () {
+        });
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
 
@@ -354,6 +430,7 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(null, $configuration->getMainLogo());
         $this->assertEquals(null, $configuration->getTermsOfServices());
+        $this->assertEquals(null, $configuration->getTosDisclaimer());
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
@@ -375,7 +452,11 @@ class AdminControllerTest extends WebTestCase
             'POST',
             '/admin/changecontent',
             [
-                'change_content' => ['_token' => $csrf_protection->getValue(), 'Submit' => true]
+                'change_content' => [
+                    'tosDisclaimer' => 'disclaimer',
+                    '_token' => $csrf_protection->getValue(),
+                    'Submit' => true
+                ]
             ],
             $files
         );
@@ -384,6 +465,7 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertNotNull($configuration->getMainLogo());
         $this->assertNotNull($configuration->getMainLogo());
+        $this->assertEquals('disclaimer', $configuration->getTosDisclaimer());
 
         $client->request('HEAD', '/download/1');
 
@@ -670,6 +752,9 @@ class AdminControllerTest extends WebTestCase
 
     public function testExportToCsv()
     {
+        $this->setOutputCallback(function () {
+        });
+
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
 

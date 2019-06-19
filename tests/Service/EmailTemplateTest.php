@@ -34,7 +34,6 @@ class EmailTemplateTest extends TestCase
         $emailTemplate->setEmailBody("email body");
         $emailTemplate->setEmailType("INVITATION");
 
-
         $employeeRepository = $this->createMock(EntityRepository::class);
         $employeeRepository->expects($this->any())
             ->method('findOneBy')
@@ -47,7 +46,9 @@ class EmailTemplateTest extends TestCase
             ->method('getRepository')
             ->willReturn($employeeRepository);
 
-        $emailTemplateManager = new EmailTemplateManager($entityManagerMock);
+        $twigMock = $this->createMock(\Twig_Environment::class);
+
+        $emailTemplateManager = new EmailTemplateManager($entityManagerMock, $twigMock);
 
         $this->assertEquals($emailTemplate, $emailTemplateManager->getEmailTemplate('INVITATION'));
 
@@ -67,7 +68,7 @@ class EmailTemplateTest extends TestCase
             ->method('getRepository')
             ->willReturn($employeeRepository);
 
-        $emailTemplateManager = new EmailTemplateManager($entityManagerMock);
+        $emailTemplateManager = new EmailTemplateManager($entityManagerMock, $twigMock);
 
         $this->assertEquals($emailTemplate, $emailTemplateManager->getEmailTemplate('INVITATION'));
 
@@ -89,7 +90,7 @@ class EmailTemplateTest extends TestCase
             ->method('getRepository')
             ->willReturn($employeeRepository);
 
-        $emailTemplateManager = new EmailTemplateManager($entityManagerMock);
+        $emailTemplateManager = new EmailTemplateManager($entityManagerMock, $twigMock);
         $this->expectException(UnsupportedEmailTypeException::class);
         $emailTemplateManager->getEmailTemplate('UPDATE');
     }
