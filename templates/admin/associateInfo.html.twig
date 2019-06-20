@@ -23,13 +23,6 @@
                 {% endif %}
             </p>
             <p><b>Join Date</b>: {{ associate.joinDate|date('d-m-Y') }}</p>
-            <p><b>Date of birth</b>:
-                {% if associate.dateOfBirth is not null %}
-                    {{ associate.dateOfBirth|date('d-m-Y') }}
-                {% else %}
-                    -
-                {% endif %}
-            </p>
         </div>
         {% else %}
             <div class="sidebarProfile__pictureContainer">
