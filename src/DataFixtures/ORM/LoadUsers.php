@@ -255,6 +255,16 @@ class LoadUsers extends Fixture
             $manager,
             $user17
         );
+        $user23 = $this->createUser(
+            '23',
+            'PureAdmin@example.com',
+            'admin',
+            ['ROLE_ADMIN','ROLE_USER'],
+            'Pure admin',
+            '1900-06-01',
+            '78521521',
+            $manager
+        );
 
         $manager->flush();
     }

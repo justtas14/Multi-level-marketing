@@ -2,14 +2,9 @@
 
 namespace App\Tests\Command;
 
-use App\Entity\Associate;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
-use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
 
 class AddAdminRoleCommandTest extends WebTestCase
 {
@@ -31,12 +26,12 @@ class AddAdminRoleCommandTest extends WebTestCase
     /**
      *  Testing adding admin role to user command
      *
-     *  - Execute command with existing email 'draustinis@gmail.com' with current roles 'ROLE_USER'.
-     *  - After command execution expected that user which has email 'draustinis@gmail.com' new set roles are.
-     * 'ROLE_ADMIN' and 'ROLE_USER' and expected successful message to appear.
+     *  - Execute command with existing email with current roles 'ROLE_USER'.
+     *  - After command execution expected that user new set roles are ROLE_ADMIN' and 'ROLE_USER' and expected
+     * successful message to appear.
      *  - Execute command with not existing email 'd@gmail.com'.
      *  - After command execution expected error message 'User not found'.
-     *  - Execute command with existing email 'justtas14@gmail.com' with current roles 'ROLE_ADMIN' and 'ROLE_USER'.
+     *  - Execute command with existing email with current roles 'ROLE_ADMIN' and 'ROLE_USER'.
      *  - After command execution expected error message that user already has admin roles.
      *
      *   @group legacy

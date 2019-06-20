@@ -10,10 +10,8 @@ use App\Entity\InvitationBlacklist;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
-use Gaufrette\Filesystem;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\FileFormField;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class AdminControllerTest extends WebTestCase
 {
@@ -463,7 +461,7 @@ class AdminControllerTest extends WebTestCase
 
         $em->refresh($configuration);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
         $this->assertEquals('disclaimer', $configuration->getTosDisclaimer());
 
@@ -482,7 +480,7 @@ class AdminControllerTest extends WebTestCase
 
         $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
@@ -512,7 +510,7 @@ class AdminControllerTest extends WebTestCase
 
         $em->refresh($configuration);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
         $crawler = $client->request('GET', '/admin/changecontent');
@@ -521,7 +519,7 @@ class AdminControllerTest extends WebTestCase
 
         $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
@@ -547,14 +545,14 @@ class AdminControllerTest extends WebTestCase
 
         $em->refresh($configuration);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
         $crawler = $client->request('GET', '/admin/changecontent');
 
         $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
         $form = $crawler->selectButton('Change content')->form();
@@ -589,7 +587,7 @@ class AdminControllerTest extends WebTestCase
 
         $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
         $form = $crawler->selectButton('Change content')->form();
@@ -606,7 +604,7 @@ class AdminControllerTest extends WebTestCase
         $files['change_content']['termsOfServices']['type'] = 'text/html';
         $csrf_protection = $form['change_content']['_token'];
 
-        $crawler = $client->request(
+        $client->request(
             'POST',
             '/admin/changecontent',
             [
@@ -649,7 +647,7 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals('-1', $responseArr['id']);
         $this->assertEquals("Company", $responseArr['title']);
         $this->assertEquals('-2', $responseArr['parentId']);
-        $this->assertEquals('1', $responseArr['numberOfChildren']);
+        $this->assertEquals('2', $responseArr['numberOfChildren']);
 
         $client->request('GET', '/admin/api/explorer', ['id' => '3']);
 
@@ -693,7 +691,7 @@ class AdminControllerTest extends WebTestCase
      *
      *  - Request to '/' main page and logged in as admin.
      *  - Expected to get redirection status code and then redirected to admin main page. Also expected to get
-     * appropriate number of levelBarListItem in main admin page.
+     * appropriate number of levelBarListItem in main admin page and appropriate number of sidebar items in menu.
      */
     public function testAdminMainPage()
     {
@@ -721,6 +719,11 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals(
             5,
             $crawler->filter('li.associate-levelBarListItem')->count()
+        );
+
+        $this->assertEquals(
+            13,
+            $crawler->filter('div.sidebar-item')->count()
         );
     }
 
@@ -750,6 +753,12 @@ class AdminControllerTest extends WebTestCase
         );
     }
 
+    /**
+     *  Testing downloadable csv file
+     *
+     *  - Request to /admin/csv api.
+     *  - Expected to get headers which states that it returns attachment with a filename and it can be downloadable.
+     */
     public function testExportToCsv()
     {
         $this->setOutputCallback(function () {
@@ -766,7 +775,7 @@ class AdminControllerTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $crawler = $client->request('HEAD', '/admin/csv');
+        $client->request('HEAD', '/admin/csv');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 

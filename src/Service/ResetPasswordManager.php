@@ -3,11 +3,9 @@
 
 namespace App\Service;
 
-use App\Entity\Associate;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Swift_Mailer;
-use Twig_Environment;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ResetPasswordManager
