@@ -437,10 +437,10 @@ class AdminControllerTest extends WebTestCase
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
-        $fileInput->upload($path.'/profile.jpg');
+        $fileInput->upload($path.'/test.png');
 
         $fileInput = $form->get('change_content')['termsOfServices'];
-        $fileInput->upload($path.'/profile2.jpg');
+        $fileInput->upload($path.'/test2.png');
 
         $files = $form->getPhpFiles();
         $files['change_content']['mainLogo']['type'] = 'image/jpeg';
@@ -471,7 +471,7 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->assertEquals(
-            'attachment; filename="profile.jpg";',
+            'attachment; filename="test.png";',
             $client->getResponse()->headers->all()['content-disposition']['0']
         );
 
@@ -490,10 +490,10 @@ class AdminControllerTest extends WebTestCase
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
-        $fileInput->upload($path.'/profile.jpg');
+        $fileInput->upload($path.'/test.png');
 
         $fileInput = $form->get('change_content')['termsOfServices'];
-        $fileInput->upload($path.'/profile2.jpg');
+        $fileInput->upload($path.'/test2.png');
 
         $files = $form->getPhpFiles();
         $files['change_content']['mainLogo']['type'] = 'image/jpeg';
@@ -529,7 +529,7 @@ class AdminControllerTest extends WebTestCase
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
-        $fileInput->upload($path.'/profile.jpg');
+        $fileInput->upload($path.'/test.png');
 
         $files = $form->getPhpFiles();
         $files['change_content']['mainLogo']['type'] = 'image/jpeg';

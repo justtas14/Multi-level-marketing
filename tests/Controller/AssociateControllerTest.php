@@ -223,7 +223,7 @@ class AssociateControllerTest extends WebTestCase
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
         $fileInput = $form->get('user_update')['associate']['profilePicture'];
-        $fileInput->upload($path.'/profile.jpg');
+        $fileInput->upload($path.'/test.png');
 
         $files = $form->getPhpFiles();
         $files['user_update']['associate']['profilePicture']['type'] = 'image/jpeg';
