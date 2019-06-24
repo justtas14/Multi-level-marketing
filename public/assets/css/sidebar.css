@@ -171,6 +171,13 @@
     animation : adminMenuFade 0.25s ease-out forwards;
     top: 240px;
 }
+.sidebarProfile__labelContainer {
+    padding: 0 10px 0 10px;
+    width: 100%;
+    word-wrap: break-word;
+    font-size: 90%;
+    text-align: center;
+}
 
 @keyframes adminMenuFade {
     from {

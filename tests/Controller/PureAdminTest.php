@@ -18,8 +18,9 @@ class PureAdminTest extends WebTestCase
     /**
      * @group legacy
      */
-    protected function setUp()
+    protected function setUp() : void
     {
+        parent::setUp();
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
             "App\DataFixtures\ORM\LoadEmailTemplates",

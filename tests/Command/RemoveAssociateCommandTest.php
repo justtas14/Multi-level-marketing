@@ -17,8 +17,9 @@ class RemoveAssociateCommandTest extends WebTestCase
     /**
      * @group legacy
      */
-    protected function setUp()
+    protected function setUp() : void
     {
+        parent::setUp();
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
             "App\DataFixtures\ORM\LoadInvitations"
@@ -42,6 +43,10 @@ class RemoveAssociateCommandTest extends WebTestCase
      *
      *  - Execute command with not admin email.
      *  - Expected message to appear that user is not admin.
+     *
+     * @covers \App\Command\RemoveAssociateCommand::__construct()
+     * @covers \App\Command\RemoveAssociateCommand::configure()
+     * @covers \App\Command\RemoveAssociateCommand::execute()
      */
     public function testRemoveAssociate()
     {

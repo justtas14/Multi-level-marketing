@@ -16,8 +16,9 @@ class AddAdminRoleCommandTest extends WebTestCase
     /**
      * @group legacy
      */
-    protected function setUp()
+    protected function setUp() : void
     {
+        parent::setUp();
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers"
         ])->getReferenceRepository();
@@ -35,6 +36,8 @@ class AddAdminRoleCommandTest extends WebTestCase
      *  - After command execution expected error message that user already has admin roles.
      *
      *   @group legacy
+     *
+     * @covers \App\Command\AddAdminRoleCommand
      */
     public function testAddAdminRole()
     {
