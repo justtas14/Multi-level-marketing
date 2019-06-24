@@ -565,7 +565,7 @@ class HomeControllerTest extends WebTestCase
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
-        $fileInput->upload($path.'/profile.jpg');
+        $fileInput->upload($path.'/test.png');
 
         $files = $form->getPhpFiles();
         $files['change_content']['mainLogo']['type'] = 'image/jpeg';
@@ -595,7 +595,7 @@ class HomeControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->assertEquals(
-            'attachment; filename="profile.jpg";',
+            'attachment; filename="test.png";',
             $client->getResponse()->headers->all()['content-disposition']['0']
         );
     }
