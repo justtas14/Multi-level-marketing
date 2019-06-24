@@ -186,3 +186,8 @@ select {
     -webkit-transform: translateY(0)!important;
     transform: translateY(0)!important;
 }
+
+
+.Node__Container {
+    margin: 3px 0;
+}
