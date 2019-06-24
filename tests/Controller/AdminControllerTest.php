@@ -11,6 +11,8 @@ use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use PlumTreeSystems\FileBundle\Entity\File;
+use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 
 class AdminControllerTest extends WebTestCase
@@ -410,6 +412,9 @@ class AdminControllerTest extends WebTestCase
     {
         $this->setOutputCallback(function () {
         });
+
+        $container = $this->getContainer();
+
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
 
@@ -613,6 +618,18 @@ class AdminControllerTest extends WebTestCase
             ],
             $files
         );
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
     }
 
     /**

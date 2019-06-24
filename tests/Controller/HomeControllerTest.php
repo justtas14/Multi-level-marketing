@@ -531,6 +531,9 @@ class HomeControllerTest extends WebTestCase
     {
         $this->setOutputCallback(function () {
         });
+
+        $container = $this->getContainer();
+
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
 
@@ -598,5 +601,17 @@ class HomeControllerTest extends WebTestCase
             'attachment; filename="test.png";',
             $client->getResponse()->headers->all()['content-disposition']['0']
         );
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
     }
 }

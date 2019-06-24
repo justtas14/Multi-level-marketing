@@ -402,6 +402,18 @@ class AssociateControllerTest extends WebTestCase
         $em->refresh($user);
 
         $this->assertNotNull($user->getAssociate()->getProfilePicture());
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
     }
 
     /**
