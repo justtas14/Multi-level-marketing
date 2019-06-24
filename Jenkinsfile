@@ -50,17 +50,16 @@ pipeline {
             }
         }
         stage('test') {
-            steps {
-                sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID build"
-                sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID up -d"
-                sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID exec -T prelaunchbuilder bash -c 'vendor/bin/phpcs'"
-                sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID exec -T prelaunchbuilder bash -c 'vendor/bin/simple-phpunit'"
-            }
-            post {
-                cleanup {
-                    sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID kill"
-                    sh "docker-compose -f docker-compose-test.yml -p \$TEST_ID down --rmi local"
+            agent {
+                docker {
+                    image 'plumtreesystems/symfony_test_env'
+                    args '-v prelaunchbuilder_phpunit:/cache -e COMPOSER_CACHE_DIR=/cache -u root:sudo'
+                    reuseNode true
                 }
+            }
+            steps {
+                sh 'vendor/bin/phpcs'
+                sh 'vendor/bin/simple-phpunit'
             }
         }
         stage('deploy-staging') {
