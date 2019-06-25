@@ -239,7 +239,8 @@ class HomeController extends AbstractController
     {
         $configuration = $cm->getConfiguration();
 
-        $image = './assets/images/plum_tree_logo.png';
+        $path = $this->getParameter('kernel.project_dir').'/public/assets/images/plum_tree_logo.png';
+
         if ($configuration->getMainLogo()) {
             return $this->forward(
                 'PlumTreeSystemsFileBundle:File:download',
@@ -247,7 +248,7 @@ class HomeController extends AbstractController
             );
         }
 
-        $file = file_get_contents($image);
+        $file = file_get_contents($path);
 
         $headers = [
             'Content-Type'     => 'image/png',
