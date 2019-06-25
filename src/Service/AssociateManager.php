@@ -111,8 +111,8 @@ class AssociateManager
             /** @var User $user */
             $user = $token->getUser();
 
-            if (!$this->isAncestor($id, $user->getAssociate()->getId(), false)
-                && !in_array('ROLE_ADMIN', $user->getRoles())) {
+            if (!in_array('ROLE_ADMIN', $user->getRoles()) &&
+                !$this->isAncestor($id, $user->getAssociate()->getId(), false)) {
                 throw new NotAncestorException('The target associate, is not in user\'s downline');
             }
         }
