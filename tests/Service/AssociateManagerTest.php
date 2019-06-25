@@ -21,8 +21,9 @@ class AssociateManagerTest extends WebTestCase
     /**
      * @group legacy
      */
-    protected function setUp()
+    protected function setUp() : void
     {
+        parent::setUp();
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers"
         ])->getReferenceRepository();
@@ -120,7 +121,7 @@ class AssociateManagerTest extends WebTestCase
 
         $em = $this->fixtures->getManager();
 
-        $associate = $em->find(Associate::class, 1);
+        $em->find(Associate::class, 1);
 
         $assertExpectedValues = [2,4,6,5,4];
 

@@ -5,6 +5,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Invitation;
 use App\Entity\User;
+use App\Exception\NotAncestorException;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
@@ -19,8 +20,9 @@ class AssociateControllerTest extends WebTestCase
     /**
      * @group legacy
      */
-    protected function setUp()
+    protected function setUp() : void
     {
+        parent::setUp();
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
             "App\DataFixtures\ORM\LoadEmailTemplates"
@@ -221,7 +223,7 @@ class AssociateControllerTest extends WebTestCase
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
         $fileInput = $form->get('user_update')['associate']['profilePicture'];
-        $fileInput->upload($path.'/profile.jpg');
+        $fileInput->upload($path.'/test.png');
 
         $files = $form->getPhpFiles();
         $files['user_update']['associate']['profilePicture']['type'] = 'image/jpeg';
@@ -400,6 +402,18 @@ class AssociateControllerTest extends WebTestCase
         $em->refresh($user);
 
         $this->assertNotNull($user->getAssociate()->getProfilePicture());
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
     }
 
     /**

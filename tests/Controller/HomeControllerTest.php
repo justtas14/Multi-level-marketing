@@ -3,11 +3,14 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Configuration;
+use App\Entity\EmailTemplate;
 use App\Entity\Invitation;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\FileFormField;
 
 class HomeControllerTest extends WebTestCase
 {
@@ -19,11 +22,13 @@ class HomeControllerTest extends WebTestCase
     /**
      * @group legacy
      */
-    protected function setUp()
+    protected function setUp() : void
     {
+        parent::setUp();
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
-            "App\DataFixtures\ORM\LoadInvitations"
+            "App\DataFixtures\ORM\LoadInvitations",
+            "App\DataFixtures\ORM\LoadEmailTemplates"
         ])->getReferenceRepository();
     }
 
@@ -63,7 +68,7 @@ class HomeControllerTest extends WebTestCase
      */
     public function testRegisterAssociate()
     {
-        $this->getContainer();
+        $container = $this->getContainer();
 
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
@@ -105,6 +110,10 @@ class HomeControllerTest extends WebTestCase
         $userRepository = $em->getRepository(User::class);
 
         $addedUser = $userRepository->findOneBy(['email' => $invitation->getEmail()]);
+
+        $encoder = $container->get('security.user_password_encoder.generic');
+        $this->assertTrue($encoder->isPasswordValid($addedUser, 'justtas'));
+
         $this->assertEquals($invitation->getFullName(), $addedUser->getAssociate()->getFullName());
         $this->assertEquals(
             "1994-04-20",
@@ -362,5 +371,247 @@ class HomeControllerTest extends WebTestCase
             'Bad Request',
             $crawler->filter('h2.exception-http')->html()
         );
+    }
+
+    /**
+     *  Testing restore password functionality
+     *
+     *  - Request to /restorePassword api,
+     *  - Expected to go to that page. Then submit not existing email. Expected appropriate error message to appear.
+     *
+     *  - Submit with actual existing email.
+     *  - Expect to get 1 email with an appropriate content and expected for user new reset password code.
+     *
+     *  - Request to /restorePassword with reset password code in slug,
+     *  - Expected to go to that page. Then submit with empty password. Expected appropriate error message to appear.
+     *
+     *  - Submit with correct same repeated password.
+     *  - Expect to be redirected to login page and to be password changed for user with entered email
+     * in reset password form.
+     *
+     *  - Request to /restorePassword api, enter valid email, but set on user expired reset password.
+     * Then go to reset password api with created reset password code in params.
+     *  - Expected to go to page with a message that user is either expired or not found.
+     *
+     */
+    public function testRestorePassword()
+    {
+        $container = $this->getContainer();
+
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/restorePassword');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user2');
+
+        $em->refresh($user);
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('reset_password')['email']->setValue("notexist");
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'This email doesnt exist',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $form->get('reset_password')['email']->setValue($user->getEmail());
+
+        $client->enableProfiler();
+
+        $client->submit($form);
+
+        $em->refresh($user);
+
+        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
+
+        $this->assertSame(1, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $collectedMessages[0];
+
+        /** @var EmailTemplate $resetPasswordTemplate */
+        $resetPasswordTemplate = $this->fixtures->getReference('emailTemplateResetPassword');
+
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame($resetPasswordTemplate->getEmailSubject(), $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
+        $this->assertSame($user->getEmail(), key($message->getTo()));
+
+        $crawler = $client->request('GET', '/restorePassword/'.$user->getResetPasswordCode());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $form = $crawler->selectButton('Reset Password')->form();
+
+
+        $form->get('new_password')['newPassword']['first']->setValue('');
+        $form->get('new_password')['newPassword']['second']->setValue('');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Passsword cannot be empty',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $form->get('new_password')['newPassword']['first']->setValue('as');
+        $form->get('new_password')['newPassword']['second']->setValue('as');
+
+        $client->submit($form);
+
+        $em->refresh($user);
+
+        $client->followRedirect();
+
+        $encoder = $container->get('security.user_password_encoder.generic');
+        $this->assertTrue($encoder->isPasswordValid($user, 'as'));
+
+        $this->assertNull($user->getResetPasswordCode());
+
+        $client->request('GET', '/restorePassword/wrong');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'There is no user with this code or its already expired',
+            $client->getResponse()->getContent()
+        );
+
+        $crawler = $client->request('GET', '/restorePassword');
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user2');
+
+        $em->refresh($user);
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('reset_password')['email']->setValue($user->getEmail());
+
+        $client->submit($form);
+
+        $user->setLastResetAt(new \DateTime("2010-04-10"));
+
+        $em->persist($user);
+        $em->flush();
+
+        $em->refresh($user);
+
+        $client->request('GET', '/restorePassword/'.$user->getResetPasswordCode());
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            'There is no user with this code or its already expired',
+            $client->getResponse()->getContent()
+        );
+    }
+
+    /**
+     *  Testing main logo /logo api
+     *
+     *  - Login as admin because it will be needed later to change main logo. Then, request to /logo api when main logo
+     *is empty.
+     *  - Expected to get 200 status code and appropriate response headers about default file plum_tree_logo.jpg.
+     *
+     *  - Request to /admin/changecontent api, change main logo, and then go back to /logo api when main logo is not
+     * empty.
+     *  - Expected to get 200 status code and appropriate response headers about uploaded main logo profile.jpg.
+     */
+    public function testGetMainLogo()
+    {
+        $this->setOutputCallback(function () {
+        });
+
+        $container = $this->getContainer();
+
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $client->request('HEAD', '/logo');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            'inline; filename="plum_tree_logo.png"',
+            $client->getResponse()->headers->all()['content-disposition']['0']
+        );
+        $this->assertEquals(
+            'image/png',
+            $client->getResponse()->headers->all()['content-type']['0']
+        );
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/test.png');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'image/jpeg';
+        $files['change_content']['termsOfServices']['type'] = 'image/jpeg';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => [
+                    '_token' => $csrf_protection->getValue(),
+                    'Submit' => true
+                ]
+            ],
+            $files
+        );
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $em->refresh($configuration);
+
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $client->request('HEAD', '/logo');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            'attachment; filename="test.png";',
+            $client->getResponse()->headers->all()['content-disposition']['0']
+        );
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
     }
 }

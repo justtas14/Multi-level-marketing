@@ -19,7 +19,7 @@ class LoadInvitations extends Fixture implements DependentFixtureInterface
             $this->getReference('user4'),
             $this->getReference('user12'),
             $this->getReference('user4'),
-            $this->getReference('user7'),
+            $this->getReference('user23'),
             $this->getReference('user10')
         ];
         for ($i = 0; $i < 6; $i++) {
@@ -32,6 +32,7 @@ class LoadInvitations extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < 6; $i++) {
             $invitation = new Invitation();
+            $invitation->setId(null);
             $invitation->setFullName($fullNames[$i]);
             $invitation->setEmail($emails[$i]);
             $invitation->setSender($senders[$i]->getAssociate());

@@ -8,6 +8,9 @@ use Twig\TwigFunction;
 
 class MenuExtension extends AbstractExtension
 {
+    /**
+     * @codeCoverageIgnore
+     */
     public function getFunctions()
     {
         return [

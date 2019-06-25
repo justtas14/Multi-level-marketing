@@ -4,15 +4,18 @@ namespace App\Exception;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class NotAncestorException extends HttpException
+class NotFoundInvitationException extends HttpException
 {
     public function __construct(
-        string $message = 'User is not ancestor',
+        string $message = null,
         \Exception $previous = null,
         array $headers = [],
         ?int $code = 0
     ) {
-        $statusCode = 403;
+        $statusCode = 404;
+        if (!$message) {
+            $message = 'Invitation not found';
+        }
         parent::__construct($statusCode, $message, $previous, $headers, $code);
     }
 }

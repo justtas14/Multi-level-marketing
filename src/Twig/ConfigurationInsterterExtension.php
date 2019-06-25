@@ -23,6 +23,9 @@ class ConfigurationInsterterExtension extends AbstractExtension
         $this->cm = $cm;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function getFunctions()
     {
         return [

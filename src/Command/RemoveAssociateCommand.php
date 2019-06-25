@@ -48,7 +48,9 @@ class RemoveAssociateCommand extends Command
 
         /** @var User $user */
         $user = $userRepository->findOneBy(['email' => $enteredEmail]);
-        $associate = $user->getAssociate();
+        if ($user) {
+            $associate = $user->getAssociate();
+        }
 
         if (!$user) {
             $output->writeln('User not found');

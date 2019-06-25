@@ -3,7 +3,6 @@
 
 namespace App\Validator\Constraints;
 
-
 use App\Entity\File;
 use Symfony\Component\HttpFoundation\File\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;

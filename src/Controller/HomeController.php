@@ -71,10 +71,7 @@ class HomeController extends AbstractController
         }
 
         $configuration = $cm->getConfiguration();
-        $termsOfServices = null;
-        if ($configuration && $configuration->getTermsOfServices()) {
-            $termsOfServices = $configuration->getTermsOfServices();
-        }
+        $termsOfServices = $configuration->getTermsOfServices();
 
         $disclaimer = $configuration->getTosDisclaimer();
 
@@ -91,28 +88,22 @@ class HomeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $user->getEmail();
-            $checkEmailExist = $em->getRepository(User::class)->findOneBy(['email' => $email]);
-            if ($checkEmailExist) {
-                $this->addFlash('error', 'This email already exist');
-            } else {
-                $associate->setParent($invitation->getSender());
-                $associate->setEmail($email);
+            $associate->setParent($invitation->getSender());
+            $associate->setEmail($email);
 
-                $user->setRoles(['ROLE_USER']);
-                $user->setAssociate($associate);
-                $invitationManager->discardInvitation($invitation);
-                $invitationManager->sendWelcomeEmail($associate);
+            $user->setRoles(['ROLE_USER']);
+            $user->setAssociate($associate);
+            $invitationManager->discardInvitation($invitation);
+            $invitationManager->sendWelcomeEmail($associate);
 
-                $em->persist($associate);
-                $em->flush();
-                $em->persist($user);
-                $em->flush();
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->container->get('security.token_storage')->setToken($token);
-                $this->container->get('session')->set('_security_main', serialize($token));
-//                $this->addFlash('success', 'Registration completed successfully');
-                return $this->redirectToRoute('home');
-            }
+            $em->persist($associate);
+            $em->flush();
+            $em->persist($user);
+            $em->flush();
+            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+            $this->container->get('security.token_storage')->setToken($token);
+            $this->container->get('session')->set('_security_main', serialize($token));
+            return $this->redirectToRoute('home');
         }
 
         $recruiter = $associateManager->getAssociate($invitation->getSender(), true);
@@ -135,7 +126,7 @@ class HomeController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
-        if (!$configuration || !$configuration->hasPrelaunchEnded()) {
+        if (!$configuration->hasPrelaunchEnded()) {
             return $this->redirectToRoute('home');
         }
 
@@ -155,9 +146,7 @@ class HomeController extends AbstractController
     public function optOutAction($invitationCode, BlacklistManager $blacklistManager)
     {
         $message = 'You have already opted out of the service';
-        if (!$invitationCode) {
-            $message = 'No code';
-        } elseif (!$blacklistManager->existsInBlacklistByCode($invitationCode)) {
+        if (!$blacklistManager->existsInBlacklistByCode($invitationCode)) {
             $blacklistManager->addToBlacklist($invitationCode);
             $message = 'Successfully opted out of the service';
         }
@@ -250,7 +239,8 @@ class HomeController extends AbstractController
     {
         $configuration = $cm->getConfiguration();
 
-        $image = './assets/images/plum_tree_logo.png';
+        $path = $this->getParameter('kernel.project_dir').'/public/assets/images/plum_tree_logo.png';
+
         if ($configuration->getMainLogo()) {
             return $this->forward(
                 'PlumTreeSystemsFileBundle:File:download',
@@ -258,7 +248,7 @@ class HomeController extends AbstractController
             );
         }
 
-        $file = file_get_contents($image);
+        $file = file_get_contents($path);
 
         $headers = [
             'Content-Type'     => 'image/png',

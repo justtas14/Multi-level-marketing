@@ -4,7 +4,6 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
 
 /**
  * @ORM\Entity
@@ -62,18 +61,10 @@ class Invitation
     }
 
     /**
-     * @return Integer
-     */
-    public function getId(): Integer
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param Integer $id
+     * @param int $id
      * @return Invitation
      */
-    public function setId(Integer $id): Invitation
+    public function setId(?int $id): Invitation
     {
         $this->id = $id;
         return $this;
@@ -149,14 +140,6 @@ class Invitation
     {
         $this->sender = $sender;
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUsed(): bool
-    {
-        return $this->used;
     }
 
     /**

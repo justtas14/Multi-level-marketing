@@ -249,9 +249,9 @@ class Associate
     public function setParent(Associate $parent): Associate
     {
         $this->parent = $parent;
-        $this->parentId = $parent->getId();
-        $this->ancestors = $parent->getAncestors().$parent->getId().'|';
-        $this->level = $parent->getLevel() + 1;
+        $this->setParentId($parent->getId());
+        $this->setAncestors($parent->getAncestors().$parent->getId().'|');
+        $this->setLevel($parent->getLevel() + 1);
         return $this;
     }
 
@@ -453,24 +453,6 @@ class Associate
     public function setAgreedToTextMessageUpdates(bool $agreedToTextMessageUpdates): Associate
     {
         $this->agreedToTextMessageUpdates = $agreedToTextMessageUpdates;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAgreedToSocialMediaUpdates(): bool
-    {
-        return $this->agreedToSocialMediaUpdates;
-    }
-
-    /**
-     * @param bool $agreedToSocialMediaUpdates
-     * @return Associate
-     */
-    public function setAgreedToSocialMediaUpdates(bool $agreedToSocialMediaUpdates): Associate
-    {
-        $this->agreedToSocialMediaUpdates = $agreedToSocialMediaUpdates;
         return $this;
     }
 

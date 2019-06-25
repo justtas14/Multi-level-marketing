@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Associate;
 use App\Entity\Configuration;
+use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\ChangeContentType;
 use App\Form\EmailTemplateType;
@@ -15,6 +16,7 @@ use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,11 +28,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serialize;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
-    const ASSOCIATE_LIMIT = 20;
+    const ASSOCIATE_LIMIT = 10;
 
     /**
      * @Route("/admin", name="admin")
@@ -40,18 +44,9 @@ class AdminController extends AbstractController
      */
     public function index(AssociateManager $associateManager, ConfigurationManager $cm)
     {
-        /**
-         * @var User $user
-         */
-
-        $em = $this->getDoctrine()->getManager();
-
         $configuration = $cm->getConfiguration();
 
-        $logo = null;
-        if ($configuration) {
-            $logo = $configuration->getMainLogo();
-        }
+        $logo = $configuration->getMainLogo();
 
         $user = $this->getUser();
 
@@ -264,6 +259,7 @@ class AdminController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      * @throws ExceptionInterface
+     * @throws WrongPageNumberException
      */
     public function findAssociates(Request $request)
     {
@@ -283,6 +279,11 @@ class AdminController extends AbstractController
         $countAssociates = $associateRepository->findAssociatesFilterCount($filter);
 
         $numberOfPages = ceil($countAssociates / self::ASSOCIATE_LIMIT);
+
+        if ($page > $numberOfPages || $page < 0 || !is_numeric($page)) {
+            throw new WrongPageNumberException('Page '.$page.' doesnt exist');
+        }
+
 
         $limitedAssociates = $associateRepository->findAssociatesByFilter(
             $filter,

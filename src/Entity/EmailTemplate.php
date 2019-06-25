@@ -11,8 +11,9 @@ class EmailTemplate
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
+     * @var integer
      */
     private $id;
 
@@ -31,11 +32,15 @@ class EmailTemplate
      */
     private $emailType;
 
-    public function getId(): ?int
+    /**
+     * @param int $id
+     * @return EmailTemplate
+     */
+    public function setId(?int $id): EmailTemplate
     {
-        return $this->id;
+        $this->id = $id;
+        return $this;
     }
-
 
     public function getEmailSubject(): ?string
     {
