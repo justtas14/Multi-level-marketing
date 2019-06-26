@@ -19,5 +19,5 @@ return [
     Liip\FunctionalTestBundle\LiipFunctionalTestBundle::class => ['dev' => true, 'test' => true],
     PlumTreeSystems\FileBundle\PlumTreeSystemsFileBundle::class => ['all' => true],
     Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class => ['all' => true],
-    Misd\PhoneNumberBundle\MisdPhoneNumberBundle::class => ['all' => true]
+    Misd\PhoneNumberBundle\MisdPhoneNumberBundle::class => ['all' => true],
 ];

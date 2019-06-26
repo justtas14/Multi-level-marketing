@@ -220,7 +220,9 @@ class AssociateController extends AbstractController
             $phoneUtil = PhoneNumberUtil::getInstance();
             try {
                 $phoneNumber = $phoneUtil->parse($user->getAssociate()->getMobilePhone(), 'GB');
-                $form->get('associate')->get('mobilePhone')->setData($phoneNumber);
+//                $phoneNumber->clearCountryCode();
+                $form->get('associate')->get('mobilePhone')->get('number')->setData($phoneNumber->getNationalNumber());
+                $form->get('associate')->get('mobilePhone')->get('country')->setData($phoneNumber->getCountryCode());
             } catch (NumberParseException $e) {
                 $form->get('associate')->get('mobilePhone')->addError(new FormError('Prior mobile is invalid'));
             }
