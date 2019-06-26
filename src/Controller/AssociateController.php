@@ -17,6 +17,8 @@ use App\Service\BlacklistManager;
 use App\Service\InvitationManager;
 use DateTime;
 use Exception;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -181,32 +183,46 @@ class AssociateController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form['oldPassword']->getData();
-            $email = $user->getEmail();
-            $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
-            if ($checkEmailExist && $currentEmail !== $email) {
-                $this->addFlash('error', 'This email already exist');
-            } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
-                $this->addFlash('error', 'Old password is not correct');
-            } else {
-                if ($savedProfilePicture) {
-                    if ($user->getAssociate()->getProfilePicture() === null) {
-                        $user->getAssociate()->setProfilePicture($savedProfilePicture);
-                    } else {
-                        $fileManager->removeEntity($savedProfilePicture);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $plainPassword = $form['oldPassword']->getData();
+                $email = $user->getEmail();
+                $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
+                if ($checkEmailExist && $currentEmail !== $email) {
+                    $this->addFlash('error', 'This email already exist');
+                } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
+                    $this->addFlash('error', 'Old password is not correct');
+                } else {
+                    if ($savedProfilePicture) {
+                        if ($user->getAssociate()->getProfilePicture() === null) {
+                            $user->getAssociate()->setProfilePicture($savedProfilePicture);
+                        } else {
+                            $fileManager->removeEntity($savedProfilePicture);
+                        }
                     }
-                }
-                $newPassword = $form['newPassword']->getData();
-                if ($newPassword) {
-                    $user->setPlainPassword($newPassword);
-                }
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($user);
-                $em->persist($user->getAssociate());
-                $em->flush();
+                    $newPassword = $form['newPassword']->getData();
+                    if ($newPassword) {
+                        $user->setPlainPassword($newPassword);
+                    }
+                    $user->getAssociate()->setMobilePhone(
+                        '+' . $form['associate']['mobilePhone']->getData()->getCountryCode() .
+                        $form['associate']['mobilePhone']->getData()->getNationalNumber()
+                    );
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($user);
+                    $em->persist($user->getAssociate());
+                    $em->flush();
 
-                $this->addFlash('success', 'Fields updated');
+                    $this->addFlash('success', 'Fields updated');
+                }
+            }
+        } else {
+            $phoneUtil = PhoneNumberUtil::getInstance();
+            try {
+                $phoneNumber = $phoneUtil->parse($user->getAssociate()->getMobilePhone(), 'GB');
+                $form->get('associate')->get('mobilePhone')->setData($phoneNumber);
+            } catch (NumberParseException $e) {
+                $form->get('associate')->get('mobilePhone')->addError(new FormError('Prior mobile is invalid'));
             }
         }
 

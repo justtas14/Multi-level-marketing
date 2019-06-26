@@ -191,3 +191,13 @@ select {
 .Node__Container {
     margin: 3px 0;
 }
+#user_update_associate_mobilePhone {
+    display: flex
+}
+#user_update_associate_mobilePhone_country {
+    flex: 1;
+}
+
+#user_update_associate_mobilePhone_number {
+    flex: 3;
+}
