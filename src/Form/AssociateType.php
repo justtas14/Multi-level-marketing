@@ -4,7 +4,6 @@
 namespace App\Form;
 
 use App\Entity\Associate;
-use App\Form\DataTransformer\FixedPhoneNumberToArrayTransformer;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use PlumTreeSystems\FileBundle\Form\Type\PTSFileType;
@@ -44,7 +43,7 @@ class AssociateType extends AbstractType
             ->add('postcode', TextType::class, [
                 'required' => true,
             ])
-            ->add('mobilePhone', FixedPhoneNumberType::class, [
+            ->add('mobilePhone', PhoneNumberType::class, [
                 'mapped' => false,
                 'invalid_message' => 'Mobile phone is not in a valid format',
                 'default_region' => 'GB',
