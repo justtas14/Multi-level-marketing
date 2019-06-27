@@ -45,3 +45,5 @@ services:
 
     PlumTreeSystems\FileBundle\Service\GaufretteFileManager:
         alias: 'pts_file.manager'
+
+

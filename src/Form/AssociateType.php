@@ -4,6 +4,8 @@
 namespace App\Form;
 
 use App\Entity\Associate;
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use PlumTreeSystems\FileBundle\Form\Type\PTSFileType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -41,10 +43,16 @@ class AssociateType extends AbstractType
             ->add('postcode', TextType::class, [
                 'required' => true,
             ])
-            ->add('mobilePhone', TelType::class, [
-                'required' => true,
+            ->add('mobilePhone', PhoneNumberType::class, [
+                'mapped' => false,
+                'invalid_message' => 'Mobile phone is not in a valid format',
+                'default_region' => 'GB',
+                'widget' => PhoneNumberType::WIDGET_COUNTRY_CHOICE,
+                'preferred_country_choices' => ['GB','US'],
+                'format' => PhoneNumberFormat::NATIONAL,
+                'required' => true
             ])
-            ->add('homePhone', TelType::class, [
+            ->add('homePhone', TextType::class, [
                 'required' => false
             ])
             ->add('agreedToEmailUpdates', CheckboxType::class, [
