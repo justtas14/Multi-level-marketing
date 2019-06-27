@@ -95,7 +95,10 @@ class HomeController extends AbstractController
             $user->setAssociate($associate);
             $invitationManager->discardInvitation($invitation);
             $invitationManager->sendWelcomeEmail($associate);
-
+            $user->getAssociate()->setMobilePhone(
+                '+' . $form['associate']['mobilePhone']->getData()->getCountryCode() .
+                $form['associate']['mobilePhone']->getData()->getNationalNumber()
+            );
             $em->persist($associate);
             $em->flush();
             $em->persist($user);

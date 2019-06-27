@@ -71,7 +71,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -92,7 +92,7 @@ class AssociateControllerTest extends WebTestCase
         $this->assertEquals('blaha', $user->getAssociate()->getAddress());
         $this->assertEquals('kretinga', $user->getAssociate()->getCity());
         $this->assertEquals('12345', $user->getAssociate()->getPostcode());
-        $this->assertEquals('86757', $user->getAssociate()->getMobilePhone());
+        $this->assertEquals('+447393334589', $user->getAssociate()->getMobilePhone());
         $this->assertEquals('23543', $user->getAssociate()->getHomePhone());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToEmailUpdates());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToTextMessageUpdates());
@@ -112,7 +112,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -141,7 +141,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -170,7 +170,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -248,7 +248,7 @@ class AssociateControllerTest extends WebTestCase
                         'address' => 'blaha',
                         'city' => 'kretinga',
                         'postcode' => '12345',
-                        'mobilePhone' => '86757',
+                        'mobilePhone' => ['country' => 'GB', 'number' => '7393334589'],
                         'homePhone' => '23543',
                         'agreedToEmailUpdates' => '1',
                         'agreedToTextMessageUpdates' => '1',
@@ -271,7 +271,7 @@ class AssociateControllerTest extends WebTestCase
         $this->assertEquals('blaha', $user->getAssociate()->getAddress());
         $this->assertEquals('kretinga', $user->getAssociate()->getCity());
         $this->assertEquals('12345', $user->getAssociate()->getPostcode());
-        $this->assertEquals('86757', $user->getAssociate()->getMobilePhone());
+        $this->assertEquals('+447393334589', $user->getAssociate()->getMobilePhone());
         $this->assertEquals('23543', $user->getAssociate()->getHomePhone());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToEmailUpdates());
         $this->assertEquals(true, $user->getAssociate()->isAgreedToTextMessageUpdates());
@@ -291,7 +291,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -320,7 +320,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -359,7 +359,7 @@ class AssociateControllerTest extends WebTestCase
                         'address' => 'blaha',
                         'city' => 'kretinga',
                         'postcode' => '12345',
-                        'mobilePhone' => '86757',
+                        'mobilePhone' => ['country' => 'GB', 'number' => '7393334589'],
                         'homePhone' => '23543',
                         'agreedToEmailUpdates' => '1',
                         'agreedToTextMessageUpdates' => '1',
@@ -391,7 +391,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['associate']['address']->setValue('blaha');
         $form->get('user_update')['associate']['city']->setValue('kretinga');
         $form->get('user_update')['associate']['postcode']->setValue('12345');
-        $form->get('user_update')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_update')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_update')['associate']['homePhone']->setValue('23543');
         $form->get('user_update')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_update')['associate']['agreedToTextMessageUpdates']->setValue(1);

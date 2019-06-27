@@ -98,7 +98,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['address2']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
         $form->get('user_registration')['associate']['postcode']->setValue('12345');
-        $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_registration')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -106,6 +106,8 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['profilePicture']->setValue(null);
 
         $client->submit($form);
+
+        $this->assertStatusCode(302, $client);
 
         $userRepository = $em->getRepository(User::class);
 
@@ -123,7 +125,7 @@ class HomeControllerTest extends WebTestCase
         $this->assertEquals('blaha', $addedUser->getAssociate()->getAddress());
         $this->assertEquals('kretinga', $addedUser->getAssociate()->getCity());
         $this->assertEquals('12345', $addedUser->getAssociate()->getPostcode());
-        $this->assertEquals('86757', $addedUser->getAssociate()->getMobilePhone());
+        $this->assertEquals('+447393334589', $addedUser->getAssociate()->getMobilePhone());
         $this->assertEquals('23543', $addedUser->getAssociate()->getHomePhone());
         $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToEmailUpdates());
         $this->assertEquals(true, $addedUser->getAssociate()->isAgreedToTextMessageUpdates());
@@ -196,7 +198,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['address']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
         $form->get('user_registration')['associate']['postcode']->setValue('12345');
-        $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_registration')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -231,7 +233,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['address']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
         $form->get('user_registration')['associate']['postcode']->setValue('12345');
-        $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_registration')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
@@ -266,7 +268,7 @@ class HomeControllerTest extends WebTestCase
         $form->get('user_registration')['associate']['address']->setValue('blaha');
         $form->get('user_registration')['associate']['city']->setValue('kretinga');
         $form->get('user_registration')['associate']['postcode']->setValue('12345');
-        $form->get('user_registration')['associate']['mobilePhone']->setValue('86757');
+        $form->get('user_registration')['associate']['mobilePhone']['number']->setValue('7393334589');
         $form->get('user_registration')['associate']['homePhone']->setValue('23543');
         $form->get('user_registration')['associate']['agreedToEmailUpdates']->setValue(1);
         $form->get('user_registration')['associate']['agreedToTextMessageUpdates']->setValue(1);
