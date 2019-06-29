@@ -802,4 +802,30 @@ class AdminControllerTest extends WebTestCase
             $client->getResponse()->headers->all()['content-disposition']['0']
         );
     }
+
+    /**
+     *  Testing /associate/info api as admin logged in whether it returns empty response.
+     */
+    public function testGetBrokenAssociateWithAdmin()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $client->request('GET', '/associate/info');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            '',
+            $client->getResponse()->getContent()
+        );
+    }
 }

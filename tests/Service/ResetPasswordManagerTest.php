@@ -40,7 +40,7 @@ class ResetPasswordManagerTest extends TestCase
      * in params.
      *  - After call expected to get null because resetPasswordCode is empty.
      */
-    public function testFindUser()
+    public function testResetPasswordFindUser()
     {
         $user = new User();
 
@@ -69,10 +69,11 @@ class ResetPasswordManagerTest extends TestCase
             $mailer,
             $router,
             $emailTemplateManager,
-            'noreply@plumtreesystems.com'
+            'noreply@plumtreesystems.com',
+            3600
         );
 
-        $this->assertEquals($user, $resetPasswordManager->findUser('code'));
+        $this->assertEquals($user, $resetPasswordManager->findUser($user->getResetPasswordCode()));
 
         $user = new User();
 
@@ -98,9 +99,10 @@ class ResetPasswordManagerTest extends TestCase
             $mailer,
             $router,
             $emailTemplateManager,
-            'noreply@plumtreesystems.com'
+            'noreply@plumtreesystems.com',
+            3600
         );
-        $this->assertNull($resetPasswordManager->findUser('code'));
+        $this->assertNull($resetPasswordManager->findUser($user->getResetPasswordCode()));
 
         $user = new User();
 
@@ -130,9 +132,10 @@ class ResetPasswordManagerTest extends TestCase
             $mailer,
             $router,
             $emailTemplateManager,
-            'noreply@plumtreesystems.com'
+            'noreply@plumtreesystems.com',
+            3600
         );
-        $this->assertNull($resetPasswordManager->findUser('code'));
+        $this->assertNull($resetPasswordManager->findUser($user->getResetPasswordCode()));
 
         $user = new User();
 
@@ -162,9 +165,10 @@ class ResetPasswordManagerTest extends TestCase
             $mailer,
             $router,
             $emailTemplateManager,
-            'noreply@plumtreesystems.com'
+            'noreply@plumtreesystems.com',
+            3600
         );
-        $this->assertEquals($user, $resetPasswordManager->findUser('code'));
+        $this->assertEquals($user, $resetPasswordManager->findUser($user->getResetPasswordCode()));
 
         $user = new User();
 
@@ -190,7 +194,8 @@ class ResetPasswordManagerTest extends TestCase
             $mailer,
             $router,
             $emailTemplateManager,
-            'noreply@plumtreesystems.com'
+            'noreply@plumtreesystems.com',
+            3600
         );
         $this->assertNull($resetPasswordManager->findUser(""));
     }

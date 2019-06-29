@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class InvitationManager
 {
-    const SECONDS_UNTIL_EXPIRED = 86400;
     /**
      * @var EntityManagerInterface $em
      */
@@ -28,8 +27,15 @@ class InvitationManager
      */
     private $router;
 
-    /** @var EmailTemplateManager $emailTemplateManager */
+    /**
+     * @var EmailTemplateManager $emailTemplateManager
+     */
     private $emailTemplateManager;
+
+    /**
+     * @var int
+     */
+    private $secondsUntilExpired;
 
     /**
      * @var string
@@ -41,13 +47,15 @@ class InvitationManager
         Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
-        string $invitationSender
+        string $invitationSender,
+        int $secondsUntilExpiredInvitation
     ) {
         $this->em = $entityManager;
         $this->mailer = $mailer;
         $this->router = $router;
         $this->emailTemplateManager = $emailTemplateManager;
         $this->sender = $invitationSender;
+        $this->secondsUntilExpired = $secondsUntilExpiredInvitation;
     }
 
     public function send(Invitation $invitation)
@@ -96,7 +104,7 @@ class InvitationManager
         $invitation = $invitationRepo->findOneBy(['invitationCode' => $invitationCode]);
 
         if (!$invitation || $invitation->getUsed()
-            || time() - $invitation->getCreated() > self::SECONDS_UNTIL_EXPIRED) {
+            || time() - $invitation->getCreated() > $this->secondsUntilExpired) {
             return null;
         }
 

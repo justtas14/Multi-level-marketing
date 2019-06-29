@@ -294,4 +294,108 @@ class PureAdminTest extends WebTestCase
             $crawler->filter('div.sidebar-item')->count()
         );
     }
+
+
+    /**
+     *  Testing /associate/info api whether it returns empty response when logged in as admin without associate.
+     */
+    public function testGetBrokenAssociateWithPureAdmin()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user23');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $client->request('GET', '/associate/info');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            '',
+            $client->getResponse()->getContent()
+        );
+    }
+
+    /**
+     *  Testing get associate api when logged in as admin without associate
+     *
+     *  - Request to /associate/info/2 api.
+     *  - Expect to go to information page about associate 2.
+     *
+     *  - Request to /associate/info/3 api.
+     *  - Expect to go to information page about associate 3.
+     *
+     *  - Request to /associate/info/-1 api.
+     *  - Expect to go to information page about company because associate with id -1 was not found.
+     *
+     *  - Request to /associate/info/700 api.
+     *  - Expect to go to information page about company because associate with id 700 was not found.
+     */
+    public function testGetAssociateWithPureAdmin()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user23');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/associate/info/2');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $user = $this->fixtures->getReference('user2');
+
+        $this->assertContains(
+            $user->getAssociate()->getFullName(),
+            $crawler->filter('div > div')->eq(1)->filter('p')->eq(0)->html()
+        );
+
+        $this->assertContains(
+            $user->getAssociate()->getEmail(),
+            $crawler->filter('div > div')->eq(1)->filter('p')->eq(1)->html()
+        );
+
+        $crawler = $client->request('GET', '/associate/info/3');
+
+        $user = $this->fixtures->getReference('user3');
+
+        $this->assertContains(
+            $user->getAssociate()->getFullName(),
+            $crawler->filter('div > div')->eq(1)->filter('p')->eq(0)->html()
+        );
+
+        $this->assertContains(
+            $user->getAssociate()->getEmail(),
+            $crawler->filter('div > div')->eq(1)->filter('p')->eq(1)->html()
+        );
+
+        $client->request('GET', '/associate/info/-1');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            '<b>Title</b>: Company',
+            $client->getResponse()->getContent()
+        );
+
+        $client->request('GET', '/associate/info/700');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            '<b>Title</b>: Company',
+            $client->getResponse()->getContent()
+        );
+    }
 }
