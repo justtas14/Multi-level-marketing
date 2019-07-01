@@ -622,6 +622,12 @@ class AssociateControllerTest extends WebTestCase
      *  - Request to /associate/info/3 api when logged in as user 2 associate.
      *  - Expect to get error status code becuase user 3 is not in associate with id 2 downline.
      *
+     *  - Request to /associate/info/1 api when logged in as user 2 associate.
+     *  - Expect to get error status code becuase user 1 is not in associate with id 2 downline.
+     *
+     *  - Request to /associate/info/1 api when logged in as admin.
+     *  - Expect to go to information page about associate 1.
+     *
      *  - Request to /associate/info/3 api when logged in as admin.
      *  - Expect to go to information page about associate 3.
      *
@@ -658,6 +664,10 @@ class AssociateControllerTest extends WebTestCase
             $crawler->filter('div > div')->eq(1)->filter('p')->eq(1)->html()
         );
 
+        $client->request('GET', '/associate/info/1');
+
+        $this->assertEquals(403, $client->getResponse()->getStatusCode());
+
         $client->request('GET', '/associate/info/3');
 
         $this->assertEquals(403, $client->getResponse()->getStatusCode());
@@ -668,6 +678,15 @@ class AssociateControllerTest extends WebTestCase
             'POST',
             '/login',
             ['submit' => true, '_username' => 'admin@plumtreesystems.com', '_password' => '123456789']
+        );
+
+        $user = $this->fixtures->getReference('user1');
+
+        $crawler = $client->request('GET', '/associate/info/1');
+
+        $this->assertContains(
+            $user->getAssociate()->getFullName(),
+            $crawler->filter('div > div')->eq(1)->filter('p')->eq(0)->html()
         );
 
         $crawler = $client->request('GET', '/associate/info/3');

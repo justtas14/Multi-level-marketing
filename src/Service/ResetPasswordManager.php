@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ResetPasswordManager
 {
-    const SECONDS_UNTIL_EXPIRED = 3600;
     /**
      * @var EntityManagerInterface $em
      */
@@ -31,21 +30,30 @@ class ResetPasswordManager
      */
     private $sender;
 
-    /** @var EmailTemplateManager $emailTemplateManager */
+    /**
+     * @var EmailTemplateManager $emailTemplateManager
+     */
     private $emailTemplateManager;
+
+    /**
+    * @var int
+    */
+    private $secondsUntilExpired;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
-        string $invitationSender
+        string $invitationSender,
+        int $secondsUntilExpiredResetPassword
     ) {
         $this->em = $entityManager;
         $this->mailer = $mailer;
         $this->router = $router;
         $this->emailTemplateManager = $emailTemplateManager;
         $this->sender = $invitationSender;
+        $this->secondsUntilExpired = $secondsUntilExpiredResetPassword;
     }
 
     public function send(string $resetPasswordCode, string $email)
@@ -89,7 +97,7 @@ class ResetPasswordManager
         /** @var User $user */
         $user = $userRepo->findOneBy(['resetPasswordCode' => $resetPasswordCode]);
 
-        if (!$user || time() - $user->getLastResetAt()->getTimestamp() > self::SECONDS_UNTIL_EXPIRED) {
+        if (!$user || time() - $user->getLastResetAt()->getTimestamp() > $this->secondsUntilExpired) {
             return null;
         }
 
