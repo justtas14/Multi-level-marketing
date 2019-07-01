@@ -11,6 +11,7 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\FileFormField;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class HomeControllerTest extends WebTestCase
 {
@@ -602,6 +603,62 @@ class HomeControllerTest extends WebTestCase
         $this->assertEquals(
             'attachment; filename="test.png";',
             $client->getResponse()->headers->all()['content-disposition']['0']
+        );
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
+    }
+
+    /**
+     *  Testing uploadFile api whether it returns expected response
+     *
+     *  - Request to uploadFile api with GET method and expect to get empty response content.
+     *
+     *  - Request to uploadFile api with POST method with additional file param.
+     *  - Expected to get 200 status code and http://localhost/download/ partial string to be returned for downloading
+     * images.
+     */
+    public function testUploadEditorImage()
+    {
+        $client = $this->makeClient();
+
+        $container = $client->getContainer();
+
+        $client->request('GET', '/uploadFile');
+
+        $this->assertEquals('', $client->getResponse()->getContent());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
+
+        $image = new UploadedFile(
+            $path,
+            'test.png',
+            'image/jpeg',
+            null
+        );
+        $client->request(
+            'POST',
+            '/uploadFile',
+            [],
+            ['image' => $image]
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $responseContent = json_decode($client->getResponse()->getContent());
+
+        $this->assertContains(
+            'http://localhost/download/',
+            $responseContent
         );
 
         $gaufretteFilteManager = $container->get('pts_file.manager');

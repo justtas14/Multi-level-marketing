@@ -15,7 +15,7 @@ class LoadEmailTemplates extends Fixture
         $emailTemplate->setId(null);
         $emailTemplate->setEmailType('INVITATION');
         $emailTemplate->setEmailSubject("You got invited by {{senderName}}. ");
-        $emailTemplate->setEmailBody("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
+        $emailTemplate->setEmailBody("<h3><br/> Here is your <a href='{{link}}'>link</a></h3> <br/><br/>".
             "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link");
 
         $manager->persist($emailTemplate);
@@ -27,7 +27,7 @@ class LoadEmailTemplates extends Fixture
         $emailTemplate->setEmailType('RESET_PASSWORD');
         $emailTemplate->setEmailSubject("Password Reset");
         $emailTemplate->setEmailBody(
-            'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>'
+            'To reset your password click <a href="{{ link }}">here</a><br/><br/>'
         );
 
         $manager->persist($emailTemplate);

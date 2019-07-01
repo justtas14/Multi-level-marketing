@@ -94,22 +94,31 @@ class AdminController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $title = "";
         $emailTemplate = [];
+        $availableParameters = [];
 
         switch ($type) {
             case 'invitation':
                 $emailTemplate =
                     $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
                 $title = 'Invitation email template';
+                $availableParameters = [
+                    'Sender name' => '{{ senderName }}',
+                    'Receiver name' => '{{ receiverName }}',
+                    'Invitation link' => '{{ link }}',
+                    'Opt out of service link' => '{{ optOutUrl }}'
+                ];
                 break;
             case 'password':
                 $emailTemplate =
                     $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_RESET_PASSWORD);
                 $title = 'Reset password email template';
+                $availableParameters = ['Reset password link' => '{{ link }}'];
                 break;
             case 'welcome':
                 $emailTemplate =
                     $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_WELCOME);
                 $title = 'Welcome email template';
+                $availableParameters = ['Full user name' => '{{ name }}'];
                 break;
             default:
                 throw new NotFoundHttpException("Email template does not exist!");
@@ -120,14 +129,21 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($emailTemplate);
-            $em->flush();
+            if (!$emailTemplate->getEmailBody() || !$emailTemplate->getEmailSubject()) {
+                $this->addFlash('error', 'Please do not leave empty values');
+            } else {
+                $em->persist($emailTemplate);
+                $em->flush();
 
-            $this->addFlash('success', 'Template updated');
+                $this->addFlash('success', 'Template updated');
+            }
         }
 
         return $this->render('admin/emailTemplate.html.twig', [
-            'form' => $form->createView(), 'title' => $title
+            'form' => $form->createView(),
+            'title' => $title,
+            'emailBody' => $emailTemplate->getEmailBody(),
+            'availableParameters' => $availableParameters,
         ]);
     }
 
@@ -143,6 +159,8 @@ class AdminController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
+        $configurationContent = $configuration->getLandingContent();
+
         $form = $this->createForm(EndPrelaunchType::class, $configuration);
 
         $form->handleRequest($request);
@@ -156,7 +174,7 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/endPrelaunch.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(), 'configurationContent' => $configurationContent
         ]);
     }
 

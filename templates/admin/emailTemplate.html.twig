@@ -19,6 +19,7 @@
                         </div>
                     {% endfor %}
                 </div>
+
                 <main id="main">
                     {{ form_start(form) }}
                     {{ form_label(form.emailSubject) }}
@@ -32,10 +33,190 @@
                     {% include 'includes/errorBlock.html.twig' with { field: form.emailBody } %}
                     <br>
                     {{ form_widget(form.emailBody) }}
+                    <div class="emailContainer">
+                        <div id="editor">
+                            <div id="editor-container">
+                                {{ emailBody }}
+                            </div>
+                        </div>
+                        <div id="emailBodyParams">
+                            <span id="emailBodyParamsTitle">Available parameters</span>
+                            <br> <br> <Br>
+                            {% for key, parameter in availableParameters %}
+                                <span id="emailBodyParam">{{ parameter }}</span>
+                                <span id ="emailBodyParamExplain">- {{ key }}</span>
+                                <Br> <Br>
+                            {% endfor %}
+                        </div>
+                    </div>
                     <br>
+                    <div id="buttons_container">
+                        <div id="button_submit">
+                            {{ form_row(form.Submit)}}
+                        </div>
+                        <div id="button_preview">
+                            <a class="waves-effect waves-light btn" id="preview">Template preview</a>
+                        </div>
+                    </div>
                     {{ form_end(form) }}
                 </main>
             </div>
         </div>
     </div>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Modal Header</h2>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the Modal Body</p>
+                <p>Some other text...</p>
+            </div>
+            <div class="modal-footer">
+                <h3>Modal Footer</h3>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+{% block quillJs %}
+    <script>
+        let AlignStyle = Quill.import('attributors/style/align')
+        let BackgroundStyle = Quill.import('attributors/style/background')
+        let ColorStyle = Quill.import('attributors/style/color')
+        let DirectionStyle = Quill.import('attributors/style/direction')
+        let FontStyle = Quill.import('attributors/style/font')
+        let SizeStyle = Quill.import('attributors/style/size')
+
+        Quill.register(AlignStyle, true);
+        Quill.register(BackgroundStyle, true);
+        Quill.register(ColorStyle, true);
+        Quill.register(DirectionStyle, true);
+        Quill.register(FontStyle, true);
+        Quill.register(SizeStyle, true);
+
+        var quill = new Quill('#editor-container', {
+            modules: {
+                'syntax': true,
+                'toolbar': [
+                    [ 'bold', 'italic', 'underline', 'strike' ],
+                    [{ 'font': [] }, { 'size': [] }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'super' }, { 'script': 'sub' }],
+                    [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block' ],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' }],
+                    [ 'direction', { 'align': [] }],
+                    [ 'link', 'image'],
+                    [ 'clean' ]
+                ]
+            },
+            theme: 'snow'
+        });
+
+        $( document ).ready(function () {
+            quill.container.firstChild.innerHTML = $('input[type=hidden]').val();
+        });
+
+        var form = document.querySelector('form');
+
+        form.addEventListener("submit", callback, false);
+
+        function callback() {
+            var emailBody = document.querySelector('input[type=hidden]');
+            emailBody.value = quill.root.innerHTML;
+            return true;
+        }
+
+
+        function selectLocalImage() {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.click();
+
+            input.onchange = () => {
+                const file = input.files[0];
+
+                // file type is only image.
+                if (/^image\//.test(file.type)) {
+                    saveToServer(file);
+                } else {
+                    console.warn('You could only upload images.');
+                }
+            };
+        }
+
+        function saveToServer(file) {
+            const fd = new FormData();
+            fd.append('image', file);
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/uploadFile', true);
+            xhr.onload = () => {
+                if (xhr.status === 200 && xhr.readyState === 4) {
+                    const url = JSON.parse(xhr.responseText);
+                    insertToEditor(url);
+                }
+            };
+            xhr.send(fd);
+        }
+
+        function insertToEditor(url) {
+            const range = quill.getSelection();
+            quill.insertEmbed(range.index, 'image', `${url}`);
+        }
+
+        quill.getModule('toolbar').addHandler('image', () => {
+            selectLocalImage();
+        });
+
+
+        var previewButton = document.querySelector('#preview');
+
+        var preview = $('.preview');
+        previewButton.addEventListener("click", function(){
+            preview.toggle();
+        });
+
+        var editorContainerContent = document.querySelector('#editor-container > .ql-editor');
+
+
+
+        editorContainerContent.addEventListener('DOMSubtreeModified', function () {
+            var editorContainerContentString = editorContainerContent.innerHTML.replace('\{\{ senderName \}\}', 'John');
+            editorContainerContentString = editorContainerContentString.replace('\{\{ receiverName \}\}', 'Receiver name');
+
+            $('#previewContent').html(editorContainerContentString);
+        });
+
+        previewButton.addEventListener('click', function () {
+            var editorContainerContentString = editorContainerContent.innerHTML.replace('\{\{ senderName \}\}', 'Sender name');
+            editorContainerContentString = editorContainerContentString.replace('\{\{ receiverName \}\}', 'Receiver name');
+
+            $('#previewContent').html(editorContainerContentString);
+        });
+
+        var modal = document.getElementById("myModal");
+
+        var btn = document.getElementById("preview");
+
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+    </script>
 {% endblock %}

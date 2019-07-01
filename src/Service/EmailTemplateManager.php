@@ -43,13 +43,14 @@ class EmailTemplateManager
             $emailTemplate = new EmailTemplate();
             switch ($type) {
                 case self::EMAIL_TYPE_INVITATION:
-                    $emailTemplate->setEmailBody("<br/> Here is your link {{link}} <br/><br/>");
+                    $emailTemplate->setEmailBody("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
+                    "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link");
                     $emailTemplate->setEmailSubject("You got invited by {{senderName}}. ");
                     $emailTemplate->setEmailType(self::EMAIL_TYPE_INVITATION);
                     break;
                 case self::EMAIL_TYPE_RESET_PASSWORD:
                     $emailTemplate->setEmailBody(
-                        'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>'
+                        'To reset your password click <a href="{{ link }}">here</a><br/><br/>'
                     );
                     $emailTemplate->setEmailSubject("Password Reset");
                     $emailTemplate->setEmailType(self::EMAIL_TYPE_RESET_PASSWORD);

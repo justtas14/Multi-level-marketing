@@ -57,7 +57,9 @@ class AdminControllerEmailTest extends WebTestCase
         $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy(['emailType' => 'INVITATION']);
 
         $this->assertEquals("You got invited by {{senderName}}. ", $emailTemplate->getEmailSubject());
-        $this->assertEquals("<br/> Here is your link {{link}} <br/><br/>", $emailTemplate->getEmailBody());
+        $this->assertEquals("<br/> Here is your <a href='{{link}}'>link</a> ".
+        "<br/><br/>To opt out of this service click ".
+        "<a href='{{ optOutUrl }}'>this</a> link", $emailTemplate->getEmailBody());
         $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
 
         $client->request('GET', '/admin/emailtemplate/password');
@@ -67,7 +69,7 @@ class AdminControllerEmailTest extends WebTestCase
 
         $this->assertEquals("Password Reset", $emailTemplate->getEmailSubject());
         $this->assertEquals(
-            'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>',
+            'To reset your password click <a href="{{ link }}">here</a><br/><br/>',
             $emailTemplate->getEmailBody()
         );
         $this->assertEquals("RESET_PASSWORD", $emailTemplate->getEmailType());

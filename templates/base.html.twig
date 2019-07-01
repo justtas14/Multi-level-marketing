@@ -20,6 +20,10 @@
             <link href="{{ asset('assets/css/login.css') }}" rel="stylesheet">
             <link href="{{ asset('assets/css/hamburgers.css') }}" rel="stylesheet">
             <link href="{{ asset('build/app.css') }}" rel="stylesheet">
+            <link href="{{ asset('assets/css/email_template.css') }}" rel="stylesheet">
+            <link href="{{ asset('assets/css/quill.snow.css') }}" rel="stylesheet">
+            <link href="{{ asset('assets/css/quill.core.css') }}" rel="stylesheet">
+            <link href="{{ asset('assets/css/quill.bubble.css') }}" rel="stylesheet">
         {% endblock %}
     </head>
     <body>
@@ -29,10 +33,17 @@
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
             <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>
             <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>
             <script src="{{ asset('assets/js/usersearch.js') }}" async></script>
             <script src="{{ asset('assets/js/sidebar.js') }}" async></script>
+            <script src="{{ asset('assets/js/quill.core.js') }}"></script>
+            <script src="{{ asset('assets/js/quill.js') }}"></script>
+            <script src="{{ asset('assets/js/quill.min.js') }}"></script>
+
         {% endblock %}
     </body>
+    {% block quillJs %}
+    {% endblock %}
 </html>

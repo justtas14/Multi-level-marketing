@@ -191,6 +191,13 @@ select {
 .Node__Container {
     margin: 3px 0;
 }
+
+.landingPage img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
 #user_update_associate_mobilePhone, #user_registration_associate_mobilePhone {
     display: flex
 }

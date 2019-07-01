@@ -6,6 +6,7 @@ use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\ResetPassword;
 use App\Entity\User;
+use App\Form\EditorImageType;
 use App\Form\NewPasswordType;
 use App\Form\ResetPasswordType;
 use App\Form\UserRegistrationType;
@@ -15,8 +16,10 @@ use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
 use App\Service\ResetPasswordManager;
 use DateTime;
+use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -258,5 +261,41 @@ class HomeController extends AbstractController
             'Content-Disposition' => 'inline; filename="plum_tree_logo.png"'
         ];
         return new Response($file, 200, $headers);
+    }
+
+    /**
+     * @Route("/uploadFile", name="upload_file")
+     * @param Request $request
+     * @param GaufretteFileManager $gaufretteFileManager
+     * @return JsonResponse|Response
+     */
+    public function uploadEditorImage(
+        Request $request,
+        GaufretteFileManager $gaufretteFileManager
+    ) {
+        if ($request->isMethod('POST')) {
+            $uploadedFile = $request->files->all()['image'];
+
+            $form = $this->createForm(EditorImageType::class);
+
+            $form->get('image')->setData($uploadedFile);
+
+            $form->submit($request->request->get($form->getName()));
+
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($form->getData()['image']);
+            $em->flush();
+
+            $url = $gaufretteFileManager->generateDownloadUrl(($form->getData()['image']));
+
+            $baseUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+
+            $absoluteUrl = $baseUrl.$url;
+
+            return new JsonResponse($absoluteUrl, 200);
+        } else {
+            return new Response('', 200);
+        }
     }
 }

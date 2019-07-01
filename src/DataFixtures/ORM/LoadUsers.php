@@ -20,7 +20,7 @@ class LoadUsers extends Fixture
             ['ROLE_ADMIN', 'ROLE_USER'],
             'Connor Vaughan',
             '1957-06-01',
-            '12455412',
+            'htrhrthht',
             $manager
         );
         $user2 = $this->createUser(

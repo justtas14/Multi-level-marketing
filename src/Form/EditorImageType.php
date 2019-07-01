@@ -1,26 +1,31 @@
 <?php
 
-
 namespace App\Form;
 
+use PlumTreeSystems\FileBundle\Form\Type\PTSFileType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EmailTemplateType extends AbstractType
+class EditorImageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('emailSubject', TextareaType::class)
-            ->add('emailBody', HiddenType::class)
+            ->add('image', PTSFileType::class, ['multiple' => false, 'required' => false])
             ->add('Submit', SubmitType::class, [
-                'label' => 'Change Template',
+                'label' => 'Change content',
                 'attr' => [
                     'class' => 'waves-effect waves-light btn'
                 ]
             ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'csrf_protection' => false,
+        ]);
     }
 }

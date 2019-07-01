@@ -280,6 +280,10 @@ class AdminControllerTest extends WebTestCase
      * - Expected to find one invitation emailTemplate with appropriate params. Change form values and submit.
      * Expected that invitation emailTemplate values have updated in database.
      *
+     * - Request to email templates list page when logged in as admin and click on invitation email template.
+     * - Change form values to empty strings and submit.
+     * - Expected error to pop up that values are empty.
+     *
      * - Request to email templates list page when logged in as admin and click on reset password email template.
      * - Expected to find one reset password emailTemplate with appropriate params. Change form values and submit.
      * Expected that reset password emailTemplate values have updated in database.
@@ -312,8 +316,9 @@ class AdminControllerTest extends WebTestCase
         $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy(['emailType' => 'INVITATION']);
 
         $this->assertEquals("You got invited by {{senderName}}. ", $emailTemplate->getEmailSubject());
-        $this->assertEquals("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
-            "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link", $emailTemplate->getEmailBody());
+        $this->assertEquals("<h3><br/> Here is your <a href='{{link}}'>link</a></h3> ".
+        "<br/><br/>To opt out of".
+        " this service click <a href='{{ optOutUrl }}'>this</a> link", $emailTemplate->getEmailBody());
         $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
 
         $form = $crawler->selectButton('Change Template')->form();
@@ -329,9 +334,34 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals("<br/> Here is your link {{link}}!!!<br/><br/>", $emailTemplate->getEmailBody());
         $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
 
+
         $crawler = $client->request('GET', '/admin/emailtemplateslist');
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $invitationLink = $crawler->filter('a[href="/admin/emailtemplate/invitation"]')->link();
+
+        $crawler = $client->click($invitationLink);
+
+        $emailTemplate = $em->getRepository(EmailTemplate::class)->findOneBy(['emailType' => 'INVITATION']);
+
+        $form = $crawler->selectButton('Change Template')->form();
+
+        $form->get('email_template')['emailSubject']->setValue("");
+        $form->get('email_template')['emailBody']->setValue("");
+
+        $crawler = $client->submit($form);
+
+        $em->refresh($emailTemplate);
+
+        $this->assertEquals("You got invited by {{senderName}}!!!", $emailTemplate->getEmailSubject());
+        $this->assertEquals("<br/> Here is your link {{link}}!!!<br/><br/>", $emailTemplate->getEmailBody());
+        $this->assertEquals("INVITATION", $emailTemplate->getEmailType());
+
+        $this->assertContains(
+            'Please do not leave empty values',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $crawler = $client->request('GET', '/admin/emailtemplateslist');
 
         $invitationLink = $crawler->filter('a[href="/admin/emailtemplate/password"]')->link();
 
@@ -342,7 +372,7 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals("Password Reset", $emailTemplate->getEmailSubject());
         $this->assertEquals(
-            'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>',
+            'To reset your password click <a href="{{ link }}">here</a><br/><br/>',
             $emailTemplate->getEmailBody()
         );
         $this->assertEquals("RESET_PASSWORD", $emailTemplate->getEmailType());
@@ -361,8 +391,6 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals("RESET_PASSWORD", $emailTemplate->getEmailType());
 
         $crawler = $client->request('GET', '/admin/emailtemplateslist');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $invitationLink = $crawler->filter('a[href="/admin/emailtemplate/welcome"]')->link();
 
