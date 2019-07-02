@@ -63,10 +63,21 @@
             </div>
         </div>
     </div>
-    <!-- The Modal -->
+{#    <div class="styles_overlay__CLSq- undefined" id="myModal">#}
+{#        <div class="styles_modal__gNwvD" role="dialog" aria-modal="true">#}
+{#            <div>#}
+{#                <div class="ModalElement__IframeContainer">#}
+{#                    <button class="styles_closeButton__20ID4">#}
+{#                        <svg class="styles_closeIcon__1QwbI" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">#}
+{#                            <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z"></path>#}
+{#                        </svg>#}
+{#                    </button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
     <div id="myModal" class="modal">
 
-        <!-- Modal content -->
         <div class="modal-content">
             <div class="modal-header">
                 <span class="close">&times;</span>
@@ -82,15 +93,29 @@
         </div>
 
     </div>
+
 {% endblock %}
+
+
+ {% block javascripts %}
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+     <script src="{{ asset('assets/js/sidebar.js') }}" async></script>
+     <script src="{{ asset('assets/js/quill.core.js') }}"></script>
+     <script src="{{ asset('assets/js/quill.js') }}"></script>
+     <script src="{{ asset('assets/js/quill.min.js') }}"></script>
+
+ {% endblock %}
 {% block quillJs %}
     <script>
-        let AlignStyle = Quill.import('attributors/style/align')
-        let BackgroundStyle = Quill.import('attributors/style/background')
-        let ColorStyle = Quill.import('attributors/style/color')
-        let DirectionStyle = Quill.import('attributors/style/direction')
-        let FontStyle = Quill.import('attributors/style/font')
-        let SizeStyle = Quill.import('attributors/style/size')
+        let AlignStyle = Quill.import('attributors/style/align');
+        let BackgroundStyle = Quill.import('attributors/style/background');
+        let ColorStyle = Quill.import('attributors/style/color');
+        let DirectionStyle = Quill.import('attributors/style/direction');
+        let FontStyle = Quill.import('attributors/style/font');
+        let SizeStyle = Quill.import('attributors/style/size');
 
         Quill.register(AlignStyle, true);
         Quill.register(BackgroundStyle, true);
@@ -183,14 +208,6 @@
         var editorContainerContent = document.querySelector('#editor-container > .ql-editor');
 
 
-
-        editorContainerContent.addEventListener('DOMSubtreeModified', function () {
-            var editorContainerContentString = editorContainerContent.innerHTML.replace('\{\{ senderName \}\}', 'John');
-            editorContainerContentString = editorContainerContentString.replace('\{\{ receiverName \}\}', 'Receiver name');
-
-            $('#previewContent').html(editorContainerContentString);
-        });
-
         previewButton.addEventListener('click', function () {
             var editorContainerContentString = editorContainerContent.innerHTML.replace('\{\{ senderName \}\}', 'Sender name');
             editorContainerContentString = editorContainerContentString.replace('\{\{ receiverName \}\}', 'Receiver name');
@@ -217,6 +234,5 @@
                 modal.style.display = "none";
             }
         }
-
     </script>
 {% endblock %}
