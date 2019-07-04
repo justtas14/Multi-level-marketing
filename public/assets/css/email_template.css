@@ -54,7 +54,7 @@ textarea {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     padding-top: 100px;
     left: 0;
     top: 0;
@@ -63,6 +63,7 @@ textarea {
     overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
+    max-height: none;
 }
 
 .modal-content {
@@ -71,7 +72,7 @@ textarea {
     margin: auto;
     padding: 0;
     border: 1px solid #888;
-    width: 80%;
+    width: 60%;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
     -webkit-animation-name: animatetop;
     -webkit-animation-duration: 0.4s;
@@ -105,16 +106,27 @@ textarea {
 
 .modal-header {
     padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+    font-size: 1.5em;
 }
 
+.modal-subject {
+    padding: 2px 16px;
+    font-size: 1.2em;
+}
 .modal-body {
     padding: 2px 16px;
 }
-
-.modal-footer {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
+.modal-body ul li {
+    list-style-type: disc;
 }
+
+.modal-body ul{
+    padding-left: 16px;
+}
+
+.modal-body img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+

@@ -50,4 +50,59 @@
             </div>
         </div>
     </div>
+    {% if sent is not defined %}
+        <div class="admin-contentContainer">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Sent Invitations</span>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Full Name</th>
+                            <th>Invitation created</th>
+                            <th>Invitation sent</th>
+                            <th>Resend</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for inv in invitations %}
+                            <tr>
+                                <td>{{ inv.email }}</td>
+                                <td>{{ inv.fullName }}</td>
+                                <td>{{ inv.created | date }}</td>
+                                {% if inv.used == true %}
+                                    <td>Yes</td>
+                                {% else %}
+                                    <td>No</td>
+                                {% endif %}
+                                <td><a href="{{ path('associate_invite', {invitationId: inv.id}) }}" class="btn">Resend Invitation</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <ul class="pagination">
+                        {% if currentPage == 1 %}
+                            <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+                        {% else %}
+                            <li class="waves-effect"><a href="{{ path('associate_invite', { page: (currentPage-1)}) }}"><i class="material-icons">chevron_left</i></a></li>
+                        {% endif %}
+                        {% for page in 1..numberOfPages %}
+                            {% if page == currentPage %}
+                                <li class="active"><a href="#!">{{ currentPage }}</a></li>
+                            {% else %}
+                                <li class="waves-effect"><a href="{{ path('associate_invite', { page: page}) }}">{{ page }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if currentPage == numberOfPages %}
+                            <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+                        {% else %}
+                            <li class="waves-effect"><a href="{{ path('associate_invite', { page: (currentPage+1)}) }}"><i class="material-icons">chevron_right</i></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

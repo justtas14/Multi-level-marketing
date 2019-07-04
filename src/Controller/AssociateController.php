@@ -8,6 +8,7 @@ use App\Entity\Invitation;
 use App\Entity\InvitationBlacklist;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
+use App\Exception\NotInvitationSender;
 use App\Filter\AssociateFilter;
 use App\Form\InvitationType;
 use App\Form\UserUpdateType;
@@ -31,6 +32,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AssociateController extends AbstractController
 {
+    const INVITATION_LIMIT = 5;
+
     /**
      * @Route("/associate", name="associate")
      * @param AssociateManager $associateManager
@@ -100,24 +103,54 @@ class AssociateController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
      * @return Response
+     * @throws NotInvitationSender
      */
     public function associateInvitation(
         Request $request,
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager
     ) {
+        $em = $this->getDoctrine()->getManager();
         /**
          * @var User $user
          */
         $user = $this->getUser();
+        $page = $request->get('page', 1);
+        $invitationId = $request->get('invitationId');
+
+        $invitationRepository = $em->getRepository(Invitation::class);
+
+        if ($invitationId) {
+            $checkInvitation = $invitationRepository->findOneBy(['sender' => $user, 'id' => $invitationId]);
+            if (!$checkInvitation) {
+                throw new NotInvitationSender('Invitation with id of '. $invitationId. ' cannot be reached', 500);
+            }
+        }
+
+        $allInvitations = $invitationRepository->findBy(['sender' => $user]);
+
+        $numberOfPages = ceil(count($allInvitations) / self::INVITATION_LIMIT);
+
+        $invitations = $invitationRepository->findBy(
+            ['sender' => $user],
+            ['created' => 'DESC'],
+            self::INVITATION_LIMIT,
+            self::INVITATION_LIMIT * ($page-1)
+        );
 
         $form = $this->createForm(InvitationType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if (($form->isSubmitted() && $form->isValid()) || $invitationId) {
             $em = $this->getDoctrine()->getManager();
-            $invitation = new Invitation();
-            $email = trim($form['email']->getData());
+            if (!$invitationId) {
+                $invitation = new Invitation();
+                $email = trim($form['email']->getData());
+            } else {
+                /** @var Invitation $resendInvitation */
+                $resendInvitation = $em->getRepository(Invitation::class)->find($invitationId);
+                $email = $resendInvitation->getEmail();
+            }
             /** @var AssociateRepository $associateRepo */
             $associateRepo = $em->getRepository(Associate::class);
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -129,27 +162,34 @@ class AssociateController extends AbstractController
                     ->get('email')
                     ->addError(new FormError('The person with this email has opted out of this service'));
             } else {
-                $invitation->setSender($user->getAssociate());
-                $invitation->setEmail($email);
-                $invitation->setFullName($form['fullName']->getData());
-
-                $invitationManager->send($invitation);
-
-                $em->persist($invitation);
-                $em->flush();
+                if (!$invitationId) {
+                    $invitation->setSender($user->getAssociate());
+                    $invitation->setEmail($email);
+                    $invitation->setFullName($form['fullName']->getData());
+                    $invitationManager->send($invitation);
+                    $em->persist($invitation);
+                    $em->flush();
+                } else {
+                    $invitationManager->send($resendInvitation);
+                    $em->persist($resendInvitation);
+                    $em->flush();
+                }
 //                $this->addFlash('success', 'Email sent');
                 return $this->render('associate/invitation.html.twig', [
                     'invitation' => $form->createView(),
                     'sent' => [
                         'completed' => true,
-                        'address' => $invitation->getEmail()
+                        'address' => $email
                     ]
                 ]);
             }
         }
 
         return $this->render('associate/invitation.html.twig', [
-            'invitation' => $form->createView()
+            'invitation' => $form->createView(),
+            'invitations' => $invitations,
+            'numberOfPages' => $numberOfPages,
+            'currentPage' => $page
         ]);
     }
 

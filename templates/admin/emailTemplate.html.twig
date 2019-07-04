@@ -63,32 +63,21 @@
             </div>
         </div>
     </div>
-{#    <div class="styles_overlay__CLSq- undefined" id="myModal">#}
-{#        <div class="styles_modal__gNwvD" role="dialog" aria-modal="true">#}
-{#            <div>#}
-{#                <div class="ModalElement__IframeContainer">#}
-{#                    <button class="styles_closeButton__20ID4">#}
-{#                        <svg class="styles_closeIcon__1QwbI" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">#}
-{#                            <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z"></path>#}
-{#                        </svg>#}
-{#                    </button>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
     <div id="myModal" class="modal">
 
         <div class="modal-content">
+            <a class="styles_closeButton__20ID4 close">
+                <svg class="styles_closeIcon__1QwbI" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
+                    <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z">
+                    </path>
+                </svg>
+            </a>
             <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Modal Header</h2>
-            </div>
-            <div class="modal-body">
-                <p>Some text in the Modal Body</p>
-                <p>Some other text...</p>
-            </div>
-            <div class="modal-footer">
-                <h3>Modal Footer</h3>
+                {{ title }} preview
+            </div> <hr class="line" align="left"> <Br> <Br>
+            <div id="previewSubjectContent" class="modal-subject" style="border: 1px solid grey"></div>
+            <Br>
+            <div id="previewBodyContent" class="modal-body ql-editor" style="border: 1px solid grey">
             </div>
         </div>
 
@@ -96,18 +85,6 @@
 
 {% endblock %}
 
-
- {% block javascripts %}
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-     <script src="{{ asset('assets/js/sidebar.js') }}" async></script>
-     <script src="{{ asset('assets/js/quill.core.js') }}"></script>
-     <script src="{{ asset('assets/js/quill.js') }}"></script>
-     <script src="{{ asset('assets/js/quill.min.js') }}"></script>
-
- {% endblock %}
 {% block quillJs %}
     <script>
         let AlignStyle = Quill.import('attributors/style/align');
@@ -115,26 +92,24 @@
         let ColorStyle = Quill.import('attributors/style/color');
         let DirectionStyle = Quill.import('attributors/style/direction');
         let FontStyle = Quill.import('attributors/style/font');
-        let SizeStyle = Quill.import('attributors/style/size');
+
 
         Quill.register(AlignStyle, true);
         Quill.register(BackgroundStyle, true);
         Quill.register(ColorStyle, true);
         Quill.register(DirectionStyle, true);
         Quill.register(FontStyle, true);
-        Quill.register(SizeStyle, true);
 
         var quill = new Quill('#editor-container', {
             modules: {
                 'syntax': true,
                 'toolbar': [
                     [ 'bold', 'italic', 'underline', 'strike' ],
-                    [{ 'font': [] }, { 'size': [] }],
-                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'color': [] }],
                     [{ 'script': 'super' }, { 'script': 'sub' }],
                     [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block' ],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' }],
-                    [ 'direction', { 'align': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet'}],
+                    [ 'direction'],
                     [ 'link', 'image'],
                     [ 'clean' ]
                 ]
@@ -143,7 +118,11 @@
         });
 
         $( document ).ready(function () {
-            quill.container.firstChild.innerHTML = $('input[type=hidden]').val();
+            try {
+                quill.setContents(JSON.parse($('input[type=hidden]').val()));
+            } catch (e) {
+                quill.container.firstChild.innerHTML = $('input[type=hidden]').val();
+            }
         });
 
         var form = document.querySelector('form');
@@ -152,7 +131,7 @@
 
         function callback() {
             var emailBody = document.querySelector('input[type=hidden]');
-            emailBody.value = quill.root.innerHTML;
+            emailBody.value = JSON.stringify(quill.getContents());
             return true;
         }
 
@@ -205,14 +184,27 @@
             preview.toggle();
         });
 
-        var editorContainerContent = document.querySelector('#editor-container > .ql-editor');
-
+        var editorBodyContainerContent = document.querySelector('#editor-container > .ql-editor');
+        var subjectContent = document.querySelector('#email_template_emailSubject');
 
         previewButton.addEventListener('click', function () {
-            var editorContainerContentString = editorContainerContent.innerHTML.replace('\{\{ senderName \}\}', 'Sender name');
-            editorContainerContentString = editorContainerContentString.replace('\{\{ receiverName \}\}', 'Receiver name');
+            var editorContainerContentInnerHTML = editorBodyContainerContent.innerHTML;
+            var subjectContentValue = subjectContent.value;
 
-            $('#previewContent').html(editorContainerContentString);
+            {% if 'Invitation' in title %}
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{ receiverName \}\}', 'RECEIVER_NAME');
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{receiverName\}\}', 'RECEIVER_NAME');
+                subjectContentValue = subjectContentValue.replace('\{\{ senderName \}\}', 'SENDER_NAME');
+                subjectContentValue = subjectContentValue.replace('\{\{senderName\}\}', 'SENDER_NAME');
+            {% endif %}
+
+            {% if 'Welcome' in title %}
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{ name \}\}', 'FULL_NAME');
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{name\}\}', 'FULL_NAME');
+            {% endif %}
+
+            $('#previewSubjectContent').html(subjectContentValue);
+            $('#previewBodyContent').html(editorContainerContentInnerHTML);
         });
 
         var modal = document.getElementById("myModal");

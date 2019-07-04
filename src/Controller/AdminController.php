@@ -369,4 +369,14 @@ class AdminController extends AbstractController
             );
         }
     }
+
+    /**
+     * @Route("/admin/gallery", name="gallery")
+     */
+    public function gallery()
+    {
+
+
+        return $this->render('admin/gallery.html.twig', []);
+    }
 }

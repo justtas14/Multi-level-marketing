@@ -138,8 +138,15 @@ class HomeController extends AbstractController
 
         $landingContent = $configuration->getLandingContent();
 
+        $parser = new \DBlackborough\Quill\Parser\Html();
+        $renderer = new \DBlackborough\Quill\Renderer\Html();
+
+        $parser->load($landingContent)->parse();
+
+        $landingContentHTML = $renderer->load($parser->deltas())->render();
+
         return $this->render('home/landingPage.html.twig', [
-            'landingContent' => $landingContent
+            'landingContent' => $landingContentHTML
         ]);
     }
 
