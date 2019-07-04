@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ResetPasswordManager
 {
-    const SECONDS_UNTIL_EXPIRED = 3600;
     /**
      * @var EntityManagerInterface $em
      */

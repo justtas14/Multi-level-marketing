@@ -42,6 +42,11 @@ class InvitationManager
      */
     private $sender;
 
+    /**
+    * @var int
+    */
+    private $secondsUntilExpired;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         Swift_Mailer $mailer,
