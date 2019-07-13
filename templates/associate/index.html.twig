@@ -29,8 +29,10 @@
                             {% set maxLevel = max(associatesInLevels) %}
                             {% for key, associateCount in associatesInLevels %}
                                 <li class="associate-levelBarListItem" style="list-style-type:none;">
-                                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                                        Level {{ key }}: <strong>{{ associateCount }}</strong>
+                                    <div style="display: flex; justify-content: center; align-items: center">
+                                        Level {{ key }}: <strong style="margin-left: 4px; font-size: 1.1em">{{ associateCount }}</strong>
+                                    </div>
+                                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%; min-height: 24px">
                                     </div>
                                 </li>
                             {% endfor %}
