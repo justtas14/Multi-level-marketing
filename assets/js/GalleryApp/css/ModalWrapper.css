@@ -1,0 +1,27 @@
+.modal-body-gallery {
+    padding: 2px 16px;
+    margin-top: 25px;
+}
+
+.fileContainer {
+    position: relative;
+}
+
+.fileTitle {
+    font-size: 1.2em;
+}
+.modal-content {
+    width: 85%;
+    padding-bottom: 5em;
+}
+
+@media only screen and (max-width: 625px) {
+    .modal-content {
+        width: 520px;
+    }
+}
+@media only screen and (min-width: 1800px) {
+    .modal-content {
+        width: 1600px;
+    }
+}

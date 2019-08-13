@@ -9,6 +9,7 @@
             <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         {% block stylesheets %}
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <script src="https://kit.fontawesome.com/8f7af2e175.js"></script>
             <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
             <link href="{{ asset('assets/css/explorer_main.css') }}" rel="stylesheet">
@@ -24,8 +25,9 @@
             <link href="{{ asset('assets/css/email_template.css') }}" rel="stylesheet">
             <link href="{{ asset('assets/css/image_gallery.css') }}" rel="stylesheet">
             <link href="{{ asset('assets/css/quill.snow.css') }}" rel="stylesheet">
-            <link href="{{ asset('assets/css/quill.core.css') }}" rel="stylesheet">
-            <link href="{{ asset('assets/css/quill.bubble.css') }}" rel="stylesheet">
+            <link href="{{ asset('build/fileGallery.css') }}" rel="stylesheet">
+            <link href="{{ asset('build/modal.css') }}" rel="stylesheet">
+            <link href="{{ asset('build/quill.css') }}" rel="stylesheet">
         {% endblock %}
     </head>
     <body>
@@ -33,20 +35,15 @@
         {% endblock %}
         {% block javascripts %}
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
             <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
             <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>
             <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>
             <script src="{{ asset('assets/js/usersearch.js') }}" async></script>
-            <script src="{{ asset('assets/js/gallery.js') }}" async></script>
             <script src="{{ asset('assets/js/sidebar.js') }}" async></script>
-            <script src="{{ asset('assets/js/quill.core.js') }}"></script>
-            <script src="{{ asset('assets/js/quill.js') }}"></script>
-            <script src="{{ asset('assets/js/quill.min.js') }}"></script>
-
         {% endblock %}
     </body>
-    {% block quillJs %}
-    {% endblock %}
 </html>

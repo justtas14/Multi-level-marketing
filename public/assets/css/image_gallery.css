@@ -1,8 +1,8 @@
 .file-upload {
     background-color: #ffffff;
-    width: 600px;
+    max-width: 60%;
     margin: 0 auto;
-    padding: 20px;
+    padding: 15px;
 }
 
 .file-upload-content {
@@ -10,28 +10,11 @@
     text-align: center;
 }
 
-.file-upload-input {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    outline: none;
-    opacity: 0;
-    cursor: pointer;
-}
-
 .image-upload-wrap {
     margin-top: 20px;
+    border-radius: 10px;
     border: 4px dashed #1FB264;
-    position: relative;
     padding: 0 10px;
-}
-
-.image-dropping,
-.image-upload-wrap:hover {
-    background-color: #1FB264;
-    border: 4px dashed #ffffff;
 }
 
 .image-title-wrap {
@@ -39,60 +22,59 @@
     color: #222;
 }
 
-.drag-text {
-    text-align: center;
+.closeContainer #removeImage {
+    position: absolute;
 }
 
-.drag-text h5 {
-    font-weight: 100;
-    text-transform: uppercase;
-    color: #15824B;
-    padding: 60px 0;
+#realMainLogo {
+    display: none;
+}
+#realTermsOfService {
+    display: none;
 }
 
-.file-upload-image {
-    max-height: 100%;
-    max-width: 100%;
-    margin: auto;
-    padding: 20px;
+.reducePadding {
+    padding: 12px !important;
+}
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-.remove-image {
-    width: 200px;
-    margin: 0;
-    color: #fff;
-    background: #cd4535;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    border-bottom: 4px solid #b02818;
-    transition: all .2s ease;
-    outline: none;
-    text-transform: uppercase;
-    font-weight: 700;
+.addMargin {
+    margin-left: 0.5em;
 }
 
-.remove-image:hover {
-    background: #c13b2a;
-    color: #ffffff;
-    transition: all .2s ease;
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
     cursor: pointer;
 }
 
-.remove-image:active {
-    border: 0;
-    transition: all .2s ease;
+#originalName {
+    display: none;
 }
 
-.gallery {
-    float: left;
-    /*display: grid;*/
-    /*grid-template-columns: auto auto auto;*/
-    /*grid-gap: 15px;*/
+@media only screen and (max-width: 1030px) {
+    #admin-gallery {
+        width: 1015px;
+        margin: unset;
+    }
 }
 
-.gallery__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+@media only screen and (max-width: 650px) {
+    #admin-gallery {
+        width: 700px;
+        margin: unset;
+    }
+}
+
+@media only screen and (min-width: 1800px) {
+    #admin-gallery {
+        width: 1800px;
+        margin: unset;
+    }
 }

@@ -35,9 +35,10 @@
                     {{ form_widget(form.emailBody) }}
                     <div class="emailContainer">
                         <div id="editor">
-                            <div id="editor-container">
-                                {{ emailBody }}
-                            </div>
+                            {% verbatim %}
+                                <section id="quillEditor">
+                                </section>
+                            {% endverbatim %}
                         </div>
                         <div id="emailBodyParams">
                             <span id="emailBodyParamsTitle">Available parameters</span>
@@ -64,10 +65,9 @@
         </div>
     </div>
     <div id="myModal" class="modal">
-
         <div class="modal-content">
             <a class="styles_closeButton__20ID4 close">
-                <svg class="styles_closeIcon__1QwbI" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
+                <svg class="styles_closeIcon__1QwbI previewClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
                     <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z">
                     </path>
                 </svg>
@@ -75,108 +75,18 @@
             <div class="modal-header">
                 {{ title }} preview
             </div> <hr class="line" align="left"> <Br> <Br>
-            <div id="previewSubjectContent" class="modal-subject" style="border: 1px solid grey"></div>
+            <div id="subjectContent" class="modal-subject" style="border: 1px solid grey"></div>
             <Br>
-            <div id="previewBodyContent" class="modal-body ql-editor" style="border: 1px solid grey">
-            </div>
+            <div id="bodyContent" class="modal-body ql-editor" style="border: 1px solid grey"></div>
         </div>
-
     </div>
-
 {% endblock %}
 
-{% block quillJs %}
+{% block javascripts %}
+
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/quill.js') }}"></script>
     <script>
-        let AlignStyle = Quill.import('attributors/style/align');
-        let BackgroundStyle = Quill.import('attributors/style/background');
-        let ColorStyle = Quill.import('attributors/style/color');
-        let DirectionStyle = Quill.import('attributors/style/direction');
-        let FontStyle = Quill.import('attributors/style/font');
-
-
-        Quill.register(AlignStyle, true);
-        Quill.register(BackgroundStyle, true);
-        Quill.register(ColorStyle, true);
-        Quill.register(DirectionStyle, true);
-        Quill.register(FontStyle, true);
-
-        var quill = new Quill('#editor-container', {
-            modules: {
-                'syntax': true,
-                'toolbar': [
-                    [ 'bold', 'italic', 'underline', 'strike' ],
-                    [{ 'color': [] }],
-                    [{ 'script': 'super' }, { 'script': 'sub' }],
-                    [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block' ],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet'}],
-                    [ 'direction'],
-                    [ 'link', 'image'],
-                    [ 'clean' ]
-                ]
-            },
-            theme: 'snow'
-        });
-
-        $( document ).ready(function () {
-            try {
-                quill.setContents(JSON.parse($('input[type=hidden]').val()));
-            } catch (e) {
-                quill.container.firstChild.innerHTML = $('input[type=hidden]').val();
-            }
-        });
-
-        var form = document.querySelector('form');
-
-        form.addEventListener("submit", callback, false);
-
-        function callback() {
-            var emailBody = document.querySelector('input[type=hidden]');
-            emailBody.value = JSON.stringify(quill.getContents());
-            return true;
-        }
-
-
-        function selectLocalImage() {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.click();
-
-            input.onchange = () => {
-                const file = input.files[0];
-
-                // file type is only image.
-                if (/^image\//.test(file.type)) {
-                    saveToServer(file);
-                } else {
-                    console.warn('You could only upload images.');
-                }
-            };
-        }
-
-        function saveToServer(file) {
-            const fd = new FormData();
-            fd.append('image', file);
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/uploadFile', true);
-            xhr.onload = () => {
-                if (xhr.status === 200 && xhr.readyState === 4) {
-                    const url = JSON.parse(xhr.responseText);
-                    insertToEditor(url);
-                }
-            };
-            xhr.send(fd);
-        }
-
-        function insertToEditor(url) {
-            const range = quill.getSelection();
-            quill.insertEmbed(range.index, 'image', `${url}`);
-        }
-
-        quill.getModule('toolbar').addHandler('image', () => {
-            selectLocalImage();
-        });
-
-
         var previewButton = document.querySelector('#preview');
 
         var preview = $('.preview');
@@ -184,7 +94,7 @@
             preview.toggle();
         });
 
-        var editorBodyContainerContent = document.querySelector('#editor-container > .ql-editor');
+        var editorBodyContainerContent = document.querySelector('.ql-editor');
         var subjectContent = document.querySelector('#email_template_emailSubject');
 
         previewButton.addEventListener('click', function () {
@@ -203,15 +113,17 @@
                 editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{name\}\}', 'FULL_NAME');
             {% endif %}
 
-            $('#previewSubjectContent').html(subjectContentValue);
-            $('#previewBodyContent').html(editorContainerContentInnerHTML);
+            console.log(editorContainerContentInnerHTML);
+
+            document.getElementById('subjectContent').innerHTML = subjectContentValue;
+            document.getElementById('bodyContent').innerHTML = editorContainerContentInnerHTML;
         });
 
         var modal = document.getElementById("myModal");
 
         var btn = document.getElementById("preview");
 
-        var span = document.getElementsByClassName("close")[0];
+        var span = document.getElementsByClassName("previewClose")[0];
 
         btn.onclick = function() {
             modal.style.display = "block";
@@ -226,5 +138,5 @@
                 modal.style.display = "none";
             }
         }
-    </script>
+        </script>
 {% endblock %}

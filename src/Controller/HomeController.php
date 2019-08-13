@@ -3,22 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
-use App\Entity\Configuration;
+use App\Entity\Gallery;
 use App\Entity\ResetPassword;
 use App\Entity\User;
 use App\Form\EditorImageType;
 use App\Form\NewPasswordType;
 use App\Form\ResetPasswordType;
 use App\Form\UserRegistrationType;
+use App\CustomNormalizer\GalleryNormalizer;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
 use App\Service\ResetPasswordManager;
-use DateTime;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +25,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class HomeController extends AbstractController
 {
@@ -138,15 +141,19 @@ class HomeController extends AbstractController
 
         $landingContent = $configuration->getLandingContent();
 
-        $parser = new \DBlackborough\Quill\Parser\Html();
-        $renderer = new \DBlackborough\Quill\Renderer\Html();
+        try {
+            $parser = new \DBlackborough\Quill\Parser\Html();
+            $renderer = new \DBlackborough\Quill\Renderer\Html();
 
-        $parser->load($landingContent)->parse();
+            $parser->load($landingContent)->parse();
 
-        $landingContentHTML = $renderer->load($parser->deltas())->render();
+            $landingContent = $renderer->load($parser->deltas())->render();
+        } catch (\Exception $exception) {
+            $landingContent = $configuration->getLandingContent();
+        }
 
         return $this->render('home/landingPage.html.twig', [
-            'landingContent' => $landingContentHTML
+            'landingContent' => $landingContent
         ]);
     }
 
@@ -273,7 +280,6 @@ class HomeController extends AbstractController
     /**
      * @Route("/uploadFile", name="upload_file")
      * @param Request $request
-     * @param GaufretteFileManager $gaufretteFileManager
      * @return JsonResponse|Response
      */
     public function uploadEditorImage(
@@ -281,26 +287,65 @@ class HomeController extends AbstractController
         GaufretteFileManager $gaufretteFileManager
     ) {
         if ($request->isMethod('POST')) {
-            $uploadedFile = $request->files->all()['image'];
+            $uploadedFile = $request->getContent();
 
-            $form = $this->createForm(EditorImageType::class);
-
-            $form->get('image')->setData($uploadedFile);
-
-            $form->submit($request->request->get($form->getName()));
+            $fileId = json_decode($uploadedFile);
 
             $em = $this->getDoctrine()->getManager();
 
-            $em->persist($form->getData()['image']);
-            $em->flush();
+            $galleryRepository = $em->getRepository(Gallery::class);
 
-            $url = $gaufretteFileManager->generateDownloadUrl(($form->getData()['image']));
+            /** @var Gallery $galleryFile */
+            $galleryFile = $galleryRepository->find($fileId);
+
+            $url = $gaufretteFileManager->generateDownloadUrl($galleryFile->getGalleryFile());
 
             $baseUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
 
             $absoluteUrl = $baseUrl.$url;
 
             return new JsonResponse($absoluteUrl, 200);
+        } else {
+            return new Response('', 200);
+        }
+    }
+
+    /**
+     * @Route("/uploadGalleryFile", name="upload_gallery_file")
+     * @param Request $request
+     * @param GalleryNormalizer $galleryNormalizer
+     * @return JsonResponse|Response
+     * @throws ExceptionInterface
+     */
+    public function uploadGalleryFile(
+        Request $request,
+        GalleryNormalizer $galleryNormalizer
+    ) {
+        if ($request->isMethod('POST')) {
+            $galleryFile = new Gallery();
+
+            $form = $this->createForm(EditorImageType::class, $galleryFile);
+            $form->submit($request->files->all());
+
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($galleryFile);
+            $em->flush();
+
+            $galleryFile->getGalleryFile()->setUploadedFileReference(null);
+            $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer, new JsonEncoder()]);
+            $serializedFile = $serializer->normalize(
+                $galleryFile,
+                null,
+                ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
+            );
+
+            return new JsonResponse(
+                [
+                    'file' => $serializedFile
+                ],
+                JsonResponse::HTTP_OK
+            );
         } else {
             return new Response('', 200);
         }

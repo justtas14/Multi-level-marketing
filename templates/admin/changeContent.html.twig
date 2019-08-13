@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Change Content</span>
-                <div id="flash-messages">
+                <div id="flash-messages" style="margin-bottom: 1em">
                     {% for message in app.flashes('error') %}
                         <div class="error__block">
                             {{ message }}
@@ -19,18 +19,31 @@
                         </div>
                     {% endfor %}
                 </div>
-
+                {{ form_start(form) }}
+                {% include 'includes/errorBlock.html.twig' with { field: form.mainLogo } %}
+                {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                 <main id="main labelFormFix">
-                    {{ form_start(form) }}
-                    <div class="input-field">
+                    <div class="fileContainer" style="margin-bottom: 2em;">
+                        <span class="fileTitle">Main logo</span>
+                        <div id="mainLogoFromGallery" class="input-field">
+                            <a id="mainLogoFilesPreview" class="waves-effect waves-light btn" onclick="showMainLogoGallery()">Choose file</a>
+                            <span id="mainLogoFileName" class="addMargin"></span>
+                        </div>
+                    </div>
+                    <div class="fileContainer" style="margin-bottom: 2em;">
+                        <span class="fileTitle">Terms Of Services</span>
+                        <div id="termsOfServicesFromGallery" class="input-field">
+                            <a id="termsOfServicesFilesPreview" class="waves-effect waves-light btn" onclick="showTermsOfServicesGallery()">Choose file</a>
+                            <span id="termsOfServicesFileName" class="addMargin"></span>
+                        </div>
+                    </div>
+                    <div id="realMainLogo" class="input-field">
                         {{ form_label(form.mainLogo) }}
                         {{ form_widget(form.mainLogo) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: form.mainLogo } %}
                     </div>
-                    <div class="input-field">
+                    <div id="realTermsOfService" class="input-field">
                         {{ form_label(form.termsOfServices) }}
                         {{ form_widget(form.termsOfServices) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                     </div>
                     <div class="input-field">
                         {{ form_label(form.tosDisclaimer) }}
@@ -42,12 +55,31 @@
                         {{ form_widget(form.Submit) }}
                     </div>
                     {% include 'includes/errorBlock.html.twig' with { field: form } %}
-                    {{ form_end(form) }}
                 </main>
+                {% verbatim %}
+                    <section id="modal">
+                    </section>
+                 {% endverbatim %}
+                {{ form_widget(form.hiddenMainLogoFile) }}
+                {{ form_widget(form.hiddenTermsOfServiceFile) }}
                 {% if configuration.termsOfServices is defined and configuration.termsOfServices is not null %}
                     <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download Terms of service</a>
                 {% endif %}
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
+
 {% endblock %}
+   {% block javascripts %}
+        {{ parent() }}
+       <script type="text/javascript" src="{{ asset('build/modal.js') }}"></script>
+       <script>
+           function showMainLogoGallery() {
+                modal.showModal('images', '#change_content_hiddenMainLogoFile', '#mainLogoFileName');
+           }
+           function showTermsOfServicesGallery() {
+                modal.showModal('all', '#change_content_hiddenTermsOfServiceFile', '#termsOfServicesFileName');
+           }
+       </script>
+   {% endblock %}

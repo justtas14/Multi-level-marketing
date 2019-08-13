@@ -13,7 +13,7 @@ class EditorImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('image', PTSFileType::class, ['multiple' => false, 'required' => false])
+            ->add('galleryFile', PTSFileType::class, ['multiple' => false, 'required' => false])
             ->add('Submit', SubmitType::class, [
                 'label' => 'Change content',
                 'attr' => [

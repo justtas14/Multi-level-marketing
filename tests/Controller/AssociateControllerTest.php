@@ -3,9 +3,7 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Invitation;
 use App\Entity\User;
-use App\Exception\NotAncestorException;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;

@@ -1,0 +1,63 @@
+<template>
+    <section id="gallerySection"
+             @drop="handleDrop"
+             @dragenter.prevent.stop="addImageDropping"
+             @dragover.prevent.stop="addImageDropping"
+             @dragleave.prevent.stop="removeImageDropping"
+             @drop.prevent.stop="removeImageDropping"
+    >
+        <input class="file-upload-input-gallery" multiple type='file'/>
+        <div v-bind:style="{display: (files.length == 0) ? 'block' : 'none'}" id="uploadImageIcon">
+            <i class="fas fa-file-download"></i>
+        </div>
+        <div class="image-upload-box" v-bind:class="{ 'image-dropping': imageDroppingClass }"></div>
+        <transition-group name="component-fade" tag="p"
+              :id="constants.galleryClasses.galleryId"
+              v-bind:class="{'noFileClass' : (files.length == 0)}"
+        >
+        <figure v-bind:key="file.id"
+                v-for="file in files"
+                class="imageContainer"
+        >
+                <GalleryFile
+                    v-bind:file="file"
+                    v-bind:imageExtensions="imageExtensions"
+                    v-bind:constants="constants"
+                />
+        </figure>
+        </transition-group>
+    </section>
+</template>
+<script>
+    import GalleryFile from './GalleryFile.vue';
+    import EventBus from '../EventBus/EventBus';
+
+    export default {
+        name: 'GalleryFileList',
+        props: ['files', 'imageExtensions', 'constants'],
+        components: {
+            GalleryFile
+        },
+        data() {
+            return {
+                imageDroppingClass: false,
+            }
+        },
+        methods: {
+            handleDrop: function (event) {
+                EventBus.$emit('handleDrop', event);
+            },
+
+            addImageDropping: function () {
+                this.imageDroppingClass = true;
+            },
+            removeImageDropping: function () {
+                this.imageDroppingClass = false;
+            },
+        },
+    }
+</script>
+
+<style src="../css/GalleryFileList.css" scoped>
+
+</style>

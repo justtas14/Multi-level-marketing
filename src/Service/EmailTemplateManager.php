@@ -6,10 +6,7 @@ namespace App\Service;
 use App\Entity\EmailTemplate;
 use App\Exception\UnsupportedEmailTypeException;
 use Doctrine\ORM\EntityManagerInterface;
-use mysql_xdevapi\Exception;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment;
-use nadar\quill\Lexer;
 
 class EmailTemplateManager
 {
@@ -90,18 +87,22 @@ class EmailTemplateManager
 
         $emailTemplateSubject = $emailTemplateEntity->getEmailSubject();
 
-        $emailTemplateBodyDelta = $emailTemplateEntity->getEmailBody();
+        $emailTemplateBody = $emailTemplateEntity->getEmailBody();
 
-        $parser = new \DBlackborough\Quill\Parser\Html();
-        $renderer = new \DBlackborough\Quill\Renderer\Html();
+        try {
+            $parser = new \DBlackborough\Quill\Parser\Html();
+            $renderer = new \DBlackborough\Quill\Renderer\Html();
 
-        $parser->load($emailTemplateBodyDelta)->parse();
+            $parser->load($emailTemplateBody)->parse();
 
-        $emailTemplateBodyHTML = $renderer->load($parser->deltas())->render();
+            $emailTemplateBody = $renderer->load($parser->deltas())->render();
+        } catch (\Exception $exception) {
+            $emailTemplateBody = $emailTemplateEntity->getEmailBody();
+        }
 
         $templateSubject = $this->twig->createTemplate($emailTemplateSubject);
 
-        $templateBody = $this->twig->createTemplate($emailTemplateBodyHTML);
+        $templateBody = $this->twig->createTemplate($emailTemplateBody);
 
         $message = new \Swift_Message();
 

@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
-use App\Entity\File;
 use App\Entity\Invitation;
-use App\Entity\InvitationBlacklist;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
 use App\Exception\NotInvitationSender;
@@ -16,7 +14,6 @@ use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\InvitationManager;
-use DateTime;
 use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
@@ -28,7 +25,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AssociateController extends AbstractController
 {
@@ -121,7 +117,9 @@ class AssociateController extends AbstractController
         $invitationRepository = $em->getRepository(Invitation::class);
 
         if ($invitationId) {
-            $checkInvitation = $invitationRepository->findOneBy(['sender' => $user, 'id' => $invitationId]);
+            $checkInvitation = $invitationRepository->findOneBy(
+                ['sender' => $user, 'id' => $invitationId]
+            );
             if (!$checkInvitation) {
                 throw new NotInvitationSender('Invitation with id of '. $invitationId. ' cannot be reached', 500);
             }
@@ -289,10 +287,9 @@ class AssociateController extends AbstractController
 
     /**
      * @Route("/associate/viewer", name="team_viewer")
-     * @param Request $request
      * @return Response
      */
-    public function teamViewer(Request $request)
+    public function teamViewer()
     {
         return $this->render('associate/teamViewer.html.twig');
     }

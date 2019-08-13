@@ -3,33 +3,19 @@
 {% block title %}Gallery{% endblock %}
 
 {% block content %}
-    <div class="admin-contentContainer">
+    <div id="admin-gallery" class="admin-contentContainer">
         <div class="card">
             <div class="card-content">
-                <span class="card-title">Add image</span>
-                <div class="file-upload">
-                    <div class="image-upload-wrap">
-                        <input class="file-upload-input" type='file' onchange="readURL(this);" accept="image/*" />
-                        <div class="drag-text">
-                            <h5>Drag and drop a file or click to add Image</h5>
-                        </div>
-                    </div>
-
+                {% verbatim %}
+                    <section id="gallery">
+                    </section>
+                {% endverbatim %}
                 </div>
             </div>
         </div>
     </div>
-    <div class="admin-contentContainer">
-        <div class="card">
-            <div class="card-content">
-                <span class="card-title">Image gallery</span>
-                <div class=”gallery”>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
 {% endblock %}
+ {% block javascripts %}
+     {{ parent() }}
+     <script type="text/javascript" src="{{ asset('build/fileGallery.js') }}"></script>
+ {% endblock %}

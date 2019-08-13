@@ -11,8 +11,6 @@ use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
-use PlumTreeSystems\FileBundle\Entity\File;
-use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 
 class AdminControllerTest extends WebTestCase
@@ -31,7 +29,8 @@ class AdminControllerTest extends WebTestCase
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
             "App\DataFixtures\ORM\LoadEmailTemplates",
-            "App\DataFixtures\ORM\LoadBlackListEmails"
+            "App\DataFixtures\ORM\LoadBlackListEmails",
+            "App\DataFixtures\ORM\LoadInvitations"
         ])->getReferenceRepository();
     }
 
@@ -80,13 +79,13 @@ class AdminControllerTest extends WebTestCase
 
         $invitations = $invitationRepository->findAll();
 
-        $this->assertEquals(0, sizeof($invitations));
+        $this->assertEquals(6, sizeof($invitations));
 
         $client->submit($form);
 
         $invitations = $invitationRepository->findAll();
 
-        $this->assertEquals(1, sizeof($invitations));
+        $this->assertEquals(7, sizeof($invitations));
 
         $mailCollector = $client->getProfile()->getCollector('swiftmailer');
 
@@ -152,6 +151,59 @@ class AdminControllerTest extends WebTestCase
 
 
     /**
+     *  Testing resend invitation functionality.
+     *
+     *  - Login as associate, get invitation fixture and call to 'associate/invite' api with a param of invitation id
+     *  - Expected successfully to be sent invite mail to fixture invitation email.
+     *
+     *  - This time call to 'associate/invite' api with not existing invitation id.
+     *  - Expected to get not found error.
+     */
+    public function testResendInvitation()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user4');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $invitation = $this->fixtures->getReference('invitation2');
+
+        $client->enableProfiler();
+
+        $crawler = $client->request(
+            'GET',
+            '/associate/invite',
+            ['invitationId' => $invitation->getId()]
+        );
+
+        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
+
+        $this->assertSame(1, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $collectedMessages[0];
+
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame('You got invited by Bailey Brookes. ', $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
+        $this->assertSame('jonas@gmail.com', key($message->getTo()));
+
+        $crawler = $client->request(
+            'GET',
+            '/associate/invite',
+            ['invitationId' => -1000]
+        );
+
+        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+    }
+
+    /**
      *  Testing end prelaunch feature
      *
      *  - Login as admin and go to end prelaunch form, set end prelaunch to false and submit. Then login with
@@ -164,6 +216,11 @@ class AdminControllerTest extends WebTestCase
      *  - Expected to be redirected in landing page after requests to '/' and '/associate' pages and
      * expected appropriate set landing page content. Also expected not to be redirected then requested
      * to '/landingpage' because prelaunch is ended.
+     *
+     *  - Change entity landing content to delta object and then again request with associate to '/'
+     * when prelaunch has ended.
+     *  - Expected to be redirected to landing page and appropriate landing content to be shown which is
+     * parsed html from delta.
      */
     public function testEndPrelaunch()
     {
@@ -271,6 +328,31 @@ class AdminControllerTest extends WebTestCase
         $targetUrl = $client->getResponse()->isRedirection();
 
         $this->assertFalse($targetUrl);
+
+        $configurationEntity = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $configurationEntity->setLandingContent('{"ops":[{"attributes":{"underline":true,"script":"sub"}'
+            .',"insert":"hello "},'.
+            '{"attributes":{"underline":true,"strike":true,"script":"sub"},"insert":"mjiujiunu"},'
+            .'{"attributes":{"header":1},"insert":"\n"},{"insert":"\n"}]}');
+
+        $em->persist($configurationEntity);
+        $em->flush();
+
+        $client->request('GET', '/');
+
+        $client->getResponse()->isRedirect("/landingpage");
+
+        $client->followRedirect();
+
+
+        $this->assertContains(
+            "<h1><u><sub>hello </sub></u><u><s><sub>mjiujiunu</sub></s></u></h1>
+<p>
+<br />
+</p>",
+            $client->getResponse()->getContent()
+        );
     }
 
     /**
@@ -440,6 +522,8 @@ class AdminControllerTest extends WebTestCase
     {
         $this->setOutputCallback(function () {
         });
+
+        $_SERVER['REQUEST_URI'] = "/admin/changecontent";
 
         $container = $this->getContainer();
 
@@ -768,7 +852,7 @@ class AdminControllerTest extends WebTestCase
         );
 
         $this->assertEquals(
-            13,
+            14,
             $crawler->filter('div.sidebar-item')->count()
         );
     }

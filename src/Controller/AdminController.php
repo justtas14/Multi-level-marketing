@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Associate;
 use App\Entity\Configuration;
+use App\Entity\Gallery;
 use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\ChangeContentType;
@@ -11,12 +12,11 @@ use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
 use App\Form\UserSearchType;
 use App\Repository\AssociateRepository;
+use App\CustomNormalizer\GalleryNormalizer;
 use App\Service\AssociateManager;
 use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,12 +29,12 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serialize;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 10;
+    const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
      * @Route("/admin", name="admin")
@@ -211,21 +211,34 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($tempConfiguration->getMainLogo()) {
-                if ($configuration->getMainLogo()) {
-                    $logo = $configuration->getMainLogo();
-                    $configuration->setMainLogo(null);
-                    $fileManager->removeEntity($logo);
+            $mainLogoFileId = $form['hiddenMainLogoFile']->getData();
+            $termsOfServicesFileId = $form['hiddenTermsOfServiceFile']->getData();
+            if ($mainLogoFileId || $termsOfServicesFileId) {
+                if ($mainLogoFileId) {
+                    $originalFile = $em->getRepository(Gallery::class)->find($mainLogoFileId)->getGalleryFile();
+                    $configuration->setMainLogo($originalFile);
                 }
-                $configuration->setMainLogo($tempConfiguration->getMainLogo());
-            }
-            if ($tempConfiguration->getTermsOfServices()) {
-                if ($configuration->getTermsOfServices()) {
-                    $temp = $configuration->getTermsOfServices();
-                    $configuration->setTermsOfServices(null);
-                    $fileManager->removeEntity($temp);
+                if ($termsOfServicesFileId) {
+                    $originalFile = $em->getRepository(Gallery::class)->find($termsOfServicesFileId)->getGalleryFile();
+                    $configuration->setTermsOfServices($originalFile);
                 }
-                $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
+            } else {
+                if ($tempConfiguration->getMainLogo()) {
+                    if ($configuration->getMainLogo()) {
+                        $logo = $configuration->getMainLogo();
+                        $configuration->setMainLogo(null);
+                        $fileManager->removeEntity($logo);
+                    }
+                    $configuration->setMainLogo($tempConfiguration->getMainLogo());
+                }
+                if ($tempConfiguration->getTermsOfServices()) {
+                    if ($configuration->getTermsOfServices()) {
+                        $temp = $configuration->getTermsOfServices();
+                        $configuration->setTermsOfServices(null);
+                        $fileManager->removeEntity($temp);
+                    }
+                    $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
+                }
             }
             if ($tempConfiguration->getTosDisclaimer()) {
                 $configuration->setTosDisclaimer($tempConfiguration->getTosDisclaimer());
@@ -370,13 +383,128 @@ class AdminController extends AbstractController
         }
     }
 
+    private function getImageTypes()
+    {
+        return [
+            'image/png',
+            'image/jpeg',
+            'image/webp',
+            'image/x-ms-bmp'
+        ];
+    }
+
+    /**
+     * @Route("/admin/jsonGallery", name="json_gallery")
+     * @param Request $request
+     * @param GalleryNormalizer $galleryNormalizer
+     * @return JsonResponse
+     * @throws ExceptionInterface
+     */
+    public function jsonGallery(Request $request, GalleryNormalizer $galleryNormalizer)
+    {
+        $page = $request->get('page', 1);
+        $category = $request->get('category', 'all');
+        $imageLimit = $request->get('imageLimit', 8);
+
+        $em = $this->getDoctrine()->getManager();
+        $galleryRepository = $em->getRepository(Gallery::class);
+
+        switch ($category) {
+            case 'all':
+                $allFiles = $galleryRepository->countAllFiles();
+                $files = $galleryRepository->findBy(
+                    [],
+                    ['created' => 'DESC'],
+                    $imageLimit,
+                    $imageLimit * ($page-1)
+                );
+                break;
+            case 'images':
+                $allFiles = $galleryRepository->countAllImages($this->getImageTypes());
+                $files = $galleryRepository->findByImages(
+                    $this->getImageTypes(),
+                    $imageLimit,
+                    $imageLimit * ($page-1)
+                );
+                break;
+            case 'files':
+                $allFiles = $galleryRepository->countAllNotImages($this->getImageTypes());
+                $files = $galleryRepository->findByNotImages(
+                    $this->getImageTypes(),
+                    $imageLimit,
+                    $imageLimit * ($page-1)
+                );
+                break;
+            default:
+                throw new NotFoundHttpException();
+        }
+
+        $numberOfPages = ceil($allFiles / $imageLimit);
+
+        if ($numberOfPages == 0) {
+            $numberOfPages++;
+        }
+
+        if (!is_numeric($page) || ($page < 1 || $page > $numberOfPages)) {
+            throw new NotFoundHttpException();
+        }
+
+        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer]);
+        $serializedFiles = $serializer->normalize(
+            $files,
+            null,
+            ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
+        );
+
+        $data = [
+            'files' => $serializedFiles,
+            'imageExtensions' => self::IMAGE_EXTENSIONS,
+            'pagination' => [
+                'numberOfPages' => $numberOfPages,
+                'currentPage' => $page,
+            ]
+        ];
+
+        return new JsonResponse($data);
+    }
+
     /**
      * @Route("/admin/gallery", name="gallery")
      */
-    public function gallery()
+    public function gallery(Request $request)
     {
-
-
         return $this->render('admin/gallery.html.twig', []);
+    }
+
+    /**
+     * @Route("/admin/removeFile", name="remove_file")
+     */
+    public function removeFile(Request $request, GaufretteFileManager $gaufretteFileManager)
+    {
+        if ($request->isMethod('POST')) {
+            $content = $request->getContent();
+            $ids = json_decode($content, true);
+
+            $galleryId = $ids['params']['galleryId'];
+            $fileId = $ids['params']['fileId'];
+
+            $em = $this->getDoctrine()->getManager();
+
+            $file = $em->getRepository(\App\Entity\File::class)->find($fileId);
+            $galleryFile = $em->getRepository(Gallery::class)->find($galleryId);
+
+            $gaufretteFileManager->remove($file);
+            $em->remove($file);
+            $em->remove($galleryFile);
+
+            $em->flush();
+
+            return new JsonResponse(
+                [],
+                JsonResponse::HTTP_OK
+            );
+        } else {
+            return new Response('', 200);
+        }
     }
 }

@@ -51,7 +51,7 @@
         </div>
     </div>
     {% if sent is not defined %}
-        <div class="admin-contentContainer">
+        <div class="admin-contentContainer sentInvitations">
             <div class="card">
                 <div class="card-content">
                     <span class="card-title">Sent Invitations</span>
@@ -82,7 +82,7 @@
                         </tbody>
                     </table>
                     <br>
-                    <ul class="pagination">
+                    <ul class="pagination" style="text-align: center">
                         {% if currentPage == 1 %}
                             <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
                         {% else %}

@@ -32,9 +32,10 @@
                         {{ form_label(form.landingContent) }}
                         {{ form_widget(form.landingContent) }}
                         {% include 'includes/errorBlock.html.twig' with { field: form.landingContent } %}
-                        <div id="prelaunch-editor-container">
-                            {{ configurationContent }}
-                        </div>
+                    {% verbatim %}
+                        <section id="quillEditor">
+                        </section>
+                    {% endverbatim %}
                     </div>
                     {{ form_end(form) }}
                 </main>
@@ -42,98 +43,9 @@
         </div>
     </div>
 {% endblock %}
-{% block quillJs %}
-    <script>
 
-        let AlignStyle = Quill.import('attributors/style/align');
-        let BackgroundStyle = Quill.import('attributors/style/background');
-        let ColorStyle = Quill.import('attributors/style/color');
-        let DirectionStyle = Quill.import('attributors/style/direction');
-        let FontStyle = Quill.import('attributors/style/font');
-
-
-        Quill.register(AlignStyle, true);
-        Quill.register(BackgroundStyle, true);
-        Quill.register(ColorStyle, true);
-        Quill.register(DirectionStyle, true);
-        Quill.register(FontStyle, true);
-
-        var quill = new Quill('#prelaunch-editor-container', {
-            modules: {
-                'syntax': true,
-                'toolbar': [
-                    [ 'bold', 'italic', 'underline', 'strike' ],
-                    [{ 'color': [] }],
-                    [{ 'script': 'super' }, { 'script': 'sub' }],
-                    [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block' ],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet'}],
-                    [ 'direction'],
-                    [ 'link', 'image'],
-                    [ 'clean' ]
-                ]
-            },
-            theme: 'snow'
-        });
-
-        $( document ).ready(function () {
-            try {
-                quill.setContents(JSON.parse($('input[type=hidden]').val()));
-            } catch (e) {
-                quill.container.firstChild.innerHTML = $('input[type=hidden]').val();
-            }
-        });
-
-        var form = document.querySelector('form');
-
-        form.addEventListener("submit", callback, false);
-
-        function callback() {
-            var emailBody = document.querySelector('input[type=hidden]');
-            emailBody.value = JSON.stringify(quill.getContents());
-            return true;
-        }
-
-
-        function selectLocalImage() {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.click();
-
-            input.onchange = () => {
-                const file = input.files[0];
-
-                // file type is only image.
-                if (/^image\//.test(file.type)) {
-                    saveToServer(file);
-                } else {
-                    console.warn('You could only upload images.');
-                }
-            };
-        }
-
-        function saveToServer(file) {
-            const fd = new FormData();
-            fd.append('image', file);
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/uploadFile', true);
-            xhr.onload = () => {
-                if (xhr.status === 200 && xhr.readyState === 4) {
-                    const url = JSON.parse(xhr.responseText);
-                    insertToEditor(url);
-                }
-            };
-            xhr.send(fd);
-        }
-
-        function insertToEditor(url) {
-            const range = quill.getSelection();
-            quill.insertEmbed(range.index, 'image', `${url}`);
-        }
-
-        quill.getModule('toolbar').addHandler('image', () => {
-            selectLocalImage();
-        });
-
-
-    </script>
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/quill.js') }}"></script>
 {% endblock %}
+

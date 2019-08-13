@@ -1,0 +1,67 @@
+.galleryContainer {
+    margin: 50px 25px 100px 25px;
+}
+
+@media only screen and (max-width: 1500px) {
+    /deep/ .addTop {
+        top: -110px;
+    }
+}
+
+@media only screen and (max-width: 1350px) {
+    /deep/ #gallery{
+        grid-template-columns: repeat(4, 1fr);
+    }
+    /deep/ #modalGallery {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    /deep/ #gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    /deep/ .addTop {
+        top: -100px;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    /deep/ #modalGallery{
+        grid-gap: 50px 25px;
+    }
+}
+
+@media only screen and (max-width: 850px) {
+    /deep/ #modalGallery {
+        grid-gap: 50px;
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    /deep/ #notify {
+        width: 200px;
+        top: 100px;
+    }
+    /deep/ #confirmBox {
+        top: 100px;
+        width: 250px;
+    }
+    /deep/ .categoryMenu {
+        margin-top: 60px;
+    }
+
+    /deep/ #gallery {
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 25px;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    /deep/ .pagination li.pages {
+        width: unset;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+}
