@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Form;
 
 use PlumTreeSystems\FileBundle\Form\Type\PTSFileType;

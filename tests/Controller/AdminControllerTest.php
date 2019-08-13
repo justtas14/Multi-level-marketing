@@ -5,6 +5,8 @@ namespace App\Tests\Controller;
 
 use App\Entity\Configuration;
 use App\Entity\EmailTemplate;
+use App\Entity\File;
+use App\Entity\Gallery;
 use App\Entity\Invitation;
 use App\Entity\InvitationBlacklist;
 use App\Entity\User;
@@ -12,6 +14,7 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\FileFormField;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class AdminControllerTest extends WebTestCase
 {
@@ -514,6 +517,10 @@ class AdminControllerTest extends WebTestCase
      * appropriate params. Change form values, upload correct files and submit.
      * - Expected that configuration values have been updated in database.
      *
+     * - Request to change content page when loggend in as admin. This time change hidden form values, upload
+     * created gallery file id's and submit.
+     * - Expected that configuration entity has been updated with new mainLogo and termsOfService values.
+     *
      * - Request to change content page when logged in as admin and expected to find one configuration with
      * appropriate params. Change form values, upload incorrect files and submit.
      * - Expected to get error message that only images are allowed.
@@ -670,8 +677,56 @@ class AdminControllerTest extends WebTestCase
 
         $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        $ptsFile = new File();
+
+        $image  = new UploadedFile(
+            $path,
+            'test.png',
+            'image/jpeg',
+            null
+        );
+
+        $ptsFile->setUploadedFileReference($image);
+        $ptsFile->setOriginalName('test.png');
+        $ptsFile->setName('test.png');
+
+        $galleryFile = new Gallery();
+        $galleryFile->setGalleryFile($ptsFile);
+        $galleryFile->setMimeType('image/jpeg');
+
+        $em->persist($galleryFile);
+        $em->flush();
+
+        $id = $galleryFile->getId();
+
+        $form['change_content[hiddenMainLogoFile]'] = $id;
+        $form['change_content[hiddenTermsOfServiceFile]'] = $id;
+
+        $client->submit($form);
+
+        $em->refresh($configuration);
+
+        $this->assertEquals(
+            'test.png',
+            $configuration->getMainLogo()->getUploadedFileReference()->getClientOriginalName()
+        );
+        $this->assertEquals(
+            'test.png',
+            $configuration->getTermsOfServices()->getUploadedFileReference()->getClientOriginalName()
+        );
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
         $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
         $form = $crawler->selectButton('Change content')->form();
 
