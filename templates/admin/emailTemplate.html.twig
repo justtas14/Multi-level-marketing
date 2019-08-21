@@ -2,6 +2,12 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/quill.css') }}" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">

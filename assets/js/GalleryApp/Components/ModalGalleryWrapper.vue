@@ -74,32 +74,33 @@
             ])
         },
         mounted () {
-            let scope = this;
+            const scope = this;
             EventBus.$on('handleDrop', function (event) {
-                let dt = event.dataTransfer;
+                const dt = event.dataTransfer;
                 let files = dt.files;
                 scope.handleFiles(files);
             });
             EventBus.$on('delete', function (fileName) {
                 scope.showConfirm('Are you sure you want to delete ' + fileName + ' file?');
             });
-            EventBus.$on('setInnerDeleteFunction', function (params) {
+            EventBus.$on('setInnerDeleteFunction', async function (params) {
                 scope.changeYesFn(() => {
                     scope.deleteRequestFunction(params);
+                    EventBus.$emit('checkDeleted', params.fileId);
                 });
             });
             EventBus.$on('previousPage', function () {
-                let page = null, action = 'subtract';
+                const page = null, action = 'subtract';
                 scope.changePage({page, action});
                 scope.callDataAxios();
             });
             EventBus.$on('nextPage', function () {
-                let action = 'add', page = null;
+                const action = 'add', page = null;
                 scope.changePage({page, action});
                 scope.callDataAxios();
             });
             EventBus.$on('page', function (page) {
-                let action = null;
+                const action = null;
                 scope.changePage({
                     page,
                     action
@@ -122,5 +123,5 @@
     }
 </script>
 
-<style src="../css/ModalGalleryWrapper.css" scoped>
+<style src="../css/ModalGalleryWrapper.css">
 </style>

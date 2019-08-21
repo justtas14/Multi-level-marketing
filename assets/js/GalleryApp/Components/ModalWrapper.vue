@@ -11,7 +11,7 @@
                 <slot name= "fileInputContainer">
                 </slot>
                 <hr class="line" align="left">
-                <div id="previewBodyContent" class="modal-body-gallery">
+                <div id="previewBodyContent" class="modal-body-gallery" v-bind:style="{opacity: dataLoaded ? '1' : '0'}">
                     <slot name = "gallery">
                     </slot>
                 </div>
@@ -33,7 +33,7 @@
             }
         },
         mounted() {
-            let galleryModal = document.getElementById("myGalleryModal");
+            const galleryModal = document.getElementById("myGalleryModal");
             window.addEventListener("click", (event) => {
                 if (event.target == galleryModal) {
                     this.closeShowModal(false);
@@ -44,15 +44,25 @@
         computed: {
             ...mapState('gallery', {
                 modalState: 'modalState',
+                dataLoaded: 'dataLoaded'
             })
         },
 
         methods: {
             ...mapMutations('gallery', [
-                'changeModalState'
+                'changeModalState',
+                'changeDataLoadState',
+                'changePage'
             ]),
             closeShowModal: function(flag) {
                 this.changeModalState(flag);
+                this.changeDataLoadState(flag);
+                const page = 1;
+                const action = null;
+                this.changePage({
+                    page,
+                    action
+                });
             }
         },
     }

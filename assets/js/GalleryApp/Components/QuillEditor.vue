@@ -10,7 +10,8 @@
     import VueQuill from 'vue-quill';
     import ModalGalleryWrapper from "../Components/ModalGalleryWrapper";
     import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
-    import { mapActions, mapMutations } from 'vuex'
+    import { mapActions, mapMutations } from 'vuex';
+    import constants from "../constants/constants";
     import EventBus from '../EventBus/EventBus';
 
     export default {
@@ -26,6 +27,10 @@
                 content: {
                     ops: [],
                 },
+                mqls: [
+                    window.matchMedia('(max-width: 550px)'),
+                    window.matchMedia('(max-width: 1350px)'),
+                ],
                 config: {
                     modules: {
                         'syntax': true,
@@ -45,22 +50,21 @@
                                  this.changeModalState(true);
                                  this.changeFilesPerPage(21);
                                  this.changeCategory('images');
-                                 let mql1 = window.matchMedia('(max-width: 1350px)');
-                                 mql1.addListener((e) => {
-                                     if (e.matches) {
-                                         this.callDataAxios(15);
-                                     } else {
-                                         this.callDataAxios(21);
-                                     }
-                                 });
 
-                                 let w = window.innerWidth;
+                                 for (let i=0; i < this.mqls.length; i++) {
+                                     this.mqls[i].addListener(this.mediaQuerryResponse);
+                                 }
+
+                                 const w = window.innerWidth;
 
                                  if (w > 1350) {
                                      this.callDataAxios(21);
-                                 } else {
+                                 } else if (w > 550 && w <= 1350) {
                                      this.callDataAxios(15);
+                                 } else {
+                                     this.callDataAxios(14);
                                  }
+                                 this.changeDataLoadState(true)
                              }
                             }
                         }
@@ -70,30 +74,29 @@
             }
         },
         mounted() {
-            let inputData = document.querySelector('input[type=hidden]').value;
-            let quillEditor = document.querySelector('.ql-editor');
+            const inputData = document.querySelector('input[type=hidden]').value;
+            const quillEditor = document.querySelector('.ql-editor');
             let quillHTML;
 
             try {
                 this.content = JSON.parse(inputData);
-                let cfg = {
+                const cfg = {
                     inlineStyles: true,
                     allowBackgroundClasses: true
                 };
-                let converter = new QuillDeltaToHtmlConverter(this.content.ops, cfg);
+                const converter = new QuillDeltaToHtmlConverter(this.content.ops, cfg);
                 quillHTML = converter.convert();
             } catch (e) {
                 quillHTML = inputData;
             }
-
             quillEditor.innerHTML = quillHTML;
 
-            let form = document.querySelector('form');
+            const form = document.querySelector('form');
             form.addEventListener("submit", this.callback, false);
 
-            EventBus.$on('oneClickFile', (fileId, fileName) => {
-                axios.post('/uploadFile', fileId).then(res => {
-                    let url = res.data;
+            EventBus.$on('oneClickFile', (fileId, fileName, filePath) => {
+                axios.post(constants.api.uploadEditorFile, filePath).then(res => {
+                    const url = res.data;
                     const range = this.editor.getSelection;
                     this.editor.insertEmbed(range.index, 'image', `${url}`);
                 }).catch(function (err) {
@@ -108,9 +111,21 @@
         },
         methods: {
             callback: function () {
-                var emailBody = document.querySelector('input[type=hidden]');
-                emailBody.value = JSON.stringify(this.content);
+                const emailBody = document.querySelector('input[type=hidden]');
+                let deltaString = JSON.stringify(this.content);
+
+
+                emailBody.value = deltaString;
                 return true;
+            },
+            mediaQuerryResponse: function () {
+                if (this.mqls[0].matches) {
+                    this.callDataAxios(14);
+                } else if (this.mqls[1].matches) {
+                    this.callDataAxios(15);
+                } else {
+                    this.callDataAxios(21);
+                }
             },
             ...mapActions('gallery', [
                 'callDataAxios'
@@ -119,11 +134,11 @@
                 'changeModalState',
                 'changeCategory',
                 'changeFilesPerPage',
-                'changeEditorState'
+                'changeEditorState',
+                'changeDataLoadState'
             ])
         },
         created() {
-
         }
     }
 </script>

@@ -8,6 +8,7 @@ use App\Entity\Gallery;
 use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\ChangeContentType;
+use App\Form\EditorImageType;
 use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
 use App\Form\UserSearchType;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -311,6 +313,10 @@ class AdminController extends AbstractController
 
         $numberOfPages = ceil($countAssociates / self::ASSOCIATE_LIMIT);
 
+        if ($numberOfPages == 0) {
+            $numberOfPages++;
+        }
+
         if ($page > $numberOfPages || $page < 0 || !is_numeric($page)) {
             throw new WrongPageNumberException('Page '.$page.' doesnt exist');
         }
@@ -389,7 +395,6 @@ class AdminController extends AbstractController
             'image/png',
             'image/jpeg',
             'image/webp',
-            'image/x-ms-bmp'
         ];
     }
 
@@ -490,19 +495,95 @@ class AdminController extends AbstractController
 
             $em = $this->getDoctrine()->getManager();
 
-            $file = $em->getRepository(\App\Entity\File::class)->find($fileId);
-            $galleryFile = $em->getRepository(Gallery::class)->find($galleryId);
+            /** @var Configuration $cm */
+            $cm = $em->getRepository(Configuration::class)->findOneBy([]);
 
-            $gaufretteFileManager->remove($file);
-            $em->remove($file);
-            $em->remove($galleryFile);
+            $fileInUse = false;
 
-            $em->flush();
+            if (($cm->getTermsOfServices() && $cm->getTermsOfServices()->getId() === $fileId)
+                || ($cm->getMainLogo() && $cm->getMainLogo()->getId() === $fileId)) {
+                $fileInUse = true;
+            } else {
+                $file = $em->getRepository(\App\Entity\File::class)->find($fileId);
+                $galleryFile = $em->getRepository(Gallery::class)->find($galleryId);
+
+                $gaufretteFileManager->remove($file);
+                $em->remove($file);
+                $em->remove($galleryFile);
+
+                $em->flush();
+            }
 
             return new JsonResponse(
-                [],
+                ['fileInUse' => $fileInUse],
                 JsonResponse::HTTP_OK
             );
+        } else {
+            return new Response('', 200);
+        }
+    }
+
+    /**
+     * @Route("/admin/uploadFile", name="upload_file")
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function uploadEditorImage(
+        Request $request
+    ) {
+        if ($request->isMethod('POST')) {
+            $filePath = $request->getContent();
+
+            $baseUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+
+            $absoluteUrl = $baseUrl.$filePath;
+
+            return new JsonResponse($absoluteUrl, 200);
+        } else {
+            return new Response('', 200);
+        }
+    }
+
+
+
+    /**
+     * @Route("/admin/uploadGalleryFile", name="upload_gallery_file")
+     * @param Request $request
+     * @param GalleryNormalizer $galleryNormalizer
+     * @return JsonResponse|Response
+     * @throws ExceptionInterface
+     */
+    public function uploadGalleryFile(
+        Request $request,
+        GalleryNormalizer $galleryNormalizer
+    ) {
+        if ($request->isMethod('POST')) {
+            $galleryFile = new Gallery();
+
+            $form = $this->createForm(EditorImageType::class, $galleryFile);
+            $form->submit($request->files->all());
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+
+                $em->persist($galleryFile);
+                $em->flush();
+
+                $galleryFile->getGalleryFile()->setUploadedFileReference(null);
+                $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer, new JsonEncoder()]);
+                $serializedFile = $serializer->normalize(
+                    $galleryFile,
+                    null,
+                    ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
+                );
+
+                return new JsonResponse(
+                    [
+                        'file' => $serializedFile
+                    ],
+                    JsonResponse::HTTP_OK
+                );
+            }
         } else {
             return new Response('', 200);
         }

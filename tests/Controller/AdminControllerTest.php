@@ -995,4 +995,151 @@ class AdminControllerTest extends WebTestCase
             $client->getResponse()->getContent()
         );
     }
+
+    /**
+     *  Testing uploadFile api whether it returns expected response
+     *
+     *  - Request to /admin/uploadFile api with GET method and expect to get empty response content.
+     *
+     *  - Request to /admin/uploadFile api with POST method with additional created pts file download path param.
+     *  - Expected to get 200 status code and http://localhost/download/ partial string to be returned for downloading
+     * images.
+     */
+    public function testUploadEditorImage()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $container = $client->getContainer();
+
+        $client->request('GET', '/admin/uploadFile');
+
+        $this->assertEquals('', $client->getResponse()->getContent());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $ptsFile = new File();
+
+        $image  = new UploadedFile(
+            $path,
+            'test.png',
+            'image/jpeg',
+            null
+        );
+
+        $ptsFile->setUploadedFileReference($image);
+        $ptsFile->setOriginalName('test.png');
+        $ptsFile->setName('test.png');
+
+        $em->persist($ptsFile);
+        $em->flush();
+
+        $filePath = $gaufretteFilteManager->generateDownloadUrl($ptsFile);
+
+        $client->request(
+            'POST',
+            '/admin/uploadFile',
+            [],
+            [],
+            [],
+            $filePath
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $responseContent = json_decode($client->getResponse()->getContent());
+
+        $this->assertContains(
+            'http://localhost/download',
+            $responseContent
+        );
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
+    }
+
+    /**
+     *  Testing /admin/uploadGalleryFile api whether it returns serialized file.
+     *
+     *  - Request to /admin/uploadGalleryFile api with GET method and expect to get empty response content.
+     *
+     *  - Request to /admin/uploadGalleryFile api with POST method with additional file param.
+     *  - Expected to get 200 status code and serialized appropriate gallery file to be returned.
+     */
+    public function testUploadGalleryFile()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $container = $client->getContainer();
+
+        $client->request('GET', '/admin/uploadGalleryFile');
+
+        $this->assertEquals('', $client->getResponse()->getContent());
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
+
+        $image = new UploadedFile(
+            $path,
+            'test.png',
+            'image/png',
+            null
+        );
+
+        $client->request(
+            'POST',
+            '/admin/uploadGalleryFile',
+            [],
+            ['galleryFile' => $image]
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $responseContent = json_decode($client->getResponse()->getContent(), true);
+
+        $responseFile = $responseContent['file'];
+
+        $this->assertArrayHasKey('id', $responseFile);
+        $this->assertArrayHasKey('galleryFile', $responseFile);
+        $this->assertArrayHasKey('filePath', $responseFile);
+        $this->assertArrayHasKey('created', $responseFile);
+        $this->assertEquals('image/png', $responseFile['mimeType']);
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $em = $container->get('doctrine.orm.default_entity_manager');
+
+        $fileObj = $em->getRepository(\App\Entity\File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
+    }
 }

@@ -123,7 +123,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -152,7 +152,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'Old password is not correct',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -312,7 +312,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -341,7 +341,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'Old password is not correct',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');

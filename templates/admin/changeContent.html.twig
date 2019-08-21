@@ -2,6 +2,11 @@
 
 {% block title %}Change Content{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/modal.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -26,14 +31,18 @@
                     <div class="fileContainer" style="margin-bottom: 2em;">
                         <span class="fileTitle">Main logo</span>
                         <div id="mainLogoFromGallery" class="input-field">
-                            <a id="mainLogoFilesPreview" class="waves-effect waves-light btn" onclick="showMainLogoGallery()">Choose file</a>
+                            <div id="mainLogoImagePreview"><img src=""></div>
+                            <a id="mainLogoFilesPreview" class="waves-effect waves-light btn"
+                               onclick="showModalGallery('images', '#change_content_hiddenMainLogoFile', '#mainLogoFileName', '#mainLogoImagePreview')">Choose file</a>
                             <span id="mainLogoFileName" class="addMargin"></span>
                         </div>
                     </div>
                     <div class="fileContainer" style="margin-bottom: 2em;">
                         <span class="fileTitle">Terms Of Services</span>
                         <div id="termsOfServicesFromGallery" class="input-field">
-                            <a id="termsOfServicesFilesPreview" class="waves-effect waves-light btn" onclick="showTermsOfServicesGallery()">Choose file</a>
+                            <div id="termsOfServicesImagePreview"><img src=""></div>
+                            <a id="termsOfServicesFilesPreview" class="waves-effect waves-light btn"
+                               onclick="showModalGallery('all', '#change_content_hiddenTermsOfServiceFile', '#termsOfServicesFileName', '#termsOfServicesImagePreview')">Choose file</a>
                             <span id="termsOfServicesFileName" class="addMargin"></span>
                         </div>
                     </div>
@@ -75,11 +84,25 @@
         {{ parent() }}
        <script type="text/javascript" src="{{ asset('build/modal.js') }}"></script>
        <script>
-           function showMainLogoGallery() {
-                modal.showModal('images', '#change_content_hiddenMainLogoFile', '#mainLogoFileName');
-           }
-           function showTermsOfServicesGallery() {
-                modal.showModal('all', '#change_content_hiddenTermsOfServiceFile', '#termsOfServicesFileName');
+           function showModalGallery(category, hiddenInputSelector, fileContainerSelector, imagePreviewContainerSelector) {
+               const hiddenInput = document.querySelector(hiddenInputSelector);
+               const fileContainer = document.querySelector(fileContainerSelector);
+               const imagePreviewContainer = document.querySelector(imagePreviewContainerSelector);
+               const image = imagePreviewContainer.querySelector('img');
+
+                modal.showModal(category,
+                    (fileObj) => {
+                        hiddenInput.setAttribute("value", fileObj.fileId);
+                        fileContainer.innerHTML = fileObj.fileName;
+                        imagePreviewContainer.style.display = 'block';
+                        image.src = fileObj.filePath;
+                    },
+                    () => {
+                        hiddenInput.setAttribute("value", '');
+                        fileContainer.innerHTML = "";
+                        imagePreviewContainer.style.display = 'none';
+                    }
+                );
            }
        </script>
    {% endblock %}

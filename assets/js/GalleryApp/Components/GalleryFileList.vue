@@ -10,7 +10,12 @@
         <div v-bind:style="{display: (files.length == 0) ? 'block' : 'none'}" id="uploadImageIcon">
             <i class="fas fa-file-download"></i>
         </div>
-        <div class="image-upload-box" v-bind:class="{ 'image-dropping': imageDroppingClass }"></div>
+        <div class="image-upload-box"
+             v-bind:class="{ 'image-dropping': imageDroppingClass }"
+             v-bind:style="{border: (files.length == 0 && imageDroppingClass == false) ?
+             '4px dashed #AAAAAA' : '5px dashed #ffffff'}"
+        >
+        </div>
         <transition-group name="component-fade" tag="p"
               :id="constants.galleryClasses.galleryId"
               v-bind:class="{'noFileClass' : (files.length == 0)}"

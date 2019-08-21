@@ -2,6 +2,12 @@
 
 {% block title %}Update Profile{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/dragNdrop.css') }}" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -71,8 +77,19 @@
                 </div>
                 <div class="input-field col s12">
                     {{ form_label(updateProfile.associate.profilePicture) }}
-                    {{ form_widget(updateProfile.associate.profilePicture) }}
-                    {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.profilePicture } %}
+                    {{ form_widget(updateProfile.associate.profilePicture, {'attr' : {'onchange' : 'readUrl'}}) }}
+                    <div id="profilePicturePreview">
+                        <img src="">
+                    </div>
+                    {% verbatim %}
+                        <div id="DragAndDrop">
+                        </div>
+                    {% endverbatim %}
+                    <div id="dragAndDropError" class="error__block" style="margin-top: 0.25em">
+                    </div>
+                    <div id="submitUploadErrorBlock">
+                        {% include 'includes/errorBlock.html.twig' with { field: updateProfile.associate.profilePicture } %}
+                    </div>
                 </div>
                 <div class="input-field">
                     <label style="position: unset!important;">
@@ -113,4 +130,17 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/dragNdrop.js') }}"></script>
+    <script>
+        const profilePicturePreview = document.getElementById('profilePicturePreview');
+        const dragAndDropElement = document.querySelector('.profile-image-upload-box');
+        const originalProfilePictureUpload = document.getElementById('user_update_associate_profilePicture');
+        const dragAndDropError = document.getElementById('dragAndDropError');
+        const submitUploadErrorBlock = document.getElementById('submitUploadErrorBlock');
+        dragNdrop.instantiateSelectors(profilePicturePreview, originalProfilePictureUpload, dragAndDropError, submitUploadErrorBlock);
+        onChangeEvent();
+    </script>
 {% endblock %}

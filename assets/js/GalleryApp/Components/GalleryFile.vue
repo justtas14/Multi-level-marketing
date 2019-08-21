@@ -25,7 +25,7 @@
             </a>
             <transition name="fade">
                 <a href="javascript:;"
-                   v-show="hoverCard"
+                   v-bind:class="{addOpacity : hoverCard}"
                    @click="deleteFile(file.galleryFile.originalName); setInnerDeleteFunction()"
                    class="closeBtn"><i class="material-icons" :class="constants.galleryClasses.closeButtonClasses.closeIcon">close</i>
                 </a>
@@ -75,7 +75,7 @@
             },
             oneClickFile: function (fileId, fileName) {
                 this.$store.commit('gallery/changeModalState', false);
-                EventBus.$emit('oneClickFile', fileId, fileName);
+                EventBus.$emit('oneClickFile', fileId, fileName, this.determineSrc());
             },
             getFileExtension: function () {
                 let originalName = this.file.galleryFile.originalName;

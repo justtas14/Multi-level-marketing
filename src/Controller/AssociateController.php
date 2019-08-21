@@ -28,7 +28,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AssociateController extends AbstractController
 {
-    const INVITATION_LIMIT = 5;
+    const INVITATION_LIMIT = 10;
 
     /**
      * @Route("/associate", name="associate")

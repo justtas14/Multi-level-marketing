@@ -3,6 +3,7 @@ import constants from '../../constants/constants'
 
 const state = {
     modalState: false,
+    dataLoaded: false,
     files: [],
     paginationInfo: {
         'currentPage': 1
@@ -30,14 +31,14 @@ const actions = {
         if (filesPerPage) {
             state.filesPerPage = filesPerPage;
         }
-        let res = await axios.get('/admin/jsonGallery', {
+        const res = await axios.get(constants.api.jsonData, {
             params: {
                 page: state.paginationInfo.currentPage,
                 imageLimit: state.filesPerPage,
                 category: state.category
             }
         });
-        let data = {
+        const data = {
             files: res.data.files,
             pagination: res.data.pagination,
             imageExtensions: res.data.imageExtensions
@@ -45,9 +46,9 @@ const actions = {
         commit('loadInfo', data);
     },
     readUrl: function ({state, dispatch, commit}, e) {
-        let input = e.target;
+        const input = e.target;
         if (input.files && input.files[0]) {
-            let reader = new FileReader();
+            const reader = new FileReader();
 
             reader.onload = (e) => {
                 const file = input.files[0];
@@ -75,7 +76,7 @@ const actions = {
         } else {
             const fd = new FormData();
             fd.append('galleryFile', file);
-            axios.post('/uploadGalleryFile', fd, {
+            axios.post(constants.api.uploadFile, fd, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -89,16 +90,20 @@ const actions = {
         }
     },
     deleteRequestFunction: function ({dispatch, state, commit}, params) {
-        commit('deleteFile', params.fileId);
-        axios.post('/admin/removeFile', {
+        axios.post(constants.api.removeFile, {
             params: {
                 galleryId: params.fileId,
                 fileId: params.galleryFileId
             }
         }).then(res => {
-            commit('subtractPage');
-            dispatch('callDataAxios');
-            commit('showNotification','File ' + params.fileName + ' deleted!');
+            if (res.data.fileInUse) {
+                commit('showNotification','File ' + params.fileName + ' is already in use!');
+            } else {
+                commit('deleteFile', params.fileId);
+                commit('subtractPage');
+                dispatch('callDataAxios');
+                commit('showNotification','File ' + params.fileName + ' deleted!');
+            }
         }).catch(function (err) {
             console.log(err);
         });
@@ -109,6 +114,9 @@ const actions = {
 const mutations = {
     changeModalState: (state, flag) => {
         state.modalState = flag;
+    },
+    changeDataLoadState: (state, flag) => {
+        state.dataLoaded = flag;
     },
     changeEditorState: (state, flag) => {
         state.editor = flag;

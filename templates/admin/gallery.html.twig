@@ -2,6 +2,12 @@
 
 {% block title %}Gallery{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/fileGallery.css') }}" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
     <div id="admin-gallery" class="admin-contentContainer">
         <div class="card">

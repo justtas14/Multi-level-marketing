@@ -73,9 +73,9 @@
             ])
         },
         mounted () {
-            let scope = this;
+            const scope = this;
             EventBus.$on('handleDrop', function (event) {
-                let dt = event.dataTransfer;
+                const dt = event.dataTransfer;
                 let files = dt.files;
                 scope.handleFiles(files);
             });
@@ -88,17 +88,17 @@
                 });
             });
             EventBus.$on('previousPage', function () {
-                let page = null, action = 'subtract';
+                const page = null, action = 'subtract';
                 scope.changePage({page, action});
                 scope.callDataAxios();
             });
             EventBus.$on('nextPage', function () {
-                let action = 'add', page = null;
+                const action = 'add', page = null;
                 scope.changePage({page, action});
                 scope.callDataAxios();
             });
             EventBus.$on('page', function (page) {
-                let action = null;
+                const action = null;
                 scope.changePage({
                     page,
                     action
@@ -118,7 +118,7 @@
             EventBus.$on('insertFileToForm', function (e) {});
         },
         created() {
-            let mql1 = window.matchMedia('(max-width: 1200px)');
+            const mql1 = window.matchMedia('(max-width: 1200px)');
             mql1.addListener((e) => {
                 if (e.matches) {
                     this.callDataAxios(18);
@@ -126,9 +126,8 @@
                     this.callDataAxios(20);
                 }
             });
-
             this.constants = galleryConst;
-            let w = window.innerWidth;
+            const w = window.innerWidth;
 
             if (w > 1200) {
                 this.callDataAxios(20);

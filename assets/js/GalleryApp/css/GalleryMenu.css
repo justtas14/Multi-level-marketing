@@ -45,9 +45,10 @@
 
 .card-title {
     margin-right: 1em;
+    white-space: nowrap
 }
 .fa-plus {
-    margin-top: 0.12em;
+    margin-top: 0.1em;
     font-size: 2em;
     opacity: 0.7;
     transition: opacity 0.2s;
@@ -91,6 +92,7 @@ label {
     padding:0;
     border-bottom: 1px solid #e0e0e0;
     margin-right: 2em;
+    text-align: right;
 }
 
 #material-tabs>a {

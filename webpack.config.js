@@ -22,6 +22,7 @@ Encore
     .addEntry('fileGallery', './assets/js/GalleryApp/app.js')
     .addEntry('modal', './assets/js/GalleryApp/modalApp.js')
     .addEntry('quill', './assets/js/GalleryApp/quillApp.js')
+    .addEntry('dragNdrop', './assets/js/DragNDrop/app.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 

@@ -58,23 +58,15 @@
     display: none;
 }
 
-@media only screen and (max-width: 1030px) {
-    #admin-gallery {
-        width: 1015px;
-        margin: unset;
-    }
+#mainLogoImagePreview {
+    display: none;
 }
 
-@media only screen and (max-width: 650px) {
-    #admin-gallery {
-        width: 700px;
-        margin: unset;
-    }
+#termsOfServicesImagePreview {
+    display: none;
 }
 
-@media only screen and (min-width: 1800px) {
-    #admin-gallery {
-        width: 1800px;
-        margin: unset;
-    }
+#mainLogoImagePreview img, #termsOfServicesImagePreview img {
+    width: 100px;
+    height: 100px;
 }

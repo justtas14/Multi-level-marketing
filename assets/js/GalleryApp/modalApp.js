@@ -7,42 +7,66 @@ const modal = new Vue({
     el: '#modal',
     store,
     data: {
-        formFieldSelector: '',
-        fileNameSelector: ''
+        onFileSelect: () => {},
+        onFileRemove: () => {},
+        fileId: [],
+        mqls: [
+            window.matchMedia('(max-width: 550px)'),
+            window.matchMedia('(max-width: 1350px)'),
+        ],
     },
     methods: {
-        showModal: function (category, formFieldSelector, fileNameSelector) {
-            this.formFieldSelector = formFieldSelector;
-            this.fileNameSelector = fileNameSelector;
+        showModal: function (category, onFileSelect, onFileRemove) {
+            this.onFileSelect = onFileSelect;
+            this.onFileRemove = onFileRemove;
             store.commit('gallery/changeModalState', true);
             store.commit('gallery/changeFilesPerPage', 21);
             store.commit('gallery/changeCategory', category);
-            let mql1 = window.matchMedia('(max-width: 1350px)');
-            mql1.addListener((e) => {
-                if (e.matches) {
-                    store.dispatch('gallery/callDataAxios', 15);
-                } else {
-                    store.dispatch('gallery/callDataAxios', 21);
-                }
-            });
-            let w = window.innerWidth;
+
+            for (let i=0; i < this.mqls.length; i++) {
+                this.mqls[i].addListener(this.mediaQuerryResponse);
+            }
+
+            const w = window.innerWidth;
 
             if (w > 1350) {
                 store.dispatch('gallery/callDataAxios', 21);
-            } else {
+            } else if (w > 550 && w <= 1350) {
                 store.dispatch('gallery/callDataAxios', 15);
+            } else {
+                store.dispatch('gallery/callDataAxios', 14);
             }
+            setTimeout(() => {
+                store.commit('gallery/changeDataLoadState', true)
+            }, 750);
         },
+        mediaQuerryResponse: function () {
+            if (this.mqls[0].matches) {
+                store.dispatch('gallery/callDataAxios', 14);
+            } else if (this.mqls[1].matches) {
+                store.dispatch('gallery/callDataAxios', 15);
+            } else {
+                store.dispatch('gallery/callDataAxios', 21);
+            }
+        }
     },
     mounted() {
-        EventBus.$on('oneClickFile',  (fileId, fileName) => {
-            let hiddenInput = document.querySelector(this.formFieldSelector);
-            hiddenInput.setAttribute("value", fileId);
-            let mainLogoFileContainer = document.querySelector(this.fileNameSelector);
-            mainLogoFileContainer.innerHTML = fileName;
+        EventBus.$on('oneClickFile',  (fileId, fileName, filePath) => {
+            this.fileId.push(fileId);
+            const fileObj = {
+                fileId: fileId,
+                fileName: fileName,
+                filePath: filePath
+            };
+            this.onFileSelect(fileObj);
         });
-    },
+        EventBus.$on('checkDeleted',  (fileId) => {
+            if (this.fileId.includes(fileId)) {
+                this.onFileRemove();
+            }
+        });
 
+    },
     template: '<ModalGalleryWrapper/>',
 
     components: {

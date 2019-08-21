@@ -32,10 +32,65 @@
     }
 }
 
+@media only screen and (max-width: 992px) {
+    /deep/ .pagination li.pages {
+        width: unset;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+}
+
+@media only screen and (max-width: 940px) {
+    /deep/ #material-tabs {
+        margin-right: 0 !important;
+        border-bottom: none !important;
+    }
+    /deep/ #material-tabs>a {
+        display: block !important;
+
+    }
+    /deep/ .yellow-bar {
+        transition: top .2s ease !important;
+        left: 10px !important;
+    }
+
+    /deep/ #tab1-tab.active ~ span.yellow-bar {
+        top: 35px !important;
+        width: 125px !important;
+    }
+
+    /deep/ #tab2-tab.active ~ span.yellow-bar {
+        top: 68px !important;
+        width: 125px !important;
+    }
+
+    /deep/ #tab3-tab.active ~ span.yellow-bar {
+        top: 102px !important;
+        width: 125px !important;
+    }
+    /deep/ .categoryIcons {
+        display: none;
+    }
+
+}
+
+
+
+@media only screen and (max-width: 900px) {
+    /deep/ #gallery{
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 50px 100px;
+    }
+}
+
+
 @media only screen and (max-width: 850px) {
     /deep/ #modalGallery {
         grid-gap: 50px;
         grid-template-columns: repeat(3, 1fr);
+    }
+    /deep/ #gallery{
+        grid-gap: 50px;
     }
 }
 
@@ -48,20 +103,65 @@
         top: 100px;
         width: 250px;
     }
-    /deep/ .categoryMenu {
-        margin-top: 60px;
-    }
 
     /deep/ #gallery {
         grid-template-columns: repeat(3, 1fr);
+        grid-gap: 50px;
         margin-top: 25px;
     }
 }
 
-@media only screen and (max-width: 992px) {
-    /deep/ .pagination li.pages {
-        width: unset;
-        overflow: hidden;
-        white-space: nowrap;
+@media only screen and (max-width: 550px) {
+    /deep/ #modalGallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 525px) {
+    /deep/ #gallery {
+        grid-gap: 50px 25px;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    /deep/ #gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    /deep/ #modalGallery {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    /deep/ .categoryName {
+        font-size: 0.8em;
+        white-space: nowrap
+    }
+
+    /deep/ #tab1-tab.active ~ span.yellow-bar {
+        top: 35px !important;
+        width: 100px !important;
+    }
+
+    /deep/ #tab2-tab.active ~ span.yellow-bar {
+        top: 68px !important;
+        width: 100px !important;
+    }
+
+    /deep/ #tab3-tab.active ~ span.yellow-bar {
+        top: 102px !important;
+        width: 100px !important;
+    }
+
+    /deep/ .categoryName {
+        white-space: nowrap
+    }
+
+}
+
+@media only screen and (max-width: 381px) {
+    /deep/ #modalGallery {
+        grid-template-columns: repeat(1, 1fr);
     }
 }

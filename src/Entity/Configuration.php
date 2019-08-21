@@ -33,7 +33,6 @@ class Configuration
      */
     private $termsOfServices;
 
-
     /**
      * @ORM\Column(type="text")
      */

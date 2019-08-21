@@ -38,7 +38,7 @@ class IsImageValidator extends ConstraintValidator
         return [
             'image/png',
             'image/jpeg',
-            'image/'
+            'image/webp',
         ];
     }
 }
