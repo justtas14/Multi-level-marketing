@@ -276,7 +276,7 @@ class AdminController extends AbstractController
                 }
                 $count = $count + 1;
                 $associates = $associateRepository
-                    ->findBy([], [], self::ASSOCIATE_LIMIT, self::ASSOCIATE_LIMIT*$count);
+                    ->findBy([], [], self::ASSOCIATE_LIMIT, self::ASSOCIATE_LIMIT * $count);
             }
             fclose($df);
         });
@@ -318,14 +318,14 @@ class AdminController extends AbstractController
         }
 
         if ($page > $numberOfPages || $page < 0 || !is_numeric($page)) {
-            throw new WrongPageNumberException('Page '.$page.' doesnt exist');
+            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
         }
 
 
         $limitedAssociates = $associateRepository->findAssociatesByFilter(
             $filter,
             self::ASSOCIATE_LIMIT,
-            self::ASSOCIATE_LIMIT * ($page-1)
+            self::ASSOCIATE_LIMIT * ($page - 1)
         );
 
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer()]);
@@ -346,6 +346,7 @@ class AdminController extends AbstractController
         $response = new JsonResponse($data);
         return $response;
     }
+
     /**
      * @Route("/admin/usersearch", name="user_search")
      * @return Response
@@ -408,8 +409,13 @@ class AdminController extends AbstractController
     public function jsonGallery(Request $request, GalleryNormalizer $galleryNormalizer)
     {
         $page = $request->get('page', 1);
+
+        if (!is_numeric($page)) {
+            throw new WrongPageNumberException();
+        }
+
         $category = $request->get('category', 'all');
-        $imageLimit = $request->get('imageLimit', 8);
+        $imageLimit = $request->get('imageLimit', 20);
 
         $em = $this->getDoctrine()->getManager();
         $galleryRepository = $em->getRepository(Gallery::class);
@@ -421,7 +427,7 @@ class AdminController extends AbstractController
                     [],
                     ['created' => 'DESC'],
                     $imageLimit,
-                    $imageLimit * ($page-1)
+                    $imageLimit * ($page - 1)
                 );
                 break;
             case 'images':
@@ -429,7 +435,7 @@ class AdminController extends AbstractController
                 $files = $galleryRepository->findByImages(
                     $this->getImageTypes(),
                     $imageLimit,
-                    $imageLimit * ($page-1)
+                    $imageLimit * ($page - 1)
                 );
                 break;
             case 'files':
@@ -437,7 +443,7 @@ class AdminController extends AbstractController
                 $files = $galleryRepository->findByNotImages(
                     $this->getImageTypes(),
                     $imageLimit,
-                    $imageLimit * ($page-1)
+                    $imageLimit * ($page - 1)
                 );
                 break;
             default:
@@ -450,8 +456,8 @@ class AdminController extends AbstractController
             $numberOfPages++;
         }
 
-        if (!is_numeric($page) || ($page < 1 || $page > $numberOfPages)) {
-            throw new NotFoundHttpException();
+        if (($page < 1 || $page > $numberOfPages)) {
+            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
         }
 
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer]);
@@ -536,14 +542,13 @@ class AdminController extends AbstractController
 
             $baseUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
 
-            $absoluteUrl = $baseUrl.$filePath;
+            $absoluteUrl = $baseUrl . $filePath;
 
             return new JsonResponse($absoluteUrl, 200);
         } else {
             return new Response('', 200);
         }
     }
-
 
 
     /**
@@ -583,6 +588,8 @@ class AdminController extends AbstractController
                     ],
                     JsonResponse::HTTP_OK
                 );
+            } else {
+                return new Response('', 200);
             }
         } else {
             return new Response('', 200);

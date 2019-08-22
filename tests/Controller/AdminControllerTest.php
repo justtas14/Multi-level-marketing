@@ -10,6 +10,7 @@ use App\Entity\Gallery;
 use App\Entity\Invitation;
 use App\Entity\InvitationBlacklist;
 use App\Entity\User;
+use DateTime;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
@@ -29,18 +30,77 @@ class AdminControllerTest extends WebTestCase
     protected function setUp() : void
     {
         parent::setUp();
+
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
             "App\DataFixtures\ORM\LoadEmailTemplates",
             "App\DataFixtures\ORM\LoadBlackListEmails",
             "App\DataFixtures\ORM\LoadInvitations"
         ])->getReferenceRepository();
+
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        $container = $this->getContainer();
+
+        $path = $container->getParameter('kernel.project_dir').'/var/test_files/notimage.txt';
+
+        for ($i = 0; $i < 30; $i++) {
+            $galleryFile = new Gallery();
+            $galleryFile->setId($i+1);
+            $galleryFile->setCreated(new DateTime());
+
+            $uploadedFile  = new UploadedFile(
+                $path,
+                'PtsFileName'.($i+1),
+                'text/html',
+                null
+            );
+
+            $ptsFile = new File();
+            $ptsFile->setName('PtsFileName'.($i+1));
+            $ptsFile->setOriginalName('PtsFileName'.($i+1));
+            $ptsFile->setUploadedFileReference($uploadedFile);
+
+            $galleryFile->setGalleryFile($ptsFile);
+
+            $em->persist($ptsFile);
+            $em->persist($galleryFile);
+        }
+        $em->flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown() : void
+    {
+        parent::tearDown();
+        $this->removeCreatedFiles();
+    }
+
+    private function removeCreatedFiles()
+    {
+        $container = $this->getContainer();
+
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        $gaufretteFilteManager = $container->get('pts_file.manager');
+
+        $fileObj = $em->getRepository(File::class);
+
+        $allFiles = $fileObj->findAll();
+
+        foreach ($allFiles as $file) {
+            $gaufretteFilteManager->remove($file);
+        }
     }
 
     /**
      *  Testing send method functionality if it sends correctly and content is the same as expected
      *
-     *  - Send invitation with new created invitation which has 4 atributes:
+     *  - Send invitation which has 4 atributes:
      * Sender: user which id is 1
      * Email: 'myemail@gmail.com'
      * Full name: 'myemail'
@@ -48,8 +108,15 @@ class AdminControllerTest extends WebTestCase
      *  - Expected to get one email with appropriate subject. Expected invitation entity to be added in database.
      * Email expected to get from sender email.
      * Email expected to sent to invitation set email.
-     * Email expected to contain in body this text: 'You got invited by', sender full name
-     * and generated link with appropriate invitation code.
+     *
+     *  - This time change invitationEmailTemplate body to delta format. Then send invitation which has 4 atributes:
+     * Sender: user which id is 1
+     * Email: 'myemail@gmail.com'
+     * Full name: 'myemail'
+     * InvitationCode: random generated code
+     *  - Expected to get one email with appropriate subject. Expected invitation entity to be added in database.
+     * Email expected to get from sender email.
+     * Email expected to sent to invitation set email.
      *
      *  - Send invitation but with invalid email address.
      *  - Expected to get error message that email is invalid.
@@ -105,6 +172,51 @@ class AdminControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/invite');
 
+        /** @var EmailTemplate $emailTemplateInvitation */
+        $emailTemplateInvitation = $this->fixtures->getReference('emailTemplateInvitation');
+
+        $emailTemplateInvitation->setEmailBody('{"ops":[{"insert":" Here is your "},'.
+        '{"attributes":{"link":"{{link}}"},"insert":"link"},{"attributes":{"header":3},"insert":"\n"},'.
+            '{"insert":" \nTo opt out of this service click \n"},'.'
+            {"attributes":{"link":"{{ optOutUrl }}"},"insert":"this"},{"insert":"\n link\n"}]}');
+
+        $em->persist($emailTemplateInvitation);
+        $em->flush();
+
+        $form = $crawler->selectButton('Send')->form();
+
+        $form->get('invitation')['email']->setValue('myemail@gmail.com');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $client->enableProfiler();
+
+        $invitationRepository = $em->getRepository(Invitation::class);
+
+        $invitations = $invitationRepository->findAll();
+
+        $this->assertEquals(7, sizeof($invitations));
+
+        $client->submit($form);
+
+        $invitations = $invitationRepository->findAll();
+
+        $this->assertEquals(8, sizeof($invitations));
+
+        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
+
+        $this->assertSame(1, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $collectedMessages[0];
+
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
+        $this->assertSame('myemail@gmail.com', key($message->getTo()));
+
+
+        $crawler = $client->request('GET', '/associate/invite');
+
         $form = $crawler->selectButton('Send')->form();
 
         $form->get('invitation')['email']->setValue('myemaifa');
@@ -141,8 +253,6 @@ class AdminControllerTest extends WebTestCase
 
         $form->get('invitation')['email']->setValue($invitationBlackList->getEmail());
         $form->get('invitation')['fullName']->setValue('myemail');
-
-
 
         $crawler = $client->submit($form);
 
@@ -590,7 +700,7 @@ class AdminControllerTest extends WebTestCase
         $this->assertNotNull($configuration->getMainLogo());
         $this->assertEquals('disclaimer', $configuration->getTosDisclaimer());
 
-        $client->request('HEAD', '/download/1');
+        $client->request('HEAD', '/download/31');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -785,18 +895,6 @@ class AdminControllerTest extends WebTestCase
             ],
             $files
         );
-
-        $gaufretteFilteManager = $container->get('pts_file.manager');
-
-        $em = $container->get('doctrine.orm.default_entity_manager');
-
-        $fileObj = $em->getRepository(\App\Entity\File::class);
-
-        $allFiles = $fileObj->findAll();
-
-        foreach ($allFiles as $file) {
-            $gaufretteFilteManager->remove($file);
-        }
     }
 
     /**
@@ -1063,16 +1161,6 @@ class AdminControllerTest extends WebTestCase
             'http://localhost/download',
             $responseContent
         );
-
-        $em = $container->get('doctrine.orm.default_entity_manager');
-
-        $fileObj = $em->getRepository(\App\Entity\File::class);
-
-        $allFiles = $fileObj->findAll();
-
-        foreach ($allFiles as $file) {
-            $gaufretteFilteManager->remove($file);
-        }
     }
 
     /**
@@ -1082,6 +1170,9 @@ class AdminControllerTest extends WebTestCase
      *
      *  - Request to /admin/uploadGalleryFile api with POST method with additional file param.
      *  - Expected to get 200 status code and serialized appropriate gallery file to be returned.
+     *
+     *  - Request to /admin/uploadGalleryFile api with POST method with additional not file param.
+     *  - Expected to get '' response content as form is not valid.
      */
     public function testUploadGalleryFile()
     {
@@ -1130,16 +1221,389 @@ class AdminControllerTest extends WebTestCase
         $this->assertArrayHasKey('created', $responseFile);
         $this->assertEquals('image/png', $responseFile['mimeType']);
 
-        $gaufretteFilteManager = $container->get('pts_file.manager');
+        $wrongFile = new UploadedFile(
+            $path,
+            'test.png',
+            'image/png',
+            404
+        );
+
+        $client->request(
+            'POST',
+            '/admin/uploadGalleryFile',
+            [],
+            ['galleryFile' => $wrongFile]
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals(
+            '',
+            $client->getResponse()->getContent()
+        );
+    }
+
+    /**
+     *  Testing /admin/gallery api main page whether it returns OK status code and have gallery app in it.
+     */
+    public function testGalleryMainPage()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $crawler = $client->request('GET', '/admin/gallery');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $this->assertContains(
+            '<section id="gallery"></section>',
+            $crawler->filter('.card-content')->html()
+        );
+    }
+
+    /**
+     *  Testing remove gallery and pts file functionality
+     *
+     *  - Request with get method to /admin/remove api.
+     *  - Expected to get '' content.
+     *
+     *  - Create pts and gallery files, and request with post method to /admin/remove api.
+     *  - Expected to get OK status code and files to be deleted in database.
+     *
+     *  - Set change content termsOfServices file. THen attempt to remove inserted file by calling /admin/removeFile api
+     *  with inserted file id.
+     *  - Expected to not delete inserted file and expected response fileInUse to be true.
+     */
+    public function testRemoveFile()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        $container = $this->getContainer();
+
+        $_SERVER['REQUEST_URI'] = "/admin/changecontent";
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
 
         $em = $container->get('doctrine.orm.default_entity_manager');
 
-        $fileObj = $em->getRepository(\App\Entity\File::class);
+        $ptsRepository = $em->getRepository(\App\Entity\File::class);
+        $galleryRepo = $em->getRepository(Gallery::class);
 
-        $allFiles = $fileObj->findAll();
+        $client->request('GET', '/admin/removeFile');
 
-        foreach ($allFiles as $file) {
-            $gaufretteFilteManager->remove($file);
-        }
+        $this->assertEquals('', $client->getResponse()->getContent());
+
+        $ptsFile = new File();
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
+
+        $image  = new UploadedFile(
+            $path,
+            'test.png',
+            'image/png',
+            null
+        );
+
+        $ptsFile->setUploadedFileReference($image);
+        $ptsFile->setOriginalName('test.png');
+        $ptsFile->setName('test.png');
+
+        $galleryFile = new Gallery();
+        $galleryFile->setGalleryFile($ptsFile);
+        $galleryFile->setMimeType('image/png');
+
+        $em->persist($galleryFile);
+        $em->persist($ptsFile);
+        $em->flush();
+
+        $allPtsFiles = $ptsRepository->findAll();
+        $allGalleryFiles = $galleryRepo->findAll();
+
+        $this->assertEquals(31, sizeof($allPtsFiles));
+        $this->assertEquals(31, sizeof($allGalleryFiles));
+
+        $galleryId = $galleryFile->getId();
+        $fileId = $ptsFile->getId();
+
+        $params = [
+            'params' => [
+                'galleryId' => $galleryId,
+                'fileId' => $fileId
+            ]
+        ];
+
+        $params = json_encode($params);
+
+        $client->request(
+            'POST',
+            '/admin/removeFile',
+            [],
+            [],
+            [],
+            $params
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $allPtsFiles = $ptsRepository->findAll();
+        $allGalleryFiles = $galleryRepo->findAll();
+
+        $this->assertEquals(30, sizeof($allPtsFiles));
+        $this->assertEquals(30, sizeof($allGalleryFiles));
+
+        $crawler = $client->request('GET', '/admin/changecontent');
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+
+        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
+
+        $form = $crawler->selectButton('Change content')->form();
+
+        /** @var FileFormField $fileInput */
+        $fileInput = $form->get('change_content')['mainLogo'];
+        $fileInput->upload($path.'/test.png');
+
+        $files = $form->getPhpFiles();
+        $files['change_content']['mainLogo']['type'] = 'image/png';
+        $csrf_protection = $form['change_content']['_token'];
+
+        $client->request(
+            'POST',
+            '/admin/changecontent',
+            [
+                'change_content' => [
+                    'tosDisclaimer' => 'disclaimer',
+                    '_token' => $csrf_protection->getValue(),
+                    'Submit' => true
+                ]
+            ],
+            $files
+        );
+
+        $em->refresh($configuration);
+
+        $this->assertNotNull($configuration->getMainLogo());
+
+        $galleryFile = new Gallery();
+        $galleryFile->setGalleryFile($configuration->getMainLogo());
+        $galleryFile->setMimeType('image/png');
+
+        $em->persist($galleryFile);
+        $em->flush();
+
+        $allPtsFiles = $ptsRepository->findAll();
+        $allGalleryFiles = $galleryRepo->findAll();
+
+        $this->assertEquals(31, sizeof($allPtsFiles));
+        $this->assertEquals(31, sizeof($allGalleryFiles));
+
+        $galleryId = $galleryFile->getId();
+        $fileId = $galleryFile->getGalleryFile()->getId();
+
+        $params = [
+            'params' => [
+                'galleryId' => $galleryId,
+                'fileId' => $fileId
+            ]
+        ];
+
+        $params = json_encode($params);
+
+        $client->request(
+            'POST',
+            '/admin/removeFile',
+            [],
+            [],
+            [],
+            $params
+        );
+
+        $allPtsFiles = $ptsRepository->findAll();
+        $allGalleryFiles = $galleryRepo->findAll();
+
+        $this->assertEquals(31, sizeof($allPtsFiles));
+        $this->assertEquals(31, sizeof($allGalleryFiles));
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(true, $responseArr['fileInUse']);
+    }
+
+    /**
+     *  Testing jsonGallery api whether it returns correct serialized json format gallery files.
+     *
+     *  - Request to jsonGallery GET api with a parameter imageLimit 20.
+     *  - Expecetd to get 20 files, each has appropriate download link. Also expected to get image extensions and
+     * appropriate info about number of pages (current page - 1 and number of pages - 2).
+     *
+     *  - Request to jsonGallery GET api with parameter imageLimit 20 and this time with a page 2.
+     *  - Expected to get 10 more files as there are 30 files. Also expected to get first and last file with appropriate
+     *  download url. Also expected to get number of page value 2 and current page value 2.
+     *
+     *  - Request to jsonGallery GET api with parameter imageLimit 20 and this time with a page 3.
+     *  - Expected to get 404 error as there is max 2 pages and there is no page 3.
+     *
+     *  - Request to jsonGallery GET api with parameter imageLimit 20 and this time with a page called 'notPage'.
+     *  - Expected to get 404 error as page must be of type number.
+     *
+     *  - Request to jsonGallery GET api with a parameter imageLimit 20, page 1 and this time with a category images
+     *  - Expecetd to get 0 files as there is no images currently in database.
+     *
+     *  - Request to jsonGallery GET api with a parameter imageLimit 20, page 1 and this time with a catetogry files
+     *  - Expecetd to get 20 files, each has appropriate download link. Also expected to get image extensions and
+     * appropriate info about number of pages (current page - 1 and number of pages - 2).
+     *
+     *  - Request to jsonGallery GET api with a parameter imageLimit 20, page 1 and this time with a catetogry 'unknown'
+     *  - Expecetd to get 404 error as there is no category named 'unknown'.
+     *
+     */
+    public function testJsonGallery()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $container = $this->getContainer();
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20]
+        );
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(20, sizeof($responseArr['files']));
+
+        $this->assertEquals('1', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/1', $responseArr['files']['0']['filePath']);
+
+        $this->assertEquals('20', $responseArr['files']['19']['id']);
+        $this->assertEquals('/download/20', $responseArr['files']['19']['filePath']);
+
+        $this->assertEquals(
+            ['jpg','jpeg','bmp','gif','png','webp','ico'],
+            $responseArr['imageExtensions']
+        );
+
+        $this->assertEquals(2, $responseArr['pagination']['numberOfPages']);
+        $this->assertEquals(1, $responseArr['pagination']['currentPage']);
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20, 'page' => 2]
+        );
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(10, sizeof($responseArr['files']));
+
+        $this->assertEquals('21', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/21', $responseArr['files']['0']['filePath']);
+
+        $this->assertEquals('30', $responseArr['files']['9']['id']);
+        $this->assertEquals('/download/30', $responseArr['files']['9']['filePath']);
+
+        $this->assertEquals(2, $responseArr['pagination']['numberOfPages']);
+        $this->assertEquals(2, $responseArr['pagination']['currentPage']);
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20, 'page' => 3]
+        );
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20, 'page' => 'notPage']
+        );
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20, 'category' => 'images', 'page' => 1]
+        );
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(0, sizeof($responseArr['files']));
+
+        $this->assertEquals(1, $responseArr['pagination']['numberOfPages']);
+        $this->assertEquals(1, $responseArr['pagination']['currentPage']);
+
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20, 'category' => 'files', 'page' => 1]
+        );
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(20, sizeof($responseArr['files']));
+
+        $this->assertEquals('1', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/1', $responseArr['files']['0']['filePath']);
+
+        $this->assertEquals('20', $responseArr['files']['19']['id']);
+        $this->assertEquals('/download/20', $responseArr['files']['19']['filePath']);
+
+        $this->assertEquals(
+            ['jpg','jpeg','bmp','gif','png','webp','ico'],
+            $responseArr['imageExtensions']
+        );
+
+        $this->assertEquals(2, $responseArr['pagination']['numberOfPages']);
+        $this->assertEquals(1, $responseArr['pagination']['currentPage']);
+
+        $client->request(
+            'GET',
+            '/admin/jsonGallery',
+            ['imageLimit' => 20, 'category' => 'unknown', 'page' => 1]
+        );
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
     }
 }
