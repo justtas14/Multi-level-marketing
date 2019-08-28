@@ -47,7 +47,8 @@ class MenuExtension extends AbstractExtension
             ],
             [
                 'route' => 'user_search',
-                'label' => 'User Search'
+                'label' => 'User Search',
+                'subRoute' => ['user_search_details']
             ],
             [
                 'route' => 'gallery',

@@ -1,7 +1,7 @@
 import {
     NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH,
     PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION,
-    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA, OPEN_MODAL, SHOW_SPINNER, HIDE_SPINNER
+    SCROLL_DOWN,  LOAD_DATA, SHOW_SPINNER, HIDE_SPINNER
 } from '../actions/actionTypes';
 import { peopleData } from './peopleData';
 
@@ -16,12 +16,8 @@ const initialState = {
     pages: 1,
     currentPages: 1,
     scrollDown: '',
-    modal: "",
-    showModal: false,
     currentAssociates: [],
     firstNewAssociate: 0,
-    modalOpen: false,
-    modalId: '',
     spinner: false,
 };
 
@@ -51,23 +47,6 @@ const reducer = (state = initialState, action) => {
         return {
             ...state,
             dateSearch: action.date
-        };
-        case ADD_MODAL:
-        return {
-            ...state,
-            modal: action.modal,
-            showModal: true,
-        };
-        case CLOSE_MODAL:
-        return {
-            ...state,
-            modalOpen: false,
-        };
-        case OPEN_MODAL:
-        return {
-            ...state,
-            modalOpen: true,
-            modalId: action.modalId
         };
         case LOAD_DATA:
         return {

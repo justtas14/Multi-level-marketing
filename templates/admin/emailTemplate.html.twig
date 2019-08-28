@@ -62,7 +62,7 @@
                             {{ form_row(form.Submit)}}
                         </div>
                         <div id="button_preview">
-                            <a class="waves-effect waves-light btn" id="preview">Template preview</a>
+                            <a class="waves-effect waves-light btn" id="modalBtn">Template preview</a>
                         </div>
                     </div>
                     {{ form_end(form) }}
@@ -72,8 +72,8 @@
     </div>
     <div id="myModal" class="modal">
         <div class="modal-content">
-            <a class="styles_closeButton__20ID4 close">
-                <svg class="styles_closeIcon__1QwbI previewClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
+            <a id="closeBtn" class="styles_closeButton__20ID4">
+                <svg class="styles_closeIcon__1QwbI close" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
                     <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z">
                     </path>
                 </svg>
@@ -89,23 +89,23 @@
 {% endblock %}
 
 {% block javascripts %}
-
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('build/quill.js') }}"></script>
+    <script src="{{ asset('assets/js/modal.js') }}" async></script>
     <script>
-        var previewButton = document.querySelector('#preview');
+        const previewButton = document.querySelector('#modalBtn');
 
-        var preview = $('.preview');
+        const preview = $('.preview');
         previewButton.addEventListener("click", function(){
             preview.toggle();
         });
 
-        var editorBodyContainerContent = document.querySelector('.ql-editor');
-        var subjectContent = document.querySelector('#email_template_emailSubject');
+        const editorBodyContainerContent = document.querySelector('.ql-editor');
+        const subjectContent = document.querySelector('#email_template_emailSubject');
 
         previewButton.addEventListener('click', function () {
-            var editorContainerContentInnerHTML = editorBodyContainerContent.innerHTML;
-            var subjectContentValue = subjectContent.value;
+            let editorContainerContentInnerHTML = editorBodyContainerContent.innerHTML;
+            let subjectContentValue = subjectContent.value;
 
             {% if 'Invitation' in title %}
                 editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{ receiverName \}\}', 'RECEIVER_NAME');
@@ -119,30 +119,8 @@
                 editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{name\}\}', 'FULL_NAME');
             {% endif %}
 
-            console.log(editorContainerContentInnerHTML);
-
             document.getElementById('subjectContent').innerHTML = subjectContentValue;
             document.getElementById('bodyContent').innerHTML = editorContainerContentInnerHTML;
         });
-
-        var modal = document.getElementById("myModal");
-
-        var btn = document.getElementById("preview");
-
-        var span = document.getElementsByClassName("previewClose")[0];
-
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        </script>
+    </script>
 {% endblock %}

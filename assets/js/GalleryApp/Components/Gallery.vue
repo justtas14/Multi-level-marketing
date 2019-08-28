@@ -12,11 +12,6 @@
                     v-bind:message="notification.message"
                     v-bind:style="{display: notification.display}"
                 />
-                <Confirm
-                    v-bind:confirm="confirm"
-                    v-bind:style="{display: confirm.display}"
-                    v-bind:yesClickFn="yesClickFn"
-                />
             </div>
         </div>
         <Pagination v-bind:paginationInfo="paginationInfo"/>
@@ -26,18 +21,16 @@
 <script>
     import Pagination from './GalleryPagination';
     import Notification from './GalleryNotification';
-    import Confirm from './GalleryConfirm';
     import GalleryFileList from "./GalleryFileList";
 
     export default {
         name: 'Gallery',
-        props: ['files', 'notification', 'confirm', 'yesClickFn', 'paginationInfo',
+        props: ['files', 'notification', 'paginationInfo',
             'imageExtensions', 'constants'],
         components: {
             Pagination,
             Notification,
-            GalleryFileList,
-            Confirm
+            GalleryFileList
         },
         data() {
             return {

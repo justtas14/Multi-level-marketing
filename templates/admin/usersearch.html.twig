@@ -4,6 +4,12 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        window.mainAction = function (id) {
+            window.location.href = '/admin/users/' + id;
+        };
+        window.mainActionLabel = 'Details';
+    </script>
     <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
 {% endblock %}
 

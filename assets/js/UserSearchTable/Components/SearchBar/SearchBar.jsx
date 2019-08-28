@@ -9,7 +9,7 @@ class SearchBar extends Component {
         };
     }
 
-    render() { 
+    render() {
         return (
             <div>
                 <div className="searchBar-container">
@@ -44,7 +44,9 @@ class SearchBar extends Component {
                     <div className="searchBar-inputLevelContainer" style={{'flex': 2}}>
                         Date
                     </div>
-
+                    <div className="searchBar-inputLevelContainer" style={{'flex': 2}}>
+                        {this.props.mainActionLabel}
+                    </div>
                 </div>
                 <div className="searchBar-item">Name</div>
                 <div className="searchBar-item">Level</div>

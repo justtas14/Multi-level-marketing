@@ -2,7 +2,6 @@
     <Gallery
             v-bind:yesClickFn="yesClickFn"
             v-bind:files="files"
-            v-bind:confirm="confirm"
             v-bind:notification="notification"
             v-bind:paginationInfo="paginationInfo"
             v-bind:imageExtensions="imageExtensions"
@@ -19,11 +18,16 @@
 </template>
 
 <script>
+    import Vue from 'vue';
     import Gallery from "./Gallery";
     import CategoryMenu from './GalleryMenu';
     import galleryConst from "../constants/galleryConst";
     import { mapActions, mapMutations, mapState } from 'vuex'
     import EventBus from '../EventBus/EventBus';
+    import 'v-slim-dialog/dist/v-slim-dialog.css';
+    import SlimDialog from 'v-slim-dialog';
+
+    Vue.use(SlimDialog);
 
     export default {
         name: 'GalleryWrapper',
@@ -34,7 +38,7 @@
         },
         data() {
             return {
-                constants: {}
+                constants: {},
             }
         },
         computed: mapState('gallery', {
@@ -48,8 +52,21 @@
               imageExtensions: 'imageExtensions'
          }),
         methods: {
+            showConfirmation(message) {
+                const options = {title: 'Confirmation',  okLabel: 'Yes', cancelLabel: 'No', size: 'sm'};
+                this.$dialogs.confirm(message, options)
+                    .then(res => {
+                        if (res.ok) {
+                            this.yesClickFn();
+                        }
+                    })
+            },
             readUrl: function (e) {
-                this.readUrl(e)
+                const params = {
+                    e: e,
+                    confirmation: this.showConfirmation
+                };
+                this.readURL(params);
             },
             categorizeFiles: function (category) {
                 this.changeCategory(category);
@@ -57,7 +74,7 @@
             },
             ...mapActions('gallery', [
                 'callDataAxios',
-                'readUrl',
+                'readURL',
                 'handleFiles',
                 'deleteRequestFunction',
             ]),
@@ -80,7 +97,7 @@
                 scope.handleFiles(files);
             });
             EventBus.$on('delete', function (fileName) {
-                scope.showConfirm('Are you sure you want to delete ' + fileName + ' file?');
+                scope.showConfirmation('Are you sure you want to delete ' + fileName + ' file?');
             });
             EventBus.$on('setInnerDeleteFunction', function (params) {
                 scope.changeYesFn(() => {

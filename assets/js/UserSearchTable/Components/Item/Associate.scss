@@ -1,11 +1,13 @@
 .associate-itemContainer, .associate-itemLevelContainer, 
 .associate-itemDateContainer  {
     overflow-x: hidden;
+    overflow-y: hidden;
     margin-top:10px;
     padding:0 10px 0 10px;
     display:inline-block;
     text-align: left;
     cursor: default;
+    align-items: center;
 }
 
 .associate-itemLevelContainer, .associate-itemDateContainer   {
@@ -13,17 +15,22 @@
 
 .associate-container, .associate-containerNew  {
     display: flex;
+    align-items: center;
     flex-direction: row;
     background-color: #fff;
     margin: 7px 5px 7px 5px;
     padding-bottom: 5px;
     border-radius: 5px;
-    border-left: 2px solid #f2f2f2; 
+    border-left: 2px solid #f2f2f2;
     border-bottom: 1px solid #f2f2f2;
     &:hover {
         border-left: 2px solid#7f06c4;
         background-color: #f2f2f2;
     }
+}
+
+.btn {
+    z-index: 10;
 }
 
 .associate-containerNew {

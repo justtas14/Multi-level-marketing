@@ -1,0 +1,75 @@
+<div class="card">
+        <div class="card-content">
+            <span class="card-title">Sent Invitations</span>
+            {% if invitations is not empty %}
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th class="recent_invitation_title">Email</th>
+                            <th class="recent_invitation_title">Full Name</th>
+                            <th class="recent_invitation_title">Invitation created</th>
+                            <th class="recent_invitation_title">Invitation used</th>
+                            <th class="recent_invitation_title">Resend</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for inv in invitations %}
+                            <tr>
+                                <td>{{ inv.email }}</td>
+                                <td>{{ inv.fullName }}</td>
+                                <td>{{ inv.created | date }}</td>
+                                {% if inv.used == true %}
+                                    <td>Yes</td>
+                                {% else %}
+                                    <td>No</td>
+                                {% endif %}
+                                <td><a href="{{ path('associate_invite', {invitationId: inv.id}) }}" class="btn">Resend Invitation</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            <br>
+            <ul class="pagination" style="text-align: center">
+                {% if currentPage == 1 %}
+                    <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+                {% else %}
+                    <li class="waves-effect">
+                        <a href="{% if associateId is defined and not null %}
+                            {{ path(route, { id: associateId, page: (currentPage-1)}) }}
+                        {% else %}
+                            {{ path(route, { page: (currentPage-1)}) }}
+                        {% endif %} ">
+                    <i class="material-icons">chevron_left</i></a></li>
+                {% endif %}
+                {% for page in 1..numberOfPages %}
+                    {% if page == currentPage %}
+                        <li class="active"><a href="#">{{ currentPage }}</a></li>
+                    {% else %}
+                        <li class="waves-effect">
+                        <a href="{% if associateId is defined and not null %}
+                            {{ path(route, { id: associateId, page: page}) }}
+                        {% else %}
+                            {{ path(route, { page: page}) }}
+                        {% endif %} ">
+                        {{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if currentPage == numberOfPages %}
+                    <li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+                {% else %}
+                    <li class="waves-effect"> <a href="{% if associateId is defined and not null %}
+                            {{ path(route, { id: associateId, page: (currentPage+1)}) }}
+                        {% else %}
+                            {{ path(route, { page: (currentPage+1)}) }}
+                        {% endif %} ">
+                    <i class="material-icons">chevron_right</i></a></li>
+                {% endif %}
+            </ul>
+            {% else %}
+                <p style="margin: 2em 0">Associate doesn't have any invitations</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

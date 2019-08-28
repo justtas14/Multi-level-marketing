@@ -221,8 +221,6 @@ class Associate
         return $this->ancestors;
     }
 
-
-
     /**
      * @return int
      */
@@ -230,8 +228,6 @@ class Associate
     {
         return $this->parentId;
     }
-
-
 
     /**
      * @return Associate

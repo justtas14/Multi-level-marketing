@@ -7,6 +7,7 @@ use App\Entity\Invitation;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
 use App\Exception\NotInvitationSender;
+use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\InvitationType;
 use App\Form\UserUpdateType;
@@ -112,6 +113,11 @@ class AssociateController extends AbstractController
          */
         $user = $this->getUser();
         $page = $request->get('page', 1);
+
+        if (!is_numeric($page)) {
+            throw new WrongPageNumberException();
+        }
+
         $invitationId = $request->get('invitationId');
 
         $invitationRepository = $em->getRepository(Invitation::class);
@@ -128,6 +134,14 @@ class AssociateController extends AbstractController
         $allInvitations = $invitationRepository->findBy(['sender' => $user]);
 
         $numberOfPages = ceil(count($allInvitations) / self::INVITATION_LIMIT);
+
+        if ($numberOfPages == 0) {
+            $numberOfPages++;
+        }
+
+        if (($page < 1 || $page > $numberOfPages)) {
+            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
+        }
 
         $invitations = $invitationRepository->findBy(
             ['sender' => $user],

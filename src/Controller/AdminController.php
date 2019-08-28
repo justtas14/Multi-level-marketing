@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\Gallery;
+use App\Entity\Invitation;
+use App\Entity\User;
 use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\ChangeContentType;
@@ -36,6 +38,7 @@ use Symfony\Component\Serializer\Serializer;
 class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 10;
+    const INVITATION_LIMIT = 10;
     const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
@@ -301,6 +304,10 @@ class AdminController extends AbstractController
         $telephoneField = $request->get('telephoneField');
         $page = $request->get('page', 1);
 
+        if (!is_numeric($page)) {
+            throw new WrongPageNumberException();
+        }
+
         $filter = new AssociateFilter();
 
         $filter->setEmail($emailField);
@@ -311,16 +318,7 @@ class AdminController extends AbstractController
 
         $countAssociates = $associateRepository->findAssociatesFilterCount($filter);
 
-        $numberOfPages = ceil($countAssociates / self::ASSOCIATE_LIMIT);
-
-        if ($numberOfPages == 0) {
-            $numberOfPages++;
-        }
-
-        if ($page > $numberOfPages || $page < 0 || !is_numeric($page)) {
-            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
-        }
-
+        $numberOfPages = $this->numberOfPages($countAssociates, self::ASSOCIATE_LIMIT, $page);
 
         $limitedAssociates = $associateRepository->findAssociatesByFilter(
             $filter,
@@ -348,7 +346,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/usersearch", name="user_search")
+     * @Route("/admin/users", name="user_search")
      * @return Response
      */
     public function userSearch()
@@ -356,7 +354,64 @@ class AdminController extends AbstractController
         $form = $this->createForm(UserSearchType::class);
 
         return $this->render('admin/usersearch.html.twig', [
-            'usersearch' => $form->createView()
+                'usersearch' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/users/{id}", name="user_search_details")
+     * @param $id
+     * @param AssociateManager $associateManager
+     * @return Response
+     */
+    public function userSearchDetails($id, Request $request, AssociateManager $associateManager)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $page = $request->get('page', 1);
+
+        if (!is_numeric($page)) {
+            throw new WrongPageNumberException();
+        }
+
+        $associate = $associateManager->getAssociate($id);
+
+        $user = $em->getRepository(User::class)->findOneBy(['associate' => $associate]);
+
+        $invitationRepository = $em->getRepository(Invitation::class);
+
+        $allInvitations = $invitationRepository->findBy(['sender' => $user]);
+
+        $numberOfPages = $this->numberOfPages(count($allInvitations), self::INVITATION_LIMIT, $page);
+
+        $invitations = $invitationRepository->findBy(
+            ['sender' => $user],
+            ['created' => 'DESC'],
+            self::INVITATION_LIMIT,
+            self::INVITATION_LIMIT * ($page-1)
+        );
+
+        if (!$associate) {
+            throw new NotFoundHttpException("User with id ".$id." is not found");
+        }
+
+        $level = $associateManager->getNumberOfLevels($associate->getAssociateId());
+
+        $associateInLevels = [];
+
+        for ($i = 1; $i <= $level; $i++) {
+            $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
+                $i,
+                $associate->getAssociateId()
+            );
+        }
+
+        return $this->render('admin/associateDetails.html.twig', [
+            'associate' => $associate,
+            'associatesInLevels' => $associateInLevels,
+            'invitations' => $invitations,
+            'numberOfPages' => $numberOfPages,
+            'currentPage' => $page
         ]);
     }
 
@@ -450,15 +505,7 @@ class AdminController extends AbstractController
                 throw new NotFoundHttpException();
         }
 
-        $numberOfPages = ceil($allFiles / $imageLimit);
-
-        if ($numberOfPages == 0) {
-            $numberOfPages++;
-        }
-
-        if (($page < 1 || $page > $numberOfPages)) {
-            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
-        }
+        $numberOfPages = $this->numberOfPages($allFiles, $imageLimit, $page);
 
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer]);
         $serializedFiles = $serializer->normalize(
@@ -477,6 +524,20 @@ class AdminController extends AbstractController
         ];
 
         return new JsonResponse($data);
+    }
+
+    private function numberOfPages($allFiles, $limit, $page)
+    {
+        $numberOfPages = ceil($allFiles / $limit);
+
+        if ($numberOfPages == 0) {
+            $numberOfPages++;
+        }
+
+        if (($page < 1 || $page > $numberOfPages)) {
+            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
+        }
+        return $numberOfPages;
     }
 
     /**

@@ -4,7 +4,7 @@ import Modal from 'react-responsive-modal';
 import {
     nameSearch, levelSearch, emailSearch,
     phoneSearch, dateSearch, addCurrentPagination,
-    scrollDown, addModal, closeModal, loadData, openModal,
+    scrollDown, loadData,
     showSpinner, hideSpinner
 } from '../store/actions/widget';
 import Associate from './Item/Associate';
@@ -96,13 +96,6 @@ class Main extends Component {
         });
     }
 
-    showModal(id) {
-        this.props.onOpenModal(id);
-    }
-
-    closeModal() {
-        this.props.onCloseModal();
-    }
 
     render() {
         const { associates, pages, currentPage } = this.props;
@@ -117,19 +110,20 @@ class Main extends Component {
                         date={associate.joinDate}
                         index={index}
                         firstNewAssociate={this.props.firstNewAssociate}
-                        showModal={this.showModal.bind(this)}
-                    />;
+                        mainAction={this.props.mainAction}
+                        mainActionLabel={this.props.mainActionLabel}
+            />;
         });
-        console.log(this.props.modal);
         return (
             <div className="main-searchContainer" style={{'position': 'relative'}}>
                 <SearchBar
                     handleNameSearchInput={this.handleNameSearch}
                     handleEmailSearchInput={this.handleEmailSearch}
+                    mainActionLabel={this.props.mainActionLabel}
                 />
                 <div className="main-associatesContainer">
-                    {associateRows}
-
+                    { associateRows.length > 0 || this.props.spinner ?
+                    associateRows : (<p className="Not__Found">Associates are not found</p>)}
                 </div>
                 {this.props.spinner ? (
                     <div className="Spinner__Container" style={{'top': 0, 'zIndex': '9999'}}>
@@ -137,12 +131,6 @@ class Main extends Component {
                     </div>
                 ): ''}
                 <PageBar pages={pages} currentPage={currentPage} onClick={this.changePage} />
-                <Modal onClose={this.props.onCloseModal} open={this.props.modalOpen}>
-                    <iframe
-                        src={`/associate/info/${this.props.modalId}`}
-                        style={{width: "400px", height: "200px", border: '0px'}}
-                    />
-                </Modal>
             </div>
         );
     }
@@ -155,10 +143,6 @@ const mapStateToProps = state => ({
         pages: state.widget.pages,
         currentPage: state.widget.currentPage,
         scrollDown: state.widget.scrollDown,
-        modal: state.widget.modal,
-        showModal: state.widget.showModal,
-        modalOpen: state.widget.modalOpen,
-        modalId: state.widget.modalId,
         spinner: state.widget.spinner
 });
 
@@ -167,9 +151,6 @@ const mapDispatchToProps = dispatch => {
         onNameSearch: (name) => dispatch(nameSearch(name)),
         onEmailSearch: (email) => dispatch(emailSearch(email)),
         onScrollDown: (position) => dispatch(scrollDown(position)),
-        onAddModal: (modal) => dispatch(addModal(modal)),
-        onCloseModal: () => dispatch(closeModal()),
-        onOpenModal: (id) => dispatch(openModal(id)),
         onLoadData: (data) => dispatch(loadData(data)),
         onShowSpinner: () => dispatch(showSpinner()),
         onHideSpinner: () => dispatch(hideSpinner()),

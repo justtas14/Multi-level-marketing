@@ -1,8 +1,7 @@
 import {
     NAME_SEARCH, LEVEL_SEARCH, EMAIL_SEARCH,
     PHONE_SEARCH, DATE_SEARCH, ADD_CURRENT_PAGINATION,
-    SCROLL_DOWN, ADD_MODAL, CLOSE_MODAL, LOAD_DATA,
-    OPEN_MODAL, SHOW_SPINNER, HIDE_SPINNER
+    SCROLL_DOWN, LOAD_DATA, SHOW_SPINNER, HIDE_SPINNER
 } from './actionTypes';
 
 export const nameSearch = (name) => {
@@ -51,32 +50,12 @@ export const scrollDown = (position) => {
     };
 };
 
-export const addModal = (modal) => {
-    return {
-        type:ADD_MODAL,
-        modal,
-    };
-};
-
-export const closeModal = () => {
-    return {
-        type:CLOSE_MODAL,
-    };
-};
-
 export const loadData = (data) => {
     return {
         type: LOAD_DATA,
         associates: data.associates,
         pages: data.pages,
         currentPage: data.currentPage,
-    }
-};
-
-export const openModal = (id) => {
-    return {
-        type: OPEN_MODAL,
-        modalId: id
     }
 };
 

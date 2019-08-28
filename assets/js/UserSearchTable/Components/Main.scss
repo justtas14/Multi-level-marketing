@@ -8,6 +8,7 @@
     max-height: 600px;
     width: 100%;
     overflow-y: scroll;
+    overflow-x: scroll;
     border-bottom: 1px solid #f2f2f2;
 }
 
@@ -31,4 +32,12 @@
 
 .main-scrollDown {
     margin-bottom: 50px;
+}
+
+.Not__Found {
+    margin: 1em !important;
+}
+
+.scrollableTable {
+    overflow-x: auto;
 }

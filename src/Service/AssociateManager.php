@@ -185,4 +185,8 @@ class AssociateManager
             $directAssociates
         );
     }
+
+
+
+
 }

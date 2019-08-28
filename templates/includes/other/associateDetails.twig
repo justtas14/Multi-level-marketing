@@ -1,0 +1,108 @@
+<div class="userDetails__picture__container">
+    {% if associate.profilePicture is not null %}
+        <img class="userDetails__picture" src="{{ associate.profilePicture|downloadUrlParser }}" />
+    {% else%}
+        <img class="userDetails__picture" src="{{ asset('assets/images/profile.jpg') }}" />
+    {% endif %}
+    {% if changeParent is defined and changeParent == 1 %}
+        <a id="modalBtn" class="btn changeParent">Change parent</a>
+    {% endif %}
+</div>
+
+<div class="userDetails__info__container {% if changeParent is defined and changeParent == 1  %} parent {% endif %}">
+    <ul class="userDetails__info">
+        <li class="userDetails__info__item"><b>Full Name</b>: {{ associate.fullName }}</li>
+        <li class="userDetails__info__item"><b>Email</b>: {{ associate.email }}</li>
+        <li class="userDetails__info__item">
+            <b>Mobile Phone</b>:
+            {% if associate.mobilePhone == '' %}
+                -
+            {% else %}
+                {{ associate.mobilePhone }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Home phone</b>:
+            {% if associate.homePhone == '' %}
+                -
+            {% else %}
+                {{ associate.homePhone }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Country</b>:
+            {% if associate.country == '' %}
+                -
+            {% else %}
+                {{ associate.country }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>City</b>:
+            {% if associate.city == '' %}
+                -
+            {% else %}
+                {{ associate.city }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Address</b>:
+            {% if associate.address == '' %}
+                -
+            {% else %}
+                {{ associate.address }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Second address</b>:
+            {% if associate.address2 == '' %}
+                -
+            {% else %}
+                {{ associate.address2 }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Post code</b>:
+            {% if associate.postCode == '' %}
+                -
+            {% else %}
+                {{ associate.postCode }}
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item"><b>Date of birth</b>: {{ associate.dateOfBirth|date('d-m-Y') }}</li>
+        <li class="userDetails__info__item"><b>Join Date</b>: {{ associate.joinDate|date('d-m-Y') }}</li>
+        <li class="userDetails__info__item"><b>Level</b>: {{ associate.level }}</li>
+        <li class="userDetails__info__item">
+            <b>Is agreed to email updates </b>:
+            {% if associate.agreedToEmailUpdates == 0 %}
+                No
+            {% else %}
+                Yes
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Is agreed to text message updates </b>:
+            {% if associate.agreedToTextMessageUpdates == 0 %}
+                No
+            {% else %}
+                Yes
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Is agreed to social media updates </b>:
+            {% if associate.agreedToSocialMediaUpdates == 0 %}
+                No
+            {% else %}
+                Yes
+            {% endif %}
+        </li>
+        <li class="userDetails__info__item">
+            <b>Is agreed to terms of services </b>:
+            {% if associate.agreedToTermsOfService == 0 %}
+                No
+            {% else %}
+                Yes
+            {% endif %}
+        </li>
+    </ul>
+</div>

@@ -6,13 +6,18 @@ class Associate extends Component {
         super(props);
         this.state = {
         };
+        this.onClick = this.onClick.bind(this);
     }
+
+    onClick() {
+        this.props.mainAction(this.props.id);
+    };
 
     render() {
         const d = new Date(this.props.date);
         const dateString = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
         return (
-            <div onClick={() => this.props.showModal(this.props.id)} className={"associate-container"}>
+            <div className={"associate-container"}>
                 <div className="associate-itemContainer" style={{'flex': 3}}>
                     {this.props.name}
                 </div>
@@ -28,7 +33,11 @@ class Associate extends Component {
                 <div className="associate-itemDateContainer" style={{'flex': 2}}>
                     {dateString}
                 </div>
+                <div className="associate-itemContainer" style={{'flex': 2}}>
+                    <a onClick={this.onClick} className="btn">{this.props.mainActionLabel}</a>
+                </div>
             </div>
+
         );
     }
 }

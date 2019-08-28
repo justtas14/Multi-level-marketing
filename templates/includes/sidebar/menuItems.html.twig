@@ -7,7 +7,9 @@
             Admin 
         </div>
         {% for route in allRoutes.adminRoutes %}
-            <div class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">
+            <div class="sidebar-item
+                {% if currentRoute == route.route or ((route.subRoute is defined and not null) and currentRoute in route.subRoute) %}sidebar--active{% endif %}"
+            >
                 <a href="{{ path(route.route) }}">{{ route.label }}</a>
             </div>
         {% endfor %}

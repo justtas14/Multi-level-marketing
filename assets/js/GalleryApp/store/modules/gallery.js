@@ -16,10 +16,6 @@ const state = {
         display: 'none',
         message: ''
     },
-    confirm: {
-        display: 'none',
-        message: '',
-    },
 };
 
 const getters = {
@@ -45,8 +41,8 @@ const actions = {
         };
         commit('loadInfo', data);
     },
-    readUrl: function ({state, dispatch, commit}, e) {
-        const input = e.target;
+    readURL: function ({state, dispatch, commit}, params) {
+        const input = params.e.target;
         if (input.files && input.files[0]) {
             const reader = new FileReader();
 
@@ -55,10 +51,9 @@ const actions = {
                 commit('changeYesFn', () => {
                     dispatch('saveToServer', file);
                     input.value = '';
-                    state.confirm.display = "none";
                 });
                 input.value = '';
-                commit('showConfirm', "Add " + file.name + ' file?');
+                params.confirmation('Add ' + file.name + ' file?');
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -107,7 +102,6 @@ const actions = {
         }).catch(function (err) {
             console.log(err);
         });
-        commit('hideConfirmation');
     },
 };
 
@@ -152,13 +146,6 @@ const mutations = {
     },
     changeYesFn: (state, fn) => {
         state.yesClickFn = fn;
-    },
-    hideConfirmation: (state) => {
-        state.confirm.display = 'none';
-    },
-    showConfirm: (state, msg) => {
-        state.confirm.message = msg;
-        state.confirm.display = 'block';
     },
     closeNotification: (state) => {
         state.notification.display = 'none';

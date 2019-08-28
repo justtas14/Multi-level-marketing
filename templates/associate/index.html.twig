@@ -23,20 +23,7 @@
                         My Team Viewer
                     </a>
                 </div>
-                <div class="associate-levelConainer">
-                    <ul class="associate-levelBarList">
-                        {% if associatesInLevels is not empty %}
-                            {% set maxLevel = max(associatesInLevels) %}
-                            {% for key, associateCount in associatesInLevels %}
-                                <li class="associate-levelBarListItem" style="list-style-type:none;">
-                                    <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                                        Level {{ key }}: <strong>{{ associateCount }}</strong>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        {% endif %}
-                    </ul>
-                </div>
+                {% include 'includes/other/businessShape.html.twig' %}
             </div>
         </div>
         {% if parent is not null %}

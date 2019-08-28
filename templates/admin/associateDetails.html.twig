@@ -1,0 +1,87 @@
+{% extends 'bodyBase.html.twig' %}
+
+{% block title %}User details{% endblock %}
+
+{% block content %}
+    <div class="admin-contentContainer">
+        <div class="card">
+            <div class="card-content">
+                <div id="flash-messages">
+                    {% for message in app.flashes('error') %}
+                        <div class="error__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="success__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="userDetails__mainContainer">
+                    <div class="userDetails__container__mainInfo">
+                        <span class="card-title addBottom userDetailsTitle">Associate details</span>
+                        <div class="userDetails__container">
+                            {% include 'includes/other/associateDetails.twig' with {'associate': associate } %}
+                        </div>
+                    </div>
+                    {% if associate.ParentId != -1 %}
+                    <div class="userDetails__container__parentInfo">
+                        <div class="userDetails_parentTitleContainer addBottom userDetailsTitle">
+                            <span class="card-title">Sponsor details</span>
+                            <a href="{{ path('user_search_details', {id : associate.getParentId}) }}" class="btn">Inspect</a>
+                        </div>
+                        <div class="userDetails__container">
+                            {% include 'includes/other/associateDetails.twig' with {'associate': associate.parent, 'changeParent': 1 } %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div id="myModal" class="modal">
+                    <div class="modal-content userSearch">
+                        <a id="closeBtn" class="styles_closeButton__20ID4">
+                            <svg class="styles_closeIcon__1QwbI close" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
+                                <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z">
+                                </path>
+                            </svg>
+                        </a>
+                        <div class="modal-header">
+                            Choose new parent
+                        </div>
+                        <div class="modal-body">
+                            <div id="root"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Business Shape</span>
+                {% include 'includes/other/businessShape.html.twig' %}
+                <div class="adminBusinessShape__buttonContainer">
+                    <a class="waves-effect waves-light btn" href="{{ path('csv') }}" target="_blank">Download CSV</a>
+                </div>
+            </div>
+        </div>
+        {% include 'includes/other/recentInvitations.twig' with {'route': 'user_search_details', 'associateId': associate.id} %}
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if associate.ParentId != -1 %}
+        <script src="{{ asset('assets/js/modal.js') }}"></script>
+        <script>
+            window.mainAction = (id) => {
+
+
+
+                console.log(id);
+            };
+            window.mainActionLabel = 'Choose';
+        </script>
+        <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
+    {% endif %}
+{% endblock %}

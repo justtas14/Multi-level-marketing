@@ -2,24 +2,12 @@
 
 {% block title %}Admin{% endblock %}
 
-{% set maxLevel = max(associatesInLevels) %}
-
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Business Shape</span>
-                <div class="associate-levelConainer">
-                    <ul class="associate-levelBarList">
-                        {% for key, associateCount in associatesInLevels %}
-                            <li class="associate-levelBarListItem" style="list-style-type:none;">
-                                <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
-                                    Level {{ key }}: <strong>{{ associateCount }}</strong>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                {% include 'includes/other/businessShape.html.twig' %}
                 <div class="adminBusinessShape__buttonContainer">
                     <a class="waves-effect waves-light btn" href="{{ path('csv') }}" target="_blank">Download CSV</a>
                 </div>

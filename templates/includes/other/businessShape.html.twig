@@ -1,0 +1,16 @@
+<ul class="associate-levelBarList">
+    {% if associatesInLevels is not empty %}
+        {% set maxLevel = max(associatesInLevels) %}
+        {% for key, associateCount in associatesInLevels %}
+            <li class="associate-levelBarListItem" style="list-style-type:none;">
+                <div class="associate-levelBar" style="width:{{ associateCount*100/maxLevel }}%">
+                    Level {{ key }}: <strong>{{ associateCount }}</strong>
+                </div>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>Associate doesn't have any children</p>
+    {% endif %}
+</ul>
+
+

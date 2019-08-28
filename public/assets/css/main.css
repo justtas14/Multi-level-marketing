@@ -248,3 +248,149 @@ select {
 #dragAndDropError {
     display: none;
 }
+
+.recent__invitation__value {
+
+}
+
+.recent_invitation_title {
+    white-space: nowrap;
+    padding-right: 1em;
+}
+
+.userDetails__mainContainer {
+    display: flex;
+    justify-content: center;
+    margin: 0.5em;
+}
+
+.userDetails__container {
+    display: flex;
+    padding-top: 1em;
+    box-shadow: 0 -5px 5px -5px rgba(51,51,51, 0.63);
+}
+
+.userDetails__container__mainInfo, .userDetails__container__parentInfo {
+    -webkit-box-shadow: 0 3px 6px rgba(0,0,0,.16), 0 3px 6px rgba(0,0,0,.35);
+    -moz-box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.35);
+    box-shadow: 0 3px 6px rgba(0,0,0,.16), 0 3px 6px rgba(0,0,0,0.35);
+    padding: 1.5em 1.5em 2em 1.5em;
+}
+
+.userDetails__info__container {
+    align-self: center;
+    margin-left: 2.5em;
+}
+
+.userDetails__picture__container {
+    width: 200px;
+    height: 200px;
+    min-width: 200px;
+    position: relative;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.userDetails__container__parentInfo {
+    margin-left: 2em;
+}
+
+.userDetails__picture {
+    width: 100%;
+    height: 100%;
+    border-radius: 3%;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.1);
+}
+.userDetails__info {
+}
+
+.userDetails_parentTitleContainer {
+    display: flex;
+    margin-left: 0.5em;
+}
+
+.userDetails_parentTitleContainer a {
+    flex: 1;
+    height: 32px;
+    line-height: 32px;
+}
+
+.userDetails_parentTitleContainer span {
+    flex: 2;
+}
+
+.userDetails__info__item {
+    margin: 1em 0;
+}
+
+.addBottom {
+    margin-bottom: 1em !important;
+}
+
+.userDetailsTitle {
+    margin-left: 0.5em;
+}
+
+.changeParent {
+    margin-top: 1em;
+    display: block;
+}
+
+.userSearch {
+    width: 80% !important;
+}
+
+@media screen and (max-width: 1330px) {
+    .userDetails__mainContainer {
+        display: block;
+    }
+    .userDetails__container__parentInfo {
+        margin: 2em 0 0 0;
+    }
+    .userDetails__info__container {
+        align-self: center;
+        margin-left: 3.5em;
+    }
+    .userDetails_parentTitleContainer a {
+        flex: 1;
+    }
+    .userDetails_parentTitleContainer span {
+        flex: 3;
+    }
+}
+@media screen and (max-width: 901px) {
+    .userDetails__container {
+        display: block;
+    }
+    .userDetails__info {
+    }
+
+    .userDetails__picture__container {
+        width: 150px;
+        height: 150px;
+        min-width: 150px;
+        text-align: center;
+        margin: auto;
+    }
+
+    .userDetails__picture {
+        display: inline-block;
+    }
+
+    .userDetails__info__container {
+        width: 50%;
+        margin: 2em auto;
+    }
+
+    .parent {
+        margin: 7.5em auto 0 auto;
+    }
+
+    .userDetailsTitle {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .userDetails_parentTitleContainer {
+        display: block;
+    }
+}
