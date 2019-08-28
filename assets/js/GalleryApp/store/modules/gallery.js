@@ -3,7 +3,6 @@ import constants from '../../constants/constants'
 
 const state = {
     modalState: false,
-    dataLoaded: false,
     files: [],
     paginationInfo: {
         'currentPage': 1
@@ -20,6 +19,7 @@ const state = {
         display: 'none',
         message: '',
     },
+    spinner: false
 };
 
 const getters = {
@@ -43,6 +43,7 @@ const actions = {
             pagination: res.data.pagination,
             imageExtensions: res.data.imageExtensions
         };
+        commit('setSpinnerState', false);
         commit('loadInfo', data);
     },
     readUrl: function ({state, dispatch, commit}, e) {
@@ -167,10 +168,14 @@ const mutations = {
         state.notification.message = msg;
         state.notification.display = 'block';
     },
+    setSpinnerState: (state, flag) => {
+        state.spinner = flag;
+    },
     loadInfo: (state, {...data}) => {
         state.files = data.files;
         state.paginationInfo = data.pagination;
         state.imageExtensions = data.imageExtensions;
+        state.spinner = false;
     }
 };
 

@@ -11,7 +11,7 @@
                 <slot name= "fileInputContainer">
                 </slot>
                 <hr class="line" align="left">
-                <div id="previewBodyContent" class="modal-body-gallery" v-bind:style="{opacity: dataLoaded ? '1' : '0'}">
+                <div id="previewBodyContent" class="modal-body-gallery">
                     <slot name = "gallery">
                     </slot>
                 </div>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-    import {mapMutations, mapGetters, mapState} from 'vuex';
+    import {mapMutations, mapState} from 'vuex';
 
     export default {
         name: 'ModalWrapper',
@@ -44,19 +44,16 @@
         computed: {
             ...mapState('gallery', {
                 modalState: 'modalState',
-                dataLoaded: 'dataLoaded'
             })
         },
 
         methods: {
             ...mapMutations('gallery', [
                 'changeModalState',
-                'changeDataLoadState',
                 'changePage'
             ]),
             closeShowModal: function(flag) {
                 this.changeModalState(flag);
-                this.changeDataLoadState(flag);
                 const page = 1;
                 const action = null;
                 this.changePage({

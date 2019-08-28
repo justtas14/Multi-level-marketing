@@ -34,7 +34,7 @@
         },
         data() {
             return {
-                constants: {}
+                constants: {},
             }
         },
         computed: mapState('gallery', {
@@ -45,7 +45,7 @@
               confirm: 'confirm',
               notification: 'notification',
               paginationInfo: 'paginationInfo',
-              imageExtensions: 'imageExtensions'
+              imageExtensions: 'imageExtensions',
          }),
         methods: {
             readUrl: function (e) {
@@ -81,11 +81,6 @@
             });
             EventBus.$on('delete', function (fileName) {
                 scope.showConfirm('Are you sure you want to delete ' + fileName + ' file?');
-            });
-            EventBus.$on('setInnerDeleteFunction', function (params) {
-                scope.changeYesFn(() => {
-                    scope.deleteRequestFunction(params);
-                });
             });
             EventBus.$on('previousPage', function () {
                 const page = null, action = 'subtract';

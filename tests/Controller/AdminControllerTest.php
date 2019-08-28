@@ -696,11 +696,15 @@ class AdminControllerTest extends WebTestCase
 
         $em->refresh($configuration);
 
-        $this->assertNotNull($configuration->getTermsOfServices());
+        $termsOfServices = $configuration->getTermsOfServices();
+
+        $this->assertNotNull($termsOfServices);
         $this->assertNotNull($configuration->getMainLogo());
         $this->assertEquals('disclaimer', $configuration->getTosDisclaimer());
 
-        $client->request('HEAD', '/download/31');
+        $id = $configuration->getMainLogo()->getId();
+
+        $client->request('HEAD', '/download/'.$id);
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 

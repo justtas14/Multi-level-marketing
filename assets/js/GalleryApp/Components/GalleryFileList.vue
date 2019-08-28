@@ -6,11 +6,14 @@
              @dragleave.prevent.stop="removeImageDropping"
              @drop.prevent.stop="removeImageDropping"
     >
+        <div v-if="spinner" class="Spinner__Container" v-bind:style="{top: 0, 'z-index': 9999}">
+            <div class="lds-dual-ring"/>
+        </div>
         <input class="file-upload-input-gallery" multiple type='file'/>
-        <div v-bind:style="{display: (files.length == 0) ? 'block' : 'none'}" id="uploadImageIcon">
+        <div v-if="!spinner" v-bind:style="{display: (files.length == 0) ? 'block' : 'none'}" id="uploadImageIcon">
             <i class="fas fa-file-download"></i>
         </div>
-        <div class="image-upload-box"
+        <div v-if="!spinner" class="image-upload-box"
              v-bind:class="{ 'image-dropping': imageDroppingClass }"
              v-bind:style="{border: (files.length == 0 && imageDroppingClass == false) ?
              '4px dashed #AAAAAA' : '5px dashed #ffffff'}"
@@ -36,6 +39,7 @@
 <script>
     import GalleryFile from './GalleryFile.vue';
     import EventBus from '../EventBus/EventBus';
+    import { mapMutations, mapState } from 'vuex'
 
     export default {
         name: 'GalleryFileList',
@@ -48,6 +52,9 @@
                 imageDroppingClass: false,
             }
         },
+        computed: mapState('gallery', {
+            spinner: 'spinner'
+        }),
         methods: {
             handleDrop: function (event) {
                 EventBus.$emit('handleDrop', event);
@@ -59,7 +66,13 @@
             removeImageDropping: function () {
                 this.imageDroppingClass = false;
             },
+            ...mapMutations('gallery', [
+                'setSpinnerState'
+            ])
         },
+        mounted() {
+            this.setSpinnerState(true);
+        }
     }
 </script>
 

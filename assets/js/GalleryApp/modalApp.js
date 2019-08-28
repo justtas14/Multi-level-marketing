@@ -29,6 +29,9 @@ const modal = new Vue({
 
             const w = window.innerWidth;
 
+
+            store.commit('gallery/setSpinnerState', true);
+
             if (w > 1350) {
                 store.dispatch('gallery/callDataAxios', 21);
             } else if (w > 550 && w <= 1350) {
@@ -36,9 +39,6 @@ const modal = new Vue({
             } else {
                 store.dispatch('gallery/callDataAxios', 14);
             }
-            setTimeout(() => {
-                store.commit('gallery/changeDataLoadState', true)
-            }, 750);
         },
         mediaQuerryResponse: function () {
             if (this.mqls[0].matches) {
@@ -51,7 +51,7 @@ const modal = new Vue({
         }
     },
     mounted() {
-        EventBus.$on('oneClickFile',  (fileId, fileName, filePath) => {
+        EventBus.$on('oneClickFile',  (fileId, fileName, filePath, downloadPath) => {
             this.fileId.push(fileId);
             const fileObj = {
                 fileId: fileId,

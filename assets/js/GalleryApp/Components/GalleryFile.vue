@@ -8,20 +8,20 @@
              @mouseover="hoverImage = true"
              @mouseleave="hoverImage = false"
         >
-            <a v-bind:href="constants.downloadable ? file.filePath : '#' " class="fileDownload" @click="oneClickFile(file.id, file.galleryFile.originalName)">
+            <a class="fileDownload" @click="oneClickFile(file.id, file.galleryFile.originalName)">
                 <div class="overlay-effect" v-bind:class="{hoverImageEffect : hoverImage}"></div>
                 <v-lazy-image
                         v-bind:src="determineSrc()"
                     src-placeholder=""
                     class="gallery__img"
-                    v-bind:alt="file.galleryFile.originalName"
-                />
-            </a>
-            <a v-bind:href="constants.downloadable ? file.filePath : '#'">
-                <i v-if="constants.downloadable" v-show="hoverImage" class="fas fa-file-download"></i>
-            </a>
-            <a v-if="constants.uploadable" href="#" @click="oneClickFile(file.id, file.galleryFile.originalName)">
-                <i v-show="hoverImage" class="fa fa-upload"></i>
+                    v-bind:alt="file.galleryFile.originalName">
+                </v-lazy-image>
+                <a v-if="constants.downloadable">
+                    <i v-if="constants.downloadable" v-show="hoverImage" class="fas fa-file-download"></i>
+                </a>
+                <a v-if="constants.uploadable">
+                    <i v-show="hoverImage" class="fa fa-upload"></i>
+                </a>
             </a>
             <transition name="fade">
                 <a href="javascript:;"
@@ -41,6 +41,7 @@
     </div>
 </template>
 <script>
+    import { mapMutations, mapActions } from 'vuex'
     import VLazyImage from "v-lazy-image";
     import defaultFile from '../../../images/defaultFile.png';
     import wordImage from '../../../images/word.png';
@@ -56,7 +57,8 @@
             return {
                 fileExtension: this.getFileExtension(),
                 hoverCard: false,
-                hoverImage: false
+                hoverImage: false,
+                isDeleted: false
             }
         },
         components: {
@@ -67,15 +69,21 @@
                 EventBus.$emit('delete', fileName);
             },
             setInnerDeleteFunction: function() {
-                EventBus.$emit('setInnerDeleteFunction', {
+                const params = {
                     fileId: this.file.id,
                     galleryFileId: this.file.galleryFile.id,
                     fileName: this.file.galleryFile.originalName
+                };
+                this.changeYesFn(() => {
+                    this.isDeleted = true;
+                    this.deleteRequestFunction(params);
                 });
             },
             oneClickFile: function (fileId, fileName) {
-                this.$store.commit('gallery/changeModalState', false);
-                EventBus.$emit('oneClickFile', fileId, fileName, this.determineSrc());
+                if (!this.isDeleted) {
+                    this.$store.commit('gallery/changeModalState', false);
+                    EventBus.$emit('oneClickFile', fileId, fileName, this.determineSrc(), this.file.filePath);
+                }
             },
             getFileExtension: function () {
                 let originalName = this.file.galleryFile.originalName;
@@ -112,6 +120,12 @@
             isXLSX: function() {
                 return this.fileExtension == 'xlsx';
             },
+            ...mapMutations('gallery', [
+                'changeYesFn',
+            ]),
+            ...mapActions('gallery', [
+                'deleteRequestFunction',
+            ]),
         }
     }
 </script>
