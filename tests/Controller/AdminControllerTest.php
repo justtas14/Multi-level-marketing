@@ -169,7 +169,6 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
 
-
         $crawler = $client->request('GET', '/associate/invite');
 
         /** @var EmailTemplate $emailTemplateInvitation */
@@ -188,8 +187,6 @@ class AdminControllerTest extends WebTestCase
         $form->get('invitation')['email']->setValue('myemail@gmail.com');
         $form->get('invitation')['fullName']->setValue('myemail');
 
-        $client->enableProfiler();
-
         $invitationRepository = $em->getRepository(Invitation::class);
 
         $invitations = $invitationRepository->findAll();
@@ -202,8 +199,6 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(8, sizeof($invitations));
 
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-
         $this->assertSame(1, $mailCollector->getMessageCount());
 
         $collectedMessages = $mailCollector->getMessages();
@@ -213,7 +208,6 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
         $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
-
 
         $crawler = $client->request('GET', '/associate/invite');
 
