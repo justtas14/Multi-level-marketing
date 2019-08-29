@@ -26,7 +26,7 @@
             <transition name="fade">
                 <a href="javascript:;"
                    v-bind:class="{addOpacity : hoverCard}"
-                   @click="deleteFile(file.galleryFile.originalName); setInnerDeleteFunction()"
+                   @click="deleteFile(file.galleryFile.originalName); setInnerDeleteFunction();"
                    class="closeBtn"><i class="material-icons" :class="constants.galleryClasses.closeButtonClasses.closeIcon">close</i>
                 </a>
             </transition>
@@ -41,14 +41,13 @@
     </div>
 </template>
 <script>
-    import { mapMutations, mapActions } from 'vuex'
+    import { mapMutations, mapActions } from 'vuex';
     import VLazyImage from "v-lazy-image";
     import defaultFile from '../../../images/defaultFile.png';
     import wordImage from '../../../images/word.png';
     import pdfImage from '../../../images/pdf.png';
     import excelImage from '../../../images/excel.png';
     import EventBus from '../EventBus/EventBus';
-
 
     export default {
         name: 'GalleryFile',
