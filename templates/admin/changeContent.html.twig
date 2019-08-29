@@ -97,11 +97,15 @@
                         imagePreviewContainer.style.display = 'block';
                         image.src = fileObj.filePath;
                     },
-                    () => {
-                        hiddenInput.setAttribute("value", '');
-                        fileContainer.innerHTML = "";
-                        imagePreviewContainer.style.display = 'none';
-                    }
+                    (getHiddenInput = false) => {
+                        if (getHiddenInput) {
+                            return hiddenInput.getAttribute('value');
+                        } else {
+                            hiddenInput.setAttribute("value", '');
+                            fileContainer.innerHTML = "";
+                            imagePreviewContainer.style.display = 'none';
+                        }
+                    },
                 );
            }
        </script>

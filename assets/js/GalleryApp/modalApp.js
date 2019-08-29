@@ -9,7 +9,7 @@ const modal = new Vue({
     data: {
         onFileSelect: () => {},
         onFileRemove: () => {},
-        fileId: [],
+        onFileRemoveList: [],
         mqls: [
             window.matchMedia('(max-width: 550px)'),
             window.matchMedia('(max-width: 1350px)'),
@@ -18,7 +18,7 @@ const modal = new Vue({
     methods: {
         showModal: function (category, onFileSelect, onFileRemove) {
             this.onFileSelect = onFileSelect;
-            this.onFileRemove = onFileRemove;
+            this.onFileRemoveList.push(onFileRemove);
             store.commit('gallery/changeModalState', true);
             store.commit('gallery/changeFilesPerPage', 21);
             store.commit('gallery/changeCategory', category);
@@ -52,7 +52,6 @@ const modal = new Vue({
     },
     mounted() {
         EventBus.$on('oneClickFile',  (fileId, fileName, filePath, downloadPath) => {
-            this.fileId.push(fileId);
             const fileObj = {
                 fileId: fileId,
                 fileName: fileName,
@@ -61,9 +60,11 @@ const modal = new Vue({
             this.onFileSelect(fileObj);
         });
         EventBus.$on('checkDeleted',  (fileId) => {
-            if (this.fileId.includes(fileId)) {
-                this.onFileRemove();
-            }
+            this.onFileRemoveList.forEach((fun) => {
+                if (fun(true) == fileId) {
+                    fun();
+                }
+            })
         });
 
     },

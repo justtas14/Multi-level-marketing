@@ -90,25 +90,25 @@ const actions = {
             });
         }
     },
-    deleteRequestFunction: function ({dispatch, state, commit}, params) {
-        axios.post(constants.api.removeFile, {
+    deleteRequestFunction: async function ({dispatch, state, commit}, params) {
+        let response = await axios.post(constants.api.removeFile, {
             params: {
                 galleryId: params.fileId,
                 fileId: params.galleryFileId
             }
-        }).then(res => {
-            if (res.data.fileInUse) {
-                commit('showNotification','File ' + params.fileName + ' is already in use!');
-            } else {
-                commit('deleteFile', params.fileId);
-                commit('subtractPage');
-                dispatch('callDataAxios');
-                commit('showNotification','File ' + params.fileName + ' deleted!');
-            }
-        }).catch(function (err) {
-            console.log(err);
         });
         commit('hideConfirmation');
+
+        if (response.data.fileInUse) {
+            commit('showNotification','File ' + params.fileName + ' is already in use!');
+            return false;
+        } else {
+            commit('deleteFile', params.fileId);
+            commit('subtractPage');
+            dispatch('callDataAxios');
+            commit('showNotification','File ' + params.fileName + ' deleted!');
+            return true;
+        }
     },
 };
 

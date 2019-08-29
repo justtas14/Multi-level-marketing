@@ -26,7 +26,7 @@
             <transition name="fade">
                 <a href="javascript:;"
                    v-bind:class="{addOpacity : hoverCard}"
-                   @click="deleteFile(file.galleryFile.originalName); setInnerDeleteFunction();"
+                   @click="deleteFile(file.galleryFile.originalName); setInnerDeleteFunction()"
                    class="closeBtn"><i class="material-icons" :class="constants.galleryClasses.closeButtonClasses.closeIcon">close</i>
                 </a>
             </transition>
@@ -73,9 +73,14 @@
                     galleryFileId: this.file.galleryFile.id,
                     fileName: this.file.galleryFile.originalName
                 };
-                this.changeYesFn(() => {
+                this.changeYesFn(async () => {
                     this.isDeleted = true;
-                    this.deleteRequestFunction(params);
+                    const isDeleted = await this.deleteRequestFunction(params);
+                    if (isDeleted) {
+                        EventBus.$emit('checkDeleted', params.fileId);
+                    } else {
+                        this.isDeleted = false;
+                    }
                 });
             },
             oneClickFile: function (fileId, fileName) {
