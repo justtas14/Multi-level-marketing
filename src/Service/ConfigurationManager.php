@@ -30,6 +30,20 @@ class ConfigurationManager
         return $configuration;
     }
 
+    public function getParsedLandingContent($landingContent)
+    {
+        try {
+            $parser = new \DBlackborough\Quill\Parser\Html();
+            $renderer = new \DBlackborough\Quill\Renderer\Html();
+
+            $parser->load($landingContent)->parse();
+
+            $landingContent = $renderer->load($parser->deltas())->render();
+        } catch (\Exception $exception) {
+        }
+        return $landingContent;
+    }
+
     private function createConfiguration(): Configuration
     {
         $configuration = new Configuration();

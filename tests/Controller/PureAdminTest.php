@@ -29,7 +29,7 @@ class PureAdminTest extends WebTestCase
     }
 
     /**
-     *  Testing end prelaunch feature whith pure admin with no associate logged in
+     *  Testincg end prelaunch feature whith pure admin with no associate logged in
      *
      *  - Login as pure admin and go to end prelaunch form, set end prelaunch to false and submit. Then login with
      * different not admin user.
@@ -290,10 +290,11 @@ class PureAdminTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->assertEquals(
-            8,
+            9,
             $crawler->filter('div.sidebar-item')->count()
         );
     }
+
 
     /**
      *  Testing /associate/info api whether it returns empty response when logged in as admin without associate.

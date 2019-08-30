@@ -2,12 +2,17 @@
 
 {% block title %}Change Content{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/modal.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Change Content</span>
-                <div id="flash-messages">
+                <div id="flash-messages" style="margin-bottom: 1em">
                     {% for message in app.flashes('error') %}
                         <div class="error__block">
                             {{ message }}
@@ -19,18 +24,35 @@
                         </div>
                     {% endfor %}
                 </div>
-
+                {{ form_start(form) }}
+                {% include 'includes/errorBlock.html.twig' with { field: form.mainLogo } %}
+                {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                 <main id="main labelFormFix">
-                    {{ form_start(form) }}
-                    <div class="input-field">
+                    <div class="fileContainer" style="margin-bottom: 2em;">
+                        <span class="fileTitle">Main logo</span>
+                        <div id="mainLogoFromGallery" class="input-field">
+                            <div id="mainLogoImagePreview"><img src=""></div>
+                            <a id="mainLogoFilesPreview" class="waves-effect waves-light btn"
+                               onclick="showModalGallery('images', '#change_content_hiddenMainLogoFile', '#mainLogoFileName', '#mainLogoImagePreview')">Choose file</a>
+                            <span id="mainLogoFileName" class="addMargin"></span>
+                        </div>
+                    </div>
+                    <div class="fileContainer" style="margin-bottom: 2em;">
+                        <span class="fileTitle">Terms Of Services</span>
+                        <div id="termsOfServicesFromGallery" class="input-field">
+                            <div id="termsOfServicesImagePreview"><img src=""></div>
+                            <a id="termsOfServicesFilesPreview" class="waves-effect waves-light btn"
+                               onclick="showModalGallery('all', '#change_content_hiddenTermsOfServiceFile', '#termsOfServicesFileName', '#termsOfServicesImagePreview')">Choose file</a>
+                            <span id="termsOfServicesFileName" class="addMargin"></span>
+                        </div>
+                    </div>
+                    <div id="realMainLogo" class="input-field">
                         {{ form_label(form.mainLogo) }}
                         {{ form_widget(form.mainLogo) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: form.mainLogo } %}
                     </div>
-                    <div class="input-field">
+                    <div id="realTermsOfService" class="input-field">
                         {{ form_label(form.termsOfServices) }}
                         {{ form_widget(form.termsOfServices) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: form.termsOfServices } %}
                     </div>
                     <div class="input-field">
                         {{ form_label(form.tosDisclaimer) }}
@@ -42,12 +64,49 @@
                         {{ form_widget(form.Submit) }}
                     </div>
                     {% include 'includes/errorBlock.html.twig' with { field: form } %}
-                    {{ form_end(form) }}
                 </main>
+                {% verbatim %}
+                    <section id="modal">
+                    </section>
+                 {% endverbatim %}
+                {{ form_widget(form.hiddenMainLogoFile) }}
+                {{ form_widget(form.hiddenTermsOfServiceFile) }}
                 {% if configuration.termsOfServices is defined and configuration.termsOfServices is not null %}
                     <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download Terms of service</a>
                 {% endif %}
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
+
 {% endblock %}
+   {% block javascripts %}
+        {{ parent() }}
+       <script type="text/javascript" src="{{ asset('build/modal.js') }}"></script>
+       <script>
+           function showModalGallery(category, hiddenInputSelector, fileContainerSelector, imagePreviewContainerSelector) {
+               const hiddenInput = document.querySelector(hiddenInputSelector);
+               const fileContainer = document.querySelector(fileContainerSelector);
+               const imagePreviewContainer = document.querySelector(imagePreviewContainerSelector);
+               const image = imagePreviewContainer.querySelector('img');
+
+                modal.showModal(category,
+                    (fileObj) => {
+                        hiddenInput.setAttribute("value", fileObj.fileId);
+                        fileContainer.innerHTML = fileObj.fileName;
+                        imagePreviewContainer.style.display = 'block';
+                        image.src = fileObj.filePath;
+                    },
+                    (getHiddenInput = false) => {
+                        if (getHiddenInput) {
+                            return hiddenInput.getAttribute('value');
+                        } else {
+                            hiddenInput.setAttribute("value", '');
+                            fileContainer.innerHTML = "";
+                            imagePreviewContainer.style.display = 'none';
+                        }
+                    },
+                );
+           }
+       </script>
+   {% endblock %}

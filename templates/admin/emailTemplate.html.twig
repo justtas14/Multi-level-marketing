@@ -2,6 +2,12 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/quill.css') }}" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -19,6 +25,7 @@
                         </div>
                     {% endfor %}
                 </div>
+
                 <main id="main">
                     {{ form_start(form) }}
                     {{ form_label(form.emailSubject) }}
@@ -32,10 +39,110 @@
                     {% include 'includes/errorBlock.html.twig' with { field: form.emailBody } %}
                     <br>
                     {{ form_widget(form.emailBody) }}
+                    <div class="emailContainer">
+                        <div id="editor">
+                            {% verbatim %}
+                                <section id="quillEditor">
+                                </section>
+                            {% endverbatim %}
+                        </div>
+                        <div id="emailBodyParams">
+                            <span id="emailBodyParamsTitle">Available parameters</span>
+                            <br> <br> <Br>
+                            {% for key, parameter in availableParameters %}
+                                <span id="emailBodyParam">{{ parameter }}</span>
+                                <span id ="emailBodyParamExplain">- {{ key }}</span>
+                                <Br> <Br>
+                            {% endfor %}
+                        </div>
+                    </div>
                     <br>
+                    <div id="buttons_container">
+                        <div id="button_submit">
+                            {{ form_row(form.Submit)}}
+                        </div>
+                        <div id="button_preview">
+                            <a class="waves-effect waves-light btn" id="preview">Template preview</a>
+                        </div>
+                    </div>
                     {{ form_end(form) }}
                 </main>
             </div>
         </div>
     </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <a class="styles_closeButton__20ID4 close">
+                <svg class="styles_closeIcon__1QwbI previewClose" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
+                    <path d="M28.5 9.62L26.38 7.5 18 15.88 9.62 7.5 7.5 9.62 15.88 18 7.5 26.38l2.12 2.12L18 20.12l8.38 8.38 2.12-2.12L20.12 18z">
+                    </path>
+                </svg>
+            </a>
+            <div class="modal-header">
+                {{ title }} preview
+            </div> <hr class="line" align="left"> <Br> <Br>
+            <div id="subjectContent" class="modal-subject" style="border: 1px solid grey"></div>
+            <Br>
+            <div id="bodyContent" class="modal-body ql-editor" style="border: 1px solid grey"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/quill.js') }}"></script>
+    <script>
+        var previewButton = document.querySelector('#preview');
+
+        var preview = $('.preview');
+        previewButton.addEventListener("click", function(){
+            preview.toggle();
+        });
+
+        var editorBodyContainerContent = document.querySelector('.ql-editor');
+        var subjectContent = document.querySelector('#email_template_emailSubject');
+
+        previewButton.addEventListener('click', function () {
+            var editorContainerContentInnerHTML = editorBodyContainerContent.innerHTML;
+            var subjectContentValue = subjectContent.value;
+
+            {% if 'Invitation' in title %}
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{ receiverName \}\}', 'RECEIVER_NAME');
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{receiverName\}\}', 'RECEIVER_NAME');
+                subjectContentValue = subjectContentValue.replace('\{\{ senderName \}\}', 'SENDER_NAME');
+                subjectContentValue = subjectContentValue.replace('\{\{senderName\}\}', 'SENDER_NAME');
+            {% endif %}
+
+            {% if 'Welcome' in title %}
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{ name \}\}', 'FULL_NAME');
+                editorContainerContentInnerHTML = editorContainerContentInnerHTML.replace('\{\{name\}\}', 'FULL_NAME');
+            {% endif %}
+
+            console.log(editorContainerContentInnerHTML);
+
+            document.getElementById('subjectContent').innerHTML = subjectContentValue;
+            document.getElementById('bodyContent').innerHTML = editorContainerContentInnerHTML;
+        });
+
+        var modal = document.getElementById("myModal");
+
+        var btn = document.getElementById("preview");
+
+        var span = document.getElementsByClassName("previewClose")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        </script>
 {% endblock %}

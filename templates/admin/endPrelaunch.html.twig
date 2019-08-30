@@ -2,6 +2,12 @@
 
 {% block title %}End Prelaunch{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/quill.css') }}" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -32,6 +38,10 @@
                         {{ form_label(form.landingContent) }}
                         {{ form_widget(form.landingContent) }}
                         {% include 'includes/errorBlock.html.twig' with { field: form.landingContent } %}
+                    {% verbatim %}
+                        <section id="quillEditor">
+                        </section>
+                    {% endverbatim %}
                     </div>
                     {{ form_end(form) }}
                 </main>
@@ -39,3 +49,9 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/quill.js') }}"></script>
+{% endblock %}
+

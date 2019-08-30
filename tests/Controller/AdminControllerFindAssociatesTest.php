@@ -43,13 +43,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
      *
      *  - Reqiest /admin/api/associates endpoint with page 4 param which is incorrect parameter because page 3 is max
      * of associates in pagination
-     *  - Expected 500 server error and exception to be thrown with appropriate error message and error page.
+     *  - Expected 404 not found error and exception to be thrown with appropriate error message and error page.
      *
      *  - Reqiest /admin/api/associates endpoint with page -4 param which is incorrect parameter.
-     *  - Expected 500 server error and exception to be thrown with appropriate error message and error page.
+     *  - Expected 404 not found error and exception to be thrown with appropriate error message and error page.
      *
      *  - Reqiest /admin/api/associates endpoint with page '-saf' param which is incorrect parameter.
-     *  - Expected 500 server error and exception to be thrown with appropriate error message and error page.
+     *  - Expected 404 not found error and exception to be thrown with appropriate error message and error page.
      *
      *  - Reqiest /admin/api/associates endpoint with nameField with value S param.
      *  - Expected to get 10 first associates (associate limit) from database which has S letter in their names.
@@ -82,6 +82,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
      * Expected appropriate associate param fullName, mobilePhone and email values in json Format.
      * Also expected to get 1 max number of pages because it is calculated by formula:
      * ceil (all associates / associate limit) => ceil (1 / 10) => 1.
+     *
+     *  - Reqiest /admin/api/associates endpoint with nameField with value Isff, emailField with value AU and
+     * telephoneField with value 2.
+     *  - Expected to get 0 associate from database which has Is word in it's names, AU word in it's emails and
+     * 2 number it's number;
+     * Also expected to get 1 max number of pages.
+     *
      */
     public function testFindAssociates()
     {
@@ -347,7 +354,7 @@ class AdminControllerFindAssociatesTest extends WebTestCase
 
         $client->request('GET', '/admin/api/associates', ['page' => '4']);
 
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
         $this->assertContains(
             'Page 4 doesnt exist',
@@ -356,7 +363,7 @@ class AdminControllerFindAssociatesTest extends WebTestCase
 
         $client->request('GET', '/admin/api/associates', ['page' => '-4']);
 
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
         $this->assertContains(
             'Page -4 doesnt exist',
@@ -365,7 +372,7 @@ class AdminControllerFindAssociatesTest extends WebTestCase
 
         $client->request('GET', '/admin/api/associates', ['page' => '-saf']);
 
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
         $this->assertContains(
             'Page -saf doesnt exist',
@@ -542,6 +549,20 @@ class AdminControllerFindAssociatesTest extends WebTestCase
             $user3->getAssociate()->getJoinDate()->format("Y-m-d"),
             $responseArr['associates']['0']['joinDate']
         );
+
+        $this->assertEquals(1, $responseArr['pagination']['maxPages']);
+        $this->assertEquals(1, $responseArr['pagination']['currentPage']);
+
+        $client->request('GET', '/admin/api/associates', ['nameField' => 'Isff',
+            'emailField' => 'AU', 'telephoneField' => '2']);
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $jsonResponse = $client->getResponse()->getContent();
+
+        $responseArr = json_decode($jsonResponse, true);
+
+        $this->assertEquals(0, sizeof($responseArr['associates']));
 
         $this->assertEquals(1, $responseArr['pagination']['maxPages']);
         $this->assertEquals(1, $responseArr['pagination']['currentPage']);

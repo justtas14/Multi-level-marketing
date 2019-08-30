@@ -54,7 +54,8 @@ class EmailTemplateTest extends TestCase
 
         $emailTemplate = new EmailTemplate();
         $emailTemplate->setEmailSubject("You got invited by {{senderName}}. ");
-        $emailTemplate->setEmailBody("<br/> Here is your link {{link}} <br/><br/>");
+        $emailTemplate->setEmailBody("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
+            "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link");
         $emailTemplate->setEmailType("INVITATION");
 
         $entityRepository = $this->createMock(EntityRepository::class);

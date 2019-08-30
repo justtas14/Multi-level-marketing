@@ -56,7 +56,7 @@ class Invitation
 
     public function __construct()
     {
-        $this->setInvitationCode(md5(time()));
+        $this->setInvitationCode(md5(uniqid("", true)));
         $this->setCreated(time());
     }
 
@@ -68,6 +68,14 @@ class Invitation
     {
         $this->id = $id;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     /**

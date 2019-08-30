@@ -5,12 +5,15 @@ namespace App\Tests\Controller;
 
 use App\Entity\Configuration;
 use App\Entity\EmailTemplate;
+use App\Entity\File;
+use App\Entity\Gallery;
 use App\Entity\Invitation;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\FileFormField;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class HomeControllerTest extends WebTestCase
 {

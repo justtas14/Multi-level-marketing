@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
-use App\Entity\Configuration;
 use App\Entity\ResetPassword;
 use App\Entity\User;
 use App\Form\NewPasswordType;
@@ -14,9 +13,7 @@ use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
 use App\Service\ResetPasswordManager;
-use DateTime;
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -134,6 +131,8 @@ class HomeController extends AbstractController
         }
 
         $landingContent = $configuration->getLandingContent();
+
+        $landingContent = $cm->getParsedLandingContent($landingContent);
 
         return $this->render('home/landingPage.html.twig', [
             'landingContent' => $landingContent

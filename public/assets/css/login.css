@@ -54,6 +54,7 @@
     margin: 0 auto 20px auto;
     margin-bottom: 20px;
     width: 200px;
+    text-align: center;
 }
 
 .login-buttonWrap, .invitation-buttonWrap {

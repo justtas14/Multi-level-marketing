@@ -1,0 +1,72 @@
+.file-upload {
+    background-color: #ffffff;
+    max-width: 60%;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.file-upload-content {
+    display: none;
+    text-align: center;
+}
+
+.image-upload-wrap {
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 4px dashed #1FB264;
+    padding: 0 10px;
+}
+
+.image-title-wrap {
+    padding: 0 15px 15px 15px;
+    color: #222;
+}
+
+.closeContainer #removeImage {
+    position: absolute;
+}
+
+#realMainLogo {
+    display: none;
+}
+#realTermsOfService {
+    display: none;
+}
+
+.reducePadding {
+    padding: 12px !important;
+}
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.addMargin {
+    margin-left: 0.5em;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#originalName {
+    display: none;
+}
+
+#mainLogoImagePreview {
+    display: none;
+}
+
+#termsOfServicesImagePreview {
+    display: none;
+}
+
+#mainLogoImagePreview img, #termsOfServicesImagePreview img {
+    width: 100px;
+    height: 100px;
+}

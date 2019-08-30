@@ -252,6 +252,12 @@ class AssociateManagerTest extends WebTestCase
      * associateId of associate id 2 as parent in params.
      *  - Expected to return false because parent associate of id 2 is not ancestor of user associate of id 5
      * or user is matched to parent
+     *
+     *  - Call associateManager service isAncestor method with id of associate id 5 as user and
+     * id of associate id 2 as parent in params.
+     *  - Expected to return false because by default searchByAssociate is true and method isAncestor got plain id of
+     * associates.
+     *
      */
     public function testIsAncestor()
     {
@@ -284,6 +290,15 @@ class AssociateManagerTest extends WebTestCase
 
         $isAncestor = $associateManager
             ->isAncestor($parentAssociate->getAssociateId(), $userAssociate->getAssociateId());
+
+        $this->assertFalse($isAncestor);
+
+        $userAssociate = $em->find(Associate::class, 5);
+
+        $parentAssociate = $em->find(Associate::class, 15);
+
+        $isAncestor = $associateManager
+            ->isAncestor($parentAssociate->getId(), $userAssociate->getId());
 
         $this->assertFalse($isAncestor);
     }

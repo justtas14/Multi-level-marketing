@@ -17,7 +17,12 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
-    .addEntry('app', './assets/js/app.jsx')
+    .addEntry('app', './assets/js/UserSearchTable/app.jsx')
+    // .addEntry('gallery', './assets/js/Gallery/app.js')
+    .addEntry('fileGallery', './assets/js/GalleryApp/app.js')
+    .addEntry('modal', './assets/js/GalleryApp/modalApp.js')
+    .addEntry('quill', './assets/js/GalleryApp/quillApp.js')
+    .addEntry('dragNdrop', './assets/js/DragNDrop/app.js')
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
@@ -40,6 +45,7 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
+    .enableVueLoader()
 
     // enables Sass/SCSS support
     //.enableSassLoader()
@@ -52,7 +58,7 @@ Encore
 
     // uncomment if you use API Platform Admin (composer req api-admin)
     .enableReactPreset()
-    .configureBabel(function(babelConfig) {
+    .configureBabel(function (babelConfig) {
         babelConfig.plugins.push('@babel/plugin-transform-runtime');
     })
     //.addEntry('admin', './assets/js/admin.js')

@@ -4,8 +4,63 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9c706461f4b6c567137726b22979ca2",
+    "content-hash": "9f3aaa0ce55025abffe1480093e92719",
     "packages": [
+        {
+            "name": "deanblackborough/php-quill-renderer",
+            "version": "v3.17.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deanblackborough/php-quill-renderer.git",
+                "reference": "78bb8bb80ca8d7f6613c7b41a6e1adf104e5c7da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/deanblackborough/php-quill-renderer/zipball/78bb8bb80ca8d7f6613c7b41a6e1adf104e5c7da",
+                "reference": "78bb8bb80ca8d7f6613c7b41a6e1adf104e5c7da",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2",
+                "phpunit/phpunit": "^7"
+            },
+            "suggest": {
+                "php": "^7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DBlackborough\\Quill\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dean Blackborough",
+                    "email": "dean@g3d-development.com"
+                }
+            ],
+            "description": "Render quill insert deltas to HTML, Markdown and GitHub flavoured Markdown",
+            "homepage": "http://www.transmute-coffee.com/php-quill-renderer.php",
+            "keywords": [
+                "delta",
+                "html",
+                "markdown",
+                "parse",
+                "php",
+                "quill",
+                "quilljs",
+                "renderer"
+            ],
+            "time": "2019-05-01T11:36:31+00:00"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.6.1",
@@ -1711,6 +1766,42 @@
             "time": "2018-11-05T09:00:11+00:00"
         },
         {
+            "name": "nadar/quill-delta-parser",
+            "version": "1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nadar/quill-delta-parser.git",
+                "reference": "63b3127a30833fb9f3176ed88ed5d7e91c335fa1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nadar/quill-delta-parser/zipball/63b3127a30833fb9f3176ed88ed5d7e91c335fa1",
+                "reference": "63b3127a30833fb9f3176ed88ed5d7e91c335fa1",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "nadar\\quill\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Basil Suter",
+                    "email": "git@nadar.io"
+                }
+            ],
+            "description": "A PHP library to parse Quill Deltas into HTML",
+            "time": "2019-06-06T19:54:41+00:00"
+        },
+        {
             "name": "ocramius/package-versions",
             "version": "1.4.0",
             "source": {
@@ -1987,12 +2078,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PlumTreeSystems/FileBundle.git",
-                "reference": "838d05f859d84ce7430585f0c13ec53eea2953ba"
+                "reference": "203034feb836a179be57d5841e242a49edde5d7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PlumTreeSystems/FileBundle/zipball/838d05f859d84ce7430585f0c13ec53eea2953ba",
-                "reference": "838d05f859d84ce7430585f0c13ec53eea2953ba",
+                "url": "https://api.github.com/repos/PlumTreeSystems/FileBundle/zipball/203034feb836a179be57d5841e242a49edde5d7b",
+                "reference": "203034feb836a179be57d5841e242a49edde5d7b",
                 "shasum": ""
             },
             "require": {
@@ -2025,7 +2116,7 @@
             "license": [
                 "MIT"
             ],
-            "time": "2019-06-24T12:41:00+00:00"
+            "time": "2019-08-20T15:27:52+00:00"
         },
         {
             "name": "psr/cache",

@@ -1,0 +1,27 @@
+{% extends 'bodyBase.html.twig' %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/fileGallery.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+    <div id="admin-gallery" class="admin-contentContainer">
+        <div class="card">
+            <div class="card-content">
+                {% verbatim %}
+                    <section id="gallery">
+                    </section>
+                {% endverbatim %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+ {% block javascripts %}
+     {{ parent() }}
+     <script type="text/javascript" src="{{ asset('build/fileGallery.js') }}"></script>
+ {% endblock %}

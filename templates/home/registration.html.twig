@@ -2,6 +2,11 @@
 
 {% block title %}Registration{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/dragNdrop.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
     <div class="card__container">
         <div class="card" style="margin: 0 auto; width: 60vw; min-width: 300px">
@@ -118,7 +123,18 @@
                     <div class="input-field">
                         {{ form_label(registration.associate.profilePicture) }}
                         {{ form_widget(registration.associate.profilePicture) }}
-                        {% include 'includes/errorBlock.html.twig' with { field: registration.associate.profilePicture } %}
+                        <div id="profilePicturePreview">
+                            <img src="">
+                        </div>
+                        {% verbatim %}
+                            <div id="DragAndDrop">
+                            </div>
+                        {% endverbatim %}
+                        <div id="dragAndDropError" class="error__block" style="margin-top: 0.25em">
+                        </div>
+                        <div id="submitUploadErrorBlock">
+                            {% include 'includes/errorBlock.html.twig' with { field: registration.associate.profilePicture } %}
+                        </div>
                     </div>
                     <div class="input-field">
                         {{ form_row(registration.associate.submit) }}
@@ -133,12 +149,14 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/dragNdrop.js') }}"></script>
     <script>
-        // $(document).ready(function(){
-        //     $('.datepicker').datepicker({
-        //         yearRange: [1900, ((new Date()).getFullYear())],
-        //         defaultDate: new Date('1980')
-        //     });
-        // });
+        const profilePicturePreview = document.getElementById('profilePicturePreview');
+        const dragAndDropElement = document.querySelector('.profile-image-upload-box');
+        const originalProfilePictureUpload = document.getElementById('user_registration_associate_profilePicture');
+        const dragAndDropError = document.getElementById('dragAndDropError');
+        const submitUploadErrorBlock = document.getElementById('submitUploadErrorBlock');
+        dragNdrop.instantiateSelectors(profilePicturePreview, originalProfilePictureUpload, dragAndDropError, submitUploadErrorBlock);
+        onChangeEvent();
     </script>
 {% endblock %}

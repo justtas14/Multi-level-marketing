@@ -4,19 +4,20 @@ namespace App\Controller;
 
 use App\Entity\Associate;
 use App\Entity\Configuration;
+use App\Entity\Gallery;
 use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\ChangeContentType;
+use App\Form\EditorImageType;
 use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
 use App\Form\UserSearchType;
 use App\Repository\AssociateRepository;
+use App\CustomNormalizer\GalleryNormalizer;
 use App\Service\AssociateManager;
 use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,16 +26,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serialize;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 10;
+    const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
      * @Route("/admin", name="admin")
@@ -94,22 +96,31 @@ class AdminController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $title = "";
         $emailTemplate = [];
+        $availableParameters = [];
 
         switch ($type) {
             case 'invitation':
                 $emailTemplate =
                     $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_INVITATION);
                 $title = 'Invitation email template';
+                $availableParameters = [
+                    'Sender name' => '{{ senderName }}',
+                    'Receiver name' => '{{ receiverName }}',
+                    'Invitation link' => '{{ link }}',
+                    'Opt out of service link' => '{{ optOutUrl }}'
+                ];
                 break;
             case 'password':
                 $emailTemplate =
                     $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_RESET_PASSWORD);
                 $title = 'Reset password email template';
+                $availableParameters = ['Reset password link' => '{{ link }}'];
                 break;
             case 'welcome':
                 $emailTemplate =
                     $emailTemplateManager->getEmailTemplate(EmailTemplateManager::EMAIL_TYPE_WELCOME);
                 $title = 'Welcome email template';
+                $availableParameters = ['Full user name' => '{{ name }}'];
                 break;
             default:
                 throw new NotFoundHttpException("Email template does not exist!");
@@ -120,14 +131,21 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($emailTemplate);
-            $em->flush();
+            if (!$emailTemplate->getEmailBody() || !$emailTemplate->getEmailSubject()) {
+                $this->addFlash('error', 'Please do not leave empty values');
+            } else {
+                $em->persist($emailTemplate);
+                $em->flush();
 
-            $this->addFlash('success', 'Template updated');
+                $this->addFlash('success', 'Template updated');
+            }
         }
 
         return $this->render('admin/emailTemplate.html.twig', [
-            'form' => $form->createView(), 'title' => $title
+            'form' => $form->createView(),
+            'title' => $title,
+            'emailBody' => $emailTemplate->getEmailBody(),
+            'availableParameters' => $availableParameters,
         ]);
     }
 
@@ -143,6 +161,8 @@ class AdminController extends AbstractController
 
         $configuration = $cm->getConfiguration();
 
+        $configurationContent = $configuration->getLandingContent();
+
         $form = $this->createForm(EndPrelaunchType::class, $configuration);
 
         $form->handleRequest($request);
@@ -156,7 +176,7 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/endPrelaunch.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(), 'configurationContent' => $configurationContent
         ]);
     }
 
@@ -193,21 +213,34 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($tempConfiguration->getMainLogo()) {
-                if ($configuration->getMainLogo()) {
-                    $logo = $configuration->getMainLogo();
-                    $configuration->setMainLogo(null);
-                    $fileManager->removeEntity($logo);
+            $mainLogoFileId = $form['hiddenMainLogoFile']->getData();
+            $termsOfServicesFileId = $form['hiddenTermsOfServiceFile']->getData();
+            if ($mainLogoFileId || $termsOfServicesFileId) {
+                if ($mainLogoFileId) {
+                    $originalFile = $em->getRepository(Gallery::class)->find($mainLogoFileId)->getGalleryFile();
+                    $configuration->setMainLogo($originalFile);
                 }
-                $configuration->setMainLogo($tempConfiguration->getMainLogo());
-            }
-            if ($tempConfiguration->getTermsOfServices()) {
-                if ($configuration->getTermsOfServices()) {
-                    $temp = $configuration->getTermsOfServices();
-                    $configuration->setTermsOfServices(null);
-                    $fileManager->removeEntity($temp);
+                if ($termsOfServicesFileId) {
+                    $originalFile = $em->getRepository(Gallery::class)->find($termsOfServicesFileId)->getGalleryFile();
+                    $configuration->setTermsOfServices($originalFile);
                 }
-                $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
+            } else {
+                if ($tempConfiguration->getMainLogo()) {
+                    if ($configuration->getMainLogo()) {
+                        $logo = $configuration->getMainLogo();
+                        $configuration->setMainLogo(null);
+                        $fileManager->removeEntity($logo);
+                    }
+                    $configuration->setMainLogo($tempConfiguration->getMainLogo());
+                }
+                if ($tempConfiguration->getTermsOfServices()) {
+                    if ($configuration->getTermsOfServices()) {
+                        $temp = $configuration->getTermsOfServices();
+                        $configuration->setTermsOfServices(null);
+                        $fileManager->removeEntity($temp);
+                    }
+                    $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
+                }
             }
             if ($tempConfiguration->getTosDisclaimer()) {
                 $configuration->setTosDisclaimer($tempConfiguration->getTosDisclaimer());
@@ -243,7 +276,7 @@ class AdminController extends AbstractController
                 }
                 $count = $count + 1;
                 $associates = $associateRepository
-                    ->findBy([], [], self::ASSOCIATE_LIMIT, self::ASSOCIATE_LIMIT*$count);
+                    ->findBy([], [], self::ASSOCIATE_LIMIT, self::ASSOCIATE_LIMIT * $count);
             }
             fclose($df);
         });
@@ -280,15 +313,19 @@ class AdminController extends AbstractController
 
         $numberOfPages = ceil($countAssociates / self::ASSOCIATE_LIMIT);
 
+        if ($numberOfPages == 0) {
+            $numberOfPages++;
+        }
+
         if ($page > $numberOfPages || $page < 0 || !is_numeric($page)) {
-            throw new WrongPageNumberException('Page '.$page.' doesnt exist');
+            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
         }
 
 
         $limitedAssociates = $associateRepository->findAssociatesByFilter(
             $filter,
             self::ASSOCIATE_LIMIT,
-            self::ASSOCIATE_LIMIT * ($page-1)
+            self::ASSOCIATE_LIMIT * ($page - 1)
         );
 
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer()]);
@@ -309,6 +346,7 @@ class AdminController extends AbstractController
         $response = new JsonResponse($data);
         return $response;
     }
+
     /**
      * @Route("/admin/usersearch", name="user_search")
      * @return Response
@@ -349,6 +387,212 @@ class AdminController extends AbstractController
                 ],
                 JsonResponse::HTTP_OK
             );
+        }
+    }
+
+    private function getImageTypes()
+    {
+        return [
+            'image/png',
+            'image/jpeg',
+            'image/webp',
+        ];
+    }
+
+    /**
+     * @Route("/admin/jsonGallery", name="json_gallery")
+     * @param Request $request
+     * @param GalleryNormalizer $galleryNormalizer
+     * @return JsonResponse
+     * @throws ExceptionInterface
+     */
+    public function jsonGallery(Request $request, GalleryNormalizer $galleryNormalizer)
+    {
+        $page = $request->get('page', 1);
+
+        if (!is_numeric($page)) {
+            throw new WrongPageNumberException();
+        }
+
+        $category = $request->get('category', 'all');
+        $imageLimit = $request->get('imageLimit', 20);
+
+        $em = $this->getDoctrine()->getManager();
+        $galleryRepository = $em->getRepository(Gallery::class);
+
+        switch ($category) {
+            case 'all':
+                $allFiles = $galleryRepository->countAllFiles();
+                $files = $galleryRepository->findBy(
+                    [],
+                    ['created' => 'DESC'],
+                    $imageLimit,
+                    $imageLimit * ($page - 1)
+                );
+                break;
+            case 'images':
+                $allFiles = $galleryRepository->countAllImages($this->getImageTypes());
+                $files = $galleryRepository->findByImages(
+                    $this->getImageTypes(),
+                    $imageLimit,
+                    $imageLimit * ($page - 1)
+                );
+                break;
+            case 'files':
+                $allFiles = $galleryRepository->countAllNotImages($this->getImageTypes());
+                $files = $galleryRepository->findByNotImages(
+                    $this->getImageTypes(),
+                    $imageLimit,
+                    $imageLimit * ($page - 1)
+                );
+                break;
+            default:
+                throw new NotFoundHttpException();
+        }
+
+        $numberOfPages = ceil($allFiles / $imageLimit);
+
+        if ($numberOfPages == 0) {
+            $numberOfPages++;
+        }
+
+        if (($page < 1 || $page > $numberOfPages)) {
+            throw new WrongPageNumberException('Page ' . $page . ' doesnt exist');
+        }
+
+        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer]);
+        $serializedFiles = $serializer->normalize(
+            $files,
+            null,
+            ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
+        );
+
+        $data = [
+            'files' => $serializedFiles,
+            'imageExtensions' => self::IMAGE_EXTENSIONS,
+            'pagination' => [
+                'numberOfPages' => $numberOfPages,
+                'currentPage' => $page,
+            ]
+        ];
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/admin/gallery", name="gallery")
+     */
+    public function gallery(Request $request)
+    {
+        return $this->render('admin/gallery.html.twig', []);
+    }
+
+    /**
+     * @Route("/admin/removeFile", name="remove_file")
+     */
+    public function removeFile(Request $request, GaufretteFileManager $gaufretteFileManager)
+    {
+        if ($request->isMethod('POST')) {
+            $content = $request->getContent();
+            $ids = json_decode($content, true);
+
+            $galleryId = $ids['params']['galleryId'];
+            $fileId = $ids['params']['fileId'];
+
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var Configuration $cm */
+            $cm = $em->getRepository(Configuration::class)->findOneBy([]);
+
+            $fileInUse = false;
+
+            if (($cm->getTermsOfServices() && $cm->getTermsOfServices()->getId() === $fileId)
+                || ($cm->getMainLogo() && $cm->getMainLogo()->getId() === $fileId)) {
+                $fileInUse = true;
+            } else {
+                $file = $em->getRepository(\App\Entity\File::class)->find($fileId);
+                $galleryFile = $em->getRepository(Gallery::class)->find($galleryId);
+
+                $gaufretteFileManager->remove($file);
+                $em->remove($file);
+                $em->remove($galleryFile);
+
+                $em->flush();
+            }
+
+            return new JsonResponse(
+                ['fileInUse' => $fileInUse],
+                JsonResponse::HTTP_OK
+            );
+        } else {
+            return new Response('', 200);
+        }
+    }
+
+    /**
+     * @Route("/admin/uploadFile", name="upload_file")
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
+    public function uploadEditorImage(
+        Request $request
+    ) {
+        if ($request->isMethod('POST')) {
+            $filePath = $request->getContent();
+
+            $baseUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
+
+            $absoluteUrl = $baseUrl . $filePath;
+
+            return new JsonResponse($absoluteUrl, 200);
+        } else {
+            return new Response('', 200);
+        }
+    }
+
+
+    /**
+     * @Route("/admin/uploadGalleryFile", name="upload_gallery_file")
+     * @param Request $request
+     * @param GalleryNormalizer $galleryNormalizer
+     * @return JsonResponse|Response
+     * @throws ExceptionInterface
+     */
+    public function uploadGalleryFile(
+        Request $request,
+        GalleryNormalizer $galleryNormalizer
+    ) {
+        if ($request->isMethod('POST')) {
+            $galleryFile = new Gallery();
+
+            $form = $this->createForm(EditorImageType::class, $galleryFile);
+            $form->submit($request->files->all());
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+
+                $em->persist($galleryFile);
+                $em->flush();
+
+                $galleryFile->getGalleryFile()->setUploadedFileReference(null);
+                $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer, new JsonEncoder()]);
+                $serializedFile = $serializer->normalize(
+                    $galleryFile,
+                    null,
+                    ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
+                );
+
+                return new JsonResponse(
+                    [
+                        'file' => $serializedFile
+                    ],
+                    JsonResponse::HTTP_OK
+                );
+            } else {
+                return new Response('', 200);
+            }
+        } else {
+            return new Response('', 200);
         }
     }
 }

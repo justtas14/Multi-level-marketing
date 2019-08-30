@@ -50,6 +50,10 @@ class MenuExtension extends AbstractExtension
                 'label' => 'User Search'
             ],
             [
+                'route' => 'gallery',
+                'label' => 'Gallery'
+            ],
+            [
                 'route' => 'csv',
                 'label' => 'Associate csv dump'
             ]

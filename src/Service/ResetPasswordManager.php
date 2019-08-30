@@ -36,8 +36,8 @@ class ResetPasswordManager
     private $emailTemplateManager;
 
     /**
-    * @var int
-    */
+     * @var int
+     */
     private $secondsUntilExpired;
 
     public function __construct(
@@ -46,7 +46,7 @@ class ResetPasswordManager
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
         string $invitationSender,
-        int $secondsUntilExpiredResetPassword
+        string $secondsUntilExpiredResetPassword
     ) {
         $this->em = $entityManager;
         $this->mailer = $mailer;

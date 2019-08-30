@@ -6,7 +6,6 @@ namespace App\Service;
 use App\Entity\EmailTemplate;
 use App\Exception\UnsupportedEmailTypeException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig_Environment;
 
 class EmailTemplateManager
@@ -43,13 +42,14 @@ class EmailTemplateManager
             $emailTemplate = new EmailTemplate();
             switch ($type) {
                 case self::EMAIL_TYPE_INVITATION:
-                    $emailTemplate->setEmailBody("<br/> Here is your link {{link}} <br/><br/>");
+                    $emailTemplate->setEmailBody("<br/> Here is your <a href='{{link}}'>link</a> <br/><br/>".
+                    "To opt out of this service click <a href='{{ optOutUrl }}'>this</a> link");
                     $emailTemplate->setEmailSubject("You got invited by {{senderName}}. ");
                     $emailTemplate->setEmailType(self::EMAIL_TYPE_INVITATION);
                     break;
                 case self::EMAIL_TYPE_RESET_PASSWORD:
                     $emailTemplate->setEmailBody(
-                        'To reset your password click here <a href="{{ link }}">{{ link }}</a><br/><br/>'
+                        'To reset your password click <a href="{{ link }}">here</a><br/><br/>'
                     );
                     $emailTemplate->setEmailSubject("Password Reset");
                     $emailTemplate->setEmailType(self::EMAIL_TYPE_RESET_PASSWORD);
@@ -88,6 +88,17 @@ class EmailTemplateManager
         $emailTemplateSubject = $emailTemplateEntity->getEmailSubject();
 
         $emailTemplateBody = $emailTemplateEntity->getEmailBody();
+
+        try {
+            $parser = new \DBlackborough\Quill\Parser\Html();
+            $renderer = new \DBlackborough\Quill\Renderer\Html();
+
+            $parser->load($emailTemplateBody)->parse();
+
+            $emailTemplateBody = $renderer->load($parser->deltas())->render();
+        } catch (\Exception $exception) {
+            $emailTemplateBody = $emailTemplateEntity->getEmailBody();
+        }
 
         $templateSubject = $this->twig->createTemplate($emailTemplateSubject);
 

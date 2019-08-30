@@ -47,7 +47,7 @@ class EmailTemplate
         return $this->emailSubject;
     }
 
-    public function setEmailSubject(string $emailSubject): self
+    public function setEmailSubject(?string $emailSubject): self
     {
         $this->emailSubject = $emailSubject;
 
@@ -59,7 +59,7 @@ class EmailTemplate
         return $this->emailBody;
     }
 
-    public function setEmailBody(string $emailBody): self
+    public function setEmailBody(?string $emailBody): self
     {
         $this->emailBody = $emailBody;
 

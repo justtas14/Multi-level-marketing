@@ -33,14 +33,14 @@ class InvitationManager
     private $emailTemplateManager;
 
     /**
+     * @var int
+     */
+    private $secondsUntilExpired;
+
+    /**
      * @var string
      */
     private $sender;
-
-    /**
-    * @var int
-    */
-    private $secondsUntilExpired;
 
     public function __construct(
         EntityManagerInterface $entityManager,

@@ -25,8 +25,8 @@
     background-color:#fff;
     padding:100px 20px 50px 20px;
     border-radius:5px;
-    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .invitation-item, .profile-item {
@@ -42,5 +42,11 @@
 @media screen and (max-width: 668px) {
     .invitation-container {
         width: 80%;
+    }
+}
+
+@media screen and (max-width: 940px) {
+    .sentInvitations {
+        width: 930px;
     }
 }

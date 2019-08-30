@@ -33,8 +33,8 @@ body {
     background-color:#fff;
     padding:100px 40px 50px 40px;
     border-radius:5px;
-    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .input-field.is-focused label {
@@ -55,8 +55,8 @@ body {
     background-color:#fff;
     padding:100px 20px 50px 20px;
     border-radius:5px;
-    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .card__container {
@@ -191,6 +191,13 @@ select {
 .Node__Container {
     margin: 3px 0;
 }
+
+.landingPage img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
 #user_update_associate_mobilePhone, #user_registration_associate_mobilePhone {
     display: flex
 }
@@ -200,4 +207,44 @@ select {
 
 #user_update_associate_mobilePhone_number, #user_registration_associate_mobilePhone_number {
     flex: 3;
+}
+
+.image-dropping {
+    background-color: #AAAAAA;
+    opacity: 0.4;
+    z-index: 2000;
+}
+
+@-webkit-keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+@keyframes mover {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-6px); }
+}
+
+.file-upload-input-gallery {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    opacity: 0;
+    display: none;
+}
+
+#profilePicturePreview {
+    margin-top: 0.5em;
+    display: none;
+}
+
+#profilePicturePreview img {
+    width: 100px;
+    height: 100px;
+}
+
+#dragAndDropError {
+    display: none;
 }

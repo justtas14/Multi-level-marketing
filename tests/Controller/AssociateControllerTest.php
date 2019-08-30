@@ -3,9 +3,7 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Invitation;
 use App\Entity\User;
-use App\Exception\NotAncestorException;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
@@ -125,7 +123,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -154,7 +152,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'Old password is not correct',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -188,14 +186,19 @@ class AssociateControllerTest extends WebTestCase
     /**
      *  Testing admin logged in update associate form if it updates correctly
      *
-     *  - Input all assumed correct update values in form.
+     *  - Go to /associate/profile api, expected that old phone is not correct error.
+     * Then input all assumed correct update values in form.
      *  - Expected for user to be updated all appropriate inputed values without any error.
+     *
      *  - Input all correct values except email which is already taken.
      *  - Expected flash message error to appear which states that email is already taken.
+     *
      *  - Input all correct values except old password which is not correct.
      *  - Expected flash message error to appear which states that old password is not correct.
+     *
      *  - Input all correct values except repeated new password is left blank.
      *  - After update expected that user password is not updated to blank but left with old password.
+     *
      *  - Input all correct values except now testing if profile picture remains the same if input is null
      *  - After update expected that profile picture is not null.
      */
@@ -215,6 +218,11 @@ class AssociateControllerTest extends WebTestCase
         $client = $this->makeClient();
 
         $crawler = $client->request('GET', '/associate/profile');
+
+        $this->assertContains(
+            'Prior mobile is invalid',
+            $crawler->filter('div.error__block')->html()
+        );
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -304,7 +312,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'This email already exist',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
@@ -333,7 +341,7 @@ class AssociateControllerTest extends WebTestCase
 
         $this->assertContains(
             'Old password is not correct',
-            $crawler->filter('div.error__block')->html()
+            $crawler->filter('#flash-messages')->html()
         );
 
         $crawler = $client->request('GET', '/associate/profile');
