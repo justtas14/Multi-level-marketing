@@ -48,8 +48,12 @@ class AdminControllerTest extends WebTestCase
         for ($i = 0; $i < 30; $i++) {
             $galleryFile = new Gallery();
             $galleryFile->setId($i+1);
-            $galleryFile->setCreated(new DateTime());
 
+            $date = new \DateTime();
+
+            $date->setTimestamp((time() + $i*100));
+
+            $galleryFile->setCreated($date);
             $uploadedFile  = new UploadedFile(
                 $path,
                 'PtsFileName'.($i+1),
@@ -121,7 +125,6 @@ class AdminControllerTest extends WebTestCase
      *  - Send invitation but with invalid email address.
      *  - Expected to get error message that email is invalid.
      *
-     *
      */
     public function testMailIsSentAndContentIsOk()
     {
@@ -169,7 +172,6 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
 
-
         $crawler = $client->request('GET', '/associate/invite');
 
         /** @var EmailTemplate $emailTemplateInvitation */
@@ -188,8 +190,6 @@ class AdminControllerTest extends WebTestCase
         $form->get('invitation')['email']->setValue('myemail@gmail.com');
         $form->get('invitation')['fullName']->setValue('myemail');
 
-        $client->enableProfiler();
-
         $invitationRepository = $em->getRepository(Invitation::class);
 
         $invitations = $invitationRepository->findAll();
@@ -202,8 +202,6 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(8, sizeof($invitations));
 
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-
         $this->assertSame(1, $mailCollector->getMessageCount());
 
         $collectedMessages = $mailCollector->getMessages();
@@ -213,7 +211,6 @@ class AdminControllerTest extends WebTestCase
         $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
         $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
         $this->assertSame('myemail@gmail.com', key($message->getTo()));
-
 
         $crawler = $client->request('GET', '/associate/invite');
 
@@ -696,11 +693,15 @@ class AdminControllerTest extends WebTestCase
 
         $em->refresh($configuration);
 
-        $this->assertNotNull($configuration->getTermsOfServices());
+        $termsOfServices = $configuration->getTermsOfServices();
+
+        $this->assertNotNull($termsOfServices);
         $this->assertNotNull($configuration->getMainLogo());
         $this->assertEquals('disclaimer', $configuration->getTosDisclaimer());
 
-        $client->request('HEAD', '/download/31');
+        $id = $configuration->getMainLogo()->getId();
+
+        $client->request('HEAD', '/download/'.$id);
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -1491,8 +1492,6 @@ class AdminControllerTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $container = $this->getContainer();
-
         $client->request(
             'GET',
             '/admin/jsonGallery',
@@ -1505,11 +1504,11 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(20, sizeof($responseArr['files']));
 
-        $this->assertEquals('1', $responseArr['files']['0']['id']);
-        $this->assertEquals('/download/1', $responseArr['files']['0']['filePath']);
+        $this->assertEquals('30', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/30', $responseArr['files']['0']['filePath']);
 
-        $this->assertEquals('20', $responseArr['files']['19']['id']);
-        $this->assertEquals('/download/20', $responseArr['files']['19']['filePath']);
+        $this->assertEquals('11', $responseArr['files']['19']['id']);
+        $this->assertEquals('/download/11', $responseArr['files']['19']['filePath']);
 
         $this->assertEquals(
             ['jpg','jpeg','bmp','gif','png','webp','ico'],
@@ -1531,11 +1530,11 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(10, sizeof($responseArr['files']));
 
-        $this->assertEquals('21', $responseArr['files']['0']['id']);
-        $this->assertEquals('/download/21', $responseArr['files']['0']['filePath']);
+        $this->assertEquals('10', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/10', $responseArr['files']['0']['filePath']);
 
-        $this->assertEquals('30', $responseArr['files']['9']['id']);
-        $this->assertEquals('/download/30', $responseArr['files']['9']['filePath']);
+        $this->assertEquals('1', $responseArr['files']['9']['id']);
+        $this->assertEquals('/download/1', $responseArr['files']['9']['filePath']);
 
         $this->assertEquals(2, $responseArr['pagination']['numberOfPages']);
         $this->assertEquals(2, $responseArr['pagination']['currentPage']);
@@ -1584,11 +1583,11 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(20, sizeof($responseArr['files']));
 
-        $this->assertEquals('1', $responseArr['files']['0']['id']);
-        $this->assertEquals('/download/1', $responseArr['files']['0']['filePath']);
+        $this->assertEquals('30', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/30', $responseArr['files']['0']['filePath']);
 
-        $this->assertEquals('20', $responseArr['files']['19']['id']);
-        $this->assertEquals('/download/20', $responseArr['files']['19']['filePath']);
+        $this->assertEquals('11', $responseArr['files']['19']['id']);
+        $this->assertEquals('/download/11', $responseArr['files']['19']['filePath']);
 
         $this->assertEquals(
             ['jpg','jpeg','bmp','gif','png','webp','ico'],

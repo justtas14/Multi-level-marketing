@@ -99,12 +99,6 @@
             EventBus.$on('delete', function (fileName) {
                 scope.showConfirmation('Are you sure you want to delete ' + fileName + ' file?');
             });
-            EventBus.$on('setInnerDeleteFunction', async function (params) {
-                scope.changeYesFn(() => {
-                    scope.deleteRequestFunction(params);
-                    EventBus.$emit('checkDeleted', params.fileId);
-                });
-            });
             EventBus.$on('previousPage', function () {
                 const page = null, action = 'subtract';
                 scope.changePage({page, action});

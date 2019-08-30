@@ -94,7 +94,7 @@
             const form = document.querySelector('form');
             form.addEventListener("submit", this.callback, false);
 
-            EventBus.$on('oneClickFile', (fileId, fileName, filePath) => {
+            EventBus.$on('oneClickFile', (fileId, fileName, filePath, downloadPath) => {
                 axios.post(constants.api.uploadEditorFile, filePath).then(res => {
                     const url = res.data;
                     const range = this.editor.getSelection;

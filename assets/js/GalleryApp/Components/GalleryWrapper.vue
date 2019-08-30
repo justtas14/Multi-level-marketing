@@ -49,7 +49,7 @@
               confirm: 'confirm',
               notification: 'notification',
               paginationInfo: 'paginationInfo',
-              imageExtensions: 'imageExtensions'
+              imageExtensions: 'imageExtensions',
          }),
         methods: {
             showConfirmation(message) {
@@ -98,11 +98,6 @@
             });
             EventBus.$on('delete', function (fileName) {
                 scope.showConfirmation('Are you sure you want to delete ' + fileName + ' file?');
-            });
-            EventBus.$on('setInnerDeleteFunction', function (params) {
-                scope.changeYesFn(() => {
-                    scope.deleteRequestFunction(params);
-                });
             });
             EventBus.$on('previousPage', function () {
                 const page = null, action = 'subtract';

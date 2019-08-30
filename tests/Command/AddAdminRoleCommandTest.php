@@ -38,6 +38,7 @@ class AddAdminRoleCommandTest extends WebTestCase
      *   @group legacy
      *
      * @covers \App\Command\AddAdminRoleCommand
+     *
      */
     public function testAddAdminRole()
     {

@@ -16,6 +16,11 @@ const state = {
         display: 'none',
         message: ''
     },
+    confirm: {
+        display: 'none',
+        message: '',
+    },
+    spinner: false
 };
 
 const getters = {
@@ -39,6 +44,7 @@ const actions = {
             pagination: res.data.pagination,
             imageExtensions: res.data.imageExtensions
         };
+        commit('setSpinnerState', false);
         commit('loadInfo', data);
     },
     readURL: function ({state, dispatch, commit}, params) {
@@ -84,24 +90,25 @@ const actions = {
             });
         }
     },
-    deleteRequestFunction: function ({dispatch, state, commit}, params) {
-        axios.post(constants.api.removeFile, {
+    deleteRequestFunction: async function ({dispatch, state, commit}, params) {
+        let response = await axios.post(constants.api.removeFile, {
             params: {
                 galleryId: params.fileId,
                 fileId: params.galleryFileId
             }
-        }).then(res => {
-            if (res.data.fileInUse) {
-                commit('showNotification','File ' + params.fileName + ' is already in use!');
-            } else {
-                commit('deleteFile', params.fileId);
-                commit('subtractPage');
-                dispatch('callDataAxios');
-                commit('showNotification','File ' + params.fileName + ' deleted!');
-            }
-        }).catch(function (err) {
-            console.log(err);
         });
+        commit('hideConfirmation');
+
+        if (response.data.fileInUse) {
+            commit('showNotification','File ' + params.fileName + ' is already in use!');
+            return false;
+        } else {
+            commit('deleteFile', params.fileId);
+            commit('subtractPage');
+            dispatch('callDataAxios');
+            commit('showNotification','File ' + params.fileName + ' deleted!');
+            return true;
+        }
     },
 };
 
@@ -154,10 +161,14 @@ const mutations = {
         state.notification.message = msg;
         state.notification.display = 'block';
     },
+    setSpinnerState: (state, flag) => {
+        state.spinner = flag;
+    },
     loadInfo: (state, {...data}) => {
         state.files = data.files;
         state.paginationInfo = data.pagination;
         state.imageExtensions = data.imageExtensions;
+        state.spinner = false;
     }
 };
 

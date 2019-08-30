@@ -47,6 +47,7 @@ class RemoveAssociateCommandTest extends WebTestCase
      * @covers \App\Command\RemoveAssociateCommand::__construct()
      * @covers \App\Command\RemoveAssociateCommand::configure()
      * @covers \App\Command\RemoveAssociateCommand::execute()
+     *
      */
     public function testRemoveAssociate()
     {

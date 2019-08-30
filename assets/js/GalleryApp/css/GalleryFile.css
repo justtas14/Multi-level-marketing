@@ -3,6 +3,7 @@
     height: 120px;
     border-radius: 5px 5px 0 0;
     position: relative;
+    object-fit: contain;
 }
 
 .cardContent {
@@ -58,6 +59,8 @@
     border-bottom: 1px solid #8c8c8c;
     overflow: hidden;
     z-index: 0;
+    background-image: url("../../../images/transparent-background.png");
+    background-size: 250px;
 }
 .overlay-effect {
     position: absolute;
@@ -77,9 +80,9 @@
 }
 
 .fileDownload {
-    position: relative;
     z-index: 100;
     display: block;
+    cursor: pointer;
 }
 
 .tooltip {
