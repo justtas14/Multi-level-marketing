@@ -32,6 +32,7 @@ class CreateUserCommandTest extends WebTestCase
      * @covers \App\Command\CreateUserCommand::__construct()
      * @covers \App\Command\CreateUserCommand::configure()
      * @covers \App\Command\CreateUserCommand::execute()
+     *
      */
     public function testAddedUser()
     {

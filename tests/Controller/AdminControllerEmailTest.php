@@ -38,6 +38,7 @@ class AdminControllerEmailTest extends WebTestCase
      *
      *  - Request to email template with a wrong slug parameter.
      *  - Expected to have error and 404 not found exception to be thrown.
+     *
      */
     public function testFetchEmail()
     {

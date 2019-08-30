@@ -121,7 +121,6 @@ class AdminControllerTest extends WebTestCase
      *  - Send invitation but with invalid email address.
      *  - Expected to get error message that email is invalid.
      *
-     *
      */
     public function testMailIsSentAndContentIsOk()
     {

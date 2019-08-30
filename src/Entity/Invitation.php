@@ -56,7 +56,7 @@ class Invitation
 
     public function __construct()
     {
-        $this->setInvitationCode(md5(time()));
+        $this->setInvitationCode(md5(uniqid("", true)));
         $this->setCreated(time());
     }
 

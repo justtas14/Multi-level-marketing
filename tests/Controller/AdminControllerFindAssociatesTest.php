@@ -88,6 +88,7 @@ class AdminControllerFindAssociatesTest extends WebTestCase
      *  - Expected to get 0 associate from database which has Is word in it's names, AU word in it's emails and
      * 2 number it's number;
      * Also expected to get 1 max number of pages.
+     *
      */
     public function testFindAssociates()
     {
