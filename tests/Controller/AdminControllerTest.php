@@ -48,8 +48,12 @@ class AdminControllerTest extends WebTestCase
         for ($i = 0; $i < 30; $i++) {
             $galleryFile = new Gallery();
             $galleryFile->setId($i+1);
-            $galleryFile->setCreated(new DateTime());
 
+            $date = new \DateTime();
+
+            $date->setTimestamp((time() + $i*100));
+
+            $galleryFile->setCreated($date);
             $uploadedFile  = new UploadedFile(
                 $path,
                 'PtsFileName'.($i+1),
@@ -1488,8 +1492,6 @@ class AdminControllerTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $container = $this->getContainer();
-
         $client->request(
             'GET',
             '/admin/jsonGallery',
@@ -1502,11 +1504,11 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(20, sizeof($responseArr['files']));
 
-        $this->assertEquals('1', $responseArr['files']['0']['id']);
-        $this->assertEquals('/download/1', $responseArr['files']['0']['filePath']);
+        $this->assertEquals('30', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/30', $responseArr['files']['0']['filePath']);
 
-        $this->assertEquals('20', $responseArr['files']['19']['id']);
-        $this->assertEquals('/download/20', $responseArr['files']['19']['filePath']);
+        $this->assertEquals('11', $responseArr['files']['19']['id']);
+        $this->assertEquals('/download/11', $responseArr['files']['19']['filePath']);
 
         $this->assertEquals(
             ['jpg','jpeg','bmp','gif','png','webp','ico'],
@@ -1528,11 +1530,11 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(10, sizeof($responseArr['files']));
 
-        $this->assertEquals('21', $responseArr['files']['0']['id']);
-        $this->assertEquals('/download/21', $responseArr['files']['0']['filePath']);
+        $this->assertEquals('10', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/10', $responseArr['files']['0']['filePath']);
 
-        $this->assertEquals('30', $responseArr['files']['9']['id']);
-        $this->assertEquals('/download/30', $responseArr['files']['9']['filePath']);
+        $this->assertEquals('1', $responseArr['files']['9']['id']);
+        $this->assertEquals('/download/1', $responseArr['files']['9']['filePath']);
 
         $this->assertEquals(2, $responseArr['pagination']['numberOfPages']);
         $this->assertEquals(2, $responseArr['pagination']['currentPage']);
@@ -1581,11 +1583,11 @@ class AdminControllerTest extends WebTestCase
 
         $this->assertEquals(20, sizeof($responseArr['files']));
 
-        $this->assertEquals('1', $responseArr['files']['0']['id']);
-        $this->assertEquals('/download/1', $responseArr['files']['0']['filePath']);
+        $this->assertEquals('30', $responseArr['files']['0']['id']);
+        $this->assertEquals('/download/30', $responseArr['files']['0']['filePath']);
 
-        $this->assertEquals('20', $responseArr['files']['19']['id']);
-        $this->assertEquals('/download/20', $responseArr['files']['19']['filePath']);
+        $this->assertEquals('11', $responseArr['files']['19']['id']);
+        $this->assertEquals('/download/11', $responseArr['files']['19']['filePath']);
 
         $this->assertEquals(
             ['jpg','jpeg','bmp','gif','png','webp','ico'],
