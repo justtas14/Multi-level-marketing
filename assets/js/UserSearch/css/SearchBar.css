@@ -1,0 +1,86 @@
+.md-field {
+    width: 100%;
+    min-height: 48px;
+    min-width: 100px;
+    margin: 4px 0 24px;
+    padding-top: 16px;
+    display: flex;
+    position: relative;
+    font-family: inherit;
+}
+
+.md-field label {
+    position: absolute;
+    top: 23px;
+    left: 0;
+    pointer-events: none;
+    transition: .4s cubic-bezier(.25,.8,.25,1);
+    transition-duration: .3s;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.md-field .active {
+    top: 0;
+    color: #3ab54a;
+    font-size: 12px;
+}
+
+.md-input {
+    border-bottom-color: #3ab54a !important;
+    color: unset !important;
+    margin: 0 !important;
+}
+input[type=text]:not(.browser-default):focus:not([readonly]) {
+    box-shadow: #3ab54a 0 0.976219px 0 0 !important;
+}
+
+.searchBar-container {
+    margin: 1em;
+}
+
+.searchBar-inputContainer {
+    margin-top:10px;
+    padding:0 0 0 15px;
+    white-space: nowrap;
+}
+
+.searchBar-inputEmailContainer {
+    margin-top:10px;
+    padding:0 10px 0 15px;
+    white-space: nowrap;
+}
+
+.searchBar-inputPhoneContainer {
+    margin-top:10px;
+    padding:0 20px 0 10px;
+    white-space: nowrap;
+}
+
+.searchBar-inputLevelContainer {
+    margin-top:10px;
+    padding:0 0 5px 0;
+    font-size: 16px;
+    color: grey;
+    overflow-x: hidden;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.searchBar-inputDateContainer {
+    margin-top:10px;
+    padding:0 0 5px 0;
+    font-size: 16px;
+    color: grey;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.searchBar-inputActionContainer {
+    margin-top:10px;
+    padding:0 0 5px 0;
+    font-size: 16px;
+    color: grey;
+    text-align: center;
+    white-space: nowrap;
+}

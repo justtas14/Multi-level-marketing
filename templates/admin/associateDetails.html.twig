@@ -2,6 +2,12 @@
 
 {% block title %}User details{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/userSearch.css') }}" rel="stylesheet">
+    <link href="{{ asset('build/confirmation.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -19,10 +25,16 @@
                     {% endfor %}
                 </div>
                 <div class="userDetails__mainContainer">
+                    {{ form_start(form, {'attr': {'style': 'display:none'}}) }}
+                        {{ form_widget(form.associateParentId) }}
+                        {{ form_widget(form.associateId) }}
+                        {{ form_widget(form.deleteAssociateId) }}
+                    {{ form_end(form) }}
                     <div class="userDetails__container__mainInfo">
                         <span class="card-title addBottom userDetailsTitle">Associate details</span>
+                        <hr class="separation__line">
                         <div class="userDetails__container">
-                            {% include 'includes/other/associateDetails.twig' with {'associate': associate } %}
+                            {% include 'includes/other/associateDetails.twig' with {'associate': associate, 'deleteAssociate' : true} %}
                         </div>
                     </div>
                     {% if associate.ParentId != -1 %}
@@ -31,6 +43,7 @@
                             <span class="card-title">Sponsor details</span>
                             <a href="{{ path('user_search_details', {id : associate.getParentId}) }}" class="btn">Inspect</a>
                         </div>
+                        <hr class="separation__line">
                         <div class="userDetails__container">
                             {% include 'includes/other/associateDetails.twig' with {'associate': associate.parent, 'changeParent': 1 } %}
                         </div>
@@ -49,7 +62,10 @@
                             Choose new parent
                         </div>
                         <div class="modal-body">
-                            <div id="root"></div>
+                            {% verbatim %}
+                                <section id="user-search">
+                                </section>
+                            {% endverbatim %}
                         </div>
                     </div>
                 </div>
@@ -65,23 +81,56 @@
             </div>
         </div>
         {% include 'includes/other/recentInvitations.twig' with {'route': 'user_search_details', 'associateId': associate.id} %}
+        {% verbatim %}
+            <section id="confirmation">
+            </section>
+        {% endverbatim %}
     </div>
-
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/confirmation.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/userSearch.js') }}"></script>
     {% if associate.ParentId != -1 %}
         <script src="{{ asset('assets/js/modal.js') }}"></script>
-        <script>
-            window.mainAction = (id) => {
-
-
-
-                console.log(id);
-            };
-            window.mainActionLabel = 'Choose';
-        </script>
-        <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
     {% endif %}
+        <script>
+            const deleteBtn = document.getElementById('deleteBtn');
+            const currentAssociateId = '{{ associate.id }}';
+            const form = document.querySelector('form');
+            const deleteAssociateId = document.getElementById('associate_modification_deleteAssociateId');
+            const associateParentIdField = document.getElementById('associate_modification_associateParentId');
+            const associateIdField = document.getElementById('associate_modification_associateId');
+            deleteAssociateId.value = null;
+            associateParentIdField.value = null;
+            associateIdField.value = null;
+
+            deleteBtn.onclick = () => {
+                const confirm = {
+                    display: 'block',
+                    message:'Are you sure you want to delete ' + '{{ associate.fullName }}' + '?'
+                };
+                const yesClickFn = () => {
+                    deleteAssociateId.value = currentAssociateId;
+                    form.submit();
+                };
+                Widgets.confirmation.confirmationFun('#confirmation', confirm, yesClickFn);
+            };
+
+            const mainAction = {
+                fun: (id) => {
+                    associateParentIdField.value = id;
+                    associateIdField.value = currentAssociateId;
+                    form.submit();
+                },
+                confirm: {
+                    message: (associateName) => {
+                        return 'Are you sure want to change '
+                            + '{{ associate.fullName }}' + ' parent to ' + associateName + '?';
+                    }
+                }
+            };
+            Widgets.userSearch.userSearchFun('#user-search', mainAction, 'Choose');
+        </script>
 {% endblock %}

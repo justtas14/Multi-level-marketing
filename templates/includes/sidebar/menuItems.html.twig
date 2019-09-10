@@ -1,8 +1,8 @@
 {% block menuItems %}
     {% set currentRoute = app.request.get('_route') %}
     {% set allRoutes = getMenu() %}
-    {% if is_granted('ROLE_ADMIN') %}
     <div class="sidebar-menu">
+    {% if is_granted('ROLE_ADMIN') %}
         <div class="sidebar-item sidebar__sectionLabel">
             Admin 
         </div>
@@ -33,6 +33,5 @@
         <div class="sidebar-itemLast">
             <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
         </div>
-
     </div>
 {% endblock %}

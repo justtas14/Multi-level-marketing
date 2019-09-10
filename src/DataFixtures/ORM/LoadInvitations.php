@@ -19,7 +19,7 @@ class LoadInvitations extends Fixture implements DependentFixtureInterface
             $this->getReference('user4'),
             $this->getReference('user12'),
             $this->getReference('user4'),
-            $this->getReference('user23'),
+            $this->getReference('user22'),
             $this->getReference('user10')
         ];
         for ($i = 0; $i < 6; $i++) {

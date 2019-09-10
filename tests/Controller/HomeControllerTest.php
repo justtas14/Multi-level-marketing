@@ -569,7 +569,7 @@ class HomeControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];

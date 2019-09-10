@@ -729,4 +729,44 @@ class AssociateControllerTest extends WebTestCase
             $client->getResponse()->getContent()
         );
     }
+
+    /**
+     *  Testing recent paginations pagination and status codes if user inputs various pages.
+     *
+     *  - Request to /associate/invite page with param of page equal 0.
+     *  - Expected to get 200 status code.
+     *
+     *  - Request to /associate/invite page with param of page equal 'fasfa'.
+     *  - Expected to get 404 status code and page not found message.
+     *
+     *  - Request to /associate/invite page with param of page equal 400.
+     *  - Expected to get 404 status code and page 400 not found message.
+     */
+    public function testRecentInvitationsPagination()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user21');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $client->request('GET', '/associate/invite', ['page' => 1]);
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+
+        $client->request('GET', '/associate/invite', ['page' => 'fasfsa']);
+
+        $this->assertEquals(404, $client->getResponse()->getStatusCode());
+
+        $this->assertContains('Page not found', $client->getResponse()->getContent());
+
+        $client->request('GET', '/associate/invite', ['page' => 400]);
+
+        $this->assertContains('Page 400 doesnt exist', $client->getResponse()->getContent());
+    }
 }

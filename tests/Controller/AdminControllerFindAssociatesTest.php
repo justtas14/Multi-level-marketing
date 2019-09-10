@@ -375,7 +375,7 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
         $this->assertContains(
-            'Page -saf doesnt exist',
+            'Page not found',
             $client->getResponse()->getContent()
         );
 

@@ -53,7 +53,7 @@ class RemoveAssociateCommandTest extends WebTestCase
     {
         $em = $this->fixtures->getManager();
 
-        $user = $em->find(User::class, 23);
+        $user = $em->find(User::class, 22);
 
         $email = $user->getEmail();
 

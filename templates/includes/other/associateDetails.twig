@@ -4,8 +4,12 @@
     {% else%}
         <img class="userDetails__picture" src="{{ asset('assets/images/profile.jpg') }}" />
     {% endif %}
+        <div class="user__name">{{ associate.fullName }}</div>
+    {% if deleteAssociate is defined and deleteAssociate == 1 %}
+        <a id="deleteBtn" class="btn btnAction">Delete user</a>
+    {% endif %}
     {% if changeParent is defined and changeParent == 1 %}
-        <a id="modalBtn" class="btn changeParent">Change parent</a>
+        <a id="modalBtn" class="btn btnAction">Change parent</a>
     {% endif %}
 </div>
 
@@ -29,6 +33,7 @@
                 {{ associate.homePhone }}
             {% endif %}
         </li>
+        <Hr class="separation__line">
         <li class="userDetails__info__item">
             <b>Country</b>:
             {% if associate.country == '' %}
@@ -61,6 +66,7 @@
                 {{ associate.address2 }}
             {% endif %}
         </li>
+        <Hr class="separation__line">
         <li class="userDetails__info__item">
             <b>Post code</b>:
             {% if associate.postCode == '' %}
@@ -72,6 +78,7 @@
         <li class="userDetails__info__item"><b>Date of birth</b>: {{ associate.dateOfBirth|date('d-m-Y') }}</li>
         <li class="userDetails__info__item"><b>Join Date</b>: {{ associate.joinDate|date('d-m-Y') }}</li>
         <li class="userDetails__info__item"><b>Level</b>: {{ associate.level }}</li>
+        <Hr class="separation__line">
         <li class="userDetails__info__item">
             <b>Is agreed to email updates </b>:
             {% if associate.agreedToEmailUpdates == 0 %}

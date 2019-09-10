@@ -52,17 +52,6 @@ class PureAdminTest extends WebTestCase
 
         $em->refresh($user);
 
-        $email = $user->getEmail();
-
-        $output = $this->runCommand(
-            'app:remove:associate',
-            [
-                'email' => $email
-            ]
-        )->getDisplay();
-
-        $this->assertContains('Associate successfully removed', $output);
-
         $this->loginAs($user, 'main');
 
         $client = $this->makeClient();
@@ -182,17 +171,6 @@ class PureAdminTest extends WebTestCase
 
         $em->refresh($user);
 
-        $email = $user->getEmail();
-
-        $output = $this->runCommand(
-            'app:remove:associate',
-            [
-                'email' => $email
-            ]
-        )->getDisplay();
-
-        $this->assertContains('Associate successfully removed', $output);
-
         $this->loginAs($user, 'main');
 
         $client = $this->makeClient();
@@ -263,17 +241,6 @@ class PureAdminTest extends WebTestCase
         $user = $this->fixtures->getReference('user23');
 
         $em->refresh($user);
-
-        $email = $user->getEmail();
-
-        $output = $this->runCommand(
-            'app:remove:associate',
-            [
-                'email' => $email
-            ]
-        )->getDisplay();
-
-        $this->assertContains('Associate successfully removed', $output);
 
         $this->loginAs($user, 'main');
 

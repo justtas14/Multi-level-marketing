@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\CustomNormalizer\AssociateNormalizer;
 use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\Gallery;
@@ -10,6 +11,7 @@ use App\Entity\User;
 use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
 use App\Form\ChangeContentType;
+use App\Form\AssociateModificationType;
 use App\Form\EditorImageType;
 use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
@@ -291,13 +293,12 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/admin/api/associates", name="user_search_associates")
-     * @param int $page
      * @param Request $request
+     * @param AssociateNormalizer $associateNormalizer
      * @return JsonResponse
      * @throws ExceptionInterface
-     * @throws WrongPageNumberException
      */
-    public function findAssociates(Request $request)
+    public function findAssociates(Request $request, AssociateNormalizer $associateNormalizer)
     {
         $nameField = $request->get('nameField');
         $emailField = $request->get('emailField');
@@ -326,7 +327,7 @@ class AdminController extends AbstractController
             self::ASSOCIATE_LIMIT * ($page - 1)
         );
 
-        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer()]);
+        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $associateNormalizer]);
         $serializedAssociates = $serializer->normalize(
             $limitedAssociates,
             null,
@@ -366,6 +367,9 @@ class AdminController extends AbstractController
      */
     public function userSearchDetails($id, Request $request, AssociateManager $associateManager)
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         $em = $this->getDoctrine()->getManager();
 
         $page = $request->get('page', 1);
@@ -373,10 +377,50 @@ class AdminController extends AbstractController
         if (!is_numeric($page)) {
             throw new WrongPageNumberException();
         }
+        /** @var Associate $associateToDisplay */
+        $associateToDisplay = $associateManager->getAssociate($id);
 
-        $associate = $associateManager->getAssociate($id);
+        $form = $this->createForm(AssociateModificationType::class);
 
-        $user = $em->getRepository(User::class)->findOneBy(['associate' => $associate]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $associateParentId = $form['associateParentId']->getData();
+            $associateId = $form['associateId']->getData();
+            $deleteAssociateId = $form['deleteAssociateId']->getData();
+            if ($associateParentId != null && $associateId != null) {
+                if ($associateParentId === $associateId) {
+                    $this->addFlash('error', 'Cannot change associate parent');
+                } elseif ($associateManager->isAncestor($associateParentId, $associateId, false)) {
+                    $this->addFlash('error', 'Cannot change associate parent');
+                } else {
+                    $associateManager->changeAssociateParent($associateId, $associateParentId);
+                    $this->addFlash('success', 'Parent successfully changed');
+                }
+            } elseif ($deleteAssociateId != null) {
+                $deleteAssociate = $associateManager->getAssociate($deleteAssociateId);
+                $loggedInAssociate = $user->getAssociate();
+
+                if ($loggedInAssociate == $deleteAssociate) {
+                    $this->addFlash('error', 'You cannot delete yourself');
+                } else {
+                    $deleteAssociateFullName = $deleteAssociate->getFullName();
+                    $deleteAssociateUser = $em->getRepository(User::class)
+                        ->findOneBy(['associate' => $deleteAssociate]);
+                    $isDeleted = $associateManager->deleteAssociate($deleteAssociate);
+                    if (!$isDeleted) {
+                        $this->addFlash('error', 'Cannot delete user with children');
+                    } else {
+                        /** @var User $deleteAssociateUser */
+                        $associateManager->deleteUser($deleteAssociateUser);
+                        $this->addFlash('success', 'User ' .$deleteAssociateFullName. ' deleted');
+                        return $this->redirectToRoute('user_search');
+                    }
+                }
+            }
+        }
+
+        $user = $em->getRepository(User::class)->findOneBy(['associate' => $associateToDisplay]);
 
         $invitationRepository = $em->getRepository(Invitation::class);
 
@@ -391,27 +435,28 @@ class AdminController extends AbstractController
             self::INVITATION_LIMIT * ($page-1)
         );
 
-        if (!$associate) {
+        if (!$associateToDisplay) {
             throw new NotFoundHttpException("User with id ".$id." is not found");
         }
 
-        $level = $associateManager->getNumberOfLevels($associate->getAssociateId());
+        $level = $associateManager->getNumberOfLevels($associateToDisplay->getAssociateId());
 
         $associateInLevels = [];
 
         for ($i = 1; $i <= $level; $i++) {
             $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
                 $i,
-                $associate->getAssociateId()
+                $associateToDisplay->getAssociateId()
             );
         }
 
         return $this->render('admin/associateDetails.html.twig', [
-            'associate' => $associate,
+            'associate' => $associateToDisplay,
             'associatesInLevels' => $associateInLevels,
             'invitations' => $invitations,
             'numberOfPages' => $numberOfPages,
-            'currentPage' => $page
+            'currentPage' => $page,
+            'form' => $form->createView()
         ]);
     }
 
@@ -517,6 +562,7 @@ class AdminController extends AbstractController
         $data = [
             'files' => $serializedFiles,
             'imageExtensions' => self::IMAGE_EXTENSIONS,
+            'imageTypes' => $this->getImageTypes(),
             'pagination' => [
                 'numberOfPages' => $numberOfPages,
                 'currentPage' => $page,

@@ -6,7 +6,7 @@ const state = {
     dataLoaded: false,
     files: [],
     paginationInfo: {
-        'currentPage': 1
+        'currentPage': 1,
     },
     filesPerPage: 20,
     imageExtensions: [],
@@ -42,24 +42,26 @@ const actions = {
         const data = {
             files: res.data.files,
             pagination: res.data.pagination,
-            imageExtensions: res.data.imageExtensions
+            imageExtensions: res.data.imageExtensions,
+            imageTypes: res.data.imageTypes
         };
         commit('setSpinnerState', false);
         commit('loadInfo', data);
     },
-    readURL: function ({state, dispatch, commit}, params) {
-        const input = params.e.target;
+    readURL: function ({state, dispatch, commit}, e) {
+        const input = e.target;
         if (input.files && input.files[0]) {
             const reader = new FileReader();
 
             reader.onload = (e) => {
                 const file = input.files[0];
                 commit('changeYesFn', () => {
+                    commit('changeConfirmation', {display:'none'});
                     dispatch('saveToServer', file);
                     input.value = '';
                 });
                 input.value = '';
-                params.confirmation('Add ' + file.name + ' file?');
+                commit('changeConfirmation', {display: 'block', message: 'Add ' + file.name + ' file?'})
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -82,7 +84,20 @@ const actions = {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(res => {
-                commit('insertImage', res.data.file);
+                switch (state.category) {
+                    case 'images':
+                        if (state.imageTypes.includes(res.data.file.mimeType)) {
+                            commit('insertImage', res.data.file);
+                        }
+                    break;
+                    case 'files' :
+                        if (!state.imageTypes.includes(res.data.file.mimeType)) {
+                            commit('insertImage', res.data.file);
+                        }
+                    break;
+                    default:
+                        commit('insertImage', res.data.file);
+                }
                 commit('showNotification', 'File '+file.name+' added!');
                 dispatch('callDataAxios');
             }).catch(function (err) {
@@ -97,8 +112,6 @@ const actions = {
                 fileId: params.galleryFileId
             }
         });
-        commit('hideConfirmation');
-
         if (response.data.fileInUse) {
             commit('showNotification','File ' + params.fileName + ' is already in use!');
             return false;
@@ -161,6 +174,14 @@ const mutations = {
         state.notification.message = msg;
         state.notification.display = 'block';
     },
+    changeConfirmation: (state, obj) => {
+        if (obj.message) {
+            state.confirm.message = obj.message;
+        }
+        if (obj.display) {
+            state.confirm.display = obj.display;
+        }
+    },
     setSpinnerState: (state, flag) => {
         state.spinner = flag;
     },
@@ -168,6 +189,7 @@ const mutations = {
         state.files = data.files;
         state.paginationInfo = data.pagination;
         state.imageExtensions = data.imageExtensions;
+        state.imageTypes = data.imageTypes;
         state.spinner = false;
     }
 };

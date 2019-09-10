@@ -6,6 +6,7 @@ namespace App\Tests\Service;
 use App\Entity\Associate;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
+use App\Repository\AssociateRepository;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -301,5 +302,61 @@ class AssociateManagerTest extends WebTestCase
             ->isAncestor($parentAssociate->getId(), $userAssociate->getId());
 
         $this->assertFalse($isAncestor);
+    }
+
+    /** Testing changeParent service method if it correctly changes associates parent
+     *
+     *  - Call associateManager service changeParent method with associateId of associate id 3 as user and
+     * associateId of associate id 2 as parent in params.
+     *  - Expected for associate with id 3 parent be associate with id 2. Also expected to be changed
+     * associate with id 3 children ancestor appropriately.
+     *
+     *  - Call associateManager service changeParent method with associateId of associate id 3 as user and
+     * associateId of associate id 1 as parent in params.
+     *  - Expected for associate with id 3 parent be returned associate with id 1. Also expected to be changed
+     * associate with id 3 children ancestor appropriately back like it was before test.
+     *
+     */
+    public function testChangeParent()
+    {
+        $container = $this->getContainer();
+        $associateManager = $container->get('App\Service\AssociateManager');
+
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+        $this->login($user);
+
+        $em->refresh($user);
+
+        /** @var Associate $associate */
+        $associate = $em->find(Associate::class, 3);
+
+        $associateChildren = $associateManager->getAllAssociateChildren($associate);
+
+        $associateManager->changeAssociateParent(3, 2);
+
+        $this->assertEquals('2', $associate->getParentId());
+
+        $associateChildrenAncestors = ['|1|2|3|', '|1|2|3|', '|1|2|3|6|', '|1|2|3|7|', '|1|2|3|7|', '|1|2|3|7|',
+            '|1|2|3|7|12|', '|1|2|3|7|12|', '|1|2|3|7|12|17|', '|1|2|3|7|12|17|'];
+
+        for ($i = 0; $i < sizeof($associateChildren); $i++) {
+            $this->assertEquals($associateChildrenAncestors[$i], $associateChildren[$i]->getAncestors());
+        }
+
+        $associateChildren = $associateManager->getAllAssociateChildren($associate);
+
+        $associateManager->changeAssociateParent(3, 1);
+
+        $this->assertEquals('1', $associate->getParentId());
+
+        $associateChildrenAncestors = ['|1|3|', '|1|3|', '|1|3|6|', '|1|3|7|', '|1|3|7|', '|1|3|7|',
+            '|1|3|7|12|', '|1|3|7|12|', '|1|3|7|12|17|', '|1|3|7|12|17|'];
+
+        for ($i = 0; $i < sizeof($associateChildren); $i++) {
+            $this->assertEquals($associateChildrenAncestors[$i], $associateChildren[$i]->getAncestors());
+        }
     }
 }

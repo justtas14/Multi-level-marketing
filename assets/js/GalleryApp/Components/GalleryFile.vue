@@ -74,6 +74,7 @@
                     fileName: this.file.galleryFile.originalName
                 };
                 this.changeYesFn(async () => {
+                    this.changeConfirmation({display:'none'});
                     this.isDeleted = true;
                     const isDeleted = await this.deleteRequestFunction(params);
                     if (isDeleted) {
@@ -126,6 +127,7 @@
             },
             ...mapMutations('gallery', [
                 'changeYesFn',
+                'changeConfirmation'
             ]),
             ...mapActions('gallery', [
                 'deleteRequestFunction',

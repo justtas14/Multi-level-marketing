@@ -123,4 +123,12 @@ class AssociateRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+    public function findAllAssociateChildren($childrenAncestorsFilter)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.ancestors LIKE :ancestors')
+            ->setParameter('ancestors', $childrenAncestorsFilter.'%')
+            ->getQuery()
+            ->getResult();
+    }
 }

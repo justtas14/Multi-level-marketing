@@ -12,6 +12,12 @@
                     v-bind:message="notification.message"
                     v-bind:style="{display: notification.display}"
                 />
+                <Confirmation
+                        @hideConfirmation="hideConfirmation"
+                        v-bind:confirm="confirm"
+                        v-bind:style="{display: confirm.display}"
+                        v-bind:yesClickFn="yesClickFn"
+                />
             </div>
         </div>
         <Pagination v-bind:paginationInfo="paginationInfo"/>
@@ -20,17 +26,20 @@
 
 <script>
     import Pagination from './GalleryPagination';
+    import Confirmation from "../../Confirmation/Components/Confirmation";
     import Notification from './GalleryNotification';
     import GalleryFileList from "./GalleryFileList";
+    import { mapMutations } from 'vuex'
 
     export default {
         name: 'Gallery',
         props: ['files', 'notification', 'paginationInfo',
-            'imageExtensions', 'constants'],
+            'imageExtensions', 'constants', 'confirm', 'yesClickFn'],
         components: {
             Pagination,
             Notification,
-            GalleryFileList
+            GalleryFileList,
+            Confirmation
         },
         data() {
             return {
@@ -39,7 +48,15 @@
         mounted() {
         },
         methods: {
-
+            hideConfirmation: function () {
+                const confirm = {
+                    display: 'none'
+                };
+                this.changeConfirmation(confirm);
+            },
+            ...mapMutations('gallery', [
+                'changeConfirmation'
+            ])
         },
     }
 </script>

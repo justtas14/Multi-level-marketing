@@ -16,11 +16,12 @@ const gallery = new Vue({
     },
     mounted() {
         EventBus.$on('oneClickFile',  (fileId, fileName, filePath, downloadPath) => {
-            console.log(downloadPath);
             window.location.href = downloadPath;
         });
     }
 });
 
 window.gallery = gallery;
+
+
 

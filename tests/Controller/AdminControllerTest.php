@@ -664,7 +664,7 @@ class AdminControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
@@ -721,7 +721,7 @@ class AdminControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
@@ -760,7 +760,7 @@ class AdminControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
@@ -790,7 +790,7 @@ class AdminControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         $ptsFile = new File();
 
@@ -839,7 +839,7 @@ class AdminControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
@@ -874,7 +874,7 @@ class AdminControllerTest extends WebTestCase
         $this->assertNotNull($configuration->getTermsOfServices());
         $this->assertNotNull($configuration->getMainLogo());
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];
@@ -931,7 +931,7 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals('-1', $responseArr['id']);
         $this->assertEquals("Company", $responseArr['title']);
         $this->assertEquals('-2', $responseArr['parentId']);
-        $this->assertEquals('2', $responseArr['numberOfChildren']);
+        $this->assertEquals('1', $responseArr['numberOfChildren']);
 
         $client->request('GET', '/admin/api/explorer', ['id' => '3']);
 
@@ -1027,7 +1027,7 @@ class AdminControllerTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $crawler = $client->request('GET', '/admin/usersearch');
+        $crawler = $client->request('GET', '/admin/users');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -1124,7 +1124,6 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals('', $client->getResponse()->getContent());
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files/test.png';
-
         $gaufretteFilteManager = $container->get('pts_file.manager');
 
         $ptsFile = new File();
@@ -1375,7 +1374,7 @@ class AdminControllerTest extends WebTestCase
 
         $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
 
-        $form = $crawler->selectButton('Change content')->form();
+        $form = $crawler->selectButton('Update')->form();
 
         /** @var FileFormField $fileInput */
         $fileInput = $form->get('change_content')['mainLogo'];

@@ -23,7 +23,7 @@ class ChangeContentType extends AbstractType
                 'label' => 'Terms of Services disclaimer content'
             ])
             ->add('Submit', SubmitType::class, [
-                'label' => 'Change content',
+                'label' => 'Update',
                 'attr' => [
                     'class' => 'waves-effect waves-light btn'
                 ]

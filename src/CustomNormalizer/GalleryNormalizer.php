@@ -31,7 +31,6 @@ class GalleryNormalizer implements ContextAwareNormalizerInterface
         $this->normalizer->setSerializer($serializer);
         $data = $this->normalizer->normalize($gallery, $format, $context);
 
-
         $data['filePath'] = $this->gaufretteFileManager->generateDownloadUrl($gallery->getGalleryFile());
 
         return $data;

@@ -248,7 +248,7 @@ class LoadUsers extends Fixture
             '22',
             'IsabelleMoran@jourrapide.com',
             '1234',
-            ['ROLE_USER'],
+            ['ROLE_ADMIN','ROLE_USER'],
             'Isabelle Moran',
             '1957-06-01',
             '144147',
@@ -263,7 +263,9 @@ class LoadUsers extends Fixture
             'Pure admin',
             '1900-06-01',
             '78521521',
-            $manager
+            $manager,
+            null,
+            true
         );
 
         $manager->flush();
@@ -276,8 +278,10 @@ class LoadUsers extends Fixture
      * @param $roles
      * @param $fullName
      * @param $birthDate
+     * @param $telephone
      * @param $manager
      * @param null $parent
+     * @param bool $onlyUser
      * @return User
      * @throws Exception
      */
@@ -290,29 +294,33 @@ class LoadUsers extends Fixture
         $birthDate,
         $telephone,
         $manager,
-        $parent = null
+        $parent = null,
+        $onlyUser = false
     ) {
         $user = new User();
-        $associate = new Associate();
 
         $user->setId($nr);
         $user->setEmail($email);
         $user->setPlainPassword($plainPassword);
         $user->setRoles($roles);
 
-        $associate->setId($nr);
-        $associate->setFullName($fullName);
-        $associate->setEmail($email);
-        $associate->setDateOfBirth(new DateTime($birthDate));
-        $associate->setMobilePhone($telephone);
+        if (!$onlyUser) {
+            $associate = new Associate();
+            $associate->setId($nr);
+            $associate->setFullName($fullName);
+            $associate->setEmail($email);
+            $associate->setDateOfBirth(new DateTime($birthDate));
+            $associate->setMobilePhone($telephone);
+            $user->setAssociate($associate);
+            /** @var ObjectManager $manager */
+            $manager->persist($associate);
+        }
+
         /** @var User $parent */
         if ($parent) {
             $associate->setParent($parent->getAssociate());
         }
-        $user->setAssociate($associate);
 
-        /** @var ObjectManager $manager */
-        $manager->persist($associate);
         $manager->persist($user);
 
         $this->addReference('user' . $nr, $user);

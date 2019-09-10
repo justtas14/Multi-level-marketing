@@ -4,6 +4,7 @@
 namespace App\Service;
 
 use App\Entity\Associate;
+use App\Entity\Invitation;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
 use App\Repository\AssociateRepository;
@@ -20,10 +21,14 @@ class AssociateManager
     /** @var TokenStorageInterface $tokenStorage */
     private $tokenStorage;
 
+    /** @var AssociateRepository $associateRepository */
+    private $associateRepository;
+
     public function __construct(EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage)
     {
         $this->em = $entityManager;
         $this->tokenStorage = $tokenStorage;
+        $this->associateRepository = $this->em->getRepository(Associate::class);
     }
 
     /**
@@ -47,11 +52,9 @@ class AssociateManager
             throw new NotAncestorException('Given parent is not in user downline');
         }
 
-        $associateRepository = $this->em->getRepository(Associate::class);
+        $associate = $this->associateRepository->findOneBy(['associateId' => $parentAssociateId]);
 
-        $associate = $associateRepository->findOneBy(['associateId' => $parentAssociateId]);
-
-        $allDirectAssociates = $associateRepository->findAllDirectAssociates(
+        $allDirectAssociates = $this->associateRepository->findAllDirectAssociates(
             $associate->getId()
         );
 
@@ -65,12 +68,11 @@ class AssociateManager
      */
     public function getNumberOfLevels(?string $associateId = null) : int
     {
-        $associateRepository = $this->em->getRepository(Associate::class);
-        $levels = $associateRepository->findMaxLevel();
+        $levels = $this->associateRepository->findMaxLevel();
 
         if ($associateId) {
-            $associate = $associateRepository->findOneBy(['associateId' => $associateId]);
-            $maxLevel = $associateRepository->findMaxLevel($associate->getAncestors().$associate->getId());
+            $associate = $this->associateRepository->findOneBy(['associateId' => $associateId]);
+            $maxLevel = $this->associateRepository->findMaxLevel($associate->getAncestors().$associate->getId());
             $levels = ($maxLevel)? ($maxLevel - $associate->getLevel()) : 0;
         }
 
@@ -79,13 +81,11 @@ class AssociateManager
 
     public function isAncestor($associateChildId, $parentAssociateId, $searchByAssociateId = true)
     {
-        $associateRepository = $this->em->getRepository(Associate::class);
-
-        $parentAssociate = $associateRepository->findOneBy([
+        $parentAssociate = $this->associateRepository->findOneBy([
             ($searchByAssociateId ? 'associateId' : 'id') => $parentAssociateId
         ]);
 
-        $childAssociate = $associateRepository->findOneBy([
+        $childAssociate = $this->associateRepository->findOneBy([
             ($searchByAssociateId ? 'associateId' : 'id') => $associateChildId
         ]);
         if (!$childAssociate) {
@@ -103,8 +103,6 @@ class AssociateManager
 
     public function getAssociate($id, $override = false)
     {
-        $associateRepository = $this->em->getRepository(Associate::class);
-
         if (!$override) {
             $token = $this->tokenStorage->getToken();
 
@@ -116,7 +114,7 @@ class AssociateManager
                 throw new NotAncestorException('The target associate, is not in user\'s downline');
             }
         }
-        return $associateRepository->findOneBy(['id' => $id]);
+        return $this->associateRepository->findOneBy(['id' => $id]);
     }
 
     /**
@@ -127,9 +125,7 @@ class AssociateManager
      */
     public function getNumberOfAssociatesInDownline(int $level, string $associateId = null) : int
     {
-        $associateRepository = $this->em->getRepository(Associate::class);
-
-        $associate = $associateRepository->findOneBy(['associateId' => $associateId]);
+        $associate = $this->associateRepository->findOneBy(['associateId' => $associateId]);
 
         $currentAncestor = null;
         $levelToBeginWith = 0;
@@ -138,7 +134,7 @@ class AssociateManager
             $levelToBeginWith = $associate->getLevel();
         }
 
-        $numberOfAssociates = $associateRepository->findAssociatesByLevel(
+        $numberOfAssociates = $this->associateRepository->findAssociatesByLevel(
             $level + $levelToBeginWith,
             $currentAncestor
         );
@@ -158,21 +154,22 @@ class AssociateManager
 
         $userAssociateId = ($associate)?($associate->getId()):(-1);
 
-        /** @var AssociateRepository $associateRepo */
-        $associateRepo = $this->em->getRepository(Associate::class);
         if (!$parentId && $associate) {
             return [
                 'id' => $userAssociateId,
                 'title' => $user->getAssociate()->getFullName(),
                 'parentId' => $user->getAssociate()->getParentId(),
-                'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($userAssociateId)
+                'numberOfChildren' => $this->associateRepository->findAllDirectAssociatesCount($userAssociateId)
             ];
         } elseif (!$user->isAdmin() && !$this->isAncestor($parentId, $userAssociateId, false)) {
             throw new NotAncestorException(
                 'Attempted to get direct downline of an associate that is not in your downline'
             );
         }
-        $directAssociates = $associateRepo->findAllDirectAssociates($parentId);
+        $directAssociates = $this->associateRepository->findAllDirectAssociates($parentId);
+
+        $associateRepo = $this->associateRepository;
+
         return array_map(
             function ($downlineNode) use ($associateRepo, $parentId) {
                 return [
@@ -186,7 +183,94 @@ class AssociateManager
         );
     }
 
+    /**
+     * @param $associate
+     * @return mixed
+     */
+    public function getAllAssociateChildren(Associate $associate)
+    {
+        $associateId = $associate->getId();
+        $currentAssociateAncestor = $associate->getAncestors();
+        $childrenAncestorsFilter = $currentAssociateAncestor.$associateId.'|';
+        $associates = $this->associateRepository->findAllAssociateChildren($childrenAncestorsFilter);
+        return $associates;
+    }
 
+    public function changeAssociateParent($associateId, $associateParentId)
+    {
+        $currentAssociate = $this->getAssociate($associateId);
+        $parentAssociate = $this->getAssociate($associateParentId);
 
+        $initialLevel = $currentAssociate->getLevel();
 
+        $currentAssociateAncestor = $currentAssociate->getAncestors();
+        $parentAssociateAncestor = $parentAssociate->getAncestors();
+
+        $associates = $this->getAllAssociateChildren($currentAssociate);
+
+        $currentAssociate->setParentId($associateParentId);
+        $currentAssociate->setParent($parentAssociate);
+
+        $this->em->persist($currentAssociate);
+
+        $parentAssociateAncestorChildren = $parentAssociateAncestor.$associateParentId.'|';
+
+        $currentAssociate->setAncestors($parentAssociateAncestorChildren);
+
+        /** @var Associate $associate */
+        foreach ($associates as $associate) {
+            $associate->setAncestors(
+                str_replace(
+                    $currentAssociateAncestor,
+                    $parentAssociateAncestorChildren,
+                    $associate->getAncestors()
+                )
+            );
+            $associate->setLevel(($associate->getLevel() + ($currentAssociate->getLevel() - $initialLevel)));
+
+            $this->em->persist($associate);
+        }
+
+        $this->em->flush();
+    }
+
+    /**
+     * @param $deleteAssociate
+     * @return bool
+     */
+    public function deleteAssociate(Associate $deleteAssociate)
+    {
+        $childrenAncestorFilter = $deleteAssociate->getAncestors().$deleteAssociate->getId().'|';
+        $childrenCount = $this->associateRepository->findAssociateChildren($childrenAncestorFilter);
+
+        if ($childrenCount === 0) {
+            $user = $this->em->getRepository(User::class)->findOneBy(['associate' => $deleteAssociate]);
+            $user->setAssociate(null);
+            $invitations = $this->em->getRepository(Invitation::class)->findBy(['sender' => $deleteAssociate]);
+            foreach ($invitations as $invitation) {
+                $this->em->remove($invitation);
+            }
+            $this->em->persist($user);
+            $this->em->remove($deleteAssociate);
+            $this->em->flush();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param User $user
+     */
+    public function deleteUser(User $user)
+    {
+        $userAssociate = $user->getAssociate();
+        if ($userAssociate) {
+            $user->setAssociate(null);
+            $this->em->persist($user);
+            $this->em->remove($userAssociate);
+        }
+        $this->em->remove($user);
+        $this->em->flush();
+    }
 }

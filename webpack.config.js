@@ -17,12 +17,14 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
-    .addEntry('app', './assets/js/UserSearchTable/app.jsx')
     // .addEntry('gallery', './assets/js/Gallery/app.js')
     .addEntry('fileGallery', './assets/js/GalleryApp/app.js')
     .addEntry('modal', './assets/js/GalleryApp/modalApp.js')
     .addEntry('quill', './assets/js/GalleryApp/quillApp.js')
     .addEntry('dragNdrop', './assets/js/DragNDrop/app.js')
+    .addEntry('confirmation', './assets/js/Confirmation/app.js')
+    .addEntry('userSearch', './assets/js/UserSearch/app.js')
+
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')
 
@@ -45,6 +47,7 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
+    .addLoader({ test: /\.vue$/, loader: "vue-svg-inline-loader" })
     .enableVueLoader()
 
     // enables Sass/SCSS support
@@ -64,6 +67,13 @@ Encore
     //.addEntry('admin', './assets/js/admin.js')
     .enableSassLoader()
 ;
+const config = Encore.getWebpackConfig();
 
-module.exports = Encore.getWebpackConfig();
+config.output = {
+    ...config.output,
+    library: ["Widgets", "[name]"],
+    libraryTarget: 'var',
+};
+
+module.exports = config;
 

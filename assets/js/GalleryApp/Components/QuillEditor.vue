@@ -139,6 +139,10 @@
             ])
         },
         created() {
+
+        },
+        beforeMount() {
+            console.log('first');
         }
     }
 </script>

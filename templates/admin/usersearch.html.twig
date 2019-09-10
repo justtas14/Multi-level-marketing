@@ -2,15 +2,9 @@
 
 {% block title %}User Search{% endblock %}
 
-{% block javascripts %}
+{% block stylesheets %}
     {{ parent() }}
-    <script>
-        window.mainAction = function (id) {
-            window.location.href = '/admin/users/' + id;
-        };
-        window.mainActionLabel = 'Details';
-    </script>
-    <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
+    <link href="{{ asset('build/userSearch.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -18,8 +12,38 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">User search</span>
-            <div id="root"></div>
+                <div id="flash-messages">
+                    {% for message in app.flashes('error') %}
+                        <div class="error__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="success__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% verbatim %}
+                    <section id="user-search">
+                    </section>
+                {% endverbatim %}
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/userSearch.js') }}"></script>
+    <script>
+        const mainAction = {
+            fun: (id) => {
+                window.location.href = '/admin/users/' + id;
+            },
+            confirm: false
+        };
+        Widgets.userSearch.userSearchFun('#user-search', mainAction, 'Details');
+
+    </script>
 {% endblock %}

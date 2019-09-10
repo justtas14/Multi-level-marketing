@@ -1,6 +1,7 @@
 "use strict";
 
-var adminMenu = function adminMenu() {
+var adminMenu = function adminMenu()
+{
     var hamburger = document.querySelector('.hamburger');
     var menu = document.querySelector('.sidebar-menu');
     var profile = document.querySelector('.sidebar-profileContainer');

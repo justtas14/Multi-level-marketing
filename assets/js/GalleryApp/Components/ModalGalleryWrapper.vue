@@ -11,6 +11,7 @@
                 v-bind:paginationInfo="paginationInfo"
                 v-bind:imageExtensions="imageExtensions"
                 v-bind:constants="constants"
+                v-bind:confirm="confirm"
             >
                 <template v-slot:category></template>
             </Gallery>
@@ -19,17 +20,13 @@
 </template>
 
 <script>
-    import Vue from 'vue';
     import Gallery from "./Gallery";
     import ModalWrapper from "./ModalWrapper";
     import ModalFileContainer from "./ModalFileContainer";
     import modalGalleryConst from "../constants/modalGalleryConst";
     import { mapActions, mapMutations, mapState } from 'vuex'
     import EventBus from '../EventBus/EventBus';
-    import 'v-slim-dialog/dist/v-slim-dialog.css';
-    import SlimDialog from 'v-slim-dialog';
 
-    Vue.use(SlimDialog);
 
     export default {
         name: 'ModalGalleryWrapper',
@@ -53,28 +50,16 @@
             files: 'files',
             notification: 'notification',
             paginationInfo: 'paginationInfo',
-            imageExtensions: 'imageExtensions'
+            imageExtensions: 'imageExtensions',
+            confirm: 'confirm'
         }),
         methods: {
-            showConfirmation(message) {
-                const options = {title: 'Confirmation',  okLabel: 'Yes', cancelLabel: 'No', size: 'sm'};
-                this.$dialogs.confirm(message, options)
-                    .then(res => {
-                        if (res.ok) {
-                            this.yesClickFn();
-                        }
-                    })
-            },
             readUrl: function (e) {
-                const params = {
-                    e: e,
-                    confirmation: this.showConfirmation
-                };
-                this.readURL(params)
+                this.readURL(e)
             },
             ...mapActions('gallery', [
                 'callDataAxios',
-                'readUrl',
+                'readURL',
                 'handleFiles',
                 'deleteRequestFunction',
             ]),
@@ -84,8 +69,7 @@
                 'changePage',
                 'closeNotification',
                 'showNotification',
-                'hideConfirmation',
-                'showConfirm',
+                'changeConfirmation',
                 'changeYesFn'
             ])
         },
@@ -97,7 +81,11 @@
                 scope.handleFiles(files);
             });
             EventBus.$on('delete', function (fileName) {
-                scope.showConfirmation('Are you sure you want to delete ' + fileName + ' file?');
+                const confirm = {
+                    display: 'block',
+                    message: 'Are you sure you want to delete ' + fileName + ' file?'
+                };
+                scope.changeConfirmation(confirm);
             });
             EventBus.$on('previousPage', function () {
                 const page = null, action = 'subtract';
@@ -122,9 +110,6 @@
             });
             EventBus.$on('closeNotification', function () {
                 scope.closeNotification();
-            });
-            EventBus.$on('hideConfirmation', function () {
-                scope.hideConfirmation();
             });
         },
         created() {

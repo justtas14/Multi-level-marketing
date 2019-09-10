@@ -89,12 +89,10 @@
     }
     .associate-enrollerContainer {
         width: 100%;
-        padding-left: 0px;
+        padding-left: 0;
     }
     .associate-enrollerPictureContainer {
         margin-left: 0;
-        padding-left: 15%;
-
     }
     .associate-enrollerDetailsContainer {
         margin-left: 0;
