@@ -94,6 +94,13 @@ class AssociateController extends AbstractController
         return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
     }
 
+    public function createUniqueRegisterInvitation()
+    {
+        /** @var User $user */
+        $associate = $this->getUser()->getAssociate();
+    }
+
+
     /**
      * @Route("/associate/invite", name="associate_invite")
      * @param Request $request

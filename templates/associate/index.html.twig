@@ -2,6 +2,10 @@
 
 {% block title %}Associate{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/clipboard.css') }}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
     <div class="admin-contentContainer">
@@ -24,6 +28,14 @@
                     </a>
                 </div>
                 {% include 'includes/other/businessShape.html.twig' %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Invitation link</span>
+                {% verbatim %}
+                <div id="clip-board"></div>
+                {% endverbatim %}
             </div>
         </div>
         {% if parent is not null %}
@@ -91,7 +103,10 @@
         </div>
     </div>
 {% endblock %}
-
+{% block javascripts %}
+    {{ parent }}
+    <script type="text/javascript" src="{{ asset('build/clipboard.js') }}"></script>
+{% endblock %}
 {#
         {% if profilePicture is not null %}
             <img style="max-width: 200px; max-height: 200px" src="{{ profilePicture|downloadUrlParser }}" />

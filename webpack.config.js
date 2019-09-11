@@ -23,6 +23,7 @@ Encore
     .addEntry('quill', './assets/js/GalleryApp/quillApp.js')
     .addEntry('dragNdrop', './assets/js/DragNDrop/app.js')
     .addEntry('confirmation', './assets/js/Confirmation/app.js')
+    .addEntry('clipboard', './assets/js/Clipboard/app.js')
     .addEntry('userSearch', './assets/js/UserSearch/app.js')
 
     //.addEntry('page1', './assets/js/page1.js')
