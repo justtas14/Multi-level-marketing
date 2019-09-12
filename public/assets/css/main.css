@@ -359,6 +359,10 @@ select {
     min-height: 7.5em;
 }
 
+.pagination li.active {
+    background-color: #3ab54a!important;
+}
+
 @media screen and (max-width: 1330px) {
     .userDetails__mainContainer {
         display: block;

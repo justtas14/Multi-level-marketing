@@ -115,6 +115,7 @@ class Associate
     private $postcode = "";
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */
@@ -156,6 +157,12 @@ class Associate
      * @var DateTime
      */
     private $dateOfBirth;
+
+    /**
+     * @ORM\Column(type="string")
+     * @var string
+     */
+    private $uniqueUserName;
 
     /**
      * @ORM\Column(type="boolean")
@@ -262,7 +269,7 @@ class Associate
      * @param string $fullName
      * @return Associate
      */
-    public function setFullName(string $fullName): Associate
+    public function setFullName(?string $fullName): Associate
     {
         $this->fullName = $fullName;
         return $this;
@@ -299,7 +306,7 @@ class Associate
      * @param string $country
      * @return Associate
      */
-    public function setCountry(string $country): Associate
+    public function setCountry(?string $country): Associate
     {
         $this->country = $country;
         return $this;
@@ -317,7 +324,7 @@ class Associate
      * @param string $address
      * @return Associate
      */
-    public function setAddress(string $address): Associate
+    public function setAddress(?string $address): Associate
     {
         $this->address = $address;
         return $this;
@@ -355,7 +362,7 @@ class Associate
      * @param string $city
      * @return Associate
      */
-    public function setCity(string $city): Associate
+    public function setCity(?string $city): Associate
     {
         $this->city = $city;
         return $this;
@@ -373,7 +380,7 @@ class Associate
      * @param string $postcode
      * @return Associate
      */
-    public function setPostcode(string $postcode): Associate
+    public function setPostcode(?string $postcode): Associate
     {
         $this->postcode = $postcode;
         return $this;
@@ -391,7 +398,7 @@ class Associate
      * @param string $mobilePhone
      * @return Associate
      */
-    public function setMobilePhone(string $mobilePhone): Associate
+    public function setMobilePhone(?string $mobilePhone): Associate
     {
         $this->mobilePhone = $mobilePhone;
         return $this;
@@ -412,6 +419,24 @@ class Associate
     public function setHomePhone(?string $homePhone): Associate
     {
         $this->homePhone = $homePhone;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvitationUserName(): ?string
+    {
+        return $this->uniqueUserName;
+    }
+
+    /**
+     * @param string $uniqueUserName
+     * @return Associate
+     */
+    public function setInvitationUserName(?string $uniqueUserName): Associate
+    {
+        $this->uniqueUserName = $uniqueUserName;
         return $this;
     }
 

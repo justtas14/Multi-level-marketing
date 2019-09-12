@@ -60,10 +60,13 @@ class HomeController extends AbstractController
         ConfigurationManager $cm,
         AssociateManager $associateManager
     ) {
+        $invitationEmail = false;
+        $withInvitation = false;
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
+        $parentAssociate = $associateManager->findByUserName($code);
 
-        if (!$invitation) {
+        if (!$invitation && !$parentAssociate) {
             return $this->render('home/linkstate.html.twig');
         }
 
@@ -74,9 +77,14 @@ class HomeController extends AbstractController
 
         $user = new User();
         $associate = new Associate();
-        $user->setEmail($invitation->getEmail());
-        $associate->setEmail($invitation->getEmail());
-        $associate->setFullName($invitation->getFullName());
+        $associate->setEmail('someemail@example.com');
+        if ($invitation) {
+            $withInvitation = true;
+            $invitationEmail = $invitation->getEmail();
+            $user->setEmail($invitationEmail);
+            $associate->setEmail($invitation->getEmail());
+            $associate->setFullName($invitation->getFullName());
+        }
         $user->setAssociate($associate);
 
         $form = $this->createForm(UserRegistrationType::class, $user);
@@ -84,34 +92,60 @@ class HomeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user->setEmail($invitationEmail ? $invitationEmail : $user->getEmail());
             $email = $user->getEmail();
-            $associate->setParent($invitation->getSender());
-            $associate->setEmail($email);
+            $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
+            if (!$email) {
+                $this->addFlash('error', 'Cannot leave empty email');
+            } elseif ($checkEmailExist) {
+                $this->addFlash('error', 'This email already exist');
+            } elseif (strlen($associate->getFullName()) > 255) {
+                $this->addFlash('error', 'Name length is too large');
+            } elseif (strlen($email) > 255) {
+                $this->addFlash('error', 'Email length is too large');
+            } else {
+                if ($invitation) {
+                    $associate->setParent($invitation->getSender());
+                    $invitationManager->discardInvitation($invitation);
+                } else {
+                    $associate->setParent($parentAssociate);
+                }
+                $associate->setEmail($email);
+                $associate->setFullName(trim($associate->getFullName()));
+                $invitationUserName = $associateManager->createUniqueUserNameInvitation($associate->getFullName());
+                $associate->setInvitationUserName($invitationUserName);
 
-            $user->setRoles(['ROLE_USER']);
-            $user->setAssociate($associate);
-            $invitationManager->discardInvitation($invitation);
-            $invitationManager->sendWelcomeEmail($associate);
-            $user->getAssociate()->setMobilePhone(
-                '+' . $form['associate']['mobilePhone']->getData()->getCountryCode() .
-                $form['associate']['mobilePhone']->getData()->getNationalNumber()
-            );
-            $em->persist($associate);
-            $em->flush();
-            $em->persist($user);
-            $em->flush();
-            $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-            $this->container->get('security.token_storage')->setToken($token);
-            $this->container->get('session')->set('_security_main', serialize($token));
-            return $this->redirectToRoute('home');
+                $user->setRoles(['ROLE_USER']);
+                $user->setAssociate($associate);
+                $invitationManager->sendWelcomeEmail($associate);
+                $user->getAssociate()->setMobilePhone(
+                    '+' . $form['associate']['mobilePhone']->getData()->getCountryCode() .
+                    $form['associate']['mobilePhone']->getData()->getNationalNumber()
+                );
+                $em->persist($associate);
+                $em->persist($user);
+
+                $em->flush();
+                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+                $this->container->get('security.token_storage')->setToken($token);
+                $this->container->get('session')->set('_security_main', serialize($token));
+                return $this->redirectToRoute('home');
+            }
         }
 
-        $recruiter = $associateManager->getAssociate($invitation->getSender(), true);
+        if ($invitation) {
+            $recruiter = $associateManager->getAssociate($invitation->getSender());
+        } else {
+            $recruiter = $associateManager->getAssociate($parentAssociate);
+        }
+
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
             'termsOfServices' => $termsOfServices,
             'recruiter' => $recruiter,
-            'disclaimer' => $disclaimer
+            'disclaimer' => $disclaimer,
+            'withInvitation' => $withInvitation,
+            'invitationEmail' => $invitationEmail
         ]);
     }
 

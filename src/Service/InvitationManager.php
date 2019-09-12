@@ -94,6 +94,15 @@ class InvitationManager
         );
     }
 
+    public function getAssociateUrl($username) : string
+    {
+        return $this->router->generate(
+            'registration',
+            ['code' => $username],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
     /**
      * @param string $invitationCode
      * @return Invitation|null

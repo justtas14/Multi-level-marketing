@@ -43,7 +43,11 @@
                     </div>
                     <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.email) }}
+                        {% if withInvitation %}
+                        {{ form_widget(registration.email, {'attr': {'disabled': 'disabled', 'value': invitationEmail}}) }}
+                        {% else %}
                         {{ form_widget(registration.email) }}
+                        {% endif %}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.email } %}
                     </div>
                     <div class="input-field registration__input--forceBorder">
@@ -150,7 +154,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('build/dragNdrop.js') }}"></script>
-    <script src="{{ asset('assets/js/onChangeDrangNDrop.js') }}" async></script>
+    <script src="{{ asset('assets/js/onChangeDrangNDrop.js') }}"></script>
     <script>
         const profilePicturePreview = document.getElementById('profilePicturePreview');
         const dragAndDropElement = document.querySelector('.profile-image-upload-box');

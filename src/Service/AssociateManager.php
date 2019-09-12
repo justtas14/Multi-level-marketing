@@ -273,4 +273,30 @@ class AssociateManager
         $this->em->remove($user);
         $this->em->flush();
     }
+
+    public function createUniqueUserNameInvitation($fullName) : string
+    {
+        $fullName = strtolower($fullName);
+        $fullName = preg_replace('/[0-9]+/', '', $fullName);
+        $fullName = trim($fullName);
+        $fullName = preg_replace('/\s+/', ' ', $fullName);
+        $fullName = preg_replace('/\s/', '-', $fullName);
+
+
+        $randomSequence = rand(0, 9).rand(0, 9).rand(0, 9);
+        if ($this->findByUserName($fullName)) {
+            $fullName = $fullName.$randomSequence;
+        }
+
+        return $fullName;
+    }
+
+    public function findByUserName($userName) : ?Associate
+    {
+        $associate = $this->associateRepository->findOneBy(['uniqueUserName' => $userName]);
+        if (!$associate) {
+            return null;
+        }
+        return $associate;
+    }
 }

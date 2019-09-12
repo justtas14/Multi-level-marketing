@@ -4,6 +4,7 @@ namespace App\DataFixtures\ORM;
 
 use App\Entity\User;
 use App\Entity\Associate;
+use App\Service\AssociateManager;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,6 +12,15 @@ use Exception;
 
 class LoadUsers extends Fixture
 {
+
+    /** @var AssociateManager $associateManagers */
+    private $associateManager;
+
+    public function __construct(AssociateManager $associateManager)
+    {
+        $this->associateManager = $associateManager;
+    }
+
     public function load(ObjectManager $manager)
     {
         $user1 = $this->createUser(
@@ -308,6 +318,8 @@ class LoadUsers extends Fixture
             $associate = new Associate();
             $associate->setId($nr);
             $associate->setFullName($fullName);
+            $invitationUserName = $this->associateManager->createUniqueUserNameInvitation($fullName);
+            $associate->setInvitationUserName($invitationUserName);
             $associate->setEmail($email);
             $associate->setDateOfBirth(new DateTime($birthDate));
             $associate->setMobilePhone($telephone);

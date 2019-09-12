@@ -12,9 +12,13 @@ class CreateAdmin
     /** @var EntityManagerInterface $em */
     private $em;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /** @var AssociateManager $associateManager */
+    private $associateManager;
+
+    public function __construct(EntityManagerInterface $entityManager, AssociateManager $associateManager)
     {
         $this->em = $entityManager;
+        $this->associateManager =$associateManager;
     }
 
     public function createAdmin($email, $password, $fullName, $mobilePhone)
@@ -25,13 +29,14 @@ class CreateAdmin
         $user->setEmail($email);
         $user->setPlainPassword($password);
         $associate->setFullName($fullName);
+        $invitationUserName = $this->associateManager->createUniqueUserNameInvitation($associate->getFullName());
+        $associate->setInvitationUserName($invitationUserName);
         $associate->setEmail($email);
         $associate->setMobilePhone($mobilePhone);
         $user->setAssociate($associate);
         $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
 
         $this->em->persist($associate);
-        $this->em->flush();
         $this->em->persist($user);
         $this->em->flush();
 

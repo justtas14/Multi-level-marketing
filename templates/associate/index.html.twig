@@ -104,7 +104,7 @@
     </div>
 {% endblock %}
 {% block javascripts %}
-    {{ parent }}
+    {{ parent() }}
     <script type="text/javascript" src="{{ asset('build/clipboard.js') }}"></script>
 {% endblock %}
 {#

@@ -1,4 +1,7 @@
 {
+    "codeitnowin/barcode": {
+        "version": "3.0.3"
+    },
     "deanblackborough/php-quill-renderer": {
         "version": "v3.17.4"
     },

@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use CodeItNow\BarcodeBundle\Utils\QrCode;
 
 class AssociateController extends AbstractController
 {
@@ -94,12 +95,37 @@ class AssociateController extends AbstractController
         return $this->render('admin/associateInfo.html.twig', ['associate' => $associate]);
     }
 
-    public function createUniqueRegisterInvitation()
+    /**
+     * @Route("/associate/link", name="associate_link")
+     * @param InvitationManager $invitationManager
+     * @return JsonResponse
+     */
+    public function getUniquePermanentAssociateLink(InvitationManager $invitationManager)
     {
-        /** @var User $user */
-        $associate = $this->getUser()->getAssociate();
-    }
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+        $associate = $currentUser->getAssociate();
 
+        $uniqueAssociateUsername= $associate->getInvitationUserName();
+
+        $uniqueAssociateInvitationLink = $invitationManager->getAssociateUrl($uniqueAssociateUsername);
+
+        $qrCode = new QrCode();
+        $qrCode
+            ->setText($uniqueAssociateInvitationLink)
+            ->setSize(300)
+            ->setPadding(10)
+            ->setErrorCorrection('high')
+            ->setForegroundColor(['r' => 0, 'g' => 0, 'b' => 0, 'a' => 0])
+            ->setBackgroundColor(['r' => 255, 'g' => 255, 'b' => 255, 'a' => 0])
+            ->setLabel('Scan Qr Code')
+            ->setLabelFontSize(16)
+            ->setImageType(QrCode::IMAGE_TYPE_PNG);
+
+
+
+        return new JsonResponse(['uniqueAssociateLink' => $uniqueAssociateInvitationLink, 'qrCode' => $qrCode]);
+    }
 
     /**
      * @Route("/associate/invite", name="associate_invite")
