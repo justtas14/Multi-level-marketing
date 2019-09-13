@@ -1,7 +1,32 @@
+#clipboard-app {
+}
+
 .container {
     position: relative;
     display: flex;
-    margin-top: 1em;
+    margin-bottom: 1em;
+    flex: 2;
+    margin-left: 1em;
+    width: 100%;
+}
+
+.barCodeImageContainer {
+    text-align: center;
+    width: 100%;
+}
+
+.invitationLinkTitle {
+    flex: 1;
+    white-space: nowrap;
+}
+
+.invitationLinkContainer {
+    display: flex;
+    width: 100%;
+}
+
+.fa-facebook-square {
+    color :#3C5A99
 }
 
 .container #link {
@@ -20,7 +45,6 @@
     outline: none;
     box-shadow: inset 0 1px 2px rgba(0,0,0,.075);
     border-right: 0;
-    overflow-y: unset;
     overflow-x: auto;
     white-space: nowrap;
 }
@@ -37,8 +61,6 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
     outline: 0;
     transition: opacity .3s ease;
 }
@@ -51,7 +73,7 @@
     opacity: 0.9 !important;
 }
 
-.container button span {
+.container #clip-boardBtn span {
     position: absolute;
     top: -55px;
     left: -50%;
@@ -73,6 +95,12 @@
     transition: all 0.2s ease-in-out;
 }
 
+#twitter-btn {
+    color: #38A1F3;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
 .lds-dual-ring {
     width: 32px;
     height: 32px;
@@ -82,6 +110,3 @@
     width: 32px;
     height: 32px;
 }
-
-
-

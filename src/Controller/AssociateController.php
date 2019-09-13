@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use CodeItNow\BarcodeBundle\Utils\QrCode;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class AssociateController extends AbstractController
 {
@@ -99,6 +101,7 @@ class AssociateController extends AbstractController
      * @Route("/associate/link", name="associate_link")
      * @param InvitationManager $invitationManager
      * @return JsonResponse
+     * @throws Exception
      */
     public function getUniquePermanentAssociateLink(InvitationManager $invitationManager)
     {
@@ -122,9 +125,15 @@ class AssociateController extends AbstractController
             ->setLabelFontSize(16)
             ->setImageType(QrCode::IMAGE_TYPE_PNG);
 
+        $generateString = $qrCode->generate();
+        $contentType = $qrCode->getContentType();
 
+        $qrCodeAttr = [
+            'generateString' => $generateString,
+            'contentType' => $contentType
+        ];
 
-        return new JsonResponse(['uniqueAssociateLink' => $uniqueAssociateInvitationLink, 'qrCode' => $qrCode]);
+        return new JsonResponse(['uniqueAssociateLink' => $uniqueAssociateInvitationLink, 'qrCode' => $qrCodeAttr]);
     }
 
     /**

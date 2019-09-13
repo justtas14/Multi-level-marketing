@@ -1,16 +1,29 @@
 <template>
     <div id="clipboard-app">
-        <div class="container">
-            <div id="link">{{ copyData}}</div>
-            <button v-clipboard="copyData" @success="handleSuccess" @error="handleError">
-                <i class="fa fa-clipboard" aria-hidden="true"></i>
-                <span v-bind:class="{visibleTooltip : showMessage}" >Copied!</span>
-            </button>
-            <div v-if="spinner" class="Spinner__Container" v-bind:style="{top: 0, 'z-index': 9999}">
-                <div class="lds-dual-ring"/>
+        <div class="invitationLinkContainer">
+            <span class="card-title invitationLinkTitle">Invitation link</span>
+            <div class="container">
+                <div id="link">{{ copyData}}</div>
+                <button id="clip-boardBtn" v-clipboard="copyData" @success="handleSuccess" @error="handleError">
+                    <i class="fa fa-clipboard" aria-hidden="true"></i>
+                    <span v-bind:class="{visibleTooltip : showMessage}" >Copied!</span>
+                </button>
+                <button @click="facebookShare" id="facebook-btn">
+                    <i class="fab fa-facebook-square"></i>
+                </button>
+                <button @click="twtterShare" id="twitter-btn">
+                    <i class="fab fa-twitter"></i>
+                </button>
+                <div v-if="spinner" class="Spinner__Container" v-bind:style="{top: 0, 'z-index': 9999}">
+                    <div class="lds-dual-ring"/>
+                </div>
             </div>
         </div>
-        <img v-if="!spinner" :src="'data:'+qrCode.getContentType+';base64,'+qrCode.generate">
+        <div class="barCodeImageContainer">
+            <img v-if="!spinner" id="bar-code" :src="'data:'+qrCode.contentType+';base64,'+qrCode.generateString">
+        </div>
+        <meta property="og:title" content="Your title here" />
+        <meta property="og:description" content="your description here" />
     </div>
 </template>
 <script>
@@ -41,6 +54,31 @@
             },
             hideMessage() {
                 this.showMessage = false;
+            },
+            socialMediaShare() {
+                FB.ui({
+                    method: 'share_open_graph',
+                    action_type: 'og.shares',
+                    display: 'popup',
+                    action_properties: JSON.stringify({
+                        object: {
+                            // 'og:title': 'Title to show',
+                            'og:description': this.copyData,
+                        }
+                    })
+                }, function(response) {
+                    if (response && !response.error_message) {
+                        console.log('Posting completed.');
+                    } else {
+                        console.log('Error while posting.');
+                    }
+                });
+            },
+            facebookShare() {
+                this.socialMediaShare();
+            },
+            twtterShare() {
+
             }
         },
         mounted() {
@@ -50,7 +88,10 @@
             this.copyData = res.data.uniqueAssociateLink;
             this.qrCode = res.data.qrCode;
             this.spinner = false;
-            console.log(this.qrCode);
+
+
+
+
         }
     }
 </script>
