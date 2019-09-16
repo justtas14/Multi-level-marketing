@@ -7,20 +7,6 @@
     <link href="{{ asset('build/clipboard.css') }}" rel="stylesheet">
 {% endblock %}
 
-{% block socialMediaJavascripts %}
-    <script>
-        window.fbAsyncInit = function() {
-            FB.init({
-                appId      : '11111111111',
-                autoLogAppEvents : true,
-                xfbml      : true,
-                version    : 'v2.7'
-            });
-        };
-    </script>
-    <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
-{% endblock %}
-
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">

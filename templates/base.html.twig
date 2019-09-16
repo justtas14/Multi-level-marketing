@@ -4,9 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>{% block title %}Welcome!{% endblock %}</title>
-            <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         {% block stylesheets %}
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
             <script src="https://kit.fontawesome.com/8f7af2e175.js"></script>
@@ -25,12 +25,11 @@
             <link href="{{ asset('assets/css/quill.snow.css') }}" rel="stylesheet">
         {% endblock %}
     </head>
-        {% block socialMediaJavascripts %}
-        {% endblock %}
     <body>
         {% block body %}
         {% endblock %}
         {% block javascripts %}
+            <script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=#{property?._id}&product=custom-share-buttons"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
             <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
             <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>

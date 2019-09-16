@@ -52,7 +52,7 @@ Encore
     .enableVueLoader()
 
     // enables Sass/SCSS support
-    //.enableSassLoader()
+    // .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -76,5 +76,5 @@ config.output = {
     libraryTarget: 'var',
 };
 
-module.exports = config;
+module.exports  = config;
 
