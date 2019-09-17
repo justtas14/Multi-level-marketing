@@ -12,18 +12,15 @@
                     <i class="fa fa-clipboard" aria-hidden="true"></i>
                     <span v-bind:class="{visibleTooltip : showMessage}" >Copied!</span>
                 </button>
-                <div class="share">
-                    <button id="shareButton">
-                        <i class="fa fa-share-alt" aria-hidden="true"></i>
-                    </button>
-                    <ul class="submenu">
-                        <li><div data-network="facebook" :data-url="copyData" class="facebook st-custom-button"><i class="fab fa-facebook"></i></div></li>
-                        <li> <div data-network="twitter" :data-url="copyData" class="twitter st-custom-button"><i class="fab fa-twitter"></i></div></li>
-                        <li> <div data-network="messenger" :data-url="copyData" class="messenger st-custom-button"><i class="fab fa-facebook-messenger"></i></div></li>
-                        <li> <div data-network="linkedin" :data-url="copyData" class="linkedin st-custom-button"><i class="fab fa-linkedin"></i></div></li>
-                        <li><div data-network="whatsapp" :data-url="copyData" class="whatsapp st-custom-button"><i class="fab fa-whatsapp"></i></div></li>
-                    </ul>
-                </div>
+                <button v-if="navigatorShare"  id="shareButton">
+                    <i class="fa fa-share-alt" aria-hidden="true"></i>
+                </button>
+                <div class="share" v-else><!--
+                    --><button data-network="facebook" :data-url="copyData" class="facebook st-custom-button"><i class="fab fa-facebook"></i></button><!--
+                    --><button data-network="twitter" :data-url="copyData" class="twitter st-custom-button"><i class="fab fa-twitter"></i></button><!--
+                    --><button data-network="messenger" :data-url="copyData" class="messenger st-custom-button"><i class="fab fa-facebook-messenger"></i></button><!--
+                    --><button data-network="linkedin" :data-url="copyData" class="linkedin st-custom-button"><i class="fab fa-linkedin"></i></button><!--
+                    --><button data-network="whatsapp" :data-url="copyData" class="whatsapp st-custom-button"><i class="fab fa-whatsapp"></i></button></div>
                 <div v-if="spinner" class="Spinner__Container" v-bind:style="{top: 0, 'z-index': 9999}">
                     <div class="lds-dual-ring"/>
                 </div>
@@ -50,7 +47,8 @@
                 qrCode: null,
                 messageTooltip: null,
                 showMessage: false,
-                spinner: true
+                spinner: true,
+                navigatorShare: null
             }
         },
         methods: {
@@ -66,6 +64,7 @@
             },
         },
         mounted() {
+            this.navigatorShare = navigator.share;
             if (navigator.share) {
                 const shareButton = document.getElementById('shareButton');
                 shareButton.addEventListener('click', event => {
@@ -76,8 +75,6 @@
                         console.log('Thanks for sharing!');
                     }).catch(console.error);
                 })
-            } else {
-
             }
         },
         async created() {

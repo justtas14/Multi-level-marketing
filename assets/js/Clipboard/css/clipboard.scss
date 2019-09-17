@@ -29,10 +29,40 @@
 }
 
 #shareButton {
-  position: relative;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
+
+.share {
+  button {
+    &:hover {
+      i.fab {
+        color: #fff;
+      }
+      background-image: unset;
+      border-radius: 2px;
+      &.facebook {
+        background-color: #3b5999;
+      }
+
+      &.twitter {
+        background-color: #55acee;
+      }
+
+      &.messenger {
+          background-color: #0078FF;
+      }
+
+      &.linkedin {
+          background-color: #0077B5;
+      }
+      &.whatsapp {
+          background-color: #25d366;
+      }
+    }
+  }
+}
+
 
 .socialShare {
   position: absolute;
@@ -45,15 +75,16 @@
   text-align: center;
 }
 
-.share i.fa {
-  height:40px;
-  width:39px;
-  text-align:center;
-  line-height:40px;
+.share {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.share:hover .submenu  {
-
+.whatsapp {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 .container #link {
@@ -99,7 +130,8 @@
 }
 
 .visibleTooltip {
-  opacity: 0.9 !important;
+  opacity: 1 !important;
+  animation: bounceIn 0.3s;
 }
 
 .container #clip-boardBtn span {
@@ -124,6 +156,20 @@
   transition: all 0.2s ease-in-out;
 }
 
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 #twitter-btn {
   color: #38A1F3;
   border-top-right-radius: 3px;
@@ -138,4 +184,13 @@
 .lds-dual-ring:after {
   width: 32px;
   height: 32px;
+}
+
+@media (max-width: 930px) {
+  .invitationLinkContainer {
+    display: block;
+  }
+  .container {
+    margin-left: 0;
+  }
 }

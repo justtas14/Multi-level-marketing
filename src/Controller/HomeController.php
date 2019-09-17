@@ -134,9 +134,9 @@ class HomeController extends AbstractController
         }
 
         if ($invitation) {
-            $recruiter = $associateManager->getAssociate($invitation->getSender());
+            $recruiter = $associateManager->getAssociate($invitation->getSender()->getId(), true);
         } else {
-            $recruiter = $associateManager->getAssociate($parentAssociate);
+            $recruiter = $associateManager->getAssociate($parentAssociate->getId(), true);
         }
 
         return $this->render('home/registration.html.twig', [
