@@ -31,6 +31,11 @@
 .associate-itemActionContainer {
     text-align: center;
 }
+
+.associate-profilePictureContainer {
+    display: none;
+}
+
 .userDetails__picture {
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -48,4 +53,87 @@
 
 .fullName {
     margin-left: 1em;
+}
+
+
+.valueTitle {
+    font-size: 1.2em;
+    font-weight: bolder;
+    display: none;
+    margin-right: 0.5em;
+}
+
+@media only screen and (max-width: 1150px) {
+    .associate-container {
+        display: grid;
+        grid-template-columns: 150px 200px 250px 200px;
+        grid-template-rows: auto auto;
+        justify-items: start;
+        align-items: center;
+    }
+
+    .associate-profilePictureContainer {
+        display: table-cell;
+        text-align: center;
+        grid-row-start: 1;
+        grid-row-end: 3;
+        padding-left: 1em;
+    }
+
+    .valueTitle {
+        display: block;
+    }
+
+    .user__search__fullName {
+        display: table-cell;
+    }
+    .userDetails__picture__container {
+        display: none;
+    }
+    .mobileUserPictureContainer {
+        display: block;
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+    }
+    .mobileUserPicture {
+
+    }
+
+    .fullName {
+        margin: 0;
+    }
+
+    .associate-itemContainer, .associate-itemLevelContainer,
+    .associate-itemDateContainer, .associate-phoneContainer, .associate-itemActionContainer  {
+        text-align: left;
+        padding-left: 1em;
+    }
+    .associate-itemContainer {
+
+    }
+}
+
+@media only screen and (max-width: 1120px) {
+    .associate-container {
+        display: grid;
+        grid-template-columns: 150px 200px 250px;
+        grid-template-rows: auto auto auto;
+        justify-items: start;
+        align-items: center;
+    }
+    .associate-profilePictureContainer {
+        display: table-cell;
+        text-align: center;
+        grid-row-start: 1;
+        grid-row-end: 4;
+        padding-left: 1em;
+    }
+
+    .mobileUserPictureContainer {
+        display: block;
+        width: 120px;
+        height: 120px;
+        min-width: 120px;
+    }
 }

@@ -43,6 +43,10 @@
     /*margin-right:35px;*/
 }
 
+.card-title {
+    white-space: nowrap;
+}
+
 .associate-levelBarListItem {
     width:100%;
     max-width:100%;
@@ -61,11 +65,20 @@
 }
 
 .associate-buttonContainer {
-    margin: 20px auto 20px auto;
+    margin: auto auto 1em auto;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     width: 100%;
+    justify-content: flex-end;
+}
+
+.associate-buttonContainer a {
+    margin-left: 1.5em;
+}
+
+.titleContainer {
+    display: flex;
 }
 
 .associate-searchContainer {
@@ -106,4 +119,15 @@
         width: 80%;
         position: relative;
     }
+}
+
+@media screen and (max-width: 550px) {
+    .titleContainer {
+        display: block;
+    }
+    .associate-buttonContainer {
+        justify-content: center;
+        margin: 1em 0 2em 0;
+    }
+
 }

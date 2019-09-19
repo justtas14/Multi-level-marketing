@@ -98,45 +98,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/link", name="associate_link")
-     * @param InvitationManager $invitationManager
-     * @return JsonResponse
-     * @throws Exception
-     */
-    public function getUniquePermanentAssociateLink(InvitationManager $invitationManager)
-    {
-        /** @var User $currentUser */
-        $currentUser = $this->getUser();
-        $associate = $currentUser->getAssociate();
-
-        $uniqueAssociateUsername= $associate->getInvitationUserName();
-
-        $uniqueAssociateInvitationLink = $invitationManager->getAssociateUrl($uniqueAssociateUsername);
-
-        $qrCode = new QrCode();
-        $qrCode
-            ->setText($uniqueAssociateInvitationLink)
-            ->setSize(250)
-            ->setPadding(10)
-            ->setErrorCorrection('high')
-            ->setForegroundColor(['r' => 0, 'g' => 0, 'b' => 0, 'a' => 0])
-            ->setBackgroundColor(['r' => 255, 'g' => 255, 'b' => 255, 'a' => 0])
-            ->setLabel('Scan Qr Code')
-            ->setLabelFontSize(16)
-            ->setImageType(QrCode::IMAGE_TYPE_PNG);
-
-        $generateString = $qrCode->generate();
-        $contentType = $qrCode->getContentType();
-
-        $qrCodeAttr = [
-            'generateString' => $generateString,
-            'contentType' => $contentType
-        ];
-
-        return new JsonResponse(['uniqueAssociateLink' => $uniqueAssociateInvitationLink, 'qrCode' => $qrCodeAttr]);
-    }
-
-    /**
      * @Route("/associate/invite", name="associate_invite")
      * @param Request $request
      * @param InvitationManager $invitationManager
@@ -154,6 +115,13 @@ class AssociateController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
+
+        $associate = $user->getAssociate();
+
+        $uniqueAssociateUsername= $associate->getInvitationUserName();
+
+        $uniqueAssociateInvitationLink = $invitationManager->getAssociateUrl($uniqueAssociateUsername);
+
         $page = $request->get('page', 1);
 
         if (!is_numeric($page)) {
@@ -243,7 +211,8 @@ class AssociateController extends AbstractController
             'invitation' => $form->createView(),
             'invitations' => $invitations,
             'numberOfPages' => $numberOfPages,
-            'currentPage' => $page
+            'currentPage' => $page,
+            'uniqueAssociateInvitationLink' => $uniqueAssociateInvitationLink
         ]);
     }
 

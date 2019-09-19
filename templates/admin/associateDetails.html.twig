@@ -41,7 +41,7 @@
                     <div class="userDetails__container__parentInfo">
                         <div class="userDetails_parentTitleContainer addBottom userDetailsTitle">
                             <span class="card-title">Sponsor details</span>
-                            <a href="{{ path('user_search_details', {id : associate.getParentId}) }}" class="btn">Inspect</a>
+                            <a href="{{ path('user_search_details', {id : associate.getParentId}) }}" class="btn">Details</a>
                         </div>
                         <hr class="separation__line">
                         <div class="userDetails__container">
@@ -75,9 +75,6 @@
             <div class="card-content">
                 <span class="card-title">Business Shape</span>
                 {% include 'includes/other/businessShape.html.twig' %}
-                <div class="adminBusinessShape__buttonContainer">
-                    <a class="waves-effect waves-light btn" href="{{ path('csv') }}" target="_blank">Download CSV</a>
-                </div>
             </div>
         </div>
         {% include 'includes/other/recentInvitations.twig' with {'route': 'user_search_details', 'associateId': associate.id} %}

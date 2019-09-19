@@ -115,7 +115,6 @@ class Associate
     private $postcode = "";
 
     /**
-     * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
      */

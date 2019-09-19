@@ -2,41 +2,30 @@
 
 {% block title %}Associate{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link href="{{ asset('build/clipboard.css') }}" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
             <div class="card-content">
-                <span class="card-title">My Team</span>
-                <div class="associate-buttonContainer">
-                    <a
-                            class="waves-effect waves-light btn-large"
-                            style="width:45%; background-color:#3ab54a; flex:1"
-                            href="{{ path('associate_invite') }}">
-                        Invite Associate
-                    </a>
-                    <a
-                            class="waves-effect waves-light btn-large"
-                            style="margin-left:5%; width:45%; background-color:#3ab54a; flex:1"
-                            href="{{ path('team_viewer') }}"
-                    >
-                        My Team Viewer
-                    </a>
+                <div class="titleContainer">
+                    <span class="card-title">My Team</span>
+                    <div class="associate-buttonContainer">
+                        <a
+                                class="btn"
+                                href="{{ path('associate_invite') }}">
+                            Invite Associate
+                        </a>
+                        <a
+                                class="btn"
+                                href="{{ path('team_viewer') }}"
+                        >
+                            My Team Viewer
+                        </a>
+                    </div>
                 </div>
                 {% include 'includes/other/businessShape.html.twig' %}
             </div>
         </div>
-        <div class="card">
-            <div class="card-content">
-                {% verbatim %}
-                <div id="clip-board"></div>
-                {% endverbatim %}
-            </div>
-        </div>
+
         {% if parent is not null %}
             <div class="card">
                 <div class="card-content">
@@ -101,10 +90,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}
-    <script type="text/javascript" src="{{ asset('build/clipboard.js') }}"></script>
 {% endblock %}
 {#
         {% if profilePicture is not null %}

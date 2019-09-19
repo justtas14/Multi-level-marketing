@@ -2,6 +2,11 @@
 
 {% block title %}Invitation{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/clipboard.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -49,9 +54,24 @@
                 {% endif %}
             </div>
         </div>
+        <div class="card">
+            <div class="card-content">
+                {% verbatim %}
+                <div id="clip-board"></div>
+                {% endverbatim %}
+            </div>
+        </div>
         {% if sent is not defined %}
             {% include 'includes/other/recentInvitations.twig' with {'route': 'associate_invite'}%}
         {% endif %}
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/clipboard.js') }}"></script>
+    <script>
+        Widgets.clipboard.clipboardFun('{{ uniqueAssociateInvitationLink }}');
+    </script>
 {% endblock %}

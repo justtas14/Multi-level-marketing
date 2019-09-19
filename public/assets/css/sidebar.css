@@ -90,29 +90,33 @@
     cursor: pointer;
 }
 
-.sidebar-item a {
+.sidebar-item a, .sidebar-itemLast a  {
     margin-left: 20px;
     display: block;
-    color: black;
-    line-height: 50px;
-    height: 50px;
-}
-
-.sidebar-itemLast a {
-    margin-left: 20px;
-    display: block;
-    color: black;
+    color: inherit;
     line-height: 50px;
     height: 50px;
 }
 
 .sidebar-item:hover {
     background-color: #f2f2f2;
+    color: #7f06c4;
 
 }
 
 .sidebar-itemLast:hover {
     background-color: #f2f2f2;
+    color: #7f06c4;
+}
+
+.sidebar-item {
+    display: flex;
+}
+
+.materialDesignIcons {
+    align-items: center;
+    justify-content: center;
+    line-height: 50px;
 }
 
 .sidebar-logo {
@@ -124,6 +128,7 @@
 
 .sidebar--active {
     background-color: #f2f2f2;
+    color: #7f06c4;
 }
 
 .sidebar-logoContainer {

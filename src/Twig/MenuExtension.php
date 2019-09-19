@@ -31,31 +31,39 @@ class MenuExtension extends AbstractExtension
         return [
             [
                 'route' => 'admin',
-                'label' => 'Home'
+                'label' => 'Home',
+                'icon' => 'home'
             ],
             [
                 'route' => 'email_template_list',
-                'label' => 'Email Templates'
+                'label' => 'Email Templates',
+                'icon' => 'email'
             ],
             [
                 'route' => 'end_prelaunch',
-                'label' => 'End Prelaunch'
+                'label' => 'End Prelaunch',
+                'icon' => 'stop'
             ],
             [
                 'route' => 'change_content',
-                'label' => 'Change Content'
+                'label' => 'Change Content',
+                'icon' => 'edit'
+
             ],
             [
                 'route' => 'user_search',
                 'label' => 'User Search',
+                'icon' => 'search',
                 'subRoute' => ['user_search_details']
             ],
             [
                 'route' => 'gallery',
+                'icon' => 'collections',
                 'label' => 'Gallery'
             ],
             [
                 'route' => 'csv',
+                'icon' => 'supervised_user_circle',
                 'label' => 'Associate csv dump'
             ]
         ];
@@ -66,18 +74,22 @@ class MenuExtension extends AbstractExtension
         return [
             [
                 'route' => 'associate',
+                'icon' => 'home',
                 'label' => 'Associate Home'
             ],
             [
                 'route' => 'team_viewer',
+                'icon' => 'people',
                 'label' => 'Team Viewer'
             ],
             [
                 'route' => 'associate_invite',
+                'icon' => 'insert_invitation',
                 'label' => 'Invite Associates'
             ],
             [
                 'route' => 'associate_profile',
+                'icon' => 'edit',
                 'label' => 'Edit Profile'
             ]
         ];

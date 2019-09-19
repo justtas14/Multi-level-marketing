@@ -1,5 +1,13 @@
 <template>
     <tr class="associate-container">
+        <td class="associate-profilePictureContainer">
+            <div class="userDetails__picture__container mobileUserPictureContainer">
+                <img class="userDetails__picture mobileUserPicture"
+                     v-if="associate.filePath" :src="associate.filePath" />
+                <img class="userDetails__picture mobileUserPicture"
+                     v-else :src="defaultPicture" />
+            </div>
+        </td>
         <td class="associate-itemContainer user__search__fullName">
             <div class="userDetails__picture__container">
                 <img class="userDetails__picture"
@@ -8,19 +16,24 @@
                      v-else :src="defaultPicture" />
             </div>
             <div class="fullName">
+                <span class="valueTitle">Full name:</span>
                 {{ associate.fullName }}
             </div>
         </td>
         <td class="associate-itemContainer">
+            <span class="valueTitle">Email:</span>
             {{ associate.email }}
         </td>
         <td class="associate-phoneContainer" v-bind:style="{'text-align' : associate.mobilePhone ? 'left' : 'center' }">
+            <span class="valueTitle">Mobile phone:</span>
             {{ associate.mobilePhone || '-'}}
         </td>
         <td class="associate-itemLevelContainer">
+            <span class="valueTitle">Level:</span>
             {{ associate.level }}
         </td>
         <td class="associate-itemDateContainer">
+            <span class="valueTitle">Join date:</span>
             {{ dateString }}
         </td>
         <td class="associate-itemActionContainer">

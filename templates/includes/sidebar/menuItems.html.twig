@@ -7,10 +7,11 @@
             Admin 
         </div>
         {% for route in allRoutes.adminRoutes %}
-            <div class="sidebar-item
+            <div onclick="goToRoute('{{ path(route.route) }}')" class="sidebar-item
                 {% if currentRoute == route.route or ((route.subRoute is defined and not null) and currentRoute in route.subRoute) %}sidebar--active{% endif %}"
             >
-                <a href="{{ path(route.route) }}">{{ route.label }}</a>
+                <i class="material-icons materialDesignIcons">{{ route.icon }}</i>
+                <a href="#">{{ route.label }}</a>
             </div>
         {% endfor %}
     {% endif %}
@@ -19,8 +20,9 @@
             Associate
         </div>
         {% for route in allRoutes.associateRoutes %}
-            <div class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">
-                <a href="{{ path(route.route) }}">{{ route.label }}</a>
+            <div onclick="goToRoute('{{ path(route.route) }}')" class="sidebar-item {% if currentRoute == route.route %}sidebar--active{% endif %}">
+                <i class="material-icons materialDesignIcons">{{ route.icon }}</i>
+                <a href="#">{{ route.label }}</a>
             </div>
         {% endfor %}
     {% endif %}
@@ -34,4 +36,10 @@
             <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
         </div>
     </div>
+
+    <script>
+        function goToRoute(path) {
+            window.location.href = path;
+        }
+    </script>
 {% endblock %}

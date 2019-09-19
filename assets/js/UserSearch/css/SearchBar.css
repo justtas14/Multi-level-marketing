@@ -84,3 +84,50 @@ input[type=text]:not(.browser-default):focus:not([readonly]) {
     text-align: center;
     white-space: nowrap;
 }
+
+@media only screen and (max-width: 1150px) {
+    .searchBar-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: auto;
+    }
+    .cantInput {
+        display: none;
+    }
+
+    .searchBar-inputContainer {
+        width: 100%;
+    }
+
+    .searchBar-inputEmailContainer {
+        width: 100%;
+    }
+
+    .searchBar-inputPhoneContainer {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 1120px) {
+    .searchBar-container {
+        grid-template-columns: auto;
+        grid-template-rows: auto auto auto;
+    }
+    .cantInput {
+        display: none;
+    }
+
+    .searchBar-inputContainer {
+        width: 100%;
+        padding: 0 20px 0 10px
+    }
+
+    .searchBar-inputEmailContainer {
+        width: 100%;
+        padding: 0 20px 0 10px;
+    }
+
+    .searchBar-inputPhoneContainer {
+        width: 100%;
+    }
+}
