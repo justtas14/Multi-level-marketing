@@ -74,7 +74,7 @@
 
     .associate-profilePictureContainer {
         display: table-cell;
-        text-align: center;
+        width: 100%;
         grid-row-start: 1;
         grid-row-end: 3;
         padding-left: 1em;
@@ -95,6 +95,7 @@
         width: 100px;
         height: 100px;
         min-width: 100px;
+        text-align: center;
     }
     .mobileUserPicture {
 
@@ -117,17 +118,14 @@
 @media only screen and (max-width: 1120px) {
     .associate-container {
         display: grid;
-        grid-template-columns: 150px 200px 250px;
+        grid-template-columns: 150px 220px 1fr;
         grid-template-rows: auto auto auto;
         justify-items: start;
         align-items: center;
     }
     .associate-profilePictureContainer {
-        display: table-cell;
-        text-align: center;
         grid-row-start: 1;
         grid-row-end: 4;
-        padding-left: 1em;
     }
 
     .mobileUserPictureContainer {
@@ -135,5 +133,95 @@
         width: 120px;
         height: 120px;
         min-width: 120px;
+    }
+}
+
+@media only screen and (max-width: 930px) {
+    .associate-container {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        grid-template-rows: auto auto auto auto;
+        justify-items: start;
+        align-items: center;
+        margin-left: 1em;
+    }
+    .associate-profilePictureContainer {
+        grid-row-start: 1;
+        grid-row-end: 3;
+    }
+
+    .user__search__fullName {
+        grid-row-start: 3;
+        grid-row-end: 4;
+    }
+
+    .associate-itemActionContainer {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 4;
+        grid-row-end: 5;
+    }
+    .associate-itemDateContainer {
+        grid-column-start: 2;
+        grid-column-end: 3;
+    }
+
+    .mobileUserPictureContainer {
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+    }
+}
+
+@media only screen and (max-width: 901px) {
+    .userDetails__picture__container {
+        margin: unset;
+    }
+}
+
+@media only screen and (max-width: 901px) {
+    .userDetails__picture__container {
+        margin: unset;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .associate-container {
+        grid-template-columns: 250px 1fr;
+        grid-template-rows: auto auto auto auto;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .associate-container {
+        grid-template-columns: 200px 1fr;
+        grid-template-rows: auto auto auto auto;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .associate-container {
+        font-size: 0.8em;
+        grid-template-columns: 150px 1fr;
+    }
+    .mobileUserPictureContainer {
+        display: block;
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+    }
+    .user__search__fullName {
+        padding-left: 1.2em;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .associate-container {
+        grid-template-columns: 125px 1fr;
+    }
+    .mobileUserPictureContainer {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
     }
 }

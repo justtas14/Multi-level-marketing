@@ -54,6 +54,7 @@
                 {% endif %}
             </div>
         </div>
+        {% if sent is not defined %}
         <div class="card">
             <div class="card-content">
                 {% verbatim %}
@@ -61,7 +62,6 @@
                 {% endverbatim %}
             </div>
         </div>
-        {% if sent is not defined %}
             {% include 'includes/other/recentInvitations.twig' with {'route': 'associate_invite'}%}
         {% endif %}
     </div>
@@ -70,8 +70,10 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('build/clipboard.js') }}"></script>
-    <script>
-        Widgets.clipboard.clipboardFun('{{ uniqueAssociateInvitationLink }}');
-    </script>
+    {% if sent is not defined %}
+        <script type="text/javascript" src="{{ asset('build/clipboard.js') }}"></script>
+        <script>
+            Widgets.clipboard.clipboardFun('{{ uniqueAssociateInvitationLink }}');
+        </script>
+    {% endif %}
 {% endblock %}

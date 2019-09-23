@@ -202,7 +202,7 @@ class AssociateController extends AbstractController
                     'sent' => [
                         'completed' => true,
                         'address' => $email
-                    ]
+                    ],
                 ]);
             }
         }
@@ -271,6 +271,7 @@ class AssociateController extends AbstractController
                         '+' . $form['associate']['mobilePhone']->getData()->getCountryCode() .
                         $form['associate']['mobilePhone']->getData()->getNationalNumber()
                     );
+                    $user->getAssociate()->setEmail($email);
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($user);
                     $em->persist($user->getAssociate());

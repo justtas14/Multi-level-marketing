@@ -64,6 +64,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['oldPassword']->setValue('1234');
         $form->get('user_update')['newPassword']['first']->setValue('12345');
         $form->get('user_update')['newPassword']['second']->setValue('12345');
+        $form->get('user_update')['associate']['email']->setValue($user->getEmail());
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -85,6 +86,7 @@ class AssociateControllerTest extends WebTestCase
         $encoder = $container->get('security.user_password_encoder.generic');
         $this->assertTrue($encoder->isPasswordValid($user, '12345'));
 
+        $this->assertEquals('associate@example.com', $user->getAssociate()->getEmail());
         $this->assertEquals('Justas', $user->getAssociate()->getFullName());
         $this->assertEquals('LT', $user->getAssociate()->getCountry());
         $this->assertEquals('blaha', $user->getAssociate()->getAddress());
@@ -105,6 +107,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['oldPassword']->setValue('12345');
         $form->get('user_update')['newPassword']['first']->setValue('justtas');
         $form->get('user_update')['newPassword']['second']->setValue('justtas');
+        $form->get('user_update')['associate']['email']->setValue("admin@plumtreesystems.com");
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -134,6 +137,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['oldPassword']->setValue('somepasw');
         $form->get('user_update')['newPassword']['first']->setValue('justtas');
         $form->get('user_update')['newPassword']['second']->setValue('justtas');
+        $form->get('user_update')['associate']['email']->setValue($user->getEmail());
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
@@ -163,6 +167,7 @@ class AssociateControllerTest extends WebTestCase
         $form->get('user_update')['oldPassword']->setValue('12345');
         $form->get('user_update')['newPassword']['first']->setValue('');
         $form->get('user_update')['newPassword']['second']->setValue('');
+        $form->get('user_update')['associate']['email']->setValue($user->getEmail());
         $form->get('user_update')['associate']['fullName']->setValue('Justas');
         $form->get('user_update')['associate']['country']->setValue('LT');
         $form->get('user_update')['associate']['address']->setValue('blaha');
