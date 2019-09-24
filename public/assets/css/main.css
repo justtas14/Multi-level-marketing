@@ -418,3 +418,8 @@ select {
         display: block;
     }
 }
+@media screen and (max-width: 400px) {
+    .card .card-title {
+        font-size: 18px;
+    }
+}

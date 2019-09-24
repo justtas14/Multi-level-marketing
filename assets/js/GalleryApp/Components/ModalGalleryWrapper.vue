@@ -12,6 +12,7 @@
                 v-bind:imageExtensions="imageExtensions"
                 v-bind:constants="constants"
                 v-bind:confirm="confirm"
+                v-bind:noTop="noTop"
             >
                 <template v-slot:category></template>
             </Gallery>
@@ -38,7 +39,8 @@
         },
         data() {
             return {
-                constants: {}
+                constants: {},
+                noTop: true
             }
         },
         computed: mapState('gallery', {

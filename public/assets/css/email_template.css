@@ -3,20 +3,9 @@ textarea {
 }
 
 .emailContainer {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-}
-
-#editor {
-    flex: 7;
-}
-
-#emailBodyParams {
-    flex: 3;
-    margin-left: 50px;
+    display: grid;
+    grid-gap: 0 50px;
+    grid-template-columns: auto auto;
 }
 
 #emailBodyParams > #emailBodyParamsTitle {
@@ -138,6 +127,15 @@ textarea {
 
 .modal-body img{
     object-fit: contain;
+}
+
+@media only screen and (max-width: 550px) {
+    .emailContainer {
+        grid-template-columns: auto;
+    }
+    .emailContainer {
+        grid-gap: 50px 0;
+    }
 }
 
 

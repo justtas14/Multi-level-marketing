@@ -65,10 +65,6 @@
                     </div>
                     {% include 'includes/errorBlock.html.twig' with { field: form } %}
                 </main>
-                {% verbatim %}
-                    <section id="modal">
-                    </section>
-                 {% endverbatim %}
                 {{ form_widget(form.hiddenMainLogoFile) }}
                 {{ form_widget(form.hiddenTermsOfServiceFile) }}
                 {% if configuration.termsOfServices is defined and configuration.termsOfServices is not null %}
@@ -78,6 +74,10 @@
             </div>
         </div>
     </div>
+    {% verbatim %}
+        <section id="modal">
+        </section>
+    {% endverbatim %}
 
 {% endblock %}
    {% block javascripts %}

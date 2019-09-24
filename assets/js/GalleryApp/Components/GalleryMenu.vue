@@ -7,16 +7,13 @@
         </div>
         <div id="material-tabs">
             <a id="tab1-tab" @click="$emit('categorise-files', 'all')"  :class="{'active': category === 'all' }">
-                <i class="far fa-file-archive categoryIcons"></i>
-                <span class="categoryName">All files</span>
+                <span class="categoryName"><i class="material-icons categoryIcons">dynamic_feed</i>All files</span>
             </a>
             <a id="tab2-tab" @click="$emit('categorise-files', 'images')" :class="{'active': category === 'images' }">
-                <i class="far fa-image categoryIcons"></i>
-                <span class="categoryName" style="margin-left: 14px">Images</span>
+                <span class="categoryName" style="margin-left: 14px"><i class="material-icons categoryIcons">image</i>Images</span>
             </a>
             <a id="tab3-tab" @click="$emit('categorise-files', 'files')" :class="{'active': category === 'files' }">
-                <i class="far fa-file categoryIcons"></i>
-                <span class="categoryName">Files</span>
+                <span class="categoryName"><i class="material-icons categoryIcons">insert_drive_file</i>Files</span>
             </a>
             <span class="yellow-bar"></span>
         </div>

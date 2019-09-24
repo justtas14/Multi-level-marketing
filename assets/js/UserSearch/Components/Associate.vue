@@ -20,7 +20,7 @@
                 {{ associate.fullName }}
             </div>
         </td>
-        <td class="associate-itemContainer">
+        <td class="associate-itemContainer email">
             <span class="valueTitle">Email:</span>
             {{ associate.email }}
         </td>

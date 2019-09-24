@@ -11,6 +11,7 @@
                 <Notification
                     v-bind:message="notification.message"
                     v-bind:style="{display: notification.display}"
+                    v-bind:noTop="noTop"
                 />
                 <Confirmation
                         @hideConfirmation="hideConfirmation"
@@ -34,7 +35,7 @@
     export default {
         name: 'Gallery',
         props: ['files', 'notification', 'paginationInfo',
-            'imageExtensions', 'constants', 'confirm', 'yesClickFn'],
+            'imageExtensions', 'constants', 'confirm', 'yesClickFn', 'noTop'],
         components: {
             Pagination,
             Notification,
