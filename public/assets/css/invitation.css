@@ -11,6 +11,20 @@
     flex-direction: row;
 }
 
+.invitationForm {
+    margin-top: 1em;
+}
+
+.invitation-buttonWrap {
+    margin: auto !important;
+    width: unset !important;
+    text-align: center;
+}
+
+#invitation_submit {
+    width: 200px;
+}
+
 .invitation-container {
     margin: 100px auto 20px auto;
     height: 20%;

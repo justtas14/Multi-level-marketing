@@ -3,21 +3,27 @@
 namespace App\Controller;
 
 use App\Entity\Associate;
+use App\Entity\Invitation;
 use App\Entity\ResetPassword;
 use App\Entity\User;
+use App\Filter\AssociateFilter;
+use App\Form\InvitationType;
 use App\Form\NewPasswordType;
 use App\Form\ResetPasswordType;
 use App\Form\UserRegistrationType;
+use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
 use App\Service\ResetPasswordManager;
 use Symfony\Component\Asset\Packages;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -60,13 +66,15 @@ class HomeController extends AbstractController
         ConfigurationManager $cm,
         AssociateManager $associateManager
     ) {
-        $invitationEmail = false;
-        $withInvitation = false;
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
         $parentAssociate = $associateManager->findByUserName($code);
 
-        if (!$invitation && !$parentAssociate) {
+        if ($parentAssociate) {
+            return $this->redirectToRoute('invite', ['id' => $parentAssociate->getId()]);
+        }
+
+        if (!$invitation) {
             return $this->render('home/linkstate.html.twig');
         }
 
@@ -77,14 +85,9 @@ class HomeController extends AbstractController
 
         $user = new User();
         $associate = new Associate();
-        $associate->setEmail('someemail@example.com');
-        if ($invitation) {
-            $withInvitation = true;
-            $invitationEmail = $invitation->getEmail();
-            $user->setEmail($invitationEmail);
-            $associate->setEmail($invitation->getEmail());
-            $associate->setFullName($invitation->getFullName());
-        }
+        $associate->setEmail($invitation->getEmail());
+        $user->setEmail($invitation->getEmail());
+        $associate->setFullName($invitation->getFullName());
         $user->setAssociate($associate);
 
         $form = $this->createForm(UserRegistrationType::class, $user);
@@ -92,25 +95,19 @@ class HomeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setEmail($invitationEmail ? $invitationEmail : $user->getEmail());
-            $email = $user->getEmail();
+            $email = $invitation->getEmail();
+            $user->setEmail($email);
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
-            if (!$email) {
-                $this->addFlash('error', 'Cannot leave empty email');
-            } elseif ($checkEmailExist) {
+            if ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
             } elseif (strlen($associate->getFullName()) > 255) {
                 $this->addFlash('error', 'Name length is too large');
             } elseif (strlen($email) > 255) {
                 $this->addFlash('error', 'Email length is too large');
             } else {
-                if ($invitation) {
-                    $associate->setParent($invitation->getSender());
-                    $invitationManager->discardInvitation($invitation);
-                } else {
-                    $associate->setParent($parentAssociate);
-                }
-                $associate->setEmail($email);
+                $associate->setParent($invitation->getSender());
+                $invitationManager->discardInvitation($invitation);
+                $associate->setEmail(trim($email));
                 $associate->setFullName(trim($associate->getFullName()));
                 $invitationUserName = $associateManager->createUniqueUserNameInvitation($associate->getFullName());
                 $associate->setInvitationUserName($invitationUserName);
@@ -133,19 +130,79 @@ class HomeController extends AbstractController
             }
         }
 
-        if ($invitation) {
-            $recruiter = $associateManager->getAssociate($invitation->getSender()->getId(), true);
-        } else {
-            $recruiter = $associateManager->getAssociate($parentAssociate->getId(), true);
-        }
+        $recruiter = $associateManager->getAssociate($invitation->getSender()->getId(), true);
 
         return $this->render('home/registration.html.twig', [
             'registration' => $form->createView(),
             'termsOfServices' => $termsOfServices,
             'recruiter' => $recruiter,
             'disclaimer' => $disclaimer,
-            'withInvitation' => $withInvitation,
-            'invitationEmail' => $invitationEmail
+        ]);
+    }
+
+    /**
+     * @Route("/invite/{id}", name="invite")
+     * @param Request $request
+     * @param InvitationManager $invitationManager
+     * @param BlacklistManager $blacklistManager
+     * @return Response
+     */
+    public function invitation(
+        $id,
+        Request $request,
+        InvitationManager $invitationManager,
+        BlacklistManager $blacklistManager
+    ) {
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $em->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw new NotFoundHttpException('Cannot find user', null, 404);
+        }
+
+        $associate = $user->getAssociate();
+
+        $form = $this->createForm(InvitationType::class);
+        $form->handleRequest($request);
+
+        if (($form->isSubmitted() && $form->isValid())) {
+            $em = $this->getDoctrine()->getManager();
+            $invitation = new Invitation();
+            $email = trim($form['email']->getData());
+            /** @var AssociateRepository $associateRepo */
+            $associateRepo = $em->getRepository(Associate::class);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->addFlash('error', 'Invalid email');
+            } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
+                $this->addFlash('error', 'Associate already exists');
+            } elseif ($blacklistManager->existsInBlacklist($email)) {
+                $form
+                    ->get('email')
+                    ->addError(new FormError('The person with this email has opted out of this service'));
+            } else {
+                $invitation->setSender($associate);
+                $invitation->setEmail($email);
+                $invitation->setFullName($form['fullName']->getData());
+                $invitationManager->send($invitation);
+                $em->persist($invitation);
+                $em->flush();
+
+//                $this->addFlash('success', 'Email sent');
+                return $this->render('home/invitation.html.twig', [
+                    'invitation' => $form->createView(),
+                    'id' => $id,
+                    'sent' => [
+                        'completed' => true,
+                        'address' => $email,
+                    ],
+                ]);
+            }
+        }
+
+        return $this->render('home/invitation.html.twig', [
+            'invitation' => $form->createView(),
+            'associateFullName' => $associate->getFullName()
         ]);
     }
 

@@ -2,7 +2,8 @@
     <div id="clipboard-app">
         <span class="card-title invitationLinkTitle">Invitation link</span>
         <div class="invitationAboutText">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            Below is an invitation link, you can share it with your potential associates, so they can begin their
+            registration flow themselves.
         </div>
         <div class="invitationLinkContainer">
             <invitationLink v-bind:invitationUrl="invitationUrl"/>

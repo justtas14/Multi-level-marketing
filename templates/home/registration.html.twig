@@ -43,11 +43,7 @@
                     </div>
                     <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.email) }}
-                        {% if withInvitation %}
-                        {{ form_widget(registration.email, {'attr': {'disabled': 'disabled', 'value': invitationEmail}}) }}
-                        {% else %}
                         {{ form_widget(registration.email) }}
-                        {% endif %}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.email } %}
                     </div>
                     <div class="input-field registration__input--forceBorder">

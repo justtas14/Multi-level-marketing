@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Invitation{% endblock %}
+
+{% block body %}
+    <div class="card__container">
+        <div class="card" style="margin: 0 auto; width: 60vw; min-width: 300px">
+            <div class="card-content">
+                <div class="login-logoContainer">
+                    {% set configuration = getConfiguration() %}
+                    {% if configuration.mainLogo is not null %}
+                        <img style="max-width:100%; max-height: 100px" src="{{ configuration.mainLogo|downloadUrlParser }}" />
+                    {% else%}
+                        <img style="max-width:100%; max-height: 100px" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
+                    {% endif %}
+                </div>
+                {% if sent is defined and sent.completed is defined and sent.completed == true %}
+                    <div style="padding: 20px 0; text-align: center">
+                        <div class="card-title" style="margin: 0 0 1em 0">Invitation has been sent successfully to the "{{ sent.address }}" email address</div>
+                        <a class="waves-effect waves-light btn" style="text-align: center; margin: auto" href="{{ path('invite', {'id' : id}) }}">Send another one</a>
+                    </div>
+                {% else %}
+                    <span class="card-title" style="text-align: center; white-space: unset;">To get started and join {{ associateFullName }} team, fill the form below</span>
+                    <main id="main" class="invitationForm">
+                        {% include 'includes/invitation.html.twig' with {'invitation' : invitation} %}
+                    </main>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
