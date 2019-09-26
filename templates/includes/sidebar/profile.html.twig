@@ -14,7 +14,7 @@
             </div>
             <div class="sidebarProfile__labelContainer">
                 {% if (associate is not null) %}
-                    {{ associate.fullName}}
+                    {{ associate.fullName |length > 40 ? associate.fullName |slice(0, 40) ~ '...' : associate.fullName }}
                 {% else %}
                     {{ app.user.email }}
                 {% endif %}

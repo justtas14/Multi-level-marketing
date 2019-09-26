@@ -19,8 +19,9 @@
                         <img style="max-width:100%; max-height: 100px" src="{{ asset('assets/images/plum_tree_logo.png') }}" />
                     {% endif %}
                 </div>
-                <span class="card-title">You have been invited by: <b>{{ recruiter.fullName }}</b></span>
-                <span class="card-title">To complete your registration, fill in the form bellow:</span>
+                <span class="card-title" style="white-space: unset !important;">You have been invited by:
+                    <b style ="white-space: unset !important; word-break: break-all">{{ recruiter.fullName |length > 40 ? recruiter.fullName |slice(0, 40) ~ '...' : recruiter.fullName  }}</b></span>
+                <span class="card-title" style="white-space: unset !important;">To complete your registration, fill in the form bellow:</span>
                 <div id="flash-messages">
                     {% for message in app.flashes('error') %}
                         <div class="error__block">
@@ -43,7 +44,7 @@
                     </div>
                     <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.email) }}
-                        {{ form_widget(registration.email) }}
+                        {{ form_widget(registration.email, {'attr': {'value' : email}}) }}
                         {% include 'includes/errorBlock.html.twig' with { field: registration.email } %}
                     </div>
                     <div class="input-field registration__input--forceBorder">

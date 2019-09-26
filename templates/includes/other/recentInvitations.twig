@@ -16,8 +16,8 @@
                         <tbody>
                         {% for inv in invitations %}
                             <tr>
-                                <td>{{ inv.email }}</td>
-                                <td>{{ inv.fullName }}</td>
+                                <td>{{ inv.email |length > 30 ? inv.email |slice(0, 30) ~ '...' : inv.email  }}</td>
+                                <td>{{ inv.fullName |length > 35 ? inv.fullName |slice(0, 35) ~ '...' : inv.fullName  }}</td>
                                 <td>{{ inv.created | date }}</td>
                                 {% if inv.used == true %}
                                     <td>Yes</td>
@@ -68,7 +68,7 @@
                 {% endif %}
             </ul>
             {% else %}
-                <p style="margin: 2em 0">Associate doesn't have any invitations</p>
+                <p style="margin: 2em 0">Associate doesn't have any sent invitations</p>
             {% endif %}
         </div>
     </div>

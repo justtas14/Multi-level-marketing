@@ -1,9 +1,9 @@
 .sidebar {
     position: fixed;
-    top: 300px;
+    top: 320px;
     bottom: 0;
     left: 0;
-    width: 250px;
+    width: 260px;
     /*min-width: 319px;*/
     height: 100%;
     background-color: #fff;
@@ -14,8 +14,8 @@
 .fixed {
     box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
     position: fixed;
-    width: 250px;
-    height: 300px;
+    width: 260px;
+    height: 320px;
     top: 0;
     bottom: 0;
     left: 0;
@@ -137,8 +137,8 @@
 .sidebar-logo {
     /*width: 100%;*/
     max-height: 100px;
-    border-radius:25px 25px 25px 25px;
     object-fit: contain;
+    padding: 1em;
 }
 
 .sidebar--active {
@@ -149,6 +149,7 @@
 .sidebar-logoContainer {
     padding: 12px 0 12px 0;
     width:100%;
+    height: 125px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -293,6 +294,9 @@
         z-index: 999999;
         max-height: 50px;
         margin-left: 40px;
+        padding: unset;
+        width: 100%;
+        height: 100%;
     }
     .sidebar-menu-inactive {
         /*display: block;*/
@@ -312,6 +316,12 @@
         animation : adminMenuFadeBack 0.25s ease-out forwards;
         /*display: none;*/
     }
+    .sidebar-logoContainer {
+        height: unset;
+        display: grid;
+        grid-template-columns: 5fr 1fr;
+        justify-items: center;
+    }
 }
 
 @media screen and (min-width: 801px) {
@@ -328,8 +338,8 @@
         display: block;
         overflow-y:scroll;
         overflow-x:hidden;
-        width: 250px;
-        top: 300px;
+        width: 260px;
+        top: 320px;
         right: auto;
     }
     .sidebar-profileContainer {

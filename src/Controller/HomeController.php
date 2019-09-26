@@ -100,10 +100,6 @@ class HomeController extends AbstractController
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
             if ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
-            } elseif (strlen($associate->getFullName()) > 255) {
-                $this->addFlash('error', 'Name length is too large');
-            } elseif (strlen($email) > 255) {
-                $this->addFlash('error', 'Email length is too large');
             } else {
                 $associate->setParent($invitation->getSender());
                 $invitationManager->discardInvitation($invitation);
@@ -137,6 +133,7 @@ class HomeController extends AbstractController
             'termsOfServices' => $termsOfServices,
             'recruiter' => $recruiter,
             'disclaimer' => $disclaimer,
+            'email' => $invitation->getEmail()
         ]);
     }
 

@@ -141,7 +141,7 @@ class AssociateController extends AbstractController
             }
         }
 
-        $allInvitations = $invitationRepository->findBy(['sender' => $user]);
+        $allInvitations = $invitationRepository->findBy(['sender' => $associate]);
 
         $numberOfPages = ceil(count($allInvitations) / self::INVITATION_LIMIT);
 
@@ -154,7 +154,7 @@ class AssociateController extends AbstractController
         }
 
         $invitations = $invitationRepository->findBy(
-            ['sender' => $user],
+            ['sender' => $associate],
             ['created' => 'DESC'],
             self::INVITATION_LIMIT,
             self::INVITATION_LIMIT * ($page-1)
@@ -212,7 +212,7 @@ class AssociateController extends AbstractController
             'invitations' => $invitations,
             'numberOfPages' => $numberOfPages,
             'currentPage' => $page,
-            'uniqueAssociateInvitationLink' => $uniqueAssociateInvitationLink
+            'uniqueAssociateInvitationLink' => $uniqueAssociateInvitationLink,
         ]);
     }
 

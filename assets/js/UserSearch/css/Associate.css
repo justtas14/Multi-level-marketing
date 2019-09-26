@@ -316,6 +316,9 @@
         text-align: center;
         margin: auto;
     }
+    .valueTitle {
+        font-size: 1em;
+    }
 
     .userDetails__picture__container {
         margin: auto;
@@ -323,51 +326,69 @@
 
     .user__search__fullName {
         width: 100%;
-        text-align: center;
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 3;
         grid-row-end: 4;
+        padding-left: 0;
+    }
+    .fullName {
+        line-height: 20px;
+        display: grid;
+        grid-template-columns: 100px auto;
     }
     .email {
+        line-height: 20px;
         width: 100%;
-        text-align: center;
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 4;
         grid-row-end: 5;
+        display: grid;
+        grid-template-columns: 100px auto;
+        padding-left: 0;
     }
 
     .associate-itemActionContainer {
+        line-height: 20px;
         width: 100%;
         text-align: center;
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 8;
         grid-row-end: 9;
+        padding-left: 0;
     }
     .associate-itemDateContainer {
+        line-height: 20px;
         width: 100%;
-        text-align: center;
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 5;
         grid-row-end: 6;
+        display: grid;
+        grid-template-columns: 100px  auto;
+        padding-left: 0;
     }
     .associate-itemLevelContainer {
         width: 100%;
-        text-align: center;
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 7;
         grid-row-end: 8;
+        display: grid;
+        grid-template-columns: 100px auto;
+        padding-left: 0;
     }
     .associate-phoneContainer {
+        line-height: 20px;
         width: 100%;
-        text-align: center !important;
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 6;
         grid-row-end: 7;
+        display: grid;
+        grid-template-columns: 100px auto;
+        padding-left: 0;
     }
 }

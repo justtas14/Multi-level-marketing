@@ -56,6 +56,12 @@ class Associate
     private $parent;
 
     /**
+     * @Assert\Length(
+     *      min = 5,
+     *      max = 255,
+     *      minMessage = "Your email must be at least {{ limit }} characters long",
+     *      maxMessage = "Your email cannot be longer than {{ limit }} characters"
+     * )
      * @Assert\NotBlank
      * @Assert\Email(
      *   message = "The email '{{ value }}' is not a valid email."
@@ -66,6 +72,12 @@ class Associate
     private $email = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your full name must be at least {{ limit }} characters long",
+     *      maxMessage = "Your full name cannot be longer than {{ limit }} characters"
+     * )
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -81,6 +93,12 @@ class Associate
     private $profilePicture;
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your country must be at least {{ limit }} characters long",
+     *      maxMessage = "Your country cannot be longer than {{ limit }} characters"
+     * )
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -88,6 +106,12 @@ class Associate
     private $country = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your address must be at least {{ limit }} characters long",
+     *      maxMessage = "Your address cannot be longer than {{ limit }} characters"
+     * )
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -95,12 +119,24 @@ class Associate
     private $address = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your email second address be at least {{ limit }} characters long",
+     *      maxMessage = "Your email second address be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(type="string")
      * @var string
      */
     private $address2 = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your city must be at least {{ limit }} characters long",
+     *      maxMessage = "Your city cannot be longer than {{ limit }} characters"
+     * )
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -108,6 +144,12 @@ class Associate
     private $city = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your postcode must be at least {{ limit }} characters long",
+     *      maxMessage = "Your postcode cannot be longer than {{ limit }} characters"
+     * )
      * @Assert\NotBlank
      * @ORM\Column(type="string")
      * @var string
@@ -115,12 +157,24 @@ class Associate
     private $postcode = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your mobile phone must be at least {{ limit }} characters long",
+     *      maxMessage = "Your mobile phone cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(type="string")
      * @var string
      */
     private $mobilePhone = "";
 
     /**
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your home phone must be at least {{ limit }} characters long",
+     *      maxMessage = "Your home phone cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(type="string", nullable=true)
      * @var string
      */

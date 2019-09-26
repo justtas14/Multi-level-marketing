@@ -10,3 +10,13 @@
         width: unset !important;
     }
 }
+
+.paginationDots {
+    vertical-align: text-top;
+    font-weight: 500;
+    padding-top: 0.2em;
+}
+
+.firstPage, .lastPage {
+    cursor: pointer;
+}
