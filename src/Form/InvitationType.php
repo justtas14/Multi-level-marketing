@@ -25,7 +25,7 @@ class InvitationType extends AbstractType
                 ]
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'send',
+                'label' => 'Send',
                 'attr' => [
                     'class' => 'waves-effect waves-light btn'
                 ]
