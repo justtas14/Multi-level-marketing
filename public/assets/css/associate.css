@@ -131,3 +131,18 @@
     }
 
 }
+@media screen and (max-width: 450px) {
+    .associate-buttonContainer {
+        display: block;
+        justify-content: center;
+        margin: 1em 0 2em 0;
+    }
+    #teamViewerBtn {
+        display: block;
+    }
+    #inviteAssociateBtn {
+        display: block;
+        margin-bottom: 1em;
+    }
+
+}

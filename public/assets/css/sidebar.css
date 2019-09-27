@@ -334,6 +334,7 @@
     }
 
     .sidebar-menu {
+        margin-top: 0.85em;
         position:fixed;
         display: block;
         overflow-y:scroll;

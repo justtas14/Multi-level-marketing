@@ -13,7 +13,7 @@
 .associate-itemContainer, .associate-itemLevelContainer,
 .associate-itemDateContainer, .associate-phoneContainer, .associate-itemActionContainer  {
     align-items: center;
-    white-space: nowrap;
+    word-break: break-all
 }
 
 .associate-itemContainer {
@@ -63,7 +63,7 @@
     margin-right: 0.5em;
 }
 
-@media only screen and (max-width: 1150px) {
+@media only screen and (max-width: 1250px) {
     .associate-container {
         display: grid;
         grid-template-columns: 150px 200px 250px 200px;
@@ -330,12 +330,11 @@
         grid-column-end: 2;
         grid-row-start: 3;
         grid-row-end: 4;
-        padding-left: 0;
     }
     .fullName {
         line-height: 20px;
         display: grid;
-        grid-template-columns: 100px auto;
+        grid-template-columns: 90px auto;
     }
     .email {
         line-height: 20px;
@@ -345,8 +344,7 @@
         grid-row-start: 4;
         grid-row-end: 5;
         display: grid;
-        grid-template-columns: 100px auto;
-        padding-left: 0;
+        grid-template-columns: 90px auto;
     }
 
     .associate-itemActionContainer {
@@ -357,7 +355,6 @@
         grid-column-end: 2;
         grid-row-start: 8;
         grid-row-end: 9;
-        padding-left: 0;
     }
     .associate-itemDateContainer {
         line-height: 20px;
@@ -367,8 +364,7 @@
         grid-row-start: 5;
         grid-row-end: 6;
         display: grid;
-        grid-template-columns: 100px  auto;
-        padding-left: 0;
+        grid-template-columns: 90px  auto;
     }
     .associate-itemLevelContainer {
         width: 100%;
@@ -377,8 +373,7 @@
         grid-row-start: 7;
         grid-row-end: 8;
         display: grid;
-        grid-template-columns: 100px auto;
-        padding-left: 0;
+        grid-template-columns: 90px auto;
     }
     .associate-phoneContainer {
         line-height: 20px;
@@ -388,7 +383,6 @@
         grid-row-start: 6;
         grid-row-end: 7;
         display: grid;
-        grid-template-columns: 100px auto;
-        padding-left: 0;
+        grid-template-columns: 90px auto;
     }
 }

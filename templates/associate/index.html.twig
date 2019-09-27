@@ -2,6 +2,11 @@
 
 {% block title %}Associate{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/css/mobileTable.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="admin-contentContainer">
         <div class="card">
@@ -10,11 +15,13 @@
                     <span class="card-title">My Team</span>
                     <div class="associate-buttonContainer">
                         <a
+                                id="inviteAssociateBtn"
                                 class="btn"
                                 href="{{ path('associate_invite') }}">
                             Invite Associate
                         </a>
                         <a
+                                id="teamViewerBtn"
                                 class="btn"
                                 href="{{ path('team_viewer') }}"
                         >
@@ -59,10 +66,10 @@
                 <table>
                     <thead>
                     <tr>
-                        <th style="max-width:50px">Name</th>
-                        <th style="max-width:50px">Email</th>
-                        <th style="max-width:50px">Mobile Phone</th>
-                        <th style="max-width:50px">Join Date</th>
+                        <th class="associate-overflow">Name</th>
+                        <th class="associate-overflow">Email</th>
+                        <th class="associate-overflow" >Mobile Phone</th>
+                        <th class="associate-overflow">Join Date</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -70,17 +77,17 @@
                         <tr><td colspan="4">You do not have any associates in your direct downline</td></tr>
                     {% endif %}
                     {% for associate in directAssociates %}
-                        <tr>
-                            <td style="max-width:50px; overflow-wrap: break-word">{{ associate.fullName }}</td>
-                            <td style="max-width:50px; overflow-wrap: break-word">{{ associate.email }}</td>
-                            <td style="max-width:50px; overflow-wrap: break-word">
+                        <tr class="associate-container">
+                            <td class="associate-overflow directAssociatesAbout">{{ associate.fullName }}</td>
+                            <td class="associate-overflow directAssociatesAbout">{{ associate.email }}</td>
+                            <td class="associate-overflow directAssociatesAbout">
                                 {% if associate.mobilePhone == '' %}
                                     -
                                 {% else %}
                                     {{ associate.mobilePhone }}
                                 {% endif %}
                             </td>
-                            <td style="max-width:50px; overflow-x: hidden">
+                            <td class="associate-overflow directAssociatesAbout">
                                 {{ associate.joinDate|date('d-m-Y') }}
                             </td>
                         </tr>

@@ -5,7 +5,7 @@ export default {
             closeIcon: 'closeIcon'
         }
     },
-    fileCutLength: 13,
+    fileCutLength: 14,
     downloadable: true,
     uploadable: false
     }

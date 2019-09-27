@@ -2,34 +2,32 @@
         <div class="card-content">
             <span class="card-title">Sent Invitations</span>
             {% if invitations is not empty %}
-                <div style="overflow-x:auto;">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th class="recent_invitation_title">Email</th>
-                            <th class="recent_invitation_title">Full Name</th>
-                            <th class="recent_invitation_title">Invitation created</th>
-                            <th class="recent_invitation_title">Invitation used</th>
-                            <th class="recent_invitation_title">Resend</th>
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="recent_invitation_title">Email</th>
+                        <th class="recent_invitation_title">Full Name</th>
+                        <th class="recent_invitation_title">Invitation created</th>
+                        <th class="recent_invitation_title">Invitation used</th>
+                        <th class="recent_invitation_title">Resend</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for inv in invitations %}
+                        <tr class="associate-container">
+                            <td class="associate-overflow invitationAbout">{{ inv.email }}</td>
+                            <td class="associate-overflow invitationAbout">{{ inv.fullName  }}</td>
+                            <td class="associate-overflow invitationAbout">{{ inv.created | date }}</td>
+                            {% if inv.used == true %}
+                                <td class="invitationAbout">Yes</td>
+                            {% else %}
+                                <td class="invitationAbout">No</td>
+                            {% endif %}
+                            <td class="invitationAbout"><a href="{{ path('associate_invite', {invitationId: inv.id}) }}" class="btn">Resend Invitation</a></td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {% for inv in invitations %}
-                            <tr>
-                                <td>{{ inv.email |length > 30 ? inv.email |slice(0, 30) ~ '...' : inv.email  }}</td>
-                                <td>{{ inv.fullName |length > 35 ? inv.fullName |slice(0, 35) ~ '...' : inv.fullName  }}</td>
-                                <td>{{ inv.created | date }}</td>
-                                {% if inv.used == true %}
-                                    <td>Yes</td>
-                                {% else %}
-                                    <td>No</td>
-                                {% endif %}
-                                <td><a href="{{ path('associate_invite', {invitationId: inv.id}) }}" class="btn">Resend Invitation</a></td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                    {% endfor %}
+                    </tbody>
+                </table>
             <br>
             <ul class="pagination" style="text-align: center">
                 {% if currentPage == 1 %}

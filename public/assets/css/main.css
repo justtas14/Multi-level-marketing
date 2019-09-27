@@ -324,6 +324,7 @@ select {
 }
 
 .userDetails__info__item {
+    word-break: break-all;
     margin: 1em 0;
 }
 
@@ -349,6 +350,7 @@ select {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 0.5em;
+    word-break: break-all;
 }
 
 .quillEditorCard {
@@ -368,7 +370,7 @@ select {
         display: block;
     }
     .userDetails__container__parentInfo {
-        margin: 2em 0 0 0;
+        margin: 1em 0 0 0;
     }
     .userDetails__info__container {
         align-self: center;
@@ -390,7 +392,7 @@ select {
 
     .userDetails__picture__container {
         width: 150px;
-        height: 150px;
+        height: 100%;
         min-width: 150px;
         text-align: center;
         margin: auto;
@@ -401,12 +403,11 @@ select {
     }
 
     .userDetails__info__container {
-        width: 50%;
-        margin: 9.5em auto 0 auto;
+        margin: 1em auto 0 auto;
     }
 
     .parent {
-        margin: 9.5em auto 0 auto;
+        margin: 1em auto 0 auto;
     }
 
     .userDetailsTitle {
@@ -417,9 +418,17 @@ select {
     .userDetails_parentTitleContainer {
         display: block;
     }
+    .user__name {
+        text-align: center;
+    }
 }
 @media screen and (max-width: 400px) {
     .card .card-title {
         font-size: 18px;
     }
+    .userDetails__info__container {
+        margin: auto;
+    }
+
+
 }
