@@ -1006,7 +1006,7 @@ class AdminControllerTest extends WebTestCase
         );
 
         $this->assertEquals(
-            15,
+            14,
             $crawler->filter('div.sidebar-item')->count()
         );
     }

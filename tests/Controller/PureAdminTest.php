@@ -257,7 +257,7 @@ class PureAdminTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $this->assertEquals(
-            10,
+            9,
             $crawler->filter('div.sidebar-item')->count()
         );
     }
