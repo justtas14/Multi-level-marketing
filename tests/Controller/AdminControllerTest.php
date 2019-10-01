@@ -185,7 +185,7 @@ class AdminControllerTest extends WebTestCase
         $em->persist($emailTemplateInvitation);
         $em->flush();
 
-        $form = $crawler->selectButton('Send')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('myemail@gmail.com');
         $form->get('invitation')['fullName']->setValue('myemail');
@@ -214,7 +214,7 @@ class AdminControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/invite');
 
-        $form = $crawler->selectButton('Send')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('myemaifa');
         $form->get('invitation')['fullName']->setValue('myemail');
@@ -228,7 +228,7 @@ class AdminControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/invite');
 
-        $form = $crawler->selectButton('Send')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('AidanNewman@dayrep.com');
         $form->get('invitation')['fullName']->setValue('myemail');
@@ -242,7 +242,7 @@ class AdminControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/invite');
 
-        $form = $crawler->selectButton('Send')->form();
+        $form = $crawler->selectButton('send')->form();
 
         /** @var InvitationBlacklist $invitationBlackList */
         $invitationBlackList = $this->fixtures->getReference('invitationBlackListEmail');
