@@ -16,11 +16,13 @@
                 </div>
                 {% if sent is defined and sent.completed is defined and sent.completed == true %}
                     <div style="padding: 20px 0; text-align: center;">
-                        <div class="card-title" style="margin: 0 0 1em 0; white-space: unset !important; word-break: break-all">Invitation has been sent successfully to the "{{ sent.address }}" email address</div>
+                        <div class="card-title" style="margin: 0 0 1em 0; white-space: unset !important; word-break: break-word">
+                            Invitation has been sent successfully to the <b>"{{ sent.address }}"</b> email address
+                        </div>
                         <a class="waves-effect waves-light btn" style="text-align: center; margin: auto" href="{{ path('invite', {'id' : id}) }}">Send another one</a>
                     </div>
                 {% else %}
-                    <span class="card-title" style="text-align: center; white-space: unset; word-break: break-all">To get started and join {{ associateFullName }} team, fill the form below</span>
+                    <span class="card-title" style="text-align: center; white-space: unset; word-break: break-word">To get started and join <b>{{ associateFullName }}</b> team, fill the form below</span>
                     <main id="main" class="invitationForm">
                         {% include 'includes/invitation.html.twig' with {'invitation' : invitation} %}
                     </main>

@@ -325,7 +325,7 @@ select {
 }
 
 .userDetails__info__item {
-    word-break: break-all;
+    word-break: break-word;
     margin: 1em 0;
 }
 
@@ -351,7 +351,7 @@ select {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 0.5em;
-    word-break: break-all;
+    word-break: break-word;
 }
 
 .quillEditorCard {

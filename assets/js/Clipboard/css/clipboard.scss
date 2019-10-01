@@ -9,6 +9,8 @@
 
 .barCodeImageContainer {
   text-align: center;
+  position: relative;
+  min-height: 200px;
   width: 100%;
 }
 
@@ -24,7 +26,42 @@
   width: 100%;
 }
 
+.originalQrCode {
+}
 
+.originalQrCode, .full-screen-img {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+.full-screen-img {
+  z-index: 1000;
+  transform: scale(3);
+}
+
+//.enlarge-enter-active {
+//  transition: all 0.6s ease;
+//}
+//.enlarge-leave-active {
+//  transition: all 0.6s ease;
+//}
+//.enlarge-enter {
+//  transform: scale(1);
+//}
+//.enlarge-enter-to {
+//  transform: scale(3);
+//}
+//.enlarge-leave {
+//}
+//.enlarge-leave-to {
+//  transform: scale(1);
+//}
+//
+//
 
 
 

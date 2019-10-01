@@ -78,4 +78,5 @@ figure {
     align-items: center;
     text-align: center;
     align-content: center;
+    transition: all 0.3s ease;
 }
