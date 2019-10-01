@@ -141,7 +141,7 @@ class AdminControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/associate/invite');
 
-        $form = $crawler->selectButton('Send')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('myemail@gmail.com');
         $form->get('invitation')['fullName']->setValue('myemail');
