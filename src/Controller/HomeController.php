@@ -160,7 +160,7 @@ class HomeController extends AbstractController
 
         $associate = $user->getAssociate();
 
-        $form = $this->createForm(InvitationType::class);
+        $form = $this->createForm(InvitationType::class, null, ['label' => 'Get invited']);
         $form->handleRequest($request);
 
         if (($form->isSubmitted() && $form->isValid())) {

@@ -246,6 +246,17 @@
     text-align: center;
 }
 
+.downloadCSV {
+
+}
+
+.footer {
+    box-shadow: inset 0 1px 0 0 #d5d5d5;
+    padding: unset;
+    pointer-events: none;
+    justify-content: center;
+}
+
 @keyframes adminMenuFade {
     from {
         /*opacity: 0;*/

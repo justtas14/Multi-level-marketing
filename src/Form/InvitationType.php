@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -25,7 +24,7 @@ class InvitationType extends AbstractType
                 ]
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Send',
+                'label' => $options['label'],
                 'attr' => [
                     'class' => 'waves-effect waves-light btn'
                 ]

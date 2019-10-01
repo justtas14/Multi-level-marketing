@@ -11,7 +11,6 @@
         </div>
         <div class="barCodeImageContainer">
             <qrcode
-                @click.native="openFullScreenImage"
                 class="originalQrCode"
                 :class="{}"
                 :value="invitationUrl"
@@ -32,10 +31,9 @@
                 v-bind:css="false"
             >
                 <qrcode
-                    @click.native="openFullScreenImage"
                     v-if="fullscreenImg"
                     class="full-screen-img"
-                    :class="{imgOpened: !fullscreenImg }"
+                    :class="{imgOpened: fullscreenImg }"
                     :value="invitationUrl"
                     :options="{ width: 200 }"
                     tag="img"
@@ -68,11 +66,26 @@
             return {
                 messageTooltip: null,
                 navigatorShare: null,
-                fullscreenImg: false
+                fullscreenImg: false,
+                centeredImage: null,
+                currentImage: null,
+                centerImagePosition: {
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                },
+                currentImagePosition:{
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0
+                }
             }
         },
         methods: {
-            openFullScreenImage() {
+
+            openFullScreenImage: function () {
                 this.fullscreenImg = !this.fullscreenImg;
             },
             // --------
@@ -80,14 +93,24 @@
             // --------
 
             beforeEnter: function (el) {
+                this.setCordinates(this.centeredImage, this.centerImagePosition);
+                this.setCordinates(this.currentImage, this.currentImagePosition);
+
                 el.style.scale = 1;
+                el.style.left = 0;
+                el.style.top = 0;
             },
             enter: function (el, done) {
-                Velocity(el, { scale: 3 }, { duration: 300 });
-                Velocity(el, { fontSize: '1em' }, { complete: done });
+                Velocity(el, { scale: 2,
+                    bottom: this.centerImagePosition.bottom - this.currentImagePosition.bottom,
+                    top: this.centerImagePosition.top - this.currentImagePosition.top,
+                    left: this.centerImagePosition.left - this.currentImagePosition.left,
+                    right: this.centerImagePosition.right - this.currentImagePosition.right
+
+                }, { duration: 400 });
             },
             afterEnter: function (el) {
-                // ...
+                el.style.scale = 2;
             },
             enterCancelled: function (el) {
                 // ...
@@ -103,8 +126,7 @@
             // the done callback is optional when
             // used in combination with CSS
             leave: function (el, done) {
-                // ...
-                done()
+                Velocity(el, { scale: 1, left: 0, top: 0, bottom: 0, right: 0  }, { duration: 300 });
             },
             afterLeave: function (el) {
                 // ...
@@ -112,9 +134,24 @@
             // leaveCancelled only available with v-show
             leaveCancelled: function (el) {
                 // ...
+            },
+            setCordinates: function (image, imagePositions) {
+                const rect = image.getBoundingClientRect();
+                imagePositions.top = rect.top;
+                imagePositions.right = rect.right;
+                imagePositions.bottom = rect.bottom;
+                imagePositions.left = rect.left;
             }
+
         },
         mounted() {
+            const centeredImage = document.querySelector('.image-center-anchor');
+            this.centeredImage = centeredImage;
+            this.setCordinates(centeredImage, this.centerImagePosition);
+            const currentImage = document.querySelector('.originalQrCode');
+            this.currentImage = currentImage;
+            this.setCordinates(currentImage, this.currentImagePosition);
+
             this.navigatorShare = navigator.share;
             if (navigator.share) {
                 const shareButton = document.getElementById('shareButton');
@@ -129,6 +166,7 @@
             }
         },
         created() {
+
         }
     }
 </script>

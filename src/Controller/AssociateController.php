@@ -160,7 +160,7 @@ class AssociateController extends AbstractController
             self::INVITATION_LIMIT * ($page-1)
         );
 
-        $form = $this->createForm(InvitationType::class);
+        $form = $this->createForm(InvitationType::class, null, ['label' => 'send']);
         $form->handleRequest($request);
 
         if (($form->isSubmitted() && $form->isValid()) || $invitationId) {
