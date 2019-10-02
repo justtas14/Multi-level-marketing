@@ -1,0 +1,39 @@
+{% extends 'bodyBase.html.twig' %}
+
+{% block title %}System logs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/logging.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="admin-contentContainer">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">System Logs</span>
+                <div id="flash-messages">
+                    {% for message in app.flashes('error') %}
+                        <div class="error__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('success') %}
+                        <div class="success__block">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% verbatim %}
+                    <div id="logging">
+                    </div>
+                {% endverbatim %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <link href="{{ asset('build/logging.js') }}" rel="stylesheet">
+{% endblock %}

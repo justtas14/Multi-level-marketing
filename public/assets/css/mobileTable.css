@@ -12,22 +12,29 @@
     .associate-overflow {
         max-width: unset;
     }
-    table {
+    #recentInvitationsTable table {
         margin-top: 1em;
-    }
-    table, thead, tbody, th, td, tr {
         display: block;
     }
-    thead tr {
+    .mobileTable table,
+    .mobileTable thead,
+    .mobileTable tbody,
+    .mobileTable th,
+    .mobileTable td,
+    .mobileTable tr {
+        display: block;
+    }
+    .mobileTable thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
-    td {
+    .mobileTable td {
         position: relative;
         padding-left: 50%;
+        word-break: break-word;
     }
-    td:before {
+    .mobileTable td:before {
         position: absolute;
         top: 6px;
         left: 10px;
@@ -51,7 +58,7 @@
 }
 
 @media screen and (max-width: 450px) {
-    td, tr{
+    .mobileTable td, .mobileTable tr{
         font-size: 0.95em;
     }
 

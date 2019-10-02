@@ -62,6 +62,11 @@ class MenuExtension extends AbstractExtension
                 'label' => 'Gallery'
             ],
             [
+                'route' => 'logs',
+                'icon' => 'library_books',
+                'label' => 'System logs'
+            ],
+            [
                 'route' => 'csv',
                 'icon' => 'supervised_user_circle',
                 'label' => 'Associate csv dump'

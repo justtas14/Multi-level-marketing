@@ -16,6 +16,7 @@ use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
+use App\Service\Logging;
 use App\Service\ResetPasswordManager;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\FormError;
@@ -56,15 +57,16 @@ class HomeController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param ConfigurationManager $cm
      * @param AssociateManager $associateManager
+     * @param Logging $logging
      * @return Response
-     * @throws \Exception
      */
     public function registration(
         $code,
         Request $request,
         InvitationManager $invitationManager,
         ConfigurationManager $cm,
-        AssociateManager $associateManager
+        AssociateManager $associateManager,
+        Logging $logging
     ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
@@ -122,6 +124,9 @@ class HomeController extends AbstractController
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
+
+                $logging->createLog($associate->getFullName(). ' registered', 'Associate registration');
+
                 return $this->redirectToRoute('home');
             }
         }
@@ -139,16 +144,19 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/invite/{id}", name="invite")
+     * @param $id
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
+     * @param Logging $logging
      * @return Response
      */
     public function invitation(
         $id,
         Request $request,
         InvitationManager $invitationManager,
-        BlacklistManager $blacklistManager
+        BlacklistManager $blacklistManager,
+        Logging $logging
     ) {
         $em = $this->getDoctrine()->getManager();
 
@@ -178,13 +186,19 @@ class HomeController extends AbstractController
                     ->get('email')
                     ->addError(new FormError('The person with this email has opted out of this service'));
             } else {
+                $fullName = $form['fullName']->getData();
                 $invitation->setSender($associate);
                 $invitation->setEmail($email);
-                $invitation->setFullName($form['fullName']->getData());
+                $invitation->setFullName($fullName);
                 $invitationManager->send($invitation);
                 $em->persist($invitation);
                 $em->flush();
 
+                $logging->createLog(
+                    $associate->getFullName().
+                    ' sent invitation to '. $fullName. ' (' .$email.')',
+                    'Global Associate invitation'
+                );
 //                $this->addFlash('success', 'Email sent');
                 return $this->render('home/invitation.html.twig', [
                     'invitation' => $form->createView(),
@@ -311,6 +325,10 @@ class HomeController extends AbstractController
                 $em->flush();
                 $resetPasswordManager->discardCode($user);
                 $this->addFlash('success', 'Password has been restored!');
+                $this->logging->createLog(
+                    'Password has been restored for '.$user->getEmail(). 'email, ',
+                    'Password restoration'
+                );
                 return $this->redirectToRoute('home');
             }
         }

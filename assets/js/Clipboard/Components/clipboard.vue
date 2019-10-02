@@ -11,6 +11,7 @@
         </div>
         <div class="barCodeImageContainer">
             <qrcode
+                @click.native="openFullScreenImage"
                 class="originalQrCode"
                 :class="{}"
                 :value="invitationUrl"
@@ -31,6 +32,7 @@
                 v-bind:css="false"
             >
                 <qrcode
+                    @click.native="openFullScreenImage"
                     v-if="fullscreenImg"
                     class="full-screen-img"
                     :class="{imgOpened: fullscreenImg }"
@@ -45,7 +47,6 @@
 </template>
 
 <script>
-
     import Vue from 'vue';
     import VueQrcode from '@chenfengyuan/vue-qrcode';
     import invitationLink from "./invitationLink";
@@ -80,7 +81,8 @@
                     right: 0,
                     bottom: 0,
                     left: 0
-                }
+                },
+                errorOfCalc: 100,
             }
         },
         methods: {
@@ -88,52 +90,60 @@
             openFullScreenImage: function () {
                 this.fullscreenImg = !this.fullscreenImg;
             },
-            // --------
-            // ENTERING
-            // --------
 
             beforeEnter: function (el) {
                 this.setCordinates(this.centeredImage, this.centerImagePosition);
                 this.setCordinates(this.currentImage, this.currentImagePosition);
 
+                window.addEventListener('resize', (e) => {
+                    const rect = this.centeredImage.getBoundingClientRect();
+                    el.style.left = rect.left + this.errorOfCalc + 'px';
+                    el.style.top = rect.top + this.errorOfCalc + 'px';
+                    el.style.bottom = rect.bottom + this.errorOfCalc + 'px';
+                    el.style.right = rect.right + this.errorOfCalc + 'px';
+                });
+
                 el.style.scale = 1;
-                el.style.left = 0;
-                el.style.top = 0;
+                el.style.left = this.currentImagePosition.left + 'px';
+                el.style.top = this.currentImagePosition.top + 'px';
+                el.style.bottom = this.currentImagePosition.bottom + 'px';
+                el.style.right = this.currentImagePosition.right + 'px';
             },
             enter: function (el, done) {
                 Velocity(el, { scale: 2,
-                    bottom: this.centerImagePosition.bottom - this.currentImagePosition.bottom,
-                    top: this.centerImagePosition.top - this.currentImagePosition.top,
-                    left: this.centerImagePosition.left - this.currentImagePosition.left,
-                    right: this.centerImagePosition.right - this.currentImagePosition.right
+                    bottom: this.centerImagePosition.bottom + this.errorOfCalc,
+                    top: this.centerImagePosition.top + this.errorOfCalc,
+                    left: this.centerImagePosition.left + this.errorOfCalc,
+                    right: this.centerImagePosition.right + this.errorOfCalc
 
-                }, { duration: 400 });
+                }, { duration: 200 });
+                done();
             },
             afterEnter: function (el) {
-                el.style.scale = 2;
+
             },
             enterCancelled: function (el) {
-                // ...
             },
 
-            // --------
-            // LEAVING
-            // --------
 
             beforeLeave: function (el) {
-                // ...
+                this.setCordinates(this.centeredImage, this.centerImagePosition);
+                this.setCordinates(this.currentImage, this.currentImagePosition);
             },
-            // the done callback is optional when
-            // used in combination with CSS
             leave: function (el, done) {
-                Velocity(el, { scale: 1, left: 0, top: 0, bottom: 0, right: 0  }, { duration: 300 });
+                Velocity(el, { scale: 1,
+                    left: this.currentImagePosition.left,
+                    top: this.currentImagePosition.top,
+                    bottom: this.currentImagePosition.bottom,
+                    right: this.currentImagePosition.right
+                }, { duration: 200, complete: done });
             },
             afterLeave: function (el) {
-                // ...
+                el.style.position = "absolute";
             },
             // leaveCancelled only available with v-show
             leaveCancelled: function (el) {
-                // ...
+
             },
             setCordinates: function (image, imagePositions) {
                 const rect = image.getBoundingClientRect();
@@ -142,7 +152,6 @@
                 imagePositions.bottom = rect.bottom;
                 imagePositions.left = rect.left;
             }
-
         },
         mounted() {
             const centeredImage = document.querySelector('.image-center-anchor');
@@ -151,6 +160,7 @@
             const currentImage = document.querySelector('.originalQrCode');
             this.currentImage = currentImage;
             this.setCordinates(currentImage, this.currentImagePosition);
+
 
             this.navigatorShare = navigator.share;
             if (navigator.share) {
@@ -166,7 +176,6 @@
             }
         },
         created() {
-
         }
     }
 </script>

@@ -246,15 +246,37 @@
     text-align: center;
 }
 
-.downloadCSV {
-
+.copyRight {
+    pointer-events: none;
+    justify-content: center;
 }
 
 .footer {
+    text-align: center;
+    padding: 0;
+    display: block;
     box-shadow: inset 0 1px 0 0 #d5d5d5;
-    padding: unset;
-    pointer-events: none;
     justify-content: center;
+    color: #5e5e5e;
+}
+
+.footer:hover {
+    background-color: #fff;
+    color: #5e5e5e;
+}
+
+.downloadCSV {
+    padding-top: 1em;
+}
+
+.downloadCSV:hover {
+    color: #7f06c4;
+}
+
+.footer a {
+    margin-left: 0;
+    line-height: 30px;
+    height: 30px;
 }
 
 @keyframes adminMenuFade {

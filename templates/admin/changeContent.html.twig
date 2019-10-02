@@ -93,7 +93,8 @@
                 modal.showModal(category,
                     (fileObj) => {
                         hiddenInput.setAttribute("value", fileObj.fileId);
-                        fileContainer.innerHTML = fileObj.fileName;
+                        fileContainer.innerHTML = fileObj.fileName.length > 80 ? (fileObj.fileName.substr(0,80) + '...')
+                            : fileObj.fileName;
                         imagePreviewContainer.style.display = 'block';
                         image.src = fileObj.filePath;
                     },

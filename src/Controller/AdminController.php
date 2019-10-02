@@ -21,6 +21,7 @@ use App\CustomNormalizer\GalleryNormalizer;
 use App\Service\AssociateManager;
 use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
+use App\Service\Logging;
 use Doctrine\ORM\EntityManagerInterface;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -85,7 +86,6 @@ class AdminController extends AbstractController
     public function emailTemplateList()
     {
         return $this->render('admin/emailTemplateList.html.twig', [
-
         ]);
     }
 
@@ -160,7 +160,7 @@ class AdminController extends AbstractController
      * @param ConfigurationManager $cm
      * @return Response
      */
-    public function endPrelaunch(Request $request, ConfigurationManager $cm)
+    public function endPrelaunch(Request $request, ConfigurationManager $cm, Logging $logging)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -177,6 +177,7 @@ class AdminController extends AbstractController
             $em->flush();
             if ($configuration->hasPrelaunchEnded()) {
                 $this->addFlash('success', 'Prelaunch ended');
+                $logging->createLog('Prelaunch successfully ended', 'Prelaunch ending');
             }
         }
 
@@ -701,5 +702,14 @@ class AdminController extends AbstractController
         } else {
             return new Response('', 200);
         }
+    }
+
+    /**
+     * @Route("/admin/logs", name="logs")
+     */
+    public function systemLogs()
+    {
+        return $this->render('admin/logs.html.twig', [
+        ]);
     }
 }

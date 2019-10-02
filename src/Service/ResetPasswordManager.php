@@ -3,6 +3,7 @@
 
 namespace App\Service;
 
+use App\Entity\Log;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Swift_Mailer;
@@ -40,11 +41,17 @@ class ResetPasswordManager
      */
     private $secondsUntilExpired;
 
+    /**
+     * @var Logging $logging
+     */
+    private $logging;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
+        Logging $logging,
         string $invitationSender,
         string $secondsUntilExpiredResetPassword
     ) {
@@ -52,6 +59,7 @@ class ResetPasswordManager
         $this->mailer = $mailer;
         $this->router = $router;
         $this->emailTemplateManager = $emailTemplateManager;
+        $this->logging = $logging;
         $this->sender = $invitationSender;
         $this->secondsUntilExpired = $secondsUntilExpiredResetPassword;
     }
@@ -119,5 +127,9 @@ class ResetPasswordManager
         $this->em->persist($user);
         $this->em->flush();
         $this->send($resetCode, $user->getEmail());
+        $this->logging->createLog(
+            'Reset password email was sent to '.$user->getEmail(),
+            'Reset password email sending'
+        );
     }
 }

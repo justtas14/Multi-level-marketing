@@ -24,11 +24,18 @@ class AssociateManager
     /** @var AssociateRepository $associateRepository */
     private $associateRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage)
-    {
+    /** @var Logging $logging */
+    private $logging;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        TokenStorageInterface $tokenStorage,
+        Logging $logging
+    ) {
         $this->em = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->associateRepository = $this->em->getRepository(Associate::class);
+        $this->logging = $logging;
     }
 
     /**
@@ -231,6 +238,9 @@ class AssociateManager
             $this->em->persist($associate);
         }
 
+        $this->logging->createLog('Successfully changed '.$currentAssociate->getFullName().' associate parent
+        to '.$parentAssociate->getFullName(), 'Parent change');
+
         $this->em->flush();
     }
 
@@ -250,9 +260,18 @@ class AssociateManager
             foreach ($invitations as $invitation) {
                 $this->em->remove($invitation);
             }
+
+            $deleteAssociateFullName = $deleteAssociate->getFullName();
+
             $this->em->persist($user);
             $this->em->remove($deleteAssociate);
             $this->em->flush();
+
+            $this->logging->createLog(
+                'Successfully deleted '.$deleteAssociateFullName.' associate',
+                'Associate deletion'
+            );
+
             return true;
         } else {
             return false;
@@ -265,6 +284,7 @@ class AssociateManager
     public function deleteUser(User $user)
     {
         $userAssociate = $user->getAssociate();
+        $userEmail = $user->getEmail();
         if ($userAssociate) {
             $user->setAssociate(null);
             $this->em->persist($user);
@@ -272,6 +292,8 @@ class AssociateManager
         }
         $this->em->remove($user);
         $this->em->flush();
+
+        $this->logging->createLog('Successfully deleted user with email '.$userEmail, 'User deletion');
     }
 
     public function createUniqueUserNameInvitation($fullName) : string

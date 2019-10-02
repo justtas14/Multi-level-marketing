@@ -15,6 +15,7 @@ use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\InvitationManager;
+use App\Service\Logging;
 use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
@@ -102,13 +103,15 @@ class AssociateController extends AbstractController
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
+     * @param Logging $logging
      * @return Response
      * @throws NotInvitationSender
      */
     public function associateInvitation(
         Request $request,
         InvitationManager $invitationManager,
-        BlacklistManager $blacklistManager
+        BlacklistManager $blacklistManager,
+        Logging $logging
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -185,16 +188,27 @@ class AssociateController extends AbstractController
                     ->addError(new FormError('The person with this email has opted out of this service'));
             } else {
                 if (!$invitationId) {
-                    $invitation->setSender($user->getAssociate());
+                    $invitation->setSender($associate);
                     $invitation->setEmail($email);
                     $invitation->setFullName($form['fullName']->getData());
                     $invitationManager->send($invitation);
                     $em->persist($invitation);
                     $em->flush();
+                    $logging->createLog(
+                        $associate->getFullName().
+                        ' sent invitation to '. $invitation->getFullName(). ' (' .$invitation->getEmail().')',
+                        'Associate invitation'
+                    );
                 } else {
                     $invitationManager->send($resendInvitation);
                     $em->persist($resendInvitation);
                     $em->flush();
+                    $logging->createLog(
+                        $associate->getFullName().
+                        ' resent invitation to '. $resendInvitation->getFullName().
+                        ' (' .$resendInvitation->getEmail().')',
+                        'Associate invitation resending'
+                    );
                 }
 //                $this->addFlash('success', 'Email sent');
                 return $this->render('associate/invitation.html.twig', [
@@ -220,13 +234,16 @@ class AssociateController extends AbstractController
      * @Route("/associate/profile", name="associate_profile")
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
+     * @param GaufretteFileManager $fileManager
+     * @param Logging $logging
      * @return Response
      * @throws Exception
      */
     public function associateProfile(
         UserPasswordEncoderInterface $encoder,
         Request $request,
-        GaufretteFileManager $fileManager
+        GaufretteFileManager $fileManager,
+        Logging $logging
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -267,15 +284,18 @@ class AssociateController extends AbstractController
                     if ($newPassword) {
                         $user->setPlainPassword($newPassword);
                     }
-                    $user->getAssociate()->setMobilePhone(
+                    $associate = $user->getAssociate();
+                    $associate->setMobilePhone(
                         '+' . $form['associate']['mobilePhone']->getData()->getCountryCode() .
                         $form['associate']['mobilePhone']->getData()->getNationalNumber()
                     );
-                    $user->getAssociate()->setEmail($email);
+                    $associate->setEmail($email);
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($user);
-                    $em->persist($user->getAssociate());
+                    $em->persist($associate);
                     $em->flush();
+
+                    $logging->createLog($associate->getFullName(). ' profile updated', 'Associate update');
 
                     $this->addFlash('success', 'Fields updated');
                 }

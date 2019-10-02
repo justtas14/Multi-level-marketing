@@ -26,19 +26,20 @@
             </div>
         {% endfor %}
     {% endif %}
-        {% set configuration = getConfiguration() %}
-        {% if configuration.termsOfServices is not null  %}
-            <div class="sidebar-item" onclick="goToRoute('{{ configuration.termsOfServices|downloadUrlParser }}')" >
-                <i class="material-icons materialDesignIcons">
-                    save_alt
-                </i>
-                <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download Terms of service</a>
-            </div>
-        {% endif %}
         <div onclick="goToRoute('{{ logout_path() }}')" class="sidebar-itemLast sidebar-item">
             <i class="material-icons materialDesignIcons">exit_to_app</i>
             <a href="{{ logout_path() }}">{{ 'Logout' }}</a>
         </div>
+        <div class="sidebar-item footer" >
+            {% set configuration = getConfiguration() %}
+            {% if configuration.termsOfServices is not null %}
+                <div class="downloadCSV" onclick="goToRoute('{{ configuration.termsOfServices|downloadUrlParser }}')" >
+                    <a href="{{ configuration.termsOfServices|downloadUrlParser }}">Download Terms of service</a>
+                </div>
+            {% endif %}
+            <div class="copyRight">© Copyright Something</div>
+        </div>
+
     </div>
 
     <script>

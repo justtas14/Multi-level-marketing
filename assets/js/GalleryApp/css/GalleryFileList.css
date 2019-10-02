@@ -31,19 +31,22 @@
     display: grid;
     justify-content: center;
     grid-gap: 50px 75px;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
     text-align: center;
     align-items: center;
     margin: 0;
     height: 100%;
     width: 100%;
+    min-height: 0;
+    min-width: 0;
 }
 
 #modalGallery {
     display: grid;
     justify-content: center;
     grid-gap: 50px;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)
+    minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
     text-align: center;
     align-items: start;
     margin: 0;

@@ -26,15 +26,22 @@ class BlacklistManager
     private $invitationManager;
 
     /**
+     * @var Logging $logging
+     */
+    private $logging;
+
+    /**
      * BlacklistManager constructor.
      * @param EntityManagerInterface $em
      * @param InvitationManager $invitationManager
+     * @param Logging $logging
      */
-    public function __construct(EntityManagerInterface $em, InvitationManager $invitationManager)
+    public function __construct(EntityManagerInterface $em, InvitationManager $invitationManager, Logging $logging)
     {
         $this->em = $em;
         $this->repo = $em->getRepository(InvitationBlacklist::class);
         $this->invitationManager = $invitationManager;
+        $this->logging = $logging;
     }
 
     public function existsInBlacklist(string $email): bool
@@ -58,6 +65,7 @@ class BlacklistManager
         if (!$this->existsInBlacklist($invitation->getEmail())) {
             $this->em->persist((new InvitationBlacklist())->setEmail($invitation->getEmail()));
             $this->em->flush();
+            $this->logging->createLog($invitation->getEmail().' email added to blacklist ', 'Black List');
         }
         return;
     }
