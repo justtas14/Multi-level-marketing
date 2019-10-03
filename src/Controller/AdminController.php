@@ -21,9 +21,9 @@ use App\CustomNormalizer\GalleryNormalizer;
 use App\Service\AssociateManager;
 use App\Service\ConfigurationManager;
 use App\Service\EmailTemplateManager;
-use App\Service\Logging;
 use Doctrine\ORM\EntityManagerInterface;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -160,7 +160,7 @@ class AdminController extends AbstractController
      * @param ConfigurationManager $cm
      * @return Response
      */
-    public function endPrelaunch(Request $request, ConfigurationManager $cm, Logging $logging)
+    public function endPrelaunch(Request $request, ConfigurationManager $cm, LoggerInterface $databaseLogger)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -177,7 +177,10 @@ class AdminController extends AbstractController
             $em->flush();
             if ($configuration->hasPrelaunchEnded()) {
                 $this->addFlash('success', 'Prelaunch ended');
-                $logging->createLog('Prelaunch successfully ended', 'Prelaunch ending');
+                $databaseLogger->info(
+                    'Prelaunch successfully ended',
+                    ['type' => 'Prelaunch ending']
+                );
             }
         }
 
@@ -365,6 +368,7 @@ class AdminController extends AbstractController
      * @param $id
      * @param AssociateManager $associateManager
      * @return Response
+     * @throws \Exception
      */
     public function userSearchDetails($id, Request $request, AssociateManager $associateManager)
     {

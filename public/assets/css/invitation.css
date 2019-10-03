@@ -16,7 +16,7 @@
 }
 
 .invitation-buttonWrap {
-    margin: auto !important;
+    margin: 1em auto auto auto;
     width: unset !important;
     text-align: center;
 }
@@ -53,8 +53,10 @@
     color: #3ab54a;
 }
 
-.captcha {
-    margin-top: 2.5em;
+.recaptcha-container {
+    text-align: center;
+    width: 80%;
+    margin: auto;
 }
 
 @media screen and (max-width: 668px) {

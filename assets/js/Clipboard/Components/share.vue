@@ -21,6 +21,21 @@
         props: ['invitationUrl', 'navigatorShare'],
         methods: {
 
+        },
+        mounted() {
+            this.navigatorShare = navigator.share;
+            console.log(this.navigatorShare);
+            if (navigator.share) {
+                const shareButton = document.getElementById('shareButton');
+                shareButton.addEventListener('click', event => {
+                    navigator.share({
+                        title: 'Share',
+                        url: this.invitationUrl
+                    }).then(() => {
+                        console.log('Thanks for sharing!');
+                    }).catch(console.error);
+                })
+            }
         }
     }
 </script>

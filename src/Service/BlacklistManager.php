@@ -7,6 +7,7 @@ use App\Entity\InvitationBlacklist;
 use App\Exception\NotFoundInvitationException;
 use App\Repository\InvitationBlacklistRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class BlacklistManager
 {
@@ -26,22 +27,25 @@ class BlacklistManager
     private $invitationManager;
 
     /**
-     * @var Logging $logging
+     * @var LoggerInterface $databaseLogger
      */
-    private $logging;
+    private $databaseLogger;
 
     /**
      * BlacklistManager constructor.
      * @param EntityManagerInterface $em
      * @param InvitationManager $invitationManager
-     * @param Logging $logging
+     * @param LoggerInterface $databaseLogger
      */
-    public function __construct(EntityManagerInterface $em, InvitationManager $invitationManager, Logging $logging)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        InvitationManager $invitationManager,
+        LoggerInterface $databaseLogger
+    ) {
         $this->em = $em;
         $this->repo = $em->getRepository(InvitationBlacklist::class);
         $this->invitationManager = $invitationManager;
-        $this->logging = $logging;
+        $this->databaseLogger = $databaseLogger;
     }
 
     public function existsInBlacklist(string $email): bool
@@ -65,7 +69,11 @@ class BlacklistManager
         if (!$this->existsInBlacklist($invitation->getEmail())) {
             $this->em->persist((new InvitationBlacklist())->setEmail($invitation->getEmail()));
             $this->em->flush();
-            $this->logging->createLog($invitation->getEmail().' email added to blacklist ', 'Black List');
+
+            $this->databaseLogger->info(
+                $invitation->getEmail().' email added to blacklist ',
+                ['type' => 'Black Listing']
+            );
         }
         return;
     }

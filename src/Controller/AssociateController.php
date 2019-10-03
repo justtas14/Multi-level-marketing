@@ -15,11 +15,11 @@ use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\InvitationManager;
-use App\Service\Logging;
 use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -103,7 +103,7 @@ class AssociateController extends AbstractController
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
-     * @param Logging $logging
+     * @param LoggerInterface $databaseLogger
      * @return Response
      * @throws NotInvitationSender
      */
@@ -111,7 +111,7 @@ class AssociateController extends AbstractController
         Request $request,
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
-        Logging $logging
+        LoggerInterface $databaseLogger
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -194,20 +194,20 @@ class AssociateController extends AbstractController
                     $invitationManager->send($invitation);
                     $em->persist($invitation);
                     $em->flush();
-                    $logging->createLog(
+                    $databaseLogger->info(
                         $associate->getFullName().
                         ' sent invitation to '. $invitation->getFullName(). ' (' .$invitation->getEmail().')',
-                        'Associate invitation'
+                        ['type' => 'Associate invitation']
                     );
                 } else {
                     $invitationManager->send($resendInvitation);
                     $em->persist($resendInvitation);
                     $em->flush();
-                    $logging->createLog(
+                    $databaseLogger->info(
                         $associate->getFullName().
                         ' resent invitation to '. $resendInvitation->getFullName().
                         ' (' .$resendInvitation->getEmail().')',
-                        'Associate invitation resending'
+                        ['type' => 'Associate invitation resending']
                     );
                 }
 //                $this->addFlash('success', 'Email sent');
@@ -235,7 +235,7 @@ class AssociateController extends AbstractController
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
      * @param GaufretteFileManager $fileManager
-     * @param Logging $logging
+     * @param LoggerInterface $databaseLogger
      * @return Response
      * @throws Exception
      */
@@ -243,7 +243,7 @@ class AssociateController extends AbstractController
         UserPasswordEncoderInterface $encoder,
         Request $request,
         GaufretteFileManager $fileManager,
-        Logging $logging
+        LoggerInterface $databaseLogger
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -294,8 +294,10 @@ class AssociateController extends AbstractController
                     $em->persist($user);
                     $em->persist($associate);
                     $em->flush();
-
-                    $logging->createLog($associate->getFullName(). ' profile updated', 'Associate update');
+                    $databaseLogger->info(
+                        $associate->getFullName(). ' profile updated',
+                        ['type' => 'Associate update']
+                    );
 
                     $this->addFlash('success', 'Fields updated');
                 }

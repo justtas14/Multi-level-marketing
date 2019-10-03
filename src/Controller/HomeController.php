@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Associate;
 use App\Entity\Invitation;
-use App\Entity\ResetPassword;
 use App\Entity\User;
 use App\Filter\AssociateFilter;
 use App\Form\InvitationType;
@@ -16,8 +15,8 @@ use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
-use App\Service\Logging;
 use App\Service\ResetPasswordManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -57,7 +56,7 @@ class HomeController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param ConfigurationManager $cm
      * @param AssociateManager $associateManager
-     * @param Logging $logging
+     * @param LoggerInterface $databaseLogger
      * @return Response
      */
     public function registration(
@@ -66,7 +65,7 @@ class HomeController extends AbstractController
         InvitationManager $invitationManager,
         ConfigurationManager $cm,
         AssociateManager $associateManager,
-        Logging $logging
+        LoggerInterface $databaseLogger
     ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
@@ -125,7 +124,10 @@ class HomeController extends AbstractController
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
 
-                $logging->createLog($associate->getFullName(). ' registered', 'Associate registration');
+                $databaseLogger->info(
+                    $associate->getFullName(). ' registered',
+                    ['type' => 'Associate registration']
+                );
 
                 return $this->redirectToRoute('home');
             }
@@ -148,7 +150,7 @@ class HomeController extends AbstractController
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
-     * @param Logging $logging
+     * @param LoggerInterface $databaseLogger
      * @return Response
      */
     public function invitation(
@@ -156,7 +158,7 @@ class HomeController extends AbstractController
         Request $request,
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
-        Logging $logging
+        LoggerInterface $databaseLogger
     ) {
         $em = $this->getDoctrine()->getManager();
 
@@ -194,11 +196,12 @@ class HomeController extends AbstractController
                 $em->persist($invitation);
                 $em->flush();
 
-                $logging->createLog(
+                $databaseLogger->info(
                     $associate->getFullName().
                     ' sent invitation to '. $fullName. ' (' .$email.')',
-                    'Global Associate invitation'
+                    ['type' => 'Global Associate invitation']
                 );
+
 //                $this->addFlash('success', 'Email sent');
                 return $this->render('home/invitation.html.twig', [
                     'invitation' => $form->createView(),
@@ -292,12 +295,18 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/restorePassword/{code}", name="restore_password")
+     * @param $code
      * @param Request $request
      * @param ResetPasswordManager $resetPasswordManager
+     * @param LoggerInterface $databaseLogger
      * @return Response
      */
-    public function restorePassword($code, Request $request, ResetPasswordManager $resetPasswordManager)
-    {
+    public function restorePassword(
+        $code,
+        Request $request,
+        ResetPasswordManager $resetPasswordManager,
+        LoggerInterface $databaseLogger
+    ) {
         $em = $this->getDoctrine()->getManager();
         $user = $resetPasswordManager->findUser($code);
 
@@ -325,9 +334,10 @@ class HomeController extends AbstractController
                 $em->flush();
                 $resetPasswordManager->discardCode($user);
                 $this->addFlash('success', 'Password has been restored!');
-                $this->logging->createLog(
+
+                $databaseLogger->info(
                     'Password has been restored for '.$user->getEmail(). 'email, ',
-                    'Password restoration'
+                    ['type' => 'Password restoration']
                 );
                 return $this->redirectToRoute('home');
             }

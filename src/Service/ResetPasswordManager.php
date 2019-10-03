@@ -6,7 +6,10 @@ namespace App\Service;
 use App\Entity\Log;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Swift_Mailer;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ResetPasswordManager
@@ -42,26 +45,26 @@ class ResetPasswordManager
     private $secondsUntilExpired;
 
     /**
-     * @var Logging $logging
+     * @var LoggerInterface $databaseLogger
      */
-    private $logging;
+    private $databaseLogger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         Swift_Mailer $mailer,
         UrlGeneratorInterface $router,
         EmailTemplateManager $emailTemplateManager,
-        Logging $logging,
         string $invitationSender,
-        string $secondsUntilExpiredResetPassword
+        string $secondsUntilExpiredResetPassword,
+        LoggerInterface $databaseLogger
     ) {
         $this->em = $entityManager;
         $this->mailer = $mailer;
         $this->router = $router;
         $this->emailTemplateManager = $emailTemplateManager;
-        $this->logging = $logging;
         $this->sender = $invitationSender;
         $this->secondsUntilExpired = $secondsUntilExpiredResetPassword;
+        $this->databaseLogger = $databaseLogger;
     }
 
     public function send(string $resetPasswordCode, string $email)
@@ -127,9 +130,10 @@ class ResetPasswordManager
         $this->em->persist($user);
         $this->em->flush();
         $this->send($resetCode, $user->getEmail());
-        $this->logging->createLog(
+
+        $this->databaseLogger->info(
             'Reset password email was sent to '.$user->getEmail(),
-            'Reset password email sending'
+            ['type' => 'Reset password email sending']
         );
     }
 }

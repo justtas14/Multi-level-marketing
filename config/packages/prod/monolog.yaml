@@ -1,5 +1,10 @@
 monolog:
+    channels: ['db']
     handlers:
+        db:
+            channels: ['db']
+            type: service
+            id: monolog.db_handler
         main:
             type: fingers_crossed
             action_level: error

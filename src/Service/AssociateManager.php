@@ -9,6 +9,9 @@ use App\Entity\User;
 use App\Exception\NotAncestorException;
 use App\Repository\AssociateRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AssociateManager
@@ -21,21 +24,25 @@ class AssociateManager
     /** @var TokenStorageInterface $tokenStorage */
     private $tokenStorage;
 
-    /** @var AssociateRepository $associateRepository */
+    /**
+     * @var AssociateRepository $associateRepository
+     */
     private $associateRepository;
 
-    /** @var Logging $logging */
-    private $logging;
+    /**
+     * @var LoggerInterface $databaseLogger
+     */
+    private $databaseLogger;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage,
-        Logging $logging
+        LoggerInterface $databaseLogger
     ) {
         $this->em = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->associateRepository = $this->em->getRepository(Associate::class);
-        $this->logging = $logging;
+        $this->databaseLogger = $databaseLogger;
     }
 
     /**
@@ -238,8 +245,11 @@ class AssociateManager
             $this->em->persist($associate);
         }
 
-        $this->logging->createLog('Successfully changed '.$currentAssociate->getFullName().' associate parent
-        to '.$parentAssociate->getFullName(), 'Parent change');
+        $this->databaseLogger->info(
+            'Successfully changed '.$currentAssociate->getFullName().' associate parent'.
+            'to '.$parentAssociate->getFullName(),
+            ['type' => 'Parent Change']
+        );
 
         $this->em->flush();
     }
@@ -247,6 +257,7 @@ class AssociateManager
     /**
      * @param $deleteAssociate
      * @return bool
+     * @throws \Exception
      */
     public function deleteAssociate(Associate $deleteAssociate)
     {
@@ -267,9 +278,9 @@ class AssociateManager
             $this->em->remove($deleteAssociate);
             $this->em->flush();
 
-            $this->logging->createLog(
+            $this->databaseLogger->info(
                 'Successfully deleted '.$deleteAssociateFullName.' associate',
-                'Associate deletion'
+                ['type' => 'Associate deletion']
             );
 
             return true;
@@ -280,6 +291,7 @@ class AssociateManager
 
     /**
      * @param User $user
+     * @throws \Exception
      */
     public function deleteUser(User $user)
     {
@@ -293,7 +305,10 @@ class AssociateManager
         $this->em->remove($user);
         $this->em->flush();
 
-        $this->logging->createLog('Successfully deleted user with email '.$userEmail, 'User deletion');
+        $this->databaseLogger->info(
+            'Successfully deleted user with email '.$userEmail,
+            ['type' => 'User deletion']
+        );
     }
 
     public function createUniqueUserNameInvitation($fullName) : string

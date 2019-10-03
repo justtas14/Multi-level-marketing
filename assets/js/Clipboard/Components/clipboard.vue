@@ -66,7 +66,6 @@
         data() {
             return {
                 messageTooltip: null,
-                navigatorShare: null,
                 fullscreenImg: false,
                 centeredImage: null,
                 currentImage: null,
@@ -95,13 +94,16 @@
                 this.setCordinates(this.centeredImage, this.centerImagePosition);
                 this.setCordinates(this.currentImage, this.currentImagePosition);
 
-                window.addEventListener('resize', (e) => {
+                const keepAlignedCentered = () => {
                     const rect = this.centeredImage.getBoundingClientRect();
                     el.style.left = rect.left + this.errorOfCalc + 'px';
                     el.style.top = rect.top + this.errorOfCalc + 'px';
                     el.style.bottom = rect.bottom + this.errorOfCalc + 'px';
                     el.style.right = rect.right + this.errorOfCalc + 'px';
-                });
+                };
+
+                window.removeEventListener('resize', keepAlignedCentered);
+                window.addEventListener('resize', keepAlignedCentered);
 
                 el.style.scale = 1;
                 el.style.left = this.currentImagePosition.left + 'px';
@@ -160,20 +162,6 @@
             const currentImage = document.querySelector('.originalQrCode');
             this.currentImage = currentImage;
             this.setCordinates(currentImage, this.currentImagePosition);
-
-
-            this.navigatorShare = navigator.share;
-            if (navigator.share) {
-                const shareButton = document.getElementById('shareButton');
-                shareButton.addEventListener('click', event => {
-                    navigator.share({
-                        title: 'Share',
-                        url: this.invitationUrl
-                    }).then(() => {
-                        console.log('Thanks for sharing!');
-                    }).catch(console.error);
-                })
-            }
         },
         created() {
         }

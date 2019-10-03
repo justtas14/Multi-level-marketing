@@ -7,7 +7,6 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Gregwar\CaptchaBundle\Type\CaptchaType;
 
 class InvitationType extends AbstractType
 {
@@ -23,12 +22,6 @@ class InvitationType extends AbstractType
                 'attr' => [
                     'class' => 'validate'
                 ]
-            ])
-            ->add('captcha', CaptchaType::class, [
-                'width' => 200,
-                'height' => 100,
-                'length' => 6,
-                'ignore_all_effects' => true
             ])
             ->add('submit', SubmitType::class, [
                 'label' => $options['label'],

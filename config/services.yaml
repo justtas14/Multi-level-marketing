@@ -19,6 +19,7 @@ services:
             $invitationSender: '%invitationSender%'
             $secondsUntilExpiredInvitation: '%secondsUntilExpiredInvitation%'
             $secondsUntilExpiredResetPassword: '%secondsUntilExpiredResetPassword%'
+            $databaseLogger: '@monolog.logger.db'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -50,5 +51,9 @@ services:
 
     PlumTreeSystems\FileBundle\Service\GaufretteFileManager:
         alias: 'pts_file.manager'
+
+    monolog.db_handler:
+        class: App\Util\MonologDBHandler
+        arguments: ['@doctrine.orm.entity_manager']
 
 

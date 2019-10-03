@@ -27,12 +27,8 @@
         {% include 'includes/errorBlock.html.twig' with { field: invitation.email } %}
     </div>
 </div>
-<div class="invitation-item captcha">
-    <div class="input-field col s12">
-        {{ form_widget(invitation.captcha) }}
-        {{ form_label(invitation.captcha) }}
-        {% include 'includes/errorBlock.html.twig' with { field: invitation.captcha } %}
-    </div>
+<div class="recaptcha-container">
+    <div class="g-recaptcha" data-sitekey="6Ld5wLsUAAAAAP1nulvp7WSGPnGUCxzhUZTj2T_M"></div>
 </div>
 <div class="invitation-buttonWrap">
     {{ form_widget(invitation.submit, { 'attr': {'style': 'background-color:#3ab54a'} }) }}
