@@ -137,7 +137,7 @@
                             {% include 'includes/errorBlock.html.twig' with { field: registration.associate.profilePicture } %}
                         </div>
                     </div>
-                    <div class="g-recaptcha" data-sitekey="6Ld5wLsUAAAAAP1nulvp7WSGPnGUCxzhUZTj2T_M"></div>
+                    <div class="g-recaptcha" data-sitekey="{{siteKey}}"></div>
                     <div class="input-field">
                         {{ form_row(registration.associate.submit) }}
                     </div>

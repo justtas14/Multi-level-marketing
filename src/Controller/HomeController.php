@@ -57,6 +57,7 @@ class HomeController extends AbstractController
      * @param ConfigurationManager $cm
      * @param AssociateManager $associateManager
      * @param LoggerInterface $databaseLogger
+     * @param string $siteKey
      * @return Response
      */
     public function registration(
@@ -65,7 +66,8 @@ class HomeController extends AbstractController
         InvitationManager $invitationManager,
         ConfigurationManager $cm,
         AssociateManager $associateManager,
-        LoggerInterface $databaseLogger
+        LoggerInterface $databaseLogger,
+        string $siteKey
     ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
@@ -140,7 +142,8 @@ class HomeController extends AbstractController
             'termsOfServices' => $termsOfServices,
             'recruiter' => $recruiter,
             'disclaimer' => $disclaimer,
-            'email' => $invitation->getEmail()
+            'email' => $invitation->getEmail(),
+            'siteKey' => $siteKey
         ]);
     }
 
@@ -151,6 +154,7 @@ class HomeController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
      * @param LoggerInterface $databaseLogger
+     * @param string $siteKey
      * @return Response
      */
     public function invitation(
@@ -158,7 +162,8 @@ class HomeController extends AbstractController
         Request $request,
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
-        LoggerInterface $databaseLogger
+        LoggerInterface $databaseLogger,
+        string $siteKey
     ) {
         $em = $this->getDoctrine()->getManager();
 
@@ -216,7 +221,8 @@ class HomeController extends AbstractController
 
         return $this->render('home/invitation.html.twig', [
             'invitation' => $form->createView(),
-            'associateFullName' => $associate->getFullName()
+            'associateFullName' => $associate->getFullName(),
+            'siteKey' => $siteKey
         ]);
     }
 

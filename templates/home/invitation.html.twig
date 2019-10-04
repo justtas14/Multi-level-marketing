@@ -24,7 +24,7 @@
                 {% else %}
                     <span class="card-title" style="text-align: center; white-space: unset; word-break: break-word">To get started and join <b>{{ associateFullName }}</b> team, fill the form below</span>
                     <main id="main" class="invitationForm">
-                        {% include 'includes/invitation.html.twig' with {'invitation' : invitation} %}
+                        {% include 'includes/invitation.html.twig' with {'invitation' : invitation, 'siteKey' : siteKey} %}
                     </main>
                 {% endif %}
             </div>

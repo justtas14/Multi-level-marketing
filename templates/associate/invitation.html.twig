@@ -21,7 +21,7 @@
                     </div>
                     <a class="waves-effect waves-light btn" href="{{ path('associate_invite') }}">Send another one</a>
                 {% else %}
-                    {% include 'includes/invitation.html.twig' with {'invitation' : invitation, 'submitLabel' : 'send'} %}
+                    {% include 'includes/invitation.html.twig' with {'invitation' : invitation, 'submitLabel' : 'send', 'siteKey' : siteKey} %}
                 {% endif %}
             </div>
         </div>

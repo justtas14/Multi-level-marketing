@@ -7,7 +7,7 @@
         </div>
         <div class="invitationLinkContainer">
             <invitationLink v-bind:invitationUrl="invitationUrl"/>
-            <share v-bind:navigatorShare="navigatorShare" v-bind:invitationUrl="invitationUrl"/>
+            <share v-bind:invitationUrl="invitationUrl"/>
         </div>
         <div class="barCodeImageContainer">
             <qrcode

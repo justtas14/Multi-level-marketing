@@ -18,7 +18,12 @@
 
     export default {
         name: "share",
-        props: ['invitationUrl', 'navigatorShare'],
+        props: ['invitationUrl'],
+        data() {
+            return {
+                navigatorShare: null
+            }
+        },
         methods: {
 
         },

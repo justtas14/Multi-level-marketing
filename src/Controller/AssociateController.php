@@ -104,6 +104,7 @@ class AssociateController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
      * @param LoggerInterface $databaseLogger
+     * @param string $siteKey
      * @return Response
      * @throws NotInvitationSender
      */
@@ -111,7 +112,8 @@ class AssociateController extends AbstractController
         Request $request,
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
-        LoggerInterface $databaseLogger
+        LoggerInterface $databaseLogger,
+        string $siteKey
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -227,6 +229,7 @@ class AssociateController extends AbstractController
             'numberOfPages' => $numberOfPages,
             'currentPage' => $page,
             'uniqueAssociateInvitationLink' => $uniqueAssociateInvitationLink,
+            'siteKey' => $siteKey
         ]);
     }
 
