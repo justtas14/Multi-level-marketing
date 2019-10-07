@@ -52,7 +52,6 @@
         mounted() {
             const barCodeImage = document.querySelector('.barCodeImage');
             this.imageSrc = barCodeImage.getAttribute('src');
-            console.log(this.imageSrc);
         },
         created() {
         }

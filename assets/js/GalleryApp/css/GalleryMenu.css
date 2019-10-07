@@ -59,16 +59,21 @@
     white-space: nowrap;
 }
 .fa-plus {
-    margin-top: 0.1em;
     font-size: 2em;
     opacity: 0.7;
     transition: opacity 0.2s;
     cursor: pointer;
+    padding: 0.25em;
+    margin-top: -0.17em;
 }
+
 
 label {
     font-size: unset;
     color: #5e5e5e;
+    align-items: start;
+    align-self: start;
+    justify-content: flex-start;
 }
 
 .fa-plus:hover {
@@ -226,5 +231,11 @@ label {
     }
     .categoryName {
         margin-left: 1em !important;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .fa-plus {
+        margin-top: -0.15em;
     }
 }

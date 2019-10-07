@@ -1,17 +1,19 @@
 <template>
     <div id="zoomImage">
         <div class="image-center-anchor"></div>
+        <transition name="fade">
+            <div class="image-background-overlay" v-show="fullscreenImg" @click="openFullScreenImage"></div>
+        </transition>
         <img
             :src="imageSrc"
-            class="imageToZoom"
             @click="openFullScreenImage"
+            class="imageToZoom"
         >
         <transition name="enlarge"
                 v-on:before-enter="beforeEnter"
                 v-on:enter="enter"
                 v-on:after-enter="afterEnter"
                 v-on:enter-cancelled="enterCancelled"
--
                 v-on:before-leave="beforeLeave"
                 v-on:leave="leave"
                 v-on:after-leave="afterLeave"
@@ -29,9 +31,6 @@
 <!--                v-if="fullscreenImg"-->
 <!--                class="full-screen-img"-->
 <!--                :class="{imgOpened: fullscreenImg }"-->
-<!--                :value="invitationUrl"-->
-<!--                :options="{ width: 200 }"-->
-<!--                tag="img"-->
 <!--            >-->
 <!--            </qrcode>-->
         </transition>
@@ -99,7 +98,6 @@
                     top: this.centerImagePosition.top + this.errorOfCalc,
                     left: this.centerImagePosition.left + this.errorOfCalc,
                     right: this.centerImagePosition.right + this.errorOfCalc
-
                 }, { duration: 200 });
                 done();
             },
@@ -123,7 +121,6 @@
                 }, { duration: 200, complete: done });
             },
             afterLeave: function (el) {
-                el.style.position = "absolute";
             },
             // leaveCancelled only available with v-show
             leaveCancelled: function (el) {
@@ -152,5 +149,4 @@
 </script>
 
 <style scoped>
-
 </style>

@@ -58,6 +58,7 @@ class HomeController extends AbstractController
      * @param AssociateManager $associateManager
      * @param LoggerInterface $databaseLogger
      * @param string $siteKey
+     * @param string $secretKey
      * @return Response
      */
     public function registration(
@@ -67,7 +68,8 @@ class HomeController extends AbstractController
         ConfigurationManager $cm,
         AssociateManager $associateManager,
         LoggerInterface $databaseLogger,
-        string $siteKey
+        string $siteKey,
+        string $secretKey
     ) {
         $em = $this->getDoctrine()->getManager();
         $invitation = $invitationManager->findInvitation($code);
@@ -101,7 +103,14 @@ class HomeController extends AbstractController
             $email = $invitation->getEmail();
             $user->setEmail($email);
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
-            if ($checkEmailExist) {
+
+            $recaptchaResponse = $request->request->get('g-recaptcha-response');
+
+            if (!$recaptchaResponse) {
+                $this->addFlash('error', 'Please check the captcha form');
+            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"]) {
+                $this->addFlash('error', 'You are the spammer!');
+            } elseif ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
             } else {
                 $associate->setParent($invitation->getSender());
@@ -126,10 +135,7 @@ class HomeController extends AbstractController
                 $this->container->get('security.token_storage')->setToken($token);
                 $this->container->get('session')->set('_security_main', serialize($token));
 
-                $databaseLogger->info(
-                    $associate->getFullName(). ' registered',
-                    ['type' => 'Associate registration']
-                );
+                $databaseLogger->info($associate->getFullName(). ' registered');
 
                 return $this->redirectToRoute('home');
             }
@@ -147,6 +153,15 @@ class HomeController extends AbstractController
         ]);
     }
 
+    private function recaptchaResponse($recaptchaResponse, $secretKey)
+    {
+        $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secretKey) .
+            '&response=' . urlencode($recaptchaResponse);
+        $response = file_get_contents($url);
+        $responseKeys = json_decode($response, true);
+        return $responseKeys;
+    }
+
     /**
      * @Route("/invite/{id}", name="invite")
      * @param $id
@@ -155,6 +170,7 @@ class HomeController extends AbstractController
      * @param BlacklistManager $blacklistManager
      * @param LoggerInterface $databaseLogger
      * @param string $siteKey
+     * @param string $secretKey
      * @return Response
      */
     public function invitation(
@@ -163,7 +179,8 @@ class HomeController extends AbstractController
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
         LoggerInterface $databaseLogger,
-        string $siteKey
+        string $siteKey,
+        string $secretKey
     ) {
         $em = $this->getDoctrine()->getManager();
 
@@ -184,7 +201,14 @@ class HomeController extends AbstractController
             $email = trim($form['email']->getData());
             /** @var AssociateRepository $associateRepo */
             $associateRepo = $em->getRepository(Associate::class);
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+            $recaptchaResponse = $request->request->get('g-recaptcha-response');
+
+            if (!$recaptchaResponse) {
+                $this->addFlash('error', 'Please check the captcha form');
+            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"]) {
+                $this->addFlash('error', 'You are the spammer!');
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
                 $this->addFlash('error', 'Associate already exists');
@@ -203,8 +227,7 @@ class HomeController extends AbstractController
 
                 $databaseLogger->info(
                     $associate->getFullName().
-                    ' sent invitation to '. $fullName. ' (' .$email.')',
-                    ['type' => 'Global Associate invitation']
+                    ' sent invitation to '. $fullName. ' (' .$email.')'
                 );
 
 //                $this->addFlash('success', 'Email sent');
@@ -341,10 +364,7 @@ class HomeController extends AbstractController
                 $resetPasswordManager->discardCode($user);
                 $this->addFlash('success', 'Password has been restored!');
 
-                $databaseLogger->info(
-                    'Password has been restored for '.$user->getEmail(). 'email, ',
-                    ['type' => 'Password restoration']
-                );
+                $databaseLogger->info('Password has been restored for '.$user->getEmail(). 'email, ');
                 return $this->redirectToRoute('home');
             }
         }

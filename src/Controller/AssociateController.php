@@ -105,6 +105,7 @@ class AssociateController extends AbstractController
      * @param BlacklistManager $blacklistManager
      * @param LoggerInterface $databaseLogger
      * @param string $siteKey
+     * @param string $secretKey
      * @return Response
      * @throws NotInvitationSender
      */
@@ -113,7 +114,8 @@ class AssociateController extends AbstractController
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
         LoggerInterface $databaseLogger,
-        string $siteKey
+        string $siteKey,
+        string $secretKey
     ) {
         $em = $this->getDoctrine()->getManager();
         /**
@@ -180,7 +182,18 @@ class AssociateController extends AbstractController
             }
             /** @var AssociateRepository $associateRepo */
             $associateRepo = $em->getRepository(Associate::class);
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $recaptchaResponse = $request->request->get('g-recaptcha-response');
+
+            $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secretKey) .
+                '&response=' . urlencode($recaptchaResponse);
+            $response = file_get_contents($url);
+            $responseKeys = json_decode($response, true);
+
+            if (!$recaptchaResponse) {
+                $this->addFlash('error', 'Please check the captcha form');
+            } elseif (!$responseKeys["success"]) {
+                $this->addFlash('error', 'You are the spammer!');
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
                 $this->addFlash('error', 'Associate already exists');
@@ -198,8 +211,7 @@ class AssociateController extends AbstractController
                     $em->flush();
                     $databaseLogger->info(
                         $associate->getFullName().
-                        ' sent invitation to '. $invitation->getFullName(). ' (' .$invitation->getEmail().')',
-                        ['type' => 'Associate invitation']
+                        ' sent invitation to '. $invitation->getFullName(). ' (' .$invitation->getEmail().')'
                     );
                 } else {
                     $invitationManager->send($resendInvitation);
@@ -208,8 +220,7 @@ class AssociateController extends AbstractController
                     $databaseLogger->info(
                         $associate->getFullName().
                         ' resent invitation to '. $resendInvitation->getFullName().
-                        ' (' .$resendInvitation->getEmail().')',
-                        ['type' => 'Associate invitation resending']
+                        ' (' .$resendInvitation->getEmail().')'
                     );
                 }
 //                $this->addFlash('success', 'Email sent');
@@ -297,10 +308,7 @@ class AssociateController extends AbstractController
                     $em->persist($user);
                     $em->persist($associate);
                     $em->flush();
-                    $databaseLogger->info(
-                        $associate->getFullName(). ' profile updated',
-                        ['type' => 'Associate update']
-                    );
+                    $databaseLogger->info($associate->getFullName(). ' profile updated');
 
                     $this->addFlash('success', 'Fields updated');
                 }

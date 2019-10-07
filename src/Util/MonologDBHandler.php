@@ -32,10 +32,6 @@ class MonologDBHandler extends AbstractProcessingHandler
         /** @var Log $logEntry */
         $logEntry = new Log();
         $logEntry->setLogMessage($record['message']);
-        $logEntry->setLevel($record['level']);
-        $logEntry->setLevelName($record['level_name']);
-        $logEntry->setExtra($record['extra']);
-        $logEntry->setContext($record['context']);
 
         $this->em->persist($logEntry);
         $this->em->flush();

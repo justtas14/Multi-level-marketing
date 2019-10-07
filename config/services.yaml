@@ -8,6 +8,7 @@ parameters:
     invitationSender: '%env(INVITATION_SENDER)%'
     urlBasePath: '%env(URL_BASE_PATH)%'
     siteKey: '%env(SITE_KEY)%'
+    secretKey: '%env(SECRET_KEY)%'
     secondsUntilExpiredInvitation: '604800'
     secondsUntilExpiredResetPassword: '3600'
 
@@ -21,6 +22,7 @@ services:
             $secondsUntilExpiredInvitation: '%secondsUntilExpiredInvitation%'
             $secondsUntilExpiredResetPassword: '%secondsUntilExpiredResetPassword%'
             $siteKey: '%siteKey%'
+            $secretKey: '%secretKey%'
             $databaseLogger: '@monolog.logger.db'
 
     # makes classes in src/ available to be used as services

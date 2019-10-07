@@ -2,8 +2,8 @@
     <div class="categoryMenu">
         <div class="gallery-title">
             <div class="card-title">File gallery</div>
-            <input class="file-upload-input" id="files" type='file'  @change="readUrl"/>
-            <label for="files"><i class="fa fa-plus" aria-hidden="true"></i></label>
+                <input class="file-upload-input" id="files" type='file'  @change="readUrl"/>
+                <label for="files"><i class="fa fa-plus" aria-hidden="true"></i></label>
         </div>
         <div id="material-tabs">
             <div id="dropdownTab" @click="tabsVisible=!tabsVisible">
@@ -37,7 +37,7 @@
         },
         data() {
             return {
-                tabsVisible: true,
+                tabsVisible: false,
                 smallWindow: false
             }
         },

@@ -177,10 +177,7 @@ class AdminController extends AbstractController
             $em->flush();
             if ($configuration->hasPrelaunchEnded()) {
                 $this->addFlash('success', 'Prelaunch ended');
-                $databaseLogger->info(
-                    'Prelaunch successfully ended',
-                    ['type' => 'Prelaunch ending']
-                );
+                $databaseLogger->info('Prelaunch successfully ended');
             }
         }
 

@@ -247,8 +247,7 @@ class AssociateManager
 
         $this->databaseLogger->info(
             'Successfully changed '.$currentAssociate->getFullName().' associate parent'.
-            'to '.$parentAssociate->getFullName(),
-            ['type' => 'Parent Change']
+            'to '.$parentAssociate->getFullName()
         );
 
         $this->em->flush();
@@ -278,10 +277,7 @@ class AssociateManager
             $this->em->remove($deleteAssociate);
             $this->em->flush();
 
-            $this->databaseLogger->info(
-                'Successfully deleted '.$deleteAssociateFullName.' associate',
-                ['type' => 'Associate deletion']
-            );
+            $this->databaseLogger->info('Successfully deleted '.$deleteAssociateFullName.' associate');
 
             return true;
         } else {
@@ -305,10 +301,7 @@ class AssociateManager
         $this->em->remove($user);
         $this->em->flush();
 
-        $this->databaseLogger->info(
-            'Successfully deleted user with email '.$userEmail,
-            ['type' => 'User deletion']
-        );
+        $this->databaseLogger->info('Successfully deleted user with email '.$userEmail);
     }
 
     public function createUniqueUserNameInvitation($fullName) : string

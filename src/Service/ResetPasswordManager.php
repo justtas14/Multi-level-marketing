@@ -131,9 +131,6 @@ class ResetPasswordManager
         $this->em->flush();
         $this->send($resetCode, $user->getEmail());
 
-        $this->databaseLogger->info(
-            'Reset password email was sent to '.$user->getEmail(),
-            ['type' => 'Reset password email sending']
-        );
+        $this->databaseLogger->info('Reset password email was sent to '.$user->getEmail());
     }
 }

@@ -70,10 +70,7 @@ class BlacklistManager
             $this->em->persist((new InvitationBlacklist())->setEmail($invitation->getEmail()));
             $this->em->flush();
 
-            $this->databaseLogger->info(
-                $invitation->getEmail().' email added to blacklist ',
-                ['type' => 'Black Listing']
-            );
+            $this->databaseLogger->info($invitation->getEmail().' email added to blacklist ');
         }
         return;
     }
