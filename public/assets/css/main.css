@@ -211,7 +211,7 @@ select {
 }
 
 .image-dropping {
-    background-color: #AAAAAA;
+    background-color: #cccccc;
     opacity: 0.4;
     z-index: 2000;
 }

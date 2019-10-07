@@ -7,6 +7,7 @@ use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\Gallery;
 use App\Entity\Invitation;
+use App\Entity\Log;
 use App\Entity\User;
 use App\Exception\WrongPageNumberException;
 use App\Filter\AssociateFilter;
@@ -35,13 +36,13 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serialize;
 use Symfony\Component\Serializer\Serializer;
 
 class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 10;
     const INVITATION_LIMIT = 10;
+    const LOG_LIMIT = 20;
     const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
@@ -590,6 +591,8 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/admin/gallery", name="gallery")
+     * @param Request $request
+     * @return Response
      */
     public function gallery(Request $request)
     {
@@ -598,6 +601,9 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/admin/removeFile", name="remove_file")
+     * @param Request $request
+     * @param GaufretteFileManager $gaufretteFileManager
+     * @return JsonResponse|Response
      */
     public function removeFile(Request $request, GaufretteFileManager $gaufretteFileManager)
     {
@@ -707,10 +713,57 @@ class AdminController extends AbstractController
 
     /**
      * @Route("/admin/logs", name="logs")
+     * @param Request $request
+     * @return Response
      */
-    public function systemLogs()
+    public function systemLogs(Request $request)
     {
         return $this->render('admin/logs.html.twig', [
         ]);
+    }
+
+    /**
+     * @Route("/admin/get-logs", name="get-logs")
+     * @param Request $request
+     * @return Response
+     * @throws ExceptionInterface
+     */
+    public function getLogs(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $logRepository = $em->getRepository(Log::class);
+
+        $page = $request->get('page', 1);
+
+        if (!is_numeric($page)) {
+            throw new WrongPageNumberException();
+        }
+
+        $allLogs = $logRepository->countAllLogs();
+        $logs = $logRepository->findBy(
+            [],
+            ['createdAt' => 'DESC'],
+            self::LOG_LIMIT,
+            self::LOG_LIMIT * ($page - 1)
+        );
+
+        $numberOfPages = $this->numberOfPages($allLogs, self::LOG_LIMIT, $page);
+
+        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer(), new JsonEncoder()]);
+        $serializedLogs = $serializer->normalize(
+            $logs,
+            null,
+            ['attributes' => ['id', 'message', 'createdAt']]
+        );
+
+        $data = [
+            'logs' => $serializedLogs,
+            'pagination' => [
+                'maxPage' => $numberOfPages,
+                'currentPage' => $page,
+            ]
+        ];
+
+        return new JsonResponse($data);
     }
 }

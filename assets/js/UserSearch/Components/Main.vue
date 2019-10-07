@@ -31,7 +31,7 @@
     import { mapActions, mapMutations, mapState } from 'vuex'
     import { findAll, findBy } from '../services/AssociateSearchService';
     import EventBus from '../EventBus/EventBus';
-    import EventBusFromGallery from '../../GalleryApp/EventBus/EventBus'
+    import EventBusFromGallery from '../../GalleryApp/EventBus/EventBus';
 
     export default {
         name: "Main",

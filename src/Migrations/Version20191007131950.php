@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191003130148 extends AbstractMigration
+final class Version20191007131950 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,7 +22,7 @@ final class Version20191003130148 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE log ADD context LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\', ADD level SMALLINT NOT NULL, ADD level_name VARCHAR(50) NOT NULL, ADD extra LONGTEXT NOT NULL COMMENT \'(DC2Type:array)\', DROP log_type, CHANGE message message LONGTEXT NOT NULL, CHANGE created created_at DATETIME DEFAULT NULL');
+        $this->addSql('CREATE TABLE log (id INT AUTO_INCREMENT NOT NULL, message LONGTEXT NOT NULL, created_at DATETIME DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
     }
 
     public function down(Schema $schema) : void
@@ -30,6 +30,6 @@ final class Version20191003130148 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE log ADD log_type VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci, DROP context, DROP level, DROP level_name, DROP extra, CHANGE message message VARCHAR(255) NOT NULL COLLATE utf8mb4_unicode_ci, CHANGE created_at created DATETIME DEFAULT NULL');
+        $this->addSql('DROP TABLE log');
     }
 }

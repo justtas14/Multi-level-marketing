@@ -52,9 +52,9 @@ class Log
     }
 
     /**
-     * @return File
+     * @return string
      */
-    public function getLogMessage(): string
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -83,7 +83,7 @@ class Log
     /**
      * @return \DateTime|null
      */
-    public function getCreated(): ?\DateTime
+    public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
     }
