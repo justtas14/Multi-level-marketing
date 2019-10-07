@@ -1,6 +1,7 @@
 #clipboard-app{
 }
 
+
 .invitationAboutText {
   font-size: 1.2em;
   padding: 1em 0 1em 0;
@@ -25,31 +26,6 @@
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   width: 100%;
 }
-
-.originalQrCode {
+.barCodeImage {
+    display: none;
 }
-
-.originalQrCode, .full-screen-img {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    cursor: pointer;
-}
-
-.full-screen-img {
-    position: fixed;
-    z-index: 1000;
-    max-width: 100%;
-    max-height: 100%;
-}
-
-.image-center-anchor {
-
-}
-
-.imgOpened {
-}
-
-

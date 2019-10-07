@@ -1,0 +1,31 @@
+.image-center-anchor {
+  width: 400px;
+  height: 400px;
+  position: fixed;
+  margin: auto;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.full-screen-img {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+  z-index: 1000;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.imageToZoom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+.imgOpened {
+}
