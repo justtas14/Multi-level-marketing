@@ -24,13 +24,21 @@
 
         },
         methods: {
-
+            checkTime: function(i) {
+                if (i < 10) {
+                    i = "0" + i;
+                }
+                return i;
+             }
         },
         created() {
             const d = new Date(this.log.createdAt);
+            let m = d.getMinutes();
+            let s = d.getSeconds();
+            m = this.checkTime(m);
+            s = this.checkTime(s);
             this.dateString = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-"
-                + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-
+                + d.getFullYear() + ' ' + d.getHours() + ':' + m + ':' + s;
         }
     }
 </script>

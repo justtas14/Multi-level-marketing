@@ -1,8 +1,13 @@
 #logTable {
-
+  -webkit-box-shadow: inset 14px 0px 7px -9px rgba(209,209,209,0.75);
+  -moz-box-shadow: inset 14px 0px 7px -9px rgba(209,209,209,0.75);
+  box-shadow: inset 14px 0px 7px -9px rgba(209,209,209,0.75);
 }
 .logHeader {
-  padding: 0.5em;
+  padding: 0.5em 0 15px 1em;
+}
+#logTable-header {
+  border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 .message {
 

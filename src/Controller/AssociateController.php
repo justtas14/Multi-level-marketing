@@ -189,9 +189,11 @@ class AssociateController extends AbstractController
             $response = file_get_contents($url);
             $responseKeys = json_decode($response, true);
 
-            if (!$recaptchaResponse) {
+            $env = $this->getParameter('kernel.environment');
+
+            if (!$recaptchaResponse && $env !== 'test') {
                 $this->addFlash('error', 'Please check the captcha form');
-            } elseif (!$responseKeys["success"]) {
+            } elseif (!$responseKeys["success"] && $env !== 'test') {
                 $this->addFlash('error', 'You are the spammer!');
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');

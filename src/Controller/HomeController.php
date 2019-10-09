@@ -105,10 +105,11 @@ class HomeController extends AbstractController
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
 
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
+            $env = $this->getParameter('kernel.environment');
 
-            if (!$recaptchaResponse) {
+            if (!$recaptchaResponse && $env !== 'test') {
                 $this->addFlash('error', 'Please check the captcha form');
-            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"]) {
+            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"] && $env !== 'test') {
                 $this->addFlash('error', 'You are the spammer!');
             } elseif ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
@@ -203,10 +204,11 @@ class HomeController extends AbstractController
             $associateRepo = $em->getRepository(Associate::class);
 
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
+            $env = $this->getParameter('kernel.environment');
 
-            if (!$recaptchaResponse) {
+            if (!$recaptchaResponse && $env !== 'test') {
                 $this->addFlash('error', 'Please check the captcha form');
-            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"]) {
+            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"] && $env !== 'test') {
                 $this->addFlash('error', 'You are the spammer!');
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');

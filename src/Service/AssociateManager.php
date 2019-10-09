@@ -34,6 +34,12 @@ class AssociateManager
      */
     private $databaseLogger;
 
+    /**
+     * AssociateManager constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param TokenStorageInterface $tokenStorage
+     * @param LoggerInterface $databaseLogger
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage,

@@ -49,6 +49,16 @@ class ResetPasswordManager
      */
     private $databaseLogger;
 
+    /**
+     * ResetPasswordManager constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param Swift_Mailer $mailer
+     * @param UrlGeneratorInterface $router
+     * @param EmailTemplateManager $emailTemplateManager
+     * @param string $invitationSender
+     * @param string $secondsUntilExpiredResetPassword
+     * @param LoggerInterface $databaseLogger
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         Swift_Mailer $mailer,

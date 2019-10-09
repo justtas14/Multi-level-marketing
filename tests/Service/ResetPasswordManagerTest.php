@@ -9,6 +9,7 @@ use App\Service\ResetPasswordManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -54,6 +55,7 @@ class ResetPasswordManagerTest extends TestCase
         $mailer = $this->createMock(Swift_Mailer::class);
         $router = $this->createMock(UrlGeneratorInterface::class);
         $emailTemplateManager = $this->createMock(EmailTemplateManager::class);
+        $databaseLogger = $this->createMock(LoggerInterface::class);
 
         $entityRepository = $this->createMock(EntityRepository::class);
         $entityRepository->expects($this->any())
@@ -70,7 +72,8 @@ class ResetPasswordManagerTest extends TestCase
             $router,
             $emailTemplateManager,
             'noreply@plumtreesystems.com',
-            3600
+            3600,
+            $databaseLogger
         );
 
         $this->assertEquals($user, $resetPasswordManager->findUser($user->getResetPasswordCode()));
@@ -100,7 +103,8 @@ class ResetPasswordManagerTest extends TestCase
             $router,
             $emailTemplateManager,
             'noreply@plumtreesystems.com',
-            3600
+            3600,
+            $databaseLogger
         );
         $this->assertNull($resetPasswordManager->findUser($user->getResetPasswordCode()));
 
@@ -133,7 +137,8 @@ class ResetPasswordManagerTest extends TestCase
             $router,
             $emailTemplateManager,
             'noreply@plumtreesystems.com',
-            3600
+            3600,
+            $databaseLogger
         );
         $this->assertNull($resetPasswordManager->findUser($user->getResetPasswordCode()));
 
@@ -166,7 +171,8 @@ class ResetPasswordManagerTest extends TestCase
             $router,
             $emailTemplateManager,
             'noreply@plumtreesystems.com',
-            3600
+            3600,
+            $databaseLogger
         );
         $this->assertEquals($user, $resetPasswordManager->findUser($user->getResetPasswordCode()));
 
@@ -195,7 +201,8 @@ class ResetPasswordManagerTest extends TestCase
             $router,
             $emailTemplateManager,
             'noreply@plumtreesystems.com',
-            3600
+            3600,
+            $databaseLogger
         );
         $this->assertNull($resetPasswordManager->findUser(""));
     }

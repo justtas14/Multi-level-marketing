@@ -749,7 +749,9 @@ class AdminController extends AbstractController
 
         $numberOfPages = $this->numberOfPages($allLogs, self::LOG_LIMIT, $page);
 
-        $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer(), new JsonEncoder()]);
+        $serializer = new Serializer(
+            [new DateTimeNormalizer('Y-m-d h:i:s'), new ObjectNormalizer(), new JsonEncoder()]
+        );
         $serializedLogs = $serializer->normalize(
             $logs,
             null,

@@ -1,6 +1,6 @@
 <template>
     <table id="logTable">
-        <thead>
+        <thead id="logTable-header">
             <th width="70%" class="logHeader message">Message</th>
             <th width="30%" class="logHeader created">Log Created</th>
         </thead>
