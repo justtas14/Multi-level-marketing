@@ -27,7 +27,7 @@
 
 <script>
     import Pagination from './GalleryPagination';
-    import Confirmation from "../../Confirmation/Components/Confirmation";
+    import Confirmation from "../../SinglePageApp/Admin/User Search/Components/Confirmation";
     import Notification from './GalleryNotification';
     import GalleryFileList from "./GalleryFileList";
     import { mapMutations } from 'vuex'

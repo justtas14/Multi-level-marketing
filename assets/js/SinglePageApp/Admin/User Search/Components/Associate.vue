@@ -50,9 +50,9 @@
 </template>
 
 <script>
-    import defaultPicture from '../../../../../../../public/assets/images/profile.jpg'
-    import Confirmation from "../../SinglePageApp/Admin/User Search/Components/Confirmation";
-    import changeParentSVG from '../../../../../../images/geneology.svg'
+    import defaultPicture from '../../../../../../public/assets/images/profile.jpg'
+    import Confirmation from "../../SinglePageApp/Pages/Admin/User Search/Components/Confirmation";
+    import changeParentSVG from '../../../../../images/geneology.svg'
 
     export default {
         name: "Associate",

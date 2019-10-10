@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import store from './store/index';
+import store from '../SinglePageApp/Store';
 import Main from './Components/Main';
 import { MdField } from 'vue-material/dist/components';
 
