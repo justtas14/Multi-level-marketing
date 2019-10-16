@@ -6,6 +6,8 @@ security:
         tokenservice:
             id: pts_user.token.provider
     encoders:
+        Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface:
+            algorithm: brcypt
         App\Entity\User:
             algorithm: bcrypt
     firewalls:

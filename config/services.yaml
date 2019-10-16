@@ -60,4 +60,5 @@ services:
         class: App\Util\MonologDBHandler
         arguments: ['@doctrine.orm.entity_manager']
 
-
+    PlumTreeSystems\UserBundle\Controller\TokenSecurityUserController:
+        class: PlumTreeSystems\UserBundle\Controller\TokenSecurityUserController

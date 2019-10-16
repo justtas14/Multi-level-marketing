@@ -1,0 +1,77 @@
+.v-dialogs {
+    display: none;
+}
+
+.v-dialog {
+    font-weight: 300;
+    align-items: center;
+}
+
+.v-dialog.active, .v-dialog:target {
+    z-index: 10000;
+}
+
+.v-dialog.active .v-dialog-overlay, .v-dialog:target .v-dialog-overlay {
+    background: rgba(0,0,0,.6);
+}
+
+.v-dialog-container {
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.v-dialog-container .v-dialog-btn {
+    color: #5cb85c;
+    font-weight: bolder;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    height: 36px;
+    line-height: 20px;
+    outline: none;
+    padding: 7px 8px;
+    text-align: center;
+    text-decoration: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap
+}
+
+.v-dialog-container .v-dialog-btn.v-dialog-btn-danger {
+    color: #d9534f;
+    font-weight: bolder;
+}
+
+.v-dialog-container .v-dialog-btn.v-dialog-btn-close {
+    height: 16px;
+    line-height: 16px;
+    margin-left: 8px;
+    margin-right: -8px;
+    padding: 0;
+    width: 16px;
+    float: right;
+    color: #50596c;
+    font-size: 1.5em;
+}
+
+.confirmImage {
+    width: 10px;
+    height: 100px;
+    min-width: 100px;
+    min-height: 100px;
+    margin-right: 1em;
+}
+.confirmImageContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    margin-bottom: 1.5em;
+}
+
+.v-dialog-footer {
+    padding-top: 0 !important;
+}
