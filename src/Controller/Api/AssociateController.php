@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\CustomNormalizer\AssociateNormalizer;
 use App\Entity\Associate;
@@ -38,12 +38,12 @@ use Symfony\Component\Serializer\Serializer;
  * @Route("/api", name="api_")
  */
 
-final class AssociateApi extends AbstractController
+final class AssociateController extends AbstractController
 {
     const INVITATION_LIMIT = 10;
 
     /**
-     * @Route("/home-associate", name="associate")
+     * @Route("/associate/home", name="associate")
      * @param AssociateManager $associateManager
      * @param AssociateNormalizer $associateNormalizer
      * @return Response

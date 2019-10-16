@@ -3,6 +3,8 @@ security:
     providers:
         ptsuser:
             id: pts_user.provider
+        tokenservice:
+            id: pts_user.token.provider
     encoders:
         App\Entity\User:
             algorithm: bcrypt
@@ -10,25 +12,21 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            provider: tokenservice
+            stateless: true
+            anonymous: ~
+            pattern: ^/api
+            guard:
+                authenticators:
+                    - pts_user.jwt.authenticator
         main:
             anonymous: true
-            user_checker: pts_user.security.checker
-            logout:
-                path: logout
-
-            # activate different ways to authenticate
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            form_login:
-                login_path: login
-                check_path: login
-            # https://symfony.com/doc/current/security/form_login_setup.html
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-         - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/associate, roles: ROLE_USER }
-         - { path: ^/landingpage, roles: ROLE_USER }
+         - { path: ^/api/admin, roles: ROLE_ADMIN }
+         - { path: ^/api/token, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/associate, roles: ROLE_USER }
+         - { path: ^/api, roles: ROLE_USER }

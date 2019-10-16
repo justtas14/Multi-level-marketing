@@ -8,3 +8,7 @@ pts_file_download:
 pts_file_remove:
   path:     /remove/{id}
   defaults: { _controller: PlumTreeSystems\FileBundle\Controller\FileController::removeAction }
+
+ptsToken:
+  resource: "@PlumTreeSystemsUserBundle/Resources/config/routes/tokenSecurityRoutes.yml"
+  prefix: /api

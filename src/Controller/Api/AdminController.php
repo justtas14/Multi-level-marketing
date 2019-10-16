@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\CustomNormalizer\AssociateNormalizer;
 use App\Entity\Associate;
@@ -42,7 +42,7 @@ use Symfony\Component\Serializer\Serializer;
  * @Route("/api", name="api_")
  */
 
-class AdminApi extends AbstractController
+class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 10;
     const INVITATION_LIMIT = 10;
@@ -50,7 +50,7 @@ class AdminApi extends AbstractController
     const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
-     * @Route("/home-admin", name="admin")
+     * @Route("/admin/home", name="admin")
      * @param AssociateManager $associateManager
      * @param ConfigurationManager $cm
      * @param GaufretteFileManager $gaufretteFileManager
