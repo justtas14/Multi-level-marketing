@@ -3,14 +3,14 @@
 
 namespace App\Entity;
 
-use PlumTreeSystems\UserBundle\Entity\User as PTSUser;
+use PlumTreeSystems\UserBundle\Entity\TokenUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  */
-class User extends PTSUser
+class User extends TokenUser
 {
     /**
      * @ORM\Id()

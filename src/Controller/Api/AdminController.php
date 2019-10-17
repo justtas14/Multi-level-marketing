@@ -42,6 +42,11 @@ use Symfony\Component\Serializer\Serializer;
  * @Route("/api", name="api_")
  */
 
+/**
+ * @OA\Info(title="Admin API", version="0.1")
+ */
+
+
 class AdminController extends AbstractController
 {
     const ASSOCIATE_LIMIT = 10;
@@ -50,7 +55,14 @@ class AdminController extends AbstractController
     const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
-     * @Route("/admin/home", name="admin")
+     * @OA\Get(
+     *     path="/api/admin",
+     *     @OA\Response(response="200", description="Admin home page")
+     * )
+     */
+
+    /**
+     * @Route("/admin", name="admin")
      * @param AssociateManager $associateManager
      * @param ConfigurationManager $cm
      * @param GaufretteFileManager $gaufretteFileManager
@@ -93,6 +105,13 @@ class AdminController extends AbstractController
 
         return new JsonResponse($data);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/admin/emailtemplate/{type}",
+     *     @OA\Response(response="200", description="Email templates")
+     * )
+     */
 
     /**
      * @Route("/admin/emailtemplate/{type}", name="email_template")
@@ -176,6 +195,13 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @OA\Post(
+     *     path="/api/admin/endprelaunch",
+     *     @OA\Response(response="200", description="Email templates")
+     * )
+     */
+
+    /**
      * @Route("/admin/endprelaunch", name="end_prelaunch")
      * @param Request $request
      * @param ConfigurationManager $cm
@@ -227,6 +253,13 @@ class AdminController extends AbstractController
 //        }
         return $tempConfiguration;
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/admin/endprelaunch",
+     *     @OA\Response(response="200", description="Email templates")
+     * )
+     */
 
     /**
      * @Route("/admin/changecontent", name="change_content")
@@ -314,6 +347,13 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/admin/associates",
+     *     @OA\Response(response="200", description="Get Associates")
+     * )
+     */
+
+    /**
      * @Route("/admin/associates", name="user_search_associates")
      * @param Request $request
      * @param AssociateNormalizer $associateNormalizer
@@ -367,6 +407,13 @@ class AdminController extends AbstractController
         $response = new JsonResponse($data);
         return $response;
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/admin/associates",
+     *     @OA\Response(response="200", description="Get Associates")
+     * )
+     */
 
     /**
      * @Route("/admin/csv", name="csv")

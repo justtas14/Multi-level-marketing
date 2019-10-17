@@ -38,12 +38,17 @@ use Symfony\Component\Serializer\Serializer;
  * @Route("/api", name="api_")
  */
 
+/**
+ * @OA\Info(title="Associate API", version="0.1")
+ */
+
+
 final class AssociateController extends AbstractController
 {
     const INVITATION_LIMIT = 10;
 
     /**
-     * @Route("/associate/home", name="associate")
+     * @Route("/associate", name="associate")
      * @param AssociateManager $associateManager
      * @param AssociateNormalizer $associateNormalizer
      * @return Response

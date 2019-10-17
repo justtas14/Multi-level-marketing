@@ -38,25 +38,25 @@ class HomeController extends AbstractController
         return $this->render('base.html.twig', []);
     }
 
-    /**
-     * @Route("/", name="home")
-     */
-    public function index()
-    {
-        $user = $this->getUser();
-        /**
-         * @var User $user
-         */
-        if (!$user) {
-            return $this->redirectToRoute('login');
-        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
-            return $this->redirectToRoute('admin');
-        } else {
-            return $this->redirectToRoute('associate');
-        }
-
-        return $this->render('home/index.html.twig');
-    }
+//    /**
+//     * @Route("/", name="home")
+//     */
+//    public function index()
+//    {
+//        $user = $this->getUser();
+//        /**
+//         * @var User $user
+//         */
+//        if (!$user) {
+//            return $this->redirectToRoute('login');
+//        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
+//            return $this->redirectToRoute('admin');
+//        } else {
+//            return $this->redirectToRoute('associate');
+//        }
+//
+//        return $this->render('home/index.html.twig');
+//    }
 
     /**
      * @Route("/register/{code}", name="registration")

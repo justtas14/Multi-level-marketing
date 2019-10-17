@@ -48,6 +48,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, connection: default }
 
+    App\Util\JsonRequestListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, connection: default }
+
+
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
         arguments:
             - !service { class: PDO, factory: ['@database_connection', 'getWrappedConnection'] }
