@@ -109,7 +109,13 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/emailtemplate/{type}",
-     *     @OA\Response(response="200", description="Email templates")
+     *     @OA\RouteParameter(
+     *         parameter="type"
+     *         type="string",
+     *         description="Entered route param in url"
+     *      ),
+     *     @OA\Response(response="200",
+     *      description="Returns email template info in json depending on given in params type ")
      * )
      */
 
@@ -197,7 +203,7 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/endprelaunch",
-     *     @OA\Response(response="200", description="Email templates")
+     *     @OA\Response(response="200", description="End prelaunch info in json format")
      * )
      */
 
@@ -256,8 +262,8 @@ class AdminController extends AbstractController
 
     /**
      * @OA\Post(
-     *     path="/api/admin/endprelaunch",
-     *     @OA\Response(response="200", description="Email templates")
+     *     path="/api/admin/changecontent",
+     *     @OA\Response(response="200", description="Change content page info in json format")
      * )
      */
 
@@ -349,7 +355,27 @@ class AdminController extends AbstractController
     /**
      * @OA\Get(
      *     path="/api/admin/associates",
-     *     @OA\Response(response="200", description="Get Associates")
+     *     @OA\QuerryParameter(
+     *         parameter="nameField"
+     *         type="string",
+     *         description="Received name field querry param"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="emailField"
+     *         type="string",
+     *         description="Received email field querry param"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="telephoneField"
+     *         type="string",
+     *         description="Received telephone field querry param"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="page"
+     *         type="int",
+     *         description="Received page querry param"
+     *      ),
+     *     @OA\Response(response="200", description="Returns appropriate associates and pagination in json")
      * )
      */
 
@@ -410,8 +436,8 @@ class AdminController extends AbstractController
 
     /**
      * @OA\Get(
-     *     path="/api/admin/associates",
-     *     @OA\Response(response="200", description="Get Associates")
+     *     path="/api/admin/csv",
+     *     @OA\Response(response="200", description="Download all associates in txt file")
      * )
      */
 
@@ -443,6 +469,18 @@ class AdminController extends AbstractController
 
         return $response->send();
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/admin/explorer",
+     *     @OA\QuerryParameter(
+     *         parameter="id"
+     *         type="int",
+     *         description="Received id querry param"
+     *      ),
+     *     @OA\Response(response="200", description="Returns information about associate or company and its children")
+     * )
+     */
 
     /**
      * @Route("/admin/explorer", name="api_admin_explorer")
@@ -496,6 +534,23 @@ class AdminController extends AbstractController
         }
         return $numberOfPages;
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/admin/users/{id}",
+     *     @OA\RouteParameter(
+     *         parameter="id"
+     *         type="int",
+     *         description="Entered id into url route parameter"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="page"
+     *         type="int",
+     *         description="Received page querry param"
+     *      ),
+     *     @OA\Response(response="200", description="Returns information about user details and user search table page")
+     * )
+     */
 
     /**
      * @Route("/admin/users/{id}", name="user_search_details")
@@ -626,6 +681,27 @@ class AdminController extends AbstractController
         return new JsonResponse($data);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/admin/jsonGallery",
+     *     @OA\QuerryParameter(
+     *         parameter="category"
+     *         type="string",
+     *         description="Category of gallery files"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="imageLimit"
+     *         type="int",
+     *         description="Image limit to display in single page"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="page"
+     *         type="int",
+     *         description="Received page querry param"
+     *      ),
+     *     @OA\Response(response="200", description="Returns appropriate gallery files and pagination in json format")
+     * )
+     */
 
     /**
      * @Route("/admin/jsonGallery", name="json_gallery")
@@ -701,6 +777,24 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @OA\Post(
+     *     path="/api/admin/removeFile",
+     *     @OA\QuerryParameter(
+     *         parameter="galleryId"
+     *         type="int",
+     *         description="Gallery file id to remove"
+     *      ),
+     *     @OA\QuerryParameter(
+     *         parameter="fileId"
+     *         type="int",
+     *         description="File id to remove"
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Removes completely gallery file with given file and gallery file id")
+     * )
+     */
+
+    /**
      * @Route("/admin/removeFile", name="remove_file")
      * @param Request $request
      * @param GaufretteFileManager $gaufretteFileManager
@@ -745,6 +839,18 @@ class AdminController extends AbstractController
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/admin/uploadFile",
+     *     @OA\QuerryParameter(
+     *         parameter="filePath"
+     *         type="string",
+     *         description="Gallery file path"
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Returns absolute url formed with gallery file path")
+     * )
+     */
 
     /**
      * @Route("/admin/uploadFile", name="upload_file")
@@ -766,6 +872,20 @@ class AdminController extends AbstractController
             return new Response('', 200);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/admin/uploadGalleryFile",
+     *     @OA\QuerryParameter(
+     *         parameter="galleryFile"
+     *         type="file",
+     *         description="Gallery file"
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Uploads and adds gallery file to database")
+     * )
+     */
+
 
     /**
      * @Route("/admin/uploadGalleryFile", name="upload_gallery_file")
@@ -811,6 +931,19 @@ class AdminController extends AbstractController
             return new Response('', 200);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/admin/get-logs",
+     *      @OA\QuerryParameter(
+     *         parameter="page"
+     *         type="int",
+     *         description="Received page querry param"
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Returns appropriate logs depending on querry parameter page")
+     * )
+     */
 
     /**
      * @Route("/admin/get-logs", name="get-logs")
