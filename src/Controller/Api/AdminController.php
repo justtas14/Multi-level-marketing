@@ -37,15 +37,13 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-
-/**
- * @Route("/api", name="api_")
- */
+use OpenApi\Annotations as OA;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * @OA\Info(title="Admin API", version="0.1")
+ * @Rest\Route("/api", name="_api")
  */
-
 
 class AdminController extends AbstractController
 {
@@ -62,6 +60,7 @@ class AdminController extends AbstractController
      */
 
     /**
+     * @Rest\Get("/admin", name="admin")
      * @Route("/admin", name="admin")
      * @param AssociateManager $associateManager
      * @param ConfigurationManager $cm
@@ -109,10 +108,19 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/emailtemplate/{type}",
-     *     @OA\RouteParameter(
-     *         parameter="type"
-     *         type="string",
-     *         description="Entered route param in url"
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="type",
+     *         required=true,
+     *         description="Email template type"
+     *         @OA\Schema(type="string")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="landingContent",
+     *         required=false,
+     *         description="Landing content string",
+     *         @OA\Schema(type="string")
      *      ),
      *     @OA\Response(response="200",
      *      description="Returns email template info in json depending on given in params type ")
@@ -120,7 +128,7 @@ class AdminController extends AbstractController
      */
 
     /**
-     * @Route("/admin/emailtemplate/{type}", name="email_template")
+     * @Rest\Post("/admin/emailtemplate/{type}", name="email_template")
      * @param Request $request
      * @param EmailTemplateManager $emailTemplateManager
      * @return Response
@@ -203,11 +211,26 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/endprelaunch",
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="hasPrelaunchEnded",
+     *         required=false,
+     *         description="Flag value which sets prelaunch end",
+     *         @OA\Schema(type="boolean")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="landingContent",
+     *         required=false,
+     *         description="Landing content string",
+     *         @OA\Schema(type="string")
+     *      ),
      *     @OA\Response(response="200", description="End prelaunch info in json format")
      * )
      */
 
     /**
+     * @Rest\Post("/admin/endprelaunch", name="end_prelaunch")
      * @Route("/admin/endprelaunch", name="end_prelaunch")
      * @param Request $request
      * @param ConfigurationManager $cm
@@ -220,8 +243,6 @@ class AdminController extends AbstractController
         $em = $this->getDoctrine()->getManager();
 
         $configuration = $cm->getConfiguration();
-
-        $configurationContent = $configuration->getLandingContent();
 
         $form = $this->createForm(EndPrelaunchType::class, $configuration);
 
@@ -237,10 +258,14 @@ class AdminController extends AbstractController
             $formSuccess = true;
         }
 
+        $configurationContent = $configuration->getLandingContent();
+        $hasPrelaunchEnded = $configuration->hasPrelaunchEnded();
+
         $data = [
             'prelaunchEnded' => $prelaunchEnded,
             'formSuccess' => $formSuccess,
-            'configurationContent' => $configurationContent
+            'configurationContent' => $configurationContent,
+            'hasPrelaunchEnded' => $hasPrelaunchEnded
         ];
 
         return new JsonResponse($data);
@@ -263,12 +288,26 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/changecontent",
+     *      @OA\Parameter(
+     *         in="formData",
+     *         name="hiddenMainLogoFile",
+     *         required=false,
+     *         description="Main logo file id",
+     *         @OA\Schema(type="int")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="hiddenTermsOfServiceFile",
+     *         required=false,
+     *         description="Terms of services file id",
+     *         @OA\Schema(type="int")
+     *      ),
      *     @OA\Response(response="200", description="Change content page info in json format")
      * )
      */
 
     /**
-     * @Route("/admin/changecontent", name="change_content")
+     * @Rest\Post("/admin/changecontent", name="change_content")
      * @param Request $request
      * @param ConfigurationManager $cm
      * @return Response
@@ -355,31 +394,40 @@ class AdminController extends AbstractController
     /**
      * @OA\Get(
      *     path="/api/admin/associates",
-     *     @OA\QuerryParameter(
-     *         parameter="nameField"
-     *         type="string",
-     *         description="Received name field querry param"
+     *      @OA\Parameter(
+     *         in="query",
+     *         name="nameField",
+     *         required=false,
+     *         description="Received name field querry param",
+     *         @OA\Schema(type="string")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="emailField"
-     *         type="string",
-     *         description="Received email field querry param"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="emailField",
+     *         required=false,
+     *         description="Received email field querry param",
+     *         @OA\Schema(type="string")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="telephoneField"
-     *         type="string",
-     *         description="Received telephone field querry param"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="telephoneField",
+     *         required=false,
+     *         description="Received telephone field querry param",
+     *         @OA\Schema(type="string")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="page"
-     *         type="int",
-     *         description="Received page querry param"
+     *      @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         required=false,
+     *         description="Received page querry param",
+     *         @OA\Schema(type="int", default="1")
      *      ),
      *     @OA\Response(response="200", description="Returns appropriate associates and pagination in json")
      * )
      */
 
     /**
+     * @Rest\Get("/admin/associates", name="user_search_associates")
      * @Route("/admin/associates", name="user_search_associates")
      * @param Request $request
      * @param AssociateNormalizer $associateNormalizer
@@ -442,7 +490,7 @@ class AdminController extends AbstractController
      */
 
     /**
-     * @Route("/admin/csv", name="csv")
+     * @Rest\Get("/admin/csv", name="csv")
      * @return StreamedResponse
      */
     public function exportToCsv()
@@ -473,17 +521,19 @@ class AdminController extends AbstractController
     /**
      * @OA\Get(
      *     path="/api/admin/explorer",
-     *     @OA\QuerryParameter(
-     *         parameter="id"
-     *         type="int",
-     *         description="Received id querry param"
+     *      @OA\Parameter(
+     *         in="query",
+     *         name="id",
+     *         required=false,
+     *         description="Received id querry param",
+     *         @OA\Schema(type="int")
      *      ),
      *     @OA\Response(response="200", description="Returns information about associate or company and its children")
      * )
      */
 
     /**
-     * @Route("/admin/explorer", name="api_admin_explorer")
+     * @Rest\Get("/admin/explorer", name="api_admin_explorer")
      * @param Request $request
      * @param AssociateManager $associateManager
      * @param EntityManagerInterface $em
@@ -538,22 +588,47 @@ class AdminController extends AbstractController
     /**
      * @OA\Get(
      *     path="/api/admin/users/{id}",
-     *     @OA\RouteParameter(
-     *         parameter="id"
-     *         type="int",
-     *         description="Entered id into url route parameter"
+     *      @OA\Parameter(
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         description="Entered id into url route parameter",
+     *         @OA\Schema(type="int")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="page"
-     *         type="int",
-     *         description="Received page querry param"
+     *      @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         required=false,
+     *         description="Received page querry param",
+     *         @OA\Schema(type="int", default="1")
+     *      ),
+     *      @OA\Parameter(
+     *         in="formData",
+     *         name="associateParentId",
+     *         required=false,
+     *         description="Associate parent id",
+     *         @OA\Schema(type="int")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="associateId",
+     *         required=false,
+     *         description="Associate id",
+     *         @OA\Schema(type="int")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="deleteAssociateId",
+     *         required=false,
+     *         description="Associate to delete id",
+     *         @OA\Schema(type="int")
      *      ),
      *     @OA\Response(response="200", description="Returns information about user details and user search table page")
      * )
      */
 
     /**
-     * @Route("/admin/users/{id}", name="user_search_details")
+     * @Rest\Get("/admin/users/{id}", name="user_search_details")
      * @param $id
      * @param Request $request
      * @param AssociateManager $associateManager
@@ -684,27 +759,33 @@ class AdminController extends AbstractController
     /**
      * @OA\Get(
      *     path="/api/admin/jsonGallery",
-     *     @OA\QuerryParameter(
-     *         parameter="category"
-     *         type="string",
-     *         description="Category of gallery files"
+     *      @OA\Parameter(
+     *         in="query",
+     *         name="category",
+     *         required=false,
+     *         description="Category of gallery files",
+     *         @OA\Schema(type="string", default="all")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="imageLimit"
-     *         type="int",
-     *         description="Image limit to display in single page"
+     *      @OA\Parameter(
+     *         in="query",
+     *         name="imageLimit",
+     *         required=false,
+     *         description="Image limit to display in single page",
+     *         @OA\Schema(type="int", default="20")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="page"
-     *         type="int",
-     *         description="Received page querry param"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         required=false,
+     *         description="Received page querry param",
+     *         @OA\Schema(type="int", default="1")
      *      ),
      *     @OA\Response(response="200", description="Returns appropriate gallery files and pagination in json format")
      * )
      */
 
     /**
-     * @Route("/admin/jsonGallery", name="json_gallery")
+     * @Rest\Get("/admin/jsonGallery", name="json_gallery")
      * @param Request $request
      * @param GalleryNormalizer $galleryNormalizer
      * @return JsonResponse
@@ -777,17 +858,21 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @OA\Post(
+     * @OA\Delete(
      *     path="/api/admin/removeFile",
-     *     @OA\QuerryParameter(
-     *         parameter="galleryId"
-     *         type="int",
-     *         description="Gallery file id to remove"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="galleryId",
+     *         required=true,
+     *         description="Gallery file id to remove",
+     *         @OA\Schema(type="int")
      *      ),
-     *     @OA\QuerryParameter(
-     *         parameter="fileId"
-     *         type="int",
-     *         description="File id to remove"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="fileId",
+     *         required=true,
+     *         description="File id to remove",
+     *         @OA\Schema(type="int")
      *      ),
      *     @OA\Response(response="200",
      *     description="Removes completely gallery file with given file and gallery file id")
@@ -795,7 +880,7 @@ class AdminController extends AbstractController
      */
 
     /**
-     * @Route("/admin/removeFile", name="remove_file")
+     * @Rest\Delete("/admin/removeFile", name="remove_file")
      * @param Request $request
      * @param GaufretteFileManager $gaufretteFileManager
      * @return JsonResponse|Response
@@ -842,10 +927,12 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/uploadFile",
-     *     @OA\QuerryParameter(
-     *         parameter="filePath"
-     *         type="string",
-     *         description="Gallery file path"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="filePath",
+     *         required=true,
+     *         description="Gallery file path",
+     *         @OA\Schema(type="string")
      *      ),
      *     @OA\Response(response="200",
      *     description="Returns absolute url formed with gallery file path")
@@ -853,7 +940,7 @@ class AdminController extends AbstractController
      */
 
     /**
-     * @Route("/admin/uploadFile", name="upload_file")
+     * @Rest\Post("/admin/uploadFile", name="upload_file")
      * @param Request $request
      * @return JsonResponse|Response
      */
@@ -876,10 +963,12 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/uploadGalleryFile",
-     *     @OA\QuerryParameter(
-     *         parameter="galleryFile"
-     *         type="file",
-     *         description="Gallery file"
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="galleryFile",
+     *         required=true,
+     *         description="Gallery file to upload",
+     *         @OA\Schema(type="galleryFile")
      *      ),
      *     @OA\Response(response="200",
      *     description="Uploads and adds gallery file to database")
@@ -888,7 +977,7 @@ class AdminController extends AbstractController
 
 
     /**
-     * @Route("/admin/uploadGalleryFile", name="upload_gallery_file")
+     * @Rest\Post("/admin/uploadGalleryFile", name="upload_gallery_file")
      * @param Request $request
      * @param GalleryNormalizer $galleryNormalizer
      * @return JsonResponse|Response
@@ -935,10 +1024,12 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/get-logs",
-     *      @OA\QuerryParameter(
-     *         parameter="page"
-     *         type="int",
-     *         description="Received page querry param"
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         required=false,
+     *         description="Received page querry param",
+     *         @OA\Schema(type="int", default="1")
      *      ),
      *     @OA\Response(response="200",
      *     description="Returns appropriate logs depending on querry parameter page")
@@ -946,7 +1037,7 @@ class AdminController extends AbstractController
      */
 
     /**
-     * @Route("/admin/get-logs", name="get-logs")
+     * @Rest\Post("/admin/get-logs", name="get_logs")
      * @param Request $request
      * @return Response
      * @throws ExceptionInterface

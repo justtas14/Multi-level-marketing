@@ -33,13 +33,12 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-
-/**
- * @Route("/api", name="api_")
- */
+use OpenApi\Annotations as OA;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 /**
  * @OA\Info(title="Associate API", version="0.1")
+ * @Rest\Route("/api", name="_api")
  */
 
 
@@ -47,8 +46,16 @@ final class AssociateController extends AbstractController
 {
     const INVITATION_LIMIT = 10;
 
+
     /**
-     * @Route("/associate", name="associate")
+     * @OA\Get(
+     *     path="/api/associate",
+     *     @OA\Response(response="200", description="Returns associate home page relevant information in json")
+     * )
+     */
+
+    /**
+     * @Rest\Get("/associate", name="associate")
      * @param AssociateManager $associateManager
      * @param AssociateNormalizer $associateNormalizer
      * @return Response
@@ -106,7 +113,15 @@ final class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/profile", name="associate_profile")
+     * @OA\Put(
+     *     path="/api/associate/profile",
+     *     @OA\Response(response="200",
+     *     description="Returns information about current associate or updates current associate")
+     * )
+     */
+
+    /**
+     * @Rest\Put("/associate/profile", name="associate_profile")
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
      * @param GaufretteFileManager $fileManager
@@ -222,14 +237,38 @@ final class AssociateController extends AbstractController
         );
 
         $data = [
-            'associate' => $serializedAssociate
+            'associate' => $serializedAssociate,
+            'formErrors' => $formErrors,
+            'updated' => $updated
         ];
 
         return new JsonResponse($data);
     }
 
     /**
-     * @Route("/associate/invite", name="associate_invite")
+     * @OA\Post(
+     *     path="/api/associate/profile",
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="invitationId",
+     *         required=false,
+     *         description="Received invitationId querry param to resend invitation",
+     *         @OA\Schema(type="int")
+     *      ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         required=false,
+     *         description="Received page querry param",
+     *         @OA\Schema(type="int", default="1")
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Returns information about associate invitation page or sends new invitation")
+     * )
+     */
+
+    /**
+     * @Rest\Post("/associate/invite", name="associate_invite")
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
@@ -306,7 +345,6 @@ final class AssociateController extends AbstractController
         $form->handleRequest($request);
 
         if (($form->isSubmitted() && $form->isValid()) || $invitationId) {
-            $em = $this->getDoctrine()->getManager();
             if (!$invitationId) {
                 $invitation = new Invitation();
                 $email = trim($form['email']->getData());
@@ -393,7 +431,22 @@ final class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/downline", name="direct_downline")
+     * @OA\Get(
+     *     path="/api/associate/profile",
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="id",
+     *         required=true,
+     *         description="Assocaite id"
+     *         @OA\Schema(type="int")
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Returns information about given associate id direct downline")
+     * )
+     */
+
+    /**
+     * @Rest\Get("/associate/downline", name="direct_downline")
      * @param Request $request
      * @param AssociateManager $associateManager
      * @return JsonResponse

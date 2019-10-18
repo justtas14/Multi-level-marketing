@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Web;
 
 use App\Entity\Associate;
 use App\Entity\Invitation;
@@ -29,34 +29,34 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
-     * @return Response
-     */
-    public function indexAction(): Response
-    {
-        return $this->render('base.html.twig', []);
-    }
-
 //    /**
-//     * @Route("/", name="home")
+//     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
+//     * @return Response
 //     */
-//    public function index()
+//    public function indexAction(): Response
 //    {
-//        $user = $this->getUser();
-//        /**
-//         * @var User $user
-//         */
-//        if (!$user) {
-//            return $this->redirectToRoute('login');
-//        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
-//            return $this->redirectToRoute('admin');
-//        } else {
-//            return $this->redirectToRoute('associate');
-//        }
-//
-//        return $this->render('home/index.html.twig');
+//        return $this->render('base.html.twig', []);
 //    }
+
+    /**
+     * @Route("/", name="home")
+     */
+    public function index()
+    {
+        $user = $this->getUser();
+        /**
+         * @var User $user
+         */
+        if (!$user) {
+            return $this->redirectToRoute('login');
+        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return $this->redirectToRoute('admin');
+        } else {
+            return $this->redirectToRoute('associate');
+        }
+
+        return $this->render('home/index.html.twig');
+    }
 
     /**
      * @Route("/register/{code}", name="registration")
