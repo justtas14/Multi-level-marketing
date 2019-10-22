@@ -1,8 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User Search{% endblock %}
-
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('build/main.css') }}" rel="stylesheet">
+{% endblock %}
 
 {% block body %}
-
+    {% verbatim %}
+        <div id="main">
+        </div>
+    {% endverbatim %}
 {% endblock %}
+
+ {% block javascripts %}
+     {{ parent() }}
+     <script type="text/javascript" src="{{ asset('build/main.js') }}"></script>
+     <script>
+         Widgets.main.mainFun('#main');
+     </script>
+ {% endblock %}

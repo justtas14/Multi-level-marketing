@@ -51,7 +51,7 @@
 
 <script>
     import defaultPicture from '../../../../../../../public/assets/images/profile.jpg'
-    import Confirmation from "../../SinglePageApp/Pages/Admin/User Search/Components/Confirmation";
+    import Confirmation from "../../../../../../js/Confirmation/Components/Confirmation";
     import changeParentSVG from '../../../../../../images/geneology.svg'
 
     export default {

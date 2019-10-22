@@ -17,7 +17,6 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if you JavaScript imports CSS.
      */
-    // .addEntry('gallery', './assets/js/Gallery/app.js')
     .addEntry('fileGallery', './assets/js/GalleryApp/app.js')
     .addEntry('modal', './assets/js/GalleryApp/modalApp.js')
     .addEntry('quill', './assets/js/GalleryApp/quillApp.js')
@@ -26,6 +25,7 @@ Encore
     .addEntry('clipboard', './assets/js/Clipboard/app.js')
     .addEntry('userSearch', './assets/js/UserSearch/app.js')
     .addEntry('logging', './assets/js/Logging/app.js')
+    .addEntry('main', './assets/js/SinglePageApp/app.js')
 
     //.addEntry('page1', './assets/js/page1.js')
     //.addEntry('page2', './assets/js/page2.js')

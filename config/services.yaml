@@ -48,6 +48,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, connection: default }
 
+    App\EventListener\HTTPExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
     App\Util\JsonRequestListener:
         tags:
             - { name: kernel.event_listener, event: kernel.request, connection: default }

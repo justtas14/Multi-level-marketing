@@ -198,7 +198,7 @@ class AssociateController extends AbstractController
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
-                $this->addFlash('error', 'Associate already exists');
+                $this->addFlash('error', 'Associate with this email already exists');
             } elseif ($blacklistManager->existsInBlacklist($email)) {
                 $form
                     ->get('email')

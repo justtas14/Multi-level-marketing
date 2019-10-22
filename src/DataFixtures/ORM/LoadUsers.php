@@ -8,6 +8,8 @@ use App\Service\AssociateManager;
 use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Id\AssignedGenerator;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Exception;
 
 class LoadUsers extends Fixture
@@ -277,6 +279,16 @@ class LoadUsers extends Fixture
             null,
             true
         );
+
+        /**
+         *  Assign 404 id for user 1 for testing purposes.
+         */
+
+        $metadata = $manager->getClassMetadata(User::class);
+        $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
+        $metadata->setIdGenerator(new AssignedGenerator());
+
+        $user1->setId('404');
 
         $manager->flush();
     }

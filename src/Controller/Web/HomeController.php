@@ -29,14 +29,18 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class HomeController extends AbstractController
 {
-//    /**
-//     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
-//     * @return Response
-//     */
-//    public function indexAction(): Response
-//    {
-//        return $this->render('base.html.twig', []);
-//    }
+    /**
+     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
+     * @return Response
+     */
+    public function indexAction(): Response
+    {
+        $user = $this->getUser();
+        $data = null;
+
+
+        return $this->render('main.html.twig', []);
+    }
 
     /**
      * @Route("/", name="home")
@@ -194,15 +198,15 @@ class HomeController extends AbstractController
     ) {
         $em = $this->getDoctrine()->getManager();
 
-        $user = $em->getRepository(User::class)->find($id);
+        $user = $em->getRepository(Associate::class)->find($id);
 
         if (!$user) {
-            throw new NotFoundHttpException('Cannot find user', null, 404);
+            throw new NotFoundHttpException('Cannot find associate', null, 404);
         }
 
         $associate = $user->getAssociate();
 
-        $form = $this->createForm(InvitationType::class, null, ['label' => 'Get invited']);
+        $form = $this->createForm(InvitationType::class, null, ['label' => 'get invited']);
         $form->handleRequest($request);
 
         if (($form->isSubmitted() && $form->isValid())) {
@@ -222,7 +226,7 @@ class HomeController extends AbstractController
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
-                $this->addFlash('error', 'Associate already exists');
+                $this->addFlash('error', 'Associate with this email already exists');
             } elseif ($blacklistManager->existsInBlacklist($email)) {
                 $form
                     ->get('email')

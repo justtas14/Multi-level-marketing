@@ -102,6 +102,60 @@ class AdminControllerTest extends WebTestCase
     }
 
     /**
+     *  Testing resend invitation functionality.
+     *
+     *  - Login as associate, get invitation fixture and call to 'associate/invite' api with a param of invitation id
+     *  - Expected successfully to be sent invite mail to fixture invitation email.
+     *
+     *  - This time call to 'associate/invite' api with not existing invitation id.
+     *  - Expected to get not found error.
+     */
+    public function testResendInvitation()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user4');
+
+        $em->refresh($user);
+        $this->loginAs($user, 'main');
+
+        $client = $this->makeClient();
+
+        $invitation = $this->fixtures->getReference('invitation2');
+
+        $client->enableProfiler();
+
+        $crawler = $client->request(
+            'GET',
+            '/associate/invite',
+            ['invitationId' => $invitation->getId()]
+        );
+
+        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
+
+        $this->assertSame(1, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $collectedMessages[0];
+
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame('You got invited by Bailey Brookes. ', $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
+        $this->assertSame('jonas@gmail.com', key($message->getTo()));
+
+        $crawler = $client->request(
+            'GET',
+            '/associate/invite',
+            ['invitationId' => -1000]
+        );
+
+        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+    }
+
+
+    /**
      *  Testing send method functionality if it sends correctly and content is the same as expected
      *
      *  - Send invitation which has 4 atributes:
@@ -124,6 +178,9 @@ class AdminControllerTest extends WebTestCase
      *
      *  - Send invitation but with invalid email address.
      *  - Expected to get error message that email is invalid.
+     *
+     *  - Send invitation but with currently logged in associate email address.
+     *  - Expected to get error message that associate is already exist.
      *
      */
     public function testMailIsSentAndContentIsOk()
@@ -178,7 +235,7 @@ class AdminControllerTest extends WebTestCase
         $emailTemplateInvitation = $this->fixtures->getReference('emailTemplateInvitation');
 
         $emailTemplateInvitation->setEmailBody('{"ops":[{"insert":" Here is your "},'.
-        '{"attributes":{"link":"{{link}}"},"insert":"link"},{"attributes":{"header":3},"insert":"\n"},'.
+            '{"attributes":{"link":"{{link}}"},"insert":"link"},{"attributes":{"header":3},"insert":"\n"},'.
             '{"insert":" \nTo opt out of this service click \n"},'.'
             {"attributes":{"link":"{{ optOutUrl }}"},"insert":"this"},{"insert":"\n link\n"}]}');
 
@@ -236,7 +293,7 @@ class AdminControllerTest extends WebTestCase
         $crawler = $client->submit($form);
 
         $this->assertContains(
-            'Associate already exists',
+            'Associate with this email already exists',
             $crawler->filter('div.error__block')->html()
         );
 
@@ -257,60 +314,22 @@ class AdminControllerTest extends WebTestCase
             'The person with this email has opted out of this service',
             $crawler->filter('div.error__block')->html()
         );
-    }
 
+        $currentAssociateEmail = $user->getAssociate()->getEmail();
 
-    /**
-     *  Testing resend invitation functionality.
-     *
-     *  - Login as associate, get invitation fixture and call to 'associate/invite' api with a param of invitation id
-     *  - Expected successfully to be sent invite mail to fixture invitation email.
-     *
-     *  - This time call to 'associate/invite' api with not existing invitation id.
-     *  - Expected to get not found error.
-     */
-    public function testResendInvitation()
-    {
-        /** @var EntityManager $em */
-        $em = $this->fixtures->getManager();
+        $crawler = $client->request('GET', '/associate/invite');
 
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user4');
+        $form = $crawler->selectButton('send')->form();
 
-        $em->refresh($user);
-        $this->loginAs($user, 'main');
+        $form->get('invitation')['email']->setValue($currentAssociateEmail);
+        $form->get('invitation')['fullName']->setValue('myemail');
 
-        $client = $this->makeClient();
+        $crawler = $client->submit($form);
 
-        $invitation = $this->fixtures->getReference('invitation2');
-
-        $client->enableProfiler();
-
-        $crawler = $client->request(
-            'GET',
-            '/associate/invite',
-            ['invitationId' => $invitation->getId()]
+        $this->assertContains(
+            'Associate with this email already exists',
+            $crawler->filter('div.error__block')->html()
         );
-
-        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
-
-        $this->assertSame(1, $mailCollector->getMessageCount());
-
-        $collectedMessages = $mailCollector->getMessages();
-        $message = $collectedMessages[0];
-
-        $this->assertInstanceOf('Swift_Message', $message);
-        $this->assertSame('You got invited by Bailey Brookes. ', $message->getSubject());
-        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
-        $this->assertSame('jonas@gmail.com', key($message->getTo()));
-
-        $crawler = $client->request(
-            'GET',
-            '/associate/invite',
-            ['invitationId' => -1000]
-        );
-
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
     }
 
     /**

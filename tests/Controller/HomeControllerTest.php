@@ -8,12 +8,15 @@ use App\Entity\EmailTemplate;
 use App\Entity\File;
 use App\Entity\Gallery;
 use App\Entity\Invitation;
+use App\Entity\InvitationBlacklist;
 use App\Entity\User;
+use App\Service\InvitationManager;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\FileFormField;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class HomeControllerTest extends WebTestCase
 {
@@ -21,6 +24,7 @@ class HomeControllerTest extends WebTestCase
      * @var ReferenceRepository
      */
     private $fixtures;
+
 
     /**
      * @group legacy
@@ -31,8 +35,209 @@ class HomeControllerTest extends WebTestCase
         $this->fixtures = $this->loadFixtures([
             "App\DataFixtures\ORM\LoadUsers",
             "App\DataFixtures\ORM\LoadInvitations",
-            "App\DataFixtures\ORM\LoadEmailTemplates"
+            "App\DataFixtures\ORM\LoadEmailTemplates",
+            "App\DataFixtures\ORM\LoadBlackListEmails"
         ])->getReferenceRepository();
+    }
+
+    /**
+     *  Testing email send method functionality from
+     * global assocaite link if it mail sends correctly and content is the same as expected
+     *
+     *  - Get global assocaite with id 1 link, go to that link and sSend invitation which has 4 atributes:
+     * Sender: user which id is 1
+     * Email: 'myemail@gmail.com'
+     * Full name: 'myemail'
+     * InvitationCode: random generated code
+     *  - Expected to get one email with appropriate subject. Expected invitation entity to be added in database.
+     * Email expected to get from sender email.
+     * Email expected to sent to invitation set email.
+     *
+     *  - This time change invitationEmailTemplate body to delta format. Then send invitation which has 4 atributes:
+     * Sender: user which id is 1
+     * Email: 'myemail@gmail.com'
+     * Full name: 'myemail'
+     * InvitationCode: random generated code
+     *  - Expected to get one email with appropriate subject. Expected invitation entity to be added in database.
+     * Email expected to get from sender email.
+     * Email expected to sent to invitation set email.
+     *
+     *  - Send invitation but with invalid email address.
+     *  - Expected to get error message that email is invalid.
+     *
+     *  - Send invitation but with currently existing associate email address.
+     *  - Expected to get error message that associate is already exist.
+     *
+     */
+    public function testGlobalMailIsSentAndContentIsOk()
+    {
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
+
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user1');
+        $em->refresh($user);
+
+        $container = $this->getContainer();
+
+        $router = $container->get('router.default');
+
+        $invitationUniqueLink = $user->getAssociate()->getInvitationUserName();
+
+        $globalUrl = $router->generate(
+            'registration',
+            ['code' => $invitationUniqueLink],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $client = $this->makeClient();
+
+        $client->request('GET', $globalUrl);
+
+        $crawler = $client->followRedirect();
+
+        $form = $crawler->selectButton('get invited')->form();
+
+        $form->get('invitation')['email']->setValue('myemail@gmail.com');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $client->enableProfiler();
+
+        $invitationRepository = $em->getRepository(Invitation::class);
+
+        $invitations = $invitationRepository->findAll();
+
+        $this->assertEquals(6, sizeof($invitations));
+
+        $client->submit($form);
+
+        $invitations = $invitationRepository->findAll();
+
+        $this->assertEquals(7, sizeof($invitations));
+
+        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
+
+        $this->assertSame(1, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $collectedMessages[0];
+
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
+        $this->assertSame('myemail@gmail.com', key($message->getTo()));
+
+        $client->request('GET', $globalUrl);
+
+        $crawler = $client->followRedirect();
+
+        /** @var EmailTemplate $emailTemplateInvitation */
+        $emailTemplateInvitation = $this->fixtures->getReference('emailTemplateInvitation');
+
+        $emailTemplateInvitation->setEmailBody('{"ops":[{"insert":" Here is your "},'.
+            '{"attributes":{"link":"{{link}}"},"insert":"link"},{"attributes":{"header":3},"insert":"\n"},'.
+            '{"insert":" \nTo opt out of this service click \n"},'.'
+            {"attributes":{"link":"{{ optOutUrl }}"},"insert":"this"},{"insert":"\n link\n"}]}');
+
+        $em->persist($emailTemplateInvitation);
+        $em->flush();
+
+        $form = $crawler->selectButton('get invited')->form();
+
+        $form->get('invitation')['email']->setValue('myemail@gmail.com');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $invitationRepository = $em->getRepository(Invitation::class);
+
+        $invitations = $invitationRepository->findAll();
+
+        $this->assertEquals(7, sizeof($invitations));
+
+        $client->submit($form);
+
+        $invitations = $invitationRepository->findAll();
+
+        $this->assertEquals(8, sizeof($invitations));
+
+        $this->assertSame(1, $mailCollector->getMessageCount());
+
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $collectedMessages[0];
+
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame('You got invited by Connor Vaughan. ', $message->getSubject());
+        $this->assertSame("noreply@plumtreesystems.com", key($message->getFrom()));
+        $this->assertSame('myemail@gmail.com', key($message->getTo()));
+
+        $client->request('GET', $globalUrl);
+
+        $crawler = $client->followRedirect();
+
+        $form = $crawler->selectButton('get invited')->form();
+
+        $form->get('invitation')['email']->setValue('myemaifa');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Invalid email',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $client->request('GET', $globalUrl);
+
+        $crawler = $client->followRedirect();
+
+        $form = $crawler->selectButton('get invited')->form();
+
+        $form->get('invitation')['email']->setValue('AidanNewman@dayrep.com');
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Associate with this email already exists',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $client->request('GET', $globalUrl);
+
+        $crawler = $client->followRedirect();
+
+        $form = $crawler->selectButton('get invited')->form();
+
+        /** @var InvitationBlacklist $invitationBlackList */
+        $invitationBlackList = $this->fixtures->getReference('invitationBlackListEmail');
+        $em->refresh($invitationBlackList);
+
+        $form->get('invitation')['email']->setValue($invitationBlackList->getEmail());
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'The person with this email has opted out of this service',
+            $crawler->filter('div.error__block')->html()
+        );
+
+        $currentAssociateEmail = $user->getAssociate()->getEmail();
+
+        $client->request('GET', $globalUrl);
+
+        $crawler = $client->followRedirect();
+
+        $form = $crawler->selectButton('get invited')->form();
+
+        $form->get('invitation')['email']->setValue($currentAssociateEmail);
+        $form->get('invitation')['fullName']->setValue('myemail');
+
+        $crawler = $client->submit($form);
+
+        $this->assertContains(
+            'Associate with this email already exists',
+            $crawler->filter('div.error__block')->html()
+        );
     }
 
     /**
