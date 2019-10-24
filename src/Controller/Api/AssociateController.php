@@ -432,7 +432,7 @@ final class AssociateController extends AbstractController
 
     /**
      * @OA\Get(
-     *     path="/api/associate/profile",
+     *     path="/api/associate/downline",
      *     @OA\Parameter(
      *         in="query",
      *         name="id",

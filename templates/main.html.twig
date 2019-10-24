@@ -7,7 +7,7 @@
 
 {% block body %}
     {% verbatim %}
-        <div id="main">
+        <div id="app">
         </div>
     {% endverbatim %}
 {% endblock %}
@@ -16,6 +16,6 @@
      {{ parent() }}
      <script type="text/javascript" src="{{ asset('build/main.js') }}"></script>
      <script>
-         Widgets.main.mainFun('#main');
+         Widgets.main.mainFun('#app', '{{ isAuthenticated }}', '{{ user }}');
      </script>
  {% endblock %}

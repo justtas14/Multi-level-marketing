@@ -20,25 +20,25 @@
                 />
             </tbody>
         </table>
-        <GalleryPagination v-bind:paginationInfo="paginationInfo"/>
+        <Pagination v-bind:paginationInfo="paginationInfo"/>
     </div>
 </template>
 
 <script>
     import Associate from "./Associate";
-    import GalleryPagination from "../../../../../GalleryApp/Components/GalleryPagination";
+    import Pagination from "../Pagination/Pagination";
     import SearchBar from "./SearchBar";
     import { mapActions, mapMutations, mapState } from 'vuex'
-    import { findAll, findBy } from '../services/AssociateSearchService';
-    import EventBus from '../EventBus/EventBus';
-    import EventBusFromGallery from '../../../../../GalleryApp/EventBus/EventBus';
+    import { findAll, findBy } from '../../Services/AssociateSearchService';
+    import EventBus from './EventBus/EventBus';
+    import EventBusFromPagination from '../Pagination/EventBus/EventBus';
 
     export default {
         name: "Main",
         props: ['mainActionLabel', 'mainAction'],
         components: {
             Associate,
-            GalleryPagination,
+            Pagination,
             SearchBar
         },
         data() {
@@ -92,17 +92,17 @@
                 this.updateSearchVal(params);
                 this.loadAppropriateAssociates();
             });
-            EventBusFromGallery.$on('previousPage', () => {
+            EventBusFromPagination.$on('previousPage', () => {
                 const page = null, action = 'subtract';
                 this.changePage({page, action});
                 this.loadAppropriateAssociates(this.paginationInfo.currentPage);
             });
-            EventBusFromGallery.$on('nextPage', () => {
+            EventBusFromPagination.$on('nextPage', () => {
                 const action = 'add', page = null;
                 this.changePage({page, action});
                 this.loadAppropriateAssociates(this.paginationInfo.currentPage);
             });
-            EventBusFromGallery.$on('page', (page) => {
+            EventBusFromPagination.$on('page', (page) => {
                 const action = null;
                 this.changePage({
                     page,
@@ -133,4 +133,4 @@
     }
 </script>
 
-<style src="../css/Main.css" scoped></style>
+<style src="../../css/UserSearch/Main.css" scoped></style>

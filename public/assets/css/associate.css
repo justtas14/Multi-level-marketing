@@ -39,10 +39,6 @@
     width: 30%;
 }
 
-.associate-levelBarList {
-    /*margin-right:35px;*/
-}
-
 .card-title {
     white-space: nowrap;
 }
@@ -52,7 +48,6 @@
     max-width:100%;
     margin: auto;
 }
-
 .associate-levelBar {
     margin: auto;
     text-align: center;

@@ -3,7 +3,8 @@ import SecurityAPI from "../api/SecurityApi/security";
 
 const AUTHENTICATING = "AUTHENTICATING",
     AUTHENTICATING_SUCCESS = "AUTHENTICATING_SUCCESS",
-    AUTHENTICATING_ERROR = "AUTHENTICATING_ERROR";
+    AUTHENTICATING_ERROR = "AUTHENTICATING_ERROR",
+    PROVIDING_DATA_ON_REFRESH_SUCCESS = "PROVIDING_DATA_ON_REFRESH_SUCCESS";
 
 const state = {
     isLoading: false,
@@ -35,6 +36,9 @@ const actions = {
             commit(AUTHENTICATING_ERROR, error);
             return null;
         }
+    },
+    onRefresh({commit}, payload) {
+        commit(PROVIDING_DATA_ON_REFRESH_SUCCESS, payload);
     }
 };
 
@@ -56,6 +60,12 @@ const mutations = {
         state.error = error;
         state.isAuthenticated = false;
         state.user = null;
+    },
+    [PROVIDING_DATA_ON_REFRESH_SUCCESS](state, payload) {
+        state.isLoading = false;
+        state.error = null;
+        state.isAuthenticated = payload.isAuthenticated;
+        state.user = payload.user;
     }
 };
 

@@ -10,7 +10,8 @@ const routes = [
     // { path: '/associate/profile', component: AssociateProfile},
     // { path: '/associate/invite', component: AssociateInvitation },
     // { path: '/associate/viewer', component: AssociateTeamViewer},
-    { path: '/login', component: Login }
+    { path: '/login', component: Login },
+    // { path: "*", redirect: "/home" }
 ];
 
 

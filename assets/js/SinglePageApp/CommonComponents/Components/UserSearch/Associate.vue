@@ -50,9 +50,9 @@
 </template>
 
 <script>
-    import defaultPicture from '../../../../../../../public/assets/images/profile.jpg'
-    import Confirmation from "../../../../../../js/Confirmation/Components/Confirmation";
-    import changeParentSVG from '../../../../../../images/geneology.svg'
+    import defaultPicture from '../../../../../../public/assets/images/profile.jpg'
+    import Confirmation from "../../../../Confirmation/Components/Confirmation";
+    import changeParentSVG from '../../../../../images/geneology.svg'
 
     export default {
         name: "Associate",
@@ -100,5 +100,5 @@
     }
 </script>
 
-<style src="../css/Associate.css" scoped></style>
+<style src="../../css/UserSearch/Associate.css" scoped></style>
 

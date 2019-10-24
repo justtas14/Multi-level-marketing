@@ -25,7 +25,7 @@
 </template>
 
 <script>
-    import EventBus from '../EventBus/EventBus';
+    import EventBus from './EventBus/EventBus';
     import { debounce } from "debounce";
 
     export default {
@@ -59,4 +59,4 @@
     }
 </script>
 
-<style src="../css/SearchBar.css" scoped></style>
+<style src="../../css/UserSearch/SearchBar.css" scoped></style>

@@ -26,21 +26,28 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
-     * @return Response
-     */
-    public function indexAction(): Response
-    {
-        $user = $this->getUser();
-        $data = null;
-
-
-        return $this->render('main.html.twig', []);
-    }
+//    /**
+//     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
+//     * @return Response
+//     */
+//    public function indexAction(SerializerInterface $serializer): Response
+//    {
+//        $user = $this->getUser();
+//        $data = null;
+//        if (!empty($user)) {
+//            $data = $serializer->serialize($user, JsonEncoder::FORMAT);
+//        }
+//
+//        return $this->render('main.html.twig', [
+//            'isAuthenticated' => json_encode(! empty($user)),
+//            'user' => $data ?? json_encode($data),
+//        ]);
+//    }
 
     /**
      * @Route("/", name="home")
@@ -58,8 +65,6 @@ class HomeController extends AbstractController
         } else {
             return $this->redirectToRoute('associate');
         }
-
-        return $this->render('home/index.html.twig');
     }
 
     /**

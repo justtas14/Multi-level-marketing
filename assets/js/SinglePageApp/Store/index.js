@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import UserSearch from './modules/user-search'
-import Login from './modules/security'
+import Security from './modules/security'
+import Gallery from './modules/gallery'
+import Logs from "../../Logging/store/modules/logs";
 
 Vue.use(Vuex);
 
@@ -11,10 +13,17 @@ export default new Vuex.Store({
             namespaced: true,
             ...UserSearch
         },
-        Login: {
+        Security: {
             namespaced: true,
-            ...Login
-        }
-
+            ...Security
+        },
+        Gallery : {
+            namespaced: true,
+            ...Gallery
+        },
+        Logs : {
+            namespaced: true,
+            ...Logs
+        },
     }
 })
