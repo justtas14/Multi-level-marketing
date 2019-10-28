@@ -14,7 +14,6 @@
             <div class="card-content">
                 <span class="card-title">Update Profile</span>
                 {{ form_start(updateProfile) }}
-                {{ form_row(updateProfile._token) }}
                 <div class="input-field col s12 registration__input--forceBorder">
                     {{ form_label(updateProfile.associate.fullName) }}
                     {{ form_widget(updateProfile.associate.fullName) }}

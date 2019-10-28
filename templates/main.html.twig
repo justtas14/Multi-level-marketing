@@ -16,6 +16,6 @@
      {{ parent() }}
      <script type="text/javascript" src="{{ asset('build/main.js') }}"></script>
      <script>
-         Widgets.main.mainFun('#app', '{{ isAuthenticated }}', '{{ user }}');
+         Widgets.main.mainFun('#app');
      </script>
  {% endblock %}

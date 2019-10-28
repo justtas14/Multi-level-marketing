@@ -16,7 +16,7 @@
         components: {
             Sidebar
         },
-        props: ['isAuthenticatedOnRefresh', 'user'],
+        props: [],
         data() {
             return {
 
@@ -25,28 +25,27 @@
         methods: {
 
             ...mapActions('Security', [
-                'onRefresh'
             ]),
             ...mapMutations('Security', [
             ])
         },
         computed: {
             ...mapGetters('Security', [
+                'isAuthenticated'
 
             ]),
             ...mapState('Security', [
-                'isAuthenticated'
             ])
         },
         created() {
-            let isAuthenticatedOnRefresh = JSON.parse(this.isAuthenticated);
-            let user = JSON.parse(this.user);
 
-            console.log(isAuthenticatedOnRefresh);
-            console.log(user);
 
-            let payload = { isAuthenticated: isAuthenticatedOnRefresh, user: user };
-            this.onRefresh(payload);
+
+            if (!this.isAuthenticated) {
+                this.$router.push({path: "/login"})
+            } else {
+
+            }
 
             axios.interceptors.response.use(undefined, (err) => {
                 return new Promise(() => {
@@ -56,7 +55,6 @@
                     throw err;
                 });
             });
-
         }
     }
 </script>

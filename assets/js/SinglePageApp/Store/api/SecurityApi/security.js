@@ -6,5 +6,10 @@ export default {
             username: login,
                 password: password
         });
+    },
+    authenticate(token) {
+        return axios.post("/api/authenticate", {
+            token: token
+        });
     }
     }

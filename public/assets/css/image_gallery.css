@@ -47,13 +47,6 @@
     margin-left: 0.5em;
 }
 
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
 #originalName {
     display: none;
 }

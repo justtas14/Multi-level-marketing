@@ -21,7 +21,7 @@
 <script>
     import Gallery from "./Gallery";
     import CategoryMenu from './GalleryMenu';
-    import galleryConst from "../../SinglePageApp/CommonComponents/Components/Gallery/constants/galleryConst";
+    import galleryConst from "../../SinglePageApp/Components/Gallery/constants/galleryConst";
     import { mapActions, mapMutations, mapState } from 'vuex'
     import EventBus from '../EventBus/EventBus';
 

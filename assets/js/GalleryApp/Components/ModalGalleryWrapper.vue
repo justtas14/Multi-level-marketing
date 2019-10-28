@@ -24,7 +24,7 @@
     import Gallery from "./Gallery";
     import ModalWrapper from "./ModalWrapper";
     import ModalFileContainer from "./ModalFileContainer";
-    import modalGalleryConst from "../../SinglePageApp/CommonComponents/Components/Gallery/constants/modalGalleryConst";
+    import modalGalleryConst from "../../SinglePageApp/Components/Gallery/constants/modalGalleryConst";
     import { mapActions, mapMutations, mapState } from 'vuex'
     import EventBus from '../EventBus/EventBus';
 

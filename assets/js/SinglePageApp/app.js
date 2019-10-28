@@ -9,18 +9,16 @@ Vue.config.productionTip = false;
 Vue.use(MdField);
 Vue.use(VueQuill);
 
-export const mainFun = (el, isAuthenticated, user) => {
+export const mainFun = (el) => {
     const main = new Vue({
         el: el,
         store,
         router,
         data: {
-            isAuthenticated: isAuthenticated,
-            user: user
         },
         methods: {
         },
-        template: '<Main v-bind:user="user" v-bind:isAuthenticatedOnRefresh="isAuthenticated"/>',
+        template: '<Main/>',
         components: {
             Main,
         },

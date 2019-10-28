@@ -4,7 +4,7 @@ import SecurityAPI from "../api/SecurityApi/security";
 const AUTHENTICATING = "AUTHENTICATING",
     AUTHENTICATING_SUCCESS = "AUTHENTICATING_SUCCESS",
     AUTHENTICATING_ERROR = "AUTHENTICATING_ERROR",
-    PROVIDING_DATA_ON_REFRESH_SUCCESS = "PROVIDING_DATA_ON_REFRESH_SUCCESS";
+    PROVIDING_DATA_ON_AUTHENTICATION = "PROVIDING_DATA_ON_AUTHENTICATION";
 
 const state = {
     isLoading: false,
@@ -15,6 +15,9 @@ const state = {
 };
 
 const getters = {
+    isAuthenticated({state, commit}) {
+        return state.isAuthenticated;
+    },
     hasError(state) {
         return state.error !== null;
     },
@@ -37,9 +40,14 @@ const actions = {
             return null;
         }
     },
-    onRefresh({commit}, payload) {
-        commit(PROVIDING_DATA_ON_REFRESH_SUCCESS, payload);
-    }
+    async authentication({commit, state}) {
+        if (!state.token) {
+            state.isAuthenticated = false;
+        } else {
+            let response = await SecurityAPI.authenticate(state.token);
+            commit(PROVIDING_DATA_ON_AUTHENTICATION, response.payload);
+        }
+    },
 };
 
 const mutations = {
@@ -49,11 +57,11 @@ const mutations = {
         state.isAuthenticated = false;
         state.user = null;
     },
-    [AUTHENTICATING_SUCCESS](state, user) {
+    [AUTHENTICATING_SUCCESS](state, data) {
         state.isLoading = false;
         state.error = null;
         state.isAuthenticated = true;
-        state.user = user;
+        state.token = data.token;
     },
     [AUTHENTICATING_ERROR](state, error) {
         state.isLoading = false;
@@ -61,7 +69,7 @@ const mutations = {
         state.isAuthenticated = false;
         state.user = null;
     },
-    [PROVIDING_DATA_ON_REFRESH_SUCCESS](state, payload) {
+    [PROVIDING_DATA_ON_AUTHENTICATION](state, payload) {
         state.isLoading = false;
         state.error = null;
         state.isAuthenticated = payload.isAuthenticated;

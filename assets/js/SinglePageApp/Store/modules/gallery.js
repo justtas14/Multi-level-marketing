@@ -1,5 +1,5 @@
 import axios from 'axios';
-import constants from '../../../SinglePageApp/CommonComponents/Components/Gallery/constants/constants'
+import constants from '../../Components/Gallery/constants/constants'
 
 const state = {
     modalState: false,

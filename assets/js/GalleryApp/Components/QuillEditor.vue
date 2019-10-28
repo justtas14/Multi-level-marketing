@@ -11,7 +11,7 @@
     import ModalGalleryWrapper from "./ModalGalleryWrapper";
     import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
     import { mapActions, mapMutations } from 'vuex';
-    import constants from "../../SinglePageApp/CommonComponents/Components/Gallery/constants/constants";
+    import constants from "../../SinglePageApp/Components/Gallery/constants/constants";
     import EventBus from '../EventBus/EventBus';
 
     export default {

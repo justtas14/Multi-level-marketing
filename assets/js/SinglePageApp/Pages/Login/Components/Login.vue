@@ -21,7 +21,7 @@
         },
         methods: {
             async performLogin() {
-                let payload = {login: this.$data.login, password: this.$data.password},
+                let payload = {login: this.login, password: this.password},
                     redirect = this.$route.query.redirect;
 
                 await this.login(payload);

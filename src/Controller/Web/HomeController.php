@@ -16,9 +16,11 @@ use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
 use App\Service\ResetPasswordManager;
+use PlumTreeSystems\UserBundle\Service\JWTManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,27 +29,72 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class HomeController extends AbstractController
 {
-//    /**
-//     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
-//     * @return Response
-//     */
-//    public function indexAction(SerializerInterface $serializer): Response
-//    {
-//        $user = $this->getUser();
-//        $data = null;
-//        if (!empty($user)) {
-//            $data = $serializer->serialize($user, JsonEncoder::FORMAT);
-//        }
-//
-//        return $this->render('main.html.twig', [
-//            'isAuthenticated' => json_encode(! empty($user)),
-//            'user' => $data ?? json_encode($data),
-//        ]);
-//    }
+    /**
+     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
+     * @return Response
+     */
+    public function indexAction(): Response
+    {
+        return $this->render('main.html.twig', []);
+    }
+
+    /**
+     * @Route("/api/authenticate", name="authentication")
+     * @param Request $request
+     * @param JWTManager $JWTManager
+     * @return Response
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    public function authenticate(Request $request, JWTManager $JWTManager): Response
+    {
+        $isAuthenticated = true;
+        $serializedUser = null;
+        $em = $this->getDoctrine()->getManager();
+
+        $tokenData = $request->request->all();
+        $payload = $JWTManager->getPayload($tokenData['token']);
+
+        if (!$tokenData || !$payload) {
+            $isAuthenticated = false;
+        } else {
+            $email = $payload;
+
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $email]);
+
+            $serializer = new Serializer([
+                new DateTimeNormalizer('Y-m-d h:i:s'),
+                new ObjectNormalizer(), new JsonEncoder()
+            ]);
+
+            $data = $serializer->normalize(
+                $user,
+                null,
+                ['attributes' =>
+                    [
+                        'id',
+                        'associate',
+                        'roles',
+
+
+                    ]
+                ]
+            );
+        }
+
+        $payload = [
+            'user' => $serializedUser,
+            'isAuthenticated' => $isAuthenticated
+        ];
+
+        return new JsonResponse($payload, JsonResponse::HTTP_OK);
+    }
 
     /**
      * @Route("/", name="home")

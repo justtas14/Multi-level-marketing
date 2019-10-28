@@ -306,8 +306,6 @@ select {
     border-radius: 50%;
     object-fit: unset !important;
 }
-.userDetails__info {
-}
 
 .userDetails_parentTitleContainer {
     display: flex;
@@ -362,10 +360,6 @@ select {
     min-height: 7.5em;
 }
 
-.pagination li.active {
-    background-color: #3ab54a!important;
-}
-
 @media screen and (max-width: 1330px) {
     .userDetails__mainContainer {
         display: block;
@@ -387,8 +381,6 @@ select {
 @media screen and (max-width: 901px) {
     .userDetails__container {
         display: block;
-    }
-    .userDetails__info {
     }
 
     .userDetails__picture__container {
