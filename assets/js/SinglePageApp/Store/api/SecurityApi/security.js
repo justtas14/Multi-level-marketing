@@ -1,15 +1,28 @@
 import axios from "axios";
+import router from "../../../Router/index";
 
 export default {
     login(login, password) {
         return axios.post("/api/token", {
-            username: login,
+            email: login,
                 password: password
         });
     },
-    authenticate(token) {
-        return axios.post("/api/authenticate", {
-            token: token
-        });
-    }
+    unAuthenticate() {
+        localStorage.associate = null;
+        localStorage.isAuthenticated = null;
+        localStorage.token = null;
+        router.push('/login');
+    },
+    authenticatePostApi(url, token) {
+        try {
+            console.log(localStorage.token);
+            return axios.post(url, {
+                token: token
+            }, {headers: {"Authorization" : `Bearer ${localStorage.token}`} });
+        } catch (e) {
+            console.log(e);
+            this.unAuthenticate();
+        }
+    },
     }

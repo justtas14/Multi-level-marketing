@@ -2,7 +2,10 @@
 
 namespace App\Controller\Web;
 
+use App\CustomNormalizer\AssociateNormalizer;
+use App\CustomNormalizer\ConfigurationNormalizer;
 use App\Entity\Associate;
+use App\Entity\Configuration;
 use App\Entity\Invitation;
 use App\Entity\User;
 use App\Filter\AssociateFilter;
@@ -46,51 +49,34 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/api/authenticate", name="authentication")
+     * @Route("/api/configuration", name="configuration")
      * @param Request $request
-     * @param JWTManager $JWTManager
+     * @param ConfigurationNormalizer $configurationNormalizer
      * @return Response
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function authenticate(Request $request, JWTManager $JWTManager): Response
-    {
-        $isAuthenticated = true;
-        $serializedUser = null;
+    public function configuration(
+        Request $request,
+        ConfigurationNormalizer $configurationNormalizer
+    ) {
         $em = $this->getDoctrine()->getManager();
 
-        $tokenData = $request->request->all();
-        $payload = $JWTManager->getPayload($tokenData['token']);
+        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
 
-        if (!$tokenData || !$payload) {
-            $isAuthenticated = false;
-        } else {
-            $email = $payload;
+        $configurationSerializer = new Serializer([
+            new DateTimeNormalizer('Y-m-d h:i:s'),
+            $configurationNormalizer, new JsonEncoder()
+        ]);
 
-            $user = $em->getRepository(User::class)->findOneBy(['email' => $email]);
+        $serializedConfiguration = $configurationSerializer->normalize(
+            $configuration,
+            null,
+            ['attributes' => ['termsOfServices']]
+        );
 
-            $serializer = new Serializer([
-                new DateTimeNormalizer('Y-m-d h:i:s'),
-                new ObjectNormalizer(), new JsonEncoder()
-            ]);
-
-            $data = $serializer->normalize(
-                $user,
-                null,
-                ['attributes' =>
-                    [
-                        'id',
-                        'associate',
-                        'roles',
-
-
-                    ]
-                ]
-            );
-        }
 
         $payload = [
-            'user' => $serializedUser,
-            'isAuthenticated' => $isAuthenticated
+            'configuration' => $serializedConfiguration,
         ];
 
         return new JsonResponse($payload, JsonResponse::HTTP_OK);

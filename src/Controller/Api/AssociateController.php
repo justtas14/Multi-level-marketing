@@ -20,6 +20,7 @@ use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
+use PlumTreeSystems\UserBundle\Service\JWTManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -232,7 +233,6 @@ final class AssociateController extends AbstractController
                 'agreedToEmailUpdates',
                 'agreedToTextMessageUpdates',
                 'agreedToTermsOfService',
-
             ]]
         );
 
@@ -455,5 +455,60 @@ final class AssociateController extends AbstractController
     {
         $id = $request->get('id');
         return new JsonResponse($associateManager->getDirectDownlineAssociates($id), JsonResponse::HTTP_OK);
+    }
+
+
+    /**
+     * @Route("/associate/me", name="me")
+     * @param Request $request
+     * @param JWTManager $JWTManager
+     * @param AssociateNormalizer $associateNormalizer
+     * @return Response
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    public function getAssociate(
+        Request $request,
+        JWTManager $JWTManager,
+        AssociateNormalizer $associateNormalizer
+    ) {
+        $serializedAssociate = null;
+        $em = $this->getDoctrine()->getManager();
+
+        $tokenData = $request->request->all();
+        $payload = $JWTManager->getPayload($tokenData['token']);
+
+        /** @var User $user */
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $payload]);
+        $associate = $user->getAssociate();
+
+        $associateSerializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $associateNormalizer]);
+        $serializedAssociate = $associateSerializer->normalize(
+            $associate,
+            null,
+            ['attributes' =>
+                [
+                    'id',
+                    'fullName',
+                    'email',
+                    'address',
+                    'address2',
+                    'city',
+                    'postcode',
+                    'country',
+                    'mobilePhone',
+                    'homePhone',
+                    'profilePicture',
+                    'agreedToEmailUpdates',
+                    'agreedToTextMessageUpdates',
+                    'agreedToTermsOfService',
+                ]
+            ]
+        );
+
+        $payload = [
+            'associate' => $serializedAssociate,
+        ];
+
+        return new JsonResponse($payload, JsonResponse::HTTP_OK);
     }
 }

@@ -46,6 +46,6 @@ security:
          - { path: ^/landingpage, roles: ROLE_USER }
          - { path: ^/api/admin, roles: ROLE_ADMIN }
          - { path: ^/api/token, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-         - { path: ^/api/authenticate, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/configuration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/associate, roles: ROLE_USER }
          - { path: ^/api, roles: ROLE_USER }

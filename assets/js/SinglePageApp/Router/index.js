@@ -2,14 +2,14 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '../Store';
 import Login from "../Pages/Login/Components/Login";
+import AdminHome from '../Pages/Admin/Home/Home';
+import AssociateHome from '../Pages/Associate/Home/Home';
 
 Vue.use(VueRouter);
 
 const routes = [
-    // { path: '/associate', component: AssociateHome },
-    // { path: '/associate/profile', component: AssociateProfile},
-    // { path: '/associate/invite', component: AssociateInvitation },
-    // { path: '/associate/viewer', component: AssociateTeamViewer},
+    { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
+    { path: '/admin', component: AdminHome, meta: { requiresAuth: true }},
     { path: '/login', component: Login },
     // { path: "*", redirect: "/home" }
 ];
@@ -22,8 +22,23 @@ let router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+    if (to.path === '/') {
+        if (!localStorage.isAuthenticated) {
+            next({
+                path: "/login"
+            });
+        } else if (store.getters('Security/isAdmin')) {
+            next({
+                path: "/admin"
+            });
+        } else {
+            next({
+                path: "/associate"
+            });
+        }
+    }
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters["security/isAuthenticated"]) {
+        if (localStorage.isAuthenticated) {
             next();
         } else {
             next({
@@ -32,7 +47,7 @@ router.beforeEach((to, from, next) => {
             });
         }
     } else {
-        next(); // make sure to always call next()
+        next();
     }
 });
 

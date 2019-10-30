@@ -2,10 +2,12 @@
     <div id="error-messages">
         <Error
             v-for="message in errorMessages"
+            v-bind:key="key"
             v-bind:message="message"
         ></Error>
         <Success
             v-for="message in successMessages"
+            v-bind:key="key"
             v-bind:message="message"
         ></Success>
     </div>

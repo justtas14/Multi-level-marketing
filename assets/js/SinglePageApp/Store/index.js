@@ -3,13 +3,14 @@ import Vuex from 'vuex';
 import UserSearch from './modules/user-search'
 import Security from './modules/security'
 import Gallery from './modules/gallery'
-import Logs from "../../Logging/store/modules/logs";
+import Logs from "./modules/logs"
+import Sidebar from "./modules/sidebar"
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
-        UserSearch : {
+        UserSearch: {
             namespaced: true,
             ...UserSearch
         },
@@ -17,13 +18,17 @@ export default new Vuex.Store({
             namespaced: true,
             ...Security
         },
-        Gallery : {
+        Gallery: {
             namespaced: true,
             ...Gallery
         },
-        Logs : {
+        Logs: {
             namespaced: true,
             ...Logs
         },
+        Sidebar: {
+            namespaced: true,
+            ...Sidebar
+        }
     }
 })
