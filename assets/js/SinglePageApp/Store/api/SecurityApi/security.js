@@ -25,4 +25,16 @@ export default {
             this.unAuthenticate();
         }
     },
+    authenticateGetApi(url, token) {
+        try {
+            console.log(localStorage.token);
+            return axios.get(url, {
+                token: token,
+                headers: {"Authorization" : `Bearer ${localStorage.token}`}
+            });
+        } catch (e) {
+            console.log(e);
+            this.unAuthenticate();
+        }
+    },
     }
