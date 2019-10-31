@@ -1,7 +1,7 @@
 <template>
     <div class="login-container">
         <div class="login-logoContainer">
-            <img v-if="checkConfigurationMainLogo" style="max-width:100%; max-height: 100px" :src="configuration.mainLogoPath" />
+            <img v-if="this.checkConfigurationMainLogo" style="max-width:100%; max-height: 100px" :src="configuration.mainLogoPath" />
             <img v-else style="max-width:100%; max-height: 100px" :src="plumTreeLogo"/>
         </div>
         <div class="login-title">
@@ -39,8 +39,8 @@
 
             </form>
         </div>
-        <div class="login-errorMessageContainer">
-            <Messages v-bind:successMessage="[]" v-bind:errorMessages="[]"></Messages>
+        <div class="login-errorMessageContainer" v-if="hasError">
+            <Error v-bind:message="error"></Error>
         </div>
     </div>
 </template>
@@ -50,10 +50,12 @@
     import plumTreeLogo from '../../../../../../public/assets/images/plum_tree_logo.png';
     import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
     import Messages from "../../../Components/Messages/Messages";
+    import Error from "../../../Components/Messages/Error";
 
     export default {
         name: "Login",
         components: {
+            Error,
             Messages
         },
         props: [],

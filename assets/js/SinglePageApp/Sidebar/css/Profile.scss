@@ -40,3 +40,56 @@
   font-size: 90%;
   text-align: center;
 }
+
+.sidebar-profileContainer-active {
+  display: block;
+  position: fixed;
+  width: 100%;
+  z-index: 20;
+}
+
+.sidebar-profileContainer-active {
+  animation : adminMenuFade 0.25s ease-out forwards;
+}
+
+@media screen and (max-width: 800px) {
+  .sidebar-profileContainer-inactive {
+    display: block;
+    position: fixed;
+    z-index: 20;
+    width: 100%;
+    animation : adminMenuFadeBack 0.25s ease-out forwards;
+    /*display: none;*/
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .sidebar-profileContainer {
+    display: block;
+    position: relative;
+    width: 100%;
+    right: auto
+  }
+}
+
+@keyframes adminMenuFade {
+  from {
+    /*opacity: 0;*/
+    transform: translateX(-100%);
+  }
+  to {
+    /*opacity: 1;*/
+    transform: translateX(0px);
+  }
+}
+
+@keyframes adminMenuFadeBack {
+  from {
+    /*opacity: 1;*/
+    transform: translateX(0px);
+  }
+  to {
+    /*opacity: 0;*/
+    transform: translateX(-100%);
+  }
+}

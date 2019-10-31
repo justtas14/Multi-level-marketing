@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar-logoContainer">
-        <img v-if="configuration.mainLogo" class="sidebar-logo" :src="configuration.mainLogoPath" />
+        <img v-if="this.checkConfigurationMainLogo" class="sidebar-logo" :src="configuration.mainLogoPath" />
         <img v-else class="sidebar-logo" :src="PlumTreeSystemsLogo" />
         <div class="hamburger hamburger--collapse">
             <div class="hamburger-box">
@@ -13,6 +13,7 @@
 <script>
     import '../css/Logo.scss'
     import PlumTreeSystemsLogo from '../../../../../public/assets/images/plum_tree_logo.png'
+    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 
     export default {
         name: "Logo",
@@ -22,14 +23,15 @@
         props: ['configuration'],
         data() {
             return {
-
+                PlumTreeSystemsLogo: PlumTreeSystemsLogo
             }
         },
         methods: {
-
         },
         computed: {
-
+            ...mapGetters('Sidebar', [
+                'checkConfigurationMainLogo'
+            ]),
         },
         created() {
 

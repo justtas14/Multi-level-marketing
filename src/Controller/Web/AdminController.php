@@ -46,7 +46,6 @@ class AdminController extends AbstractController
     const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
-     * @Route("/admin", name="admin")
      * @param AssociateManager $associateManager
      * @param ConfigurationManager $cm
      * @return Response
@@ -91,7 +90,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/emailtemplate/{type}", name="email_template")
      * @param Request $request
      * @param EmailTemplateManager $emailTemplateManager
      * @return Response
@@ -156,7 +154,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/endprelaunch", name="end_prelaunch")
      * @param Request $request
      * @param ConfigurationManager $cm
      * @return Response
@@ -201,7 +198,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/changecontent", name="change_content")
      * @param Request $request
      * @param ConfigurationManager $cm
      * @return Response
@@ -265,7 +261,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/csv", name="csv")
      * @return StreamedResponse
      */
     public function exportToCsv()
@@ -294,7 +289,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/api/associates", name="user_search_associates")
      * @param Request $request
      * @param AssociateNormalizer $associateNormalizer
      * @return JsonResponse
@@ -349,7 +343,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/users", name="user_search")
      * @return Response
      */
     public function userSearch()
@@ -362,7 +355,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/users/{id}", name="user_search_details")
      * @param $id
      * @param AssociateManager $associateManager
      * @return Response
@@ -464,7 +456,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/api/explorer", name="api_admin_explorer")
      * @param Request $request
      * @param AssociateManager $associateManager
      * @param EntityManagerInterface $em
@@ -503,7 +494,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/jsonGallery", name="json_gallery")
      * @param Request $request
      * @param GalleryNormalizer $galleryNormalizer
      * @return JsonResponse
@@ -590,7 +580,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/gallery", name="gallery")
      * @param Request $request
      * @return Response
      */
@@ -600,7 +589,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/removeFile", name="remove_file")
      * @param Request $request
      * @param GaufretteFileManager $gaufretteFileManager
      * @return JsonResponse|Response
@@ -645,7 +633,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/uploadFile", name="upload_file")
      * @param Request $request
      * @return JsonResponse|Response
      */
@@ -667,7 +654,6 @@ class AdminController extends AbstractController
 
 
     /**
-     * @Route("/admin/uploadGalleryFile", name="upload_gallery_file")
      * @param Request $request
      * @param GalleryNormalizer $galleryNormalizer
      * @return JsonResponse|Response
@@ -712,7 +698,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/logs", name="logs")
      * @param Request $request
      * @return Response
      */
@@ -723,7 +708,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/get-logs", name="get-logs")
      * @param Request $request
      * @return Response
      * @throws ExceptionInterface

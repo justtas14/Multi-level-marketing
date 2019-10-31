@@ -8,9 +8,9 @@ import AssociateHome from '../Pages/Associate/Home/Home';
 Vue.use(VueRouter);
 
 const routes = [
-    { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
-    { path: '/admin', component: AdminHome, meta: { requiresAuth: true }},
     { path: '/login', component: Login },
+    { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
+    { path: '/admin', component: AdminHome, meta: { requiresAuth: true }}
     // { path: "*", redirect: "/home" }
 ];
 
@@ -23,11 +23,12 @@ let router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.path === '/') {
-        if (!localStorage.isAuthenticated) {
+        if (!store.getters['Security/isAuthenticated']) {
+            console.log('going to login');
             next({
                 path: "/login"
             });
-        } else if (store.getters('Security/isAdmin')) {
+        } else if (store.getters['Security/isAdmin']) {
             next({
                 path: "/admin"
             });
@@ -38,9 +39,10 @@ router.beforeEach((to, from, next) => {
         }
     }
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (localStorage.isAuthenticated) {
+        if (store.getters['Security/isAuthenticated']) {
             next();
         } else {
+            console.log('going to login');
             next({
                 path: "/login",
                 query: { redirect: to.fullPath }

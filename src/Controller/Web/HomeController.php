@@ -71,7 +71,7 @@ class HomeController extends AbstractController
         $serializedConfiguration = $configurationSerializer->normalize(
             $configuration,
             null,
-            ['attributes' => ['termsOfServices']]
+            ['attributes' => ['termsOfServices', 'mainLogo']]
         );
 
 
@@ -82,23 +82,23 @@ class HomeController extends AbstractController
         return new JsonResponse($payload, JsonResponse::HTTP_OK);
     }
 
-    /**
-     * @Route("/", name="home")
-     */
-    public function index()
-    {
-        $user = $this->getUser();
-        /**
-         * @var User $user
-         */
-        if (!$user) {
-            return $this->redirectToRoute('login');
-        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
-            return $this->redirectToRoute('admin');
-        } else {
-            return $this->redirectToRoute('associate');
-        }
-    }
+//    /**
+//     * @Route("/", name="home")
+//     */
+//    public function index()
+//    {
+//        $user = $this->getUser();
+//        /**
+//         * @var User $user
+//         */
+//        if (!$user) {
+//            return $this->redirectToRoute('login');
+//        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
+//            return $this->redirectToRoute('admin');
+//        } else {
+//            return $this->redirectToRoute('associate');
+//        }
+//    }
 
     /**
      * @Route("/register/{code}", name="registration")

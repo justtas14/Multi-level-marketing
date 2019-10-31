@@ -5,6 +5,12 @@ import Security from './modules/security'
 import Gallery from './modules/gallery'
 import Logs from "./modules/logs"
 import Sidebar from "./modules/sidebar"
+import VuexPersist from 'vuex-persist'
+
+const vuexPersist = new VuexPersist({
+    key: 'my-app',
+    storage: window.localStorage
+});
 
 Vue.use(Vuex);
 
@@ -30,5 +36,6 @@ export default new Vuex.Store({
             namespaced: true,
             ...Sidebar
         }
-    }
+    },
+    plugins: [vuexPersist.plugin]
 })

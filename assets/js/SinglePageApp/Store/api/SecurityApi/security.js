@@ -1,5 +1,6 @@
 import axios from "axios";
 import router from "../../../Router/index";
+import store from '../../../Store';
 
 export default {
     login(login, password) {
@@ -9,31 +10,25 @@ export default {
         });
     },
     unAuthenticate() {
-        localStorage.associate = null;
-        localStorage.isAuthenticated = null;
-        localStorage.token = null;
+        store.commit('Security/logout');
         router.push('/login');
     },
     authenticatePostApi(url, token) {
         try {
-            console.log(localStorage.token);
             return axios.post(url, {
                 token: token
-            }, {headers: {"Authorization" : `Bearer ${localStorage.token}`} });
+            }, {headers: {"Authorization" : `Bearer ${token}`} });
         } catch (e) {
-            console.log(e);
             this.unAuthenticate();
         }
     },
     authenticateGetApi(url, token) {
         try {
-            console.log(localStorage.token);
             return axios.get(url, {
                 token: token,
-                headers: {"Authorization" : `Bearer ${localStorage.token}`}
+                headers: {"Authorization" : `Bearer ${token}`}
             });
         } catch (e) {
-            console.log(e);
             this.unAuthenticate();
         }
     },

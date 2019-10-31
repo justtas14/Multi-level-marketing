@@ -8,19 +8,27 @@ const AUTHENTICATING = "AUTHENTICATING",
 
 const state = {
     isLoading: false,
-    error: null
+    error: null,
+    associate: null,
+    token: null,
+    isAuthenticated: false
 };
 
 const getters = {
     isAuthenticated(state) {
-        return localStorage.isAuthenticated;
+        return state.isAuthenticated;
+    },
+    getAssociate(state) {
+        return state.associate;
     },
     hasError(state) {
         return state.error !== null;
     },
     isAdmin(state) {
-        console.log(JSON.parse(localStorage.associate));
-        return JSON.parse(localStorage.associate).roles.includes("ROLE_ADMIN");
+        return state.associate.roles.includes("ROLE_ADMIN");
+    },
+    isUser(state) {
+        return state.associate.roles.includes("ROLE_USER");
     }
 };
 
@@ -32,14 +40,12 @@ const actions = {
             commit(AUTHENTICATING_SUCCESS, response.data);
             return response.data;
         } catch (response) {
-            // commit(AUTHENTICATING_ERROR);
-            console.log(response);
-            console.log(response.message);
+            commit(AUTHENTICATING_ERROR, response.response.data['#'][0]);
             return null;
         }
     },
     async loadAssociate({commit, state}) {
-        let response = await SecurityAPI.authenticatePostApi('/api/associate/me', localStorage.token);
+        let response = await SecurityAPI.authenticatePostApi('/api/associate/me', state.token);
         commit(PROVIDING_DATA_ON_AUTHENTICATION, response.data);
         return true;
     },
@@ -49,25 +55,30 @@ const mutations = {
     [AUTHENTICATING](state) {
         state.isLoading = true;
         state.error = null;
-        localStorage.isAuthenticated = false;
-        localStorage.associate = null;
+        state.associate = null;
+        state.isAuthenticated = false;
     },
     [AUTHENTICATING_SUCCESS](state, data) {
         state.isLoading = false;
         state.error = null;
-        localStorage.token = data.token;
-        localStorage.isAuthenticated = true;
+        state.token = data.token;
+        state.isAuthenticated = true;
     },
     [AUTHENTICATING_ERROR](state, error) {
         state.isLoading = false;
         state.error = error;
-        localStorage.isAuthenticated = false;
-        localStorage.associate = null;
+        state.isAuthenticated = false;
+        state.associate = null;
     },
     [PROVIDING_DATA_ON_AUTHENTICATION](state, payload) {
         state.isLoading = false;
         state.error = null;
-        localStorage.associate = JSON.stringify(payload.associate);
+        state.associate = payload.associate;
+    },
+    logout(state) {
+        state.isAuthenticated = false;
+        state.token = null;
+        state.associate = null;
     }
 };
 

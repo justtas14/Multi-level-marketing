@@ -36,7 +36,6 @@ class AssociateController extends AbstractController
     const INVITATION_LIMIT = 10;
 
     /**
-     * @Route("/associate", name="associate")
      * @param AssociateManager $associateManager
      * @return Response
      * @throws Exception
@@ -75,7 +74,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/info", name="get_associate_broken")
      */
     public function getBrokenAssociate()
     {
@@ -83,7 +81,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/info/{id}", name="get_associate")
      * @param $id
      * @param AssociateManager $associateManager
      * @return Response
@@ -99,7 +96,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/invite", name="associate_invite")
      * @param Request $request
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
@@ -247,7 +243,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/profile", name="associate_profile")
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
      * @param GaufretteFileManager $fileManager
@@ -335,7 +330,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/downline", name="direct_downline")
      * @param Request $request
      * @param AssociateManager $associateManager
      * @return JsonResponse
@@ -347,7 +341,6 @@ class AssociateController extends AbstractController
     }
 
     /**
-     * @Route("/associate/viewer", name="team_viewer")
      * @return Response
      */
     public function teamViewer()

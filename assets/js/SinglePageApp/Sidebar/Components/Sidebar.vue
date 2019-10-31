@@ -1,10 +1,10 @@
 <template>
     <div class="sidebar">
         <div class="fixed">
-            <Logo/>
-            <Profile/>
+            <Logo v-bind:configuration="this.configuration"/>
+            <Profile v-bind:associate="this.getAssociate"/>
         </div>
-        <MenuItems/>
+        <MenuItems v-bind:associate="this.getAssociate"/>
     </div>
 
 </template>
@@ -14,6 +14,7 @@
     import Logo from "./Logo";
     import Profile from "./Profile";
     import MenuItems from "./MenuItems";
+    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 
     export default {
         name: "Sidebar",
@@ -32,7 +33,12 @@
 
         },
         computed: {
-
+            ...mapState('Sidebar', [
+                'configuration'
+            ]),
+            ...mapGetters('Security', [
+                'getAssociate'
+            ]),
         },
         created() {
 

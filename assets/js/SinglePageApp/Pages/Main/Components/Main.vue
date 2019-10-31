@@ -1,12 +1,13 @@
 <template>
     <div id="main">
-        <Sidebar v-if="localStorage.isAuthenticated"></Sidebar>
+        <Sidebar v-if="this.isAuthenticated"></Sidebar>
         <router-view></router-view>
     </div>
 </template>
 
 <script>
     import axios from "axios";
+    import '../../../CommonCss/Main.scss'
     import '../css/Main.scss';
     import Sidebar from "../../../Sidebar/Components/Sidebar";
     import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
@@ -37,14 +38,16 @@
         computed: {
             ...mapGetters('Security', [
                 'isAdmin',
+                'isAuthenticated'
             ]),
             ...mapState('Security', [
+                'isLoading'
             ]),
         },
         async created() {
             await this.configurationApi();
 
-            if (!localStorage.isAuthenticated) {
+            if (!this.isAuthenticated) {
                 this.$router.push({path: "/login"})
             }
 

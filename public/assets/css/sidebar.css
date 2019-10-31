@@ -318,8 +318,6 @@
         bottom: auto;
         z-index: 50;
     }
-    .sidebar-itemLast {
-    }
     .sidebar-label {
         display: inline-block;
         cursor: pointer;
