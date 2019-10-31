@@ -3,20 +3,24 @@
         <div v-if="isAdmin" class="sidebar-item sidebar__sectionLabel">
             Admin
         </div>
-        <div v-if="isAdmin" :key="route.path" v-for="route in this.getAdminRoutes" @click="goToRoute(route.path)" class="sidebar-item"
+        <div v-if="isAdmin" :key="route.path" v-for="route in adminRoutes" @click="goToRoute(route.path)" class="sidebar-item"
             :class="{'sidebar--active' : isCurrentRoute(route.path)}">
 <!--                {% if currentRoute == route.route or ((route.subRoute is defined and not null) and currentRoute in route.subRoute) %}sidebar&#45;&#45;active{% endif %}"-->
 
             <i class="material-icons materialDesignIcons">{{ route.icon }}</i>
-            <a href="#">{{ route.label }}</a>
+            <a @click="goToRoute(route.path)">{{ route.label }}</a>
+        </div>
+        <div v-if="isAdmin" @click="this.downloadCSV" class="sidebar-item">
+            <i class="material-icons materialDesignIcons">supervised_user_circle</i>
+            <a @click="">Associate csv dump</a>
         </div>
         <div v-if="isUser" class="sidebar-item sidebar__sectionLabel">
             Associate
         </div>
-        <div v-if="isUser" :key="route.path" v-for="route in this.getAssociateRoutes" @click="goToRoute(route.path)" class="sidebar-item"
+        <div v-if="isUser" :key="route.path" v-for="route in associateRoutes" @click="goToRoute(route.path)" class="sidebar-item"
              :class="{'sidebar--active' : isCurrentRoute(route.path)}">
             <i class="material-icons materialDesignIcons">{{ route.icon }}</i>
-            <a href="#">{{ route.label }}</a>
+            <a @click="goToRoute(route.path)">{{ route.label }}</a>
         </div>
         <div @click="loggingOut" class="sidebar-itemLast sidebar-item">
             <i class="material-icons materialDesignIcons">exit_to_app</i>
@@ -34,17 +38,22 @@
 <script>
     import '../css/MenuItems.scss';
     import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+    import adminRoutes from "../../Router/Routes/adminRoutes";
+    import associateRoutes from "../../Router/Routes/associateRoutes";
 
     export default {
         name: "MenuItems",
         props: ['associate'],
         data() {
             return {
-                currentPath: this.$router.currentRoute.path
+                currentPath: this.$router.currentRoute.path,
+                adminRoutes: adminRoutes.adminRoutes,
+                associateRoutes: associateRoutes.associateRoutes
             }
         },
         methods: {
             goToRoute: function(path) {
+                this.currentPath = path;
                 this.$router.push({path: path});
             },
             isCurrentRoute: function (path) {
@@ -57,14 +66,15 @@
             ...mapMutations('Security', [
                 'logout'
             ]),
+            ...mapActions('Sidebar', [
+                'downloadCSV'
+            ]),
         },
         computed: {
             ...mapState('Sidebar', [
                 'configuration'
             ]),
             ...mapGetters('Sidebar', [
-                'getAdminRoutes',
-                'getAssociateRoutes',
                 'checkConfigurationTermsOfService'
             ]),
             ...mapGetters('Security', [

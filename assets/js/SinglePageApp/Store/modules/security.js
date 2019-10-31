@@ -8,6 +8,7 @@ const AUTHENTICATING = "AUTHENTICATING",
 
 const state = {
     isLoading: false,
+    isLoggedIn: false,
     error: null,
     associate: null,
     token: null,
@@ -17,6 +18,9 @@ const state = {
 const getters = {
     isAuthenticated(state) {
         return state.isAuthenticated;
+    },
+    getToken(state) {
+        return state.token;
     },
     getAssociate(state) {
         return state.associate;
@@ -45,7 +49,7 @@ const actions = {
         }
     },
     async loadAssociate({commit, state}) {
-        let response = await SecurityAPI.authenticatePostApi('/api/associate/me', state.token);
+        let response = await SecurityAPI.authenticateMe(state.token);
         commit(PROVIDING_DATA_ON_AUTHENTICATION, response.data);
         return true;
     },
@@ -59,6 +63,7 @@ const mutations = {
         state.isAuthenticated = false;
     },
     [AUTHENTICATING_SUCCESS](state, data) {
+        state.isLoggedIn = true;
         state.isLoading = false;
         state.error = null;
         state.token = data.token;
@@ -71,6 +76,7 @@ const mutations = {
         state.associate = null;
     },
     [PROVIDING_DATA_ON_AUTHENTICATION](state, payload) {
+        state.isLoggedIn = false;
         state.isLoading = false;
         state.error = null;
         state.associate = payload.associate;

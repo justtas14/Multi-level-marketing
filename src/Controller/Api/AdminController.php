@@ -63,29 +63,11 @@ class AdminController extends AbstractController
      * @Rest\Get("/admin", name="admin")
      * @Route("/admin", name="admin")
      * @param AssociateManager $associateManager
-     * @param ConfigurationManager $cm
-     * @param GaufretteFileManager $gaufretteFileManager
      * @return Response
      */
     public function index(
-        AssociateManager $associateManager,
-        ConfigurationManager $cm,
-        GaufretteFileManager $gaufretteFileManager
+        AssociateManager $associateManager
     ) {
-        $configuration = $cm->getConfiguration();
-
-        $logo = $configuration->getMainLogo();
-        $logoPath = $gaufretteFileManager->generateDownloadUrl($logo);
-
-        $user = $this->getUser();
-
-        $profilePicture = null;
-        $profilePicturePath = null;
-        if ($user->getAssociate()) {
-            $profilePicture = $user->getAssociate()->getProfilePicture();
-            $profilePicturePath = $gaufretteFileManager->generateDownloadUrl($profilePicture);
-        }
-
         $level = $associateManager->getNumberOfLevels();
 
         $associateInLevels = [];
@@ -95,11 +77,12 @@ class AdminController extends AbstractController
                 $i
             );
         }
+        $maxLevel = max($associateInLevels);
 
         $data = [
             'associatesInLevels' => $associateInLevels,
-            'logoPath' => $logoPath,
-            'profilePicturePath' => $profilePicturePath
+            'levels' => $level,
+            'maxLevel' => $maxLevel
         ];
 
         return new JsonResponse($data);

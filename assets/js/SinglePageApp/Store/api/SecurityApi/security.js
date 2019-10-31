@@ -13,9 +13,9 @@ export default {
         store.commit('Security/logout');
         router.push('/login');
     },
-    authenticatePostApi(url, token) {
+    authenticateMe(token) {
         try {
-            return axios.post(url, {
+            return axios.post('/api/associate/me', {
                 token: token
             }, {headers: {"Authorization" : `Bearer ${token}`} });
         } catch (e) {
@@ -25,8 +25,21 @@ export default {
     authenticateGetApi(url, token) {
         try {
             return axios.get(url, {
-                token: token,
                 headers: {"Authorization" : `Bearer ${token}`}
+            });
+        } catch (e) {
+            this.unAuthenticate();
+        }
+    },
+    downloadCSVApi(token) {
+        try {
+            return axios.get('api/admin/csv', {
+                responseType: 'blob',
+                headers: {
+                    "Authorization" : `Bearer ${token}`,
+                    'Content-Type': 'application/force-download',
+                    'Content-Disposition': 'attachment; filename=associates.csv'
+                }
             });
         } catch (e) {
             this.unAuthenticate();

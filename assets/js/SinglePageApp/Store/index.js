@@ -5,6 +5,7 @@ import Security from './modules/security'
 import Gallery from './modules/gallery'
 import Logs from "./modules/logs"
 import Sidebar from "./modules/sidebar"
+import AdminHome from "./modules/adminHome"
 import VuexPersist from 'vuex-persist'
 
 const vuexPersist = new VuexPersist({
@@ -35,6 +36,10 @@ export default new Vuex.Store({
         Sidebar: {
             namespaced: true,
             ...Sidebar
+        },
+        AdminHome: {
+            namespaced: true,
+            ...AdminHome
         }
     },
     plugins: [vuexPersist.plugin]

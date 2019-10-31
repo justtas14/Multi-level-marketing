@@ -46,7 +46,6 @@
 
         },
         created() {
-            console.log('associate', this.associate);
         }
     }
 </script>

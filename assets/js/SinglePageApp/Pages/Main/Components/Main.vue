@@ -1,6 +1,6 @@
 <template>
     <div id="main">
-        <Sidebar v-if="this.isAuthenticated"></Sidebar>
+        <Sidebar v-if="this.isAuthenticated && this.getAssociate"></Sidebar>
         <router-view></router-view>
     </div>
 </template>
@@ -38,6 +38,7 @@
         computed: {
             ...mapGetters('Security', [
                 'isAdmin',
+                'getAssociate',
                 'isAuthenticated'
             ]),
             ...mapState('Security', [
@@ -64,5 +65,4 @@
 </script>
 
 <style scoped>
-
 </style>

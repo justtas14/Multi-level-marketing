@@ -25,6 +25,10 @@
                     Forgot your password?
                     <a href="#">Click here</a>
                 </div>
+                <div id="loggingLogs">
+                    <span v-if="isLoading">Loading...</span>
+                    <span class="successLoggedIn" v-if="isLoggedIn">Success!</span>
+                </div>
                 <div class="login-buttonWrap">
                     <button
                         class="waves-effect waves-light btn"
@@ -102,7 +106,8 @@
             ]),
             ...mapState('Security', [
                 'error',
-                'isLoading'
+                'isLoading',
+                'isLoggedIn'
             ]),
             ...mapState('Sidebar', [
                 'configuration',

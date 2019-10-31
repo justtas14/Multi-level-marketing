@@ -1,7 +1,7 @@
 <template>
     <li class="associate-levelBarListItem" style="list-style-type:none;">
         <div class="associate-levelBar" :style="{ width: associatesInLevel*100/maxLevel + '%' }">
-            Level {{ key }}: <strong>{{ associatesInLevel }}</strong>
+            Level {{ level }}: <strong>{{ associatesInLevel }}</strong>
         </div>
     </li>
 </template>
@@ -14,7 +14,7 @@
         components: {
 
         },
-        props: ['maxLevel', 'key', 'associatesInLevel'],
+        props: ['maxLevel', 'level', 'associatesInLevel'],
         data() {
             return {
             }

@@ -1,15 +1,17 @@
 <template>
     <ul class="associate-levelBarList">
-        <LevelBarListItem
-                v-if="associatesInLevels.length > 0"
-                v-bind:key="associatesInLevel.key"
-                v-for="associatesInLevel in associatesInLevels"
-                v-bind:associatesInLevel="associatesInLevel"
+        <div v-if="this.levels > 0">
+            <LevelBarListItem
+                v-for="(item, index) in associatesInLevels"
+                :key="index"
+                v-bind:associatesInLevel="item"
                 v-bind:maxLevel="maxLevel"
-        />
+                v-bind:level="index"
+            />
+        </div>
         <p v-else>Associate doesn't have any children</p>
     </ul>
-</template>
+</template>s
 
 <script>
     import './css/BusinessShape.scss'
@@ -20,20 +22,17 @@
         components: {
             LevelBarListItem
         },
-        props: ['associatesInLevels'],
+        props: ['associatesInLevels', 'levels', 'maxLevel'],
         data() {
             return {
-                maxLevel: 0
             }
         },
         methods: {
-
         },
         computed: {
 
         },
         created() {
-            this.maxLevel = Math.max(this.associatesInLevels);
         }
     }
 </script>
