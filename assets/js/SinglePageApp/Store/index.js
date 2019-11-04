@@ -6,6 +6,8 @@ import Gallery from './modules/gallery'
 import Logs from "./modules/logs"
 import Sidebar from "./modules/sidebar"
 import AdminHome from "./modules/adminHome"
+import AssociateHome from './modules/associateHome'
+import Invitation from './modules/invitation'
 import VuexPersist from 'vuex-persist'
 
 const vuexPersist = new VuexPersist({
@@ -40,6 +42,14 @@ export default new Vuex.Store({
         AdminHome: {
             namespaced: true,
             ...AdminHome
+        },
+        AssociateHome: {
+            namespaced: true,
+            ...AssociateHome
+        },
+        Invitation: {
+            namespaced: true,
+            ...Invitation
         }
     },
     plugins: [vuexPersist.plugin]

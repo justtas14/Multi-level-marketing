@@ -31,7 +31,7 @@
 </template>
 
 <script>
-    import '../css/zoomImage.scss';
+    import './css/zoomImage.scss';
 
     export default {
         name: "zoomImage",
@@ -44,6 +44,7 @@
                 fullscreenImg: false,
                 centeredImage: null,
                 currentImage: null,
+                isLeaving: false,
                 centerImagePosition: {
                     top: 0,
                     right: 0,
@@ -61,7 +62,9 @@
         },
         methods: {
             openFullScreenImage: function () {
-                this.fullscreenImg = !this.fullscreenImg;
+                if (!this.isLeaving) {
+                    this.fullscreenImg = !this.fullscreenImg;
+                }
             },
 
             beforeEnter: function (el) {
@@ -102,6 +105,10 @@
 
 
             beforeLeave: function (el) {
+                this.isLeaving = true;
+                setTimeout(() => {
+                    this.isLeaving = false;
+                }, 500);
                 this.setCordinates(this.centeredImage, this.centerImagePosition);
                 this.setCordinates(this.currentImage, this.currentImagePosition);
             },

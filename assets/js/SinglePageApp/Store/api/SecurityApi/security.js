@@ -31,6 +31,19 @@ export default {
             this.unAuthenticate();
         }
     },
+    authenticateInvitationPostApi(url, token, data) {
+        try {
+            return axios.post(url, {
+                email: data.invitationEmail,
+                fullName: data.fullName
+            },{
+                headers: {"Authorization" : `Bearer ${token}`}
+            });
+        } catch (e) {
+            console.log(e);
+            this.unAuthenticate();
+        }
+    },
     downloadCSVApi(token) {
         try {
             return axios.get('api/admin/csv', {

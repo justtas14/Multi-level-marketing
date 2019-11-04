@@ -14,7 +14,7 @@
 </template>
 
 <script>
-    import '../css/share.scss';
+    import './css/share.scss';
 
     export default {
         name: "share",

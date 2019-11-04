@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -26,12 +27,22 @@ class Invitation
 
     /**
      * @ORM\Column(type="string")
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *   message = "The email '{{ value }}' is not a valid email."
+     * )
      * @var string
      */
     private $email = "";
 
     /**
      * @ORM\Column(type="string")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Full name must be at least {{ limit }} characters long",
+     *      maxMessage = "Full name email cannot be longer than {{ limit }} characters"
+     * )
      * @var string
      */
     private $fullName = "";

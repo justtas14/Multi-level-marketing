@@ -1,12 +1,13 @@
 <template>
     <div id="main">
         <Sidebar v-if="this.isAuthenticated && this.getAssociate"></Sidebar>
-        <router-view></router-view>
+        <keep-alive>
+            <router-view></router-view>
+        </keep-alive>
     </div>
 </template>
 
 <script>
-    import axios from "axios";
     import '../../../CommonCss/Main.scss'
     import '../css/Main.scss';
     import Sidebar from "../../../Sidebar/Components/Sidebar";

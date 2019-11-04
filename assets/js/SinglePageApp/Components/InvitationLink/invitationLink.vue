@@ -9,7 +9,7 @@
 </template>
 
 <script>
-    import '../css/link.scss';
+    import './css/InvitationLink.scss'
 
     export default {
         props: ['invitationUrl'],

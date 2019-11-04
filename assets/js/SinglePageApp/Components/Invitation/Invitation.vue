@@ -1,6 +1,6 @@
 <template>
     <div>
-<!--        <Messages></Messages>-->
+        <Messages v-bind:errorMessages="this.formErrors"></Messages>
         <form name="invitation" method="post">
             <div class="invitation-item" >
                 <div class="input-field col s12">
@@ -13,7 +13,7 @@
                             class="validate"
                     >
                     <label for="invitation_fullName" class="required">Full name</label>
-                    <!--                <Error v-if=""></Error>-->
+                    <Error v-if="this.formErrors.invalidFullName" v-bind:message="this.formErrors.invalidFullName"></Error>
                 </div>
             </div>
             <div class="invitation-item" >
@@ -27,16 +27,16 @@
                             type="email"
                     >
                     <label for="invitation_email" class="required">Email</label>
-                    <!--                <Error v-if=""></Error>-->
+                    <Error v-if="this.formErrors.invalidEmail" v-bind:message="this.formErrors.invalidEmail"></Error>
                 </div>
             </div>
-            <Recaptcha v-bind:siteKey="siteKey"/>
+            <Recaptcha v-if="siteKey" v-bind:siteKey="siteKey"/>
             <div class="invitation-buttonWrap">
                 <button
                         id="invitation_submit"
                         name="invitation[submit]"
                         class="waves-effect waves-light btn"
-                        :disabled="login.length === 0 || password.length === 0 || isLoading"
+                        :disabled="invitationEmail.length === 0 || fullName.length === 0 || isFormLoading"
                         type="button"
                         style="background-color: #3ab54a"
                         @click="sendInvitation"
@@ -53,6 +53,8 @@
     import Recaptcha from "../Recaptcha/Recaptcha";
     import Messages from "../Messages/Messages";
     import Error from "../Messages/Error";
+    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+
 
     export default {
         name: "Invitation",
@@ -70,11 +72,21 @@
         },
         methods: {
             sendInvitation: function () {
-
-            }
+                let payload = {
+                    invitationEmail: this.invitationEmail,
+                    fullName: this.fullName
+                };
+                this.submitInvitationForm(payload);
+            },
+            ...mapActions('Invitation', [
+                'submitInvitationForm'
+            ]),
         },
         computed: {
-
+            ...mapState('Invitation', [
+                'isFormLoading',
+                'formErrors'
+            ]),
         },
         created() {
 

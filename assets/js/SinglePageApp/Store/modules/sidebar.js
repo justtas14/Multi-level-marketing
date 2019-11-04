@@ -2,7 +2,8 @@ import axios from 'axios';
 import SecurityAPI from "../api/SecurityApi/security";
 
 const state = {
-    configuration: null
+    configuration: null,
+    currentPath: ''
 };
 
 const getters = {
@@ -42,6 +43,9 @@ const mutations = {
     setConfiguration: (state, configuration) => {
         state.configuration = configuration;
     },
+    setCurrentPath: (state, currentPath) => {
+        state.currentPath = currentPath;
+    }
 };
 
 export default {

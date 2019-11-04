@@ -6,7 +6,7 @@ export default {
             icon: "home"
         },
         {
-            path: '/admin/viewer',
+            path: '/associate/viewer',
             label: 'Team Viewer',
             icon: 'people'
         },
@@ -16,7 +16,7 @@ export default {
             icon: 'insert_invitation'
         },
         {
-            path: '/admin/profile',
+            path: '/associate/profile',
             label: 'Edit Profile',
             icon: 'edit'
         },

@@ -80,6 +80,8 @@ final class AssociateController extends AbstractController
             );
         }
 
+        $maxLevel = max($associateInLevels);
+
         $directAssociates = $associateManager->getAllDirectAssociates($user->getAssociate()->getAssociateId());
 
         $serializer = new Serializer(
@@ -105,7 +107,8 @@ final class AssociateController extends AbstractController
 
         $data = [
             'associatesInLevels' => $associateInLevels,
-            'maxLevel' => $level,
+            'levels' => $level,
+            'maxLevel' => $maxLevel,
             'parent' => $serializedParent,
             'directAssociates' => $serializedDirectAssociates
         ];
@@ -341,10 +344,14 @@ final class AssociateController extends AbstractController
             self::INVITATION_LIMIT * ($page-1)
         );
 
-        $form = $this->createForm(InvitationType::class, null, ['label' => 'send']);
-        $form->handleRequest($request);
+        $form = $this->createForm(InvitationType::class);
+        if (array_key_exists('email', $request->request->all())
+            && array_key_exists('fullName', $request->request->all())
+        ) {
+            $form->submit($request->request->all());
+        }
 
-        if (($form->isSubmitted() && $form->isValid()) || $invitationId) {
+        if ($form->isSubmitted() && $form->isValid() || $invitationId) {
             if (!$invitationId) {
                 $invitation = new Invitation();
                 $email = trim($form['email']->getData());
@@ -365,15 +372,13 @@ final class AssociateController extends AbstractController
             $env = $this->getParameter('kernel.environment');
 
             if (!$recaptchaResponse && $env !== 'test') {
-                $formErrors = ['recaptchaError' => 'Please check the captcha form'];
+                $formErrors['generalError'] = 'Please check the captcha form';
             } elseif (!$responseKeys["success"] && $env !== 'test') {
-                $formErrors = ['recaptchaError' => 'You are the spammer!'];
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $formErrors = ['invalidEmail' => 'Invalid email'];
+                $formErrors['generalError'] = 'You are the spammer!';
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
-                $formErrors = ['invalidEmail' => 'Associate already exists'];
+                $formErrors['invalidEmail'] = 'Associate already exists';
             } elseif ($blacklistManager->existsInBlacklist($email)) {
-                $formErrors = ['invalidEmail' => 'The person with this email has opted out of this service'];
+                $formErrors['invalidEmail'] = 'The person with this email has opted out of this service';
             } else {
                 if (!$invitationId) {
                     $invitation->setSender($associate);
@@ -406,6 +411,15 @@ final class AssociateController extends AbstractController
                 return new JsonResponse($data);
             }
         }
+        if ((string)$form['email']->getErrors()) {
+            $emailError = $form['email']->getErrors()['0']->getMessage();
+            $formErrors['invalidEmail'] = $emailError;
+        }
+        if ((string)$form['fullName']->getErrors()) {
+            $fullNameError = $form['fullName']->getErrors()['0']->getMessage();
+            $formErrors['invalidFullName'] = $fullNameError;
+        }
+
         $serializer = new Serializer(
             [new DateTimeNormalizer('Y-m-d h:i:s'), new ObjectNormalizer(), new JsonEncoder()]
         );
@@ -413,7 +427,7 @@ final class AssociateController extends AbstractController
         $serializedInvitations = $serializer->normalize(
             $invitations,
             null,
-            ['attributes' => ['id', 'email', 'fullName', 'sender', 'used', 'created']]
+            ['attributes' => ['id', 'email', 'fullName', 'used', 'created']]
         );
 
         $data = [
@@ -424,7 +438,8 @@ final class AssociateController extends AbstractController
                 'currentPage' => $page
             ],
             'uniqueAssociateInvitationLink' => $uniqueAssociateInvitationLink,
-            'siteKey' => $siteKey
+            'siteKey' => $siteKey,
+            'submitLabel' => 'send'
         ];
 
         return new JsonResponse($data);

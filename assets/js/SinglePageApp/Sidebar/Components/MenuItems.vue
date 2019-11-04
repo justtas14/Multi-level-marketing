@@ -46,14 +46,13 @@
         props: ['associate'],
         data() {
             return {
-                currentPath: this.$router.currentRoute.path,
                 adminRoutes: adminRoutes.adminRoutes,
                 associateRoutes: associateRoutes.associateRoutes
             }
         },
         methods: {
             goToRoute: function(path) {
-                this.currentPath = path;
+                this.setCurrentPath(path);
                 this.$router.push({path: path});
             },
             isCurrentRoute: function (path) {
@@ -66,13 +65,17 @@
             ...mapMutations('Security', [
                 'logout'
             ]),
+            ...mapMutations('Sidebar', [
+                'setCurrentPath'
+            ]),
             ...mapActions('Sidebar', [
                 'downloadCSV'
             ]),
         },
         computed: {
             ...mapState('Sidebar', [
-                'configuration'
+                'configuration',
+                'currentPath'
             ]),
             ...mapGetters('Sidebar', [
                 'checkConfigurationTermsOfService'
@@ -84,6 +87,7 @@
             ]),
         },
         created() {
+            this.setCurrentPath(this.$router.currentRoute.path);
         }
     }
 </script>
