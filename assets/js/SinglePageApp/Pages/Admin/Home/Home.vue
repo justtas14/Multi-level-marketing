@@ -34,7 +34,7 @@
     import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
 
     export default {
-        name: "Home",
+        name: "AdminHome",
         components: {
             BusinessShape
         },
