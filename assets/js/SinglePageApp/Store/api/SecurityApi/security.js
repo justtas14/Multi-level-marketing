@@ -35,12 +35,13 @@ export default {
         try {
             return axios.post(url, {
                 email: data.invitationEmail,
-                fullName: data.fullName
+                fullName: data.fullName,
+                invitationId: data.invitationId,
+                page: data.page
             },{
                 headers: {"Authorization" : `Bearer ${token}`}
             });
         } catch (e) {
-            console.log(e);
             this.unAuthenticate();
         }
     },

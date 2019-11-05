@@ -13,7 +13,7 @@
                             class="validate"
                     >
                     <label for="invitation_fullName" class="required">Full name</label>
-                    <Error v-if="this.formErrors.invalidFullName" v-bind:message="this.formErrors.invalidFullName"></Error>
+                    <Error v-if="this.formErrors && this.formErrors.invalidFullName" v-bind:message="this.formErrors.invalidFullName"></Error>
                 </div>
             </div>
             <div class="invitation-item" >
@@ -27,7 +27,7 @@
                             type="email"
                     >
                     <label for="invitation_email" class="required">Email</label>
-                    <Error v-if="this.formErrors.invalidEmail" v-bind:message="this.formErrors.invalidEmail"></Error>
+                    <Error v-if="this.formErrors && this.formErrors.invalidEmail" v-bind:message="this.formErrors.invalidEmail"></Error>
                 </div>
             </div>
             <Recaptcha v-if="siteKey" v-bind:siteKey="siteKey"/>

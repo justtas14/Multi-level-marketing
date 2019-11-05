@@ -3,10 +3,13 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Invitation</span>
+                <div v-if="isLoading" class="Spinner__Container user__search__spiner" v-bind:style="{top: 0, 'z-index': 9999}">
+                    <div class="lds-dual-ring"/>
+                </div>
                 <div v-if="this.sent && this.sent.completed === true" style="padding: 20px 0">
                     Invitation has been sent successfully to the "{{ sent.address }}" email address
                 </div>
-                <a @click="goToRoute('associate/invite')" v-if="this.sent && this.sent.completed === true"
+                <a @click="goToRoute('invite')" v-if="this.sent && this.sent.completed === true"
                    class="waves-effect waves-light btn">Send another one</a>
                 <Invitation
                     v-else-if="this.siteKey"
@@ -19,6 +22,9 @@
         <div v-if="!this.sent" class="card">
             <div class="card-content">
                 <span class="card-title invitationLinkTitle">Invitation link</span>
+                <div v-if="isLoading" class="Spinner__Container user__search__spiner" v-bind:style="{top: 0, 'z-index': 9999}">
+                    <div class="lds-dual-ring"/>
+                </div>
                 <div class="invitationAboutText">
                     Below is an invitation link, you can share it with your potential associates, so they can begin their
                     registration flow themselves.
@@ -39,8 +45,19 @@
                 ></qrcode>
             </div>
         </div>
-<!--        {% include 'includes/other/recentInvitations.twig' with {'route': 'associate_invite'}%}-->
-<!--        {% endif %}-->
+        <div v-if="!this.sent" class="card">
+            <div class="card-content">
+                <span class="card-title">Sent Invitations</span>
+                    <div v-if="isLoading || isLoadingSentInvitations" class="Spinner__Container user__search__spiner" v-bind:style="{top: 0, 'z-index': 9999}">
+                        <div class="lds-dual-ring"/>
+                    </div>
+                    <RecentInvitations
+                        v-bind:invitations="invitations"
+                        v-bind:paginationInfo="pagination"
+                    >
+                    </RecentInvitations>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -52,6 +69,8 @@
     import invitationLink from '../../../Components/InvitationLink/invitationLink';
     import zoomImage from "../../../Components/ZoomImage/ZoomImage";
     import share from "../../../Components/Share/Share";
+    import RecentInvitations from "../../../Components/RecetInvitations/RecentInvitations";
+    import EventBus from "../../../Components/Pagination/EventBus/EventBus";
     import './css/Invite.scss'
 
     Vue.component(VueQrcode.name, VueQrcode);
@@ -63,7 +82,8 @@
             Invitation,
             invitationLink,
             zoomImage,
-            share
+            share,
+            RecentInvitations
         },
         data() {
             return {
@@ -72,30 +92,54 @@
             }
         },
         methods: {
-            goToRoute() {
+            async goToRoute(path) {
+                this.setNotSent();
                 this.setCurrentPath(path);
-                this.$router.push({path: path});
+                await this.invitationHome();
             },
             ...mapMutations('Invitation', [
+                'setNotSent',
+                'changePagination'
             ]),
             ...mapMutations('Sidebar', [
                 'setCurrentPath'
             ]),
             ...mapActions('Invitation', [
-                'invitationHome'
+                'invitationHome',
+                'changePage',
+                'changePage'
             ]),
         },
         mounted() {
             const barCodeImage = document.querySelector('.barCodeImage');
             this.imageSrc = barCodeImage.getAttribute('src');
+
+            EventBus.$on('previousPage', async () => {
+                const page = null, action = 'subtract';
+                this.changePagination({page, action});
+                await this.changePage();
+            });
+            EventBus.$on('nextPage', async () => {
+                const action = 'add', page = null;
+                this.changePagination({page, action});
+                await this.changePage();
+            });
+            EventBus.$on('page', async (page) =>  {
+                const action = null;
+                this.changePagination({page, action});
+                await this.changePage();
+            });
         },
         computed: {
             ...mapState('Invitation', [
                 'isLoading',
+                'isLoadingSentInvitations',
                 'sent',
                 'siteKey',
                 'submitLabel',
-                'uniqueAssociateInvitationLink'
+                'uniqueAssociateInvitationLink',
+                'invitations',
+                'pagination'
             ]),
             ...mapGetters('Invitation', [
 

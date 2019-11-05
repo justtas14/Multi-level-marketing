@@ -12,19 +12,19 @@
             </thead>
             <tbody>
             <InvitationAbout
-                v-for="invitation in invitations"
+                v-for="(invitation, key) in invitations"
+                :key="key"
                 v-bind:invitation="invitation"
             >
             </InvitationAbout>
             </tbody>
         </table>
-        <Pagination v-bind:paginationInfo="paginationInfo"></Pagination>
+        <Pagination v-if="invitations.length > 0" v-bind:paginationInfo="paginationInfo"></Pagination>
         <p style="margin: 2em 0" v-else>Associate doesn't have any sent invitations</p>
     </div>
 </template>
 
 <script>
-    import EventBus from "../Pagination/EventBus/EventBus";
     import '../../CommonCss/mobileTable.scss';
     import './css/RecentInvitations.scss';
     import Pagination from "../Pagination/Pagination";

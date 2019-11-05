@@ -1,14 +1,14 @@
 <template>
     <div id="error-messages">
         <Error
-            v-for="message in errorMessages"
+            v-for="(value, key) in errorMessages"
             v-bind:key="key"
-            v-bind:message="message"
+            v-bind:message="value"
         ></Error>
         <Success
-            v-for="message in successMessages"
+            v-for="(value, key) in successMessages"
             v-bind:key="key"
-            v-bind:message="message"
+            v-bind:message="value"
         ></Success>
     </div>
 </template>

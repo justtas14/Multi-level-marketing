@@ -16,6 +16,7 @@ use App\Repository\AssociateRepository;
 use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\InvitationManager;
+use App\Service\RecaptchaManager;
 use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
@@ -277,6 +278,7 @@ final class AssociateController extends AbstractController
      * @param BlacklistManager $blacklistManager
      * @param LoggerInterface $databaseLogger
      * @param AssociateNormalizer $associateNormalizer
+     * @param RecaptchaManager $recaptchaManager
      * @param string $siteKey
      * @param string $secretKey
      * @return Response
@@ -289,10 +291,13 @@ final class AssociateController extends AbstractController
         BlacklistManager $blacklistManager,
         LoggerInterface $databaseLogger,
         AssociateNormalizer $associateNormalizer,
+        RecaptchaManager $recaptchaManager,
         string $siteKey,
         string $secretKey
     ) {
         $formErrors = [];
+        $invitationId = null;
+        $page = 1;
 
         $em = $this->getDoctrine()->getManager();
         /**
@@ -306,19 +311,23 @@ final class AssociateController extends AbstractController
 
         $uniqueAssociateInvitationLink = $invitationManager->getAssociateUrl($uniqueAssociateUsername);
 
-        $page = $request->get('page', 1);
+        if (array_key_exists('page', $request->request->all())) {
+            $page = $request->request->all()['page'];
+        }
 
         if (!is_numeric($page)) {
             throw new WrongPageNumberException();
         }
 
-        $invitationId = $request->get('invitationId');
+        if (array_key_exists('invitationId', $request->request->all())) {
+            $invitationId = $request->request->all()['invitationId'];
+        }
 
         $invitationRepository = $em->getRepository(Invitation::class);
 
         if ($invitationId) {
             $checkInvitation = $invitationRepository->findOneBy(
-                ['sender' => $user, 'id' => $invitationId]
+                ['sender' => $associate, 'id' => $invitationId]
             );
             if (!$checkInvitation) {
                 throw new NotInvitationSender('Invitation with id of '. $invitationId. ' cannot be reached', 500);
@@ -363,18 +372,10 @@ final class AssociateController extends AbstractController
             /** @var AssociateRepository $associateRepo */
             $associateRepo = $em->getRepository(Associate::class);
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
+            $recaptchaError = $recaptchaManager->validateRecaptcha($recaptchaResponse, $secretKey);
 
-            $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secretKey) .
-                '&response=' . urlencode($recaptchaResponse);
-            $response = file_get_contents($url);
-            $responseKeys = json_decode($response, true);
-
-            $env = $this->getParameter('kernel.environment');
-
-            if (!$recaptchaResponse && $env !== 'test') {
-                $formErrors['generalError'] = 'Please check the captcha form';
-            } elseif (!$responseKeys["success"] && $env !== 'test') {
-                $formErrors['generalError'] = 'You are the spammer!';
+            if ($recaptchaError) {
+                $formErrors['generalError'] = $recaptchaError;
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
                 $formErrors['invalidEmail'] = 'Associate already exists';
             } elseif ($blacklistManager->existsInBlacklist($email)) {
