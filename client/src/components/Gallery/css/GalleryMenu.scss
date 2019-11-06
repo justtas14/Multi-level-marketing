@@ -1,0 +1,241 @@
+.category-content{
+    background-color: #f9f9f9;
+    /*box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
+    z-index: 1;
+    display: block;
+    opacity: 1;
+    margin: 0;
+}
+
+.category-content a {
+    color: black;
+    padding: 12px 12px;
+    font-size: 1.2em;
+    text-decoration: none;
+    width: 100%;
+    display: flex;
+    cursor: pointer;
+}
+
+.category-content a:hover, .category-content-a-active {
+    font-size: 1.3em;
+    background: #e3e3e3;
+}
+
+.categoryMenu {
+    display: flex;
+    align-items: flex-start;
+}
+
+.categoryIcons {
+    font-size: 1.5em!important;
+    padding-top: 0.3em;
+    position: absolute;
+    left: -35px;
+    transition: all 0.3s ease-in-out;
+    top: -8px;
+}
+
+.reverse {
+    display: inline-block;
+    top: -4px;
+    transform: rotate(180deg);
+}
+
+.categoryName {
+    margin-left: 1.2em;
+    position: relative;
+}
+
+.gallery-title{
+    position: relative;
+    display: flex;
+    flex: 1;
+    margin-right: 1em;
+}
+
+.card-title {
+    margin-right: 1em;
+    white-space: nowrap;
+}
+.fa-plus {
+    font-size: 2em;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    cursor: pointer;
+    padding: 0.25em;
+    margin-top: -0.17em;
+}
+
+
+label {
+    font-size: unset;
+    color: #5e5e5e;
+    align-items: start;
+    align-self: start;
+    justify-content: flex-start;
+}
+
+.fa-plus:hover {
+    opacity: 1;
+}
+
+#tabs {
+    flex: 4;
+}
+
+.container{
+    height:500px;
+    width:580px;
+    padding:0;
+    margin:10px;
+    border-radius:5px;
+    box-shadow: 0 2px 3px rgba(0,0,0,.3)
+
+}
+
+.hide {
+    display: none;
+}
+
+.tab-content {
+    padding:25px;
+}
+
+#material-tabs {
+    position: relative;
+    display: table;
+    padding:0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-right: 2em;
+    text-align: right;
+    transition: all 0.5s ease-in-out;
+}
+
+#dropdownTab {
+    margin: auto;
+    vertical-align: middle;
+    display: none;
+    text-decoration: none;
+    padding: 10px 26px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #424f5a;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+}
+
+#material-tabs>a {
+    margin: auto;
+    vertical-align: middle;
+    display: table-cell;
+    text-decoration: none;
+    padding: 10px 26px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #424f5a;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+}
+
+
+#material-tabs>a.active {
+    font-weight: 700;
+    outline:none;
+}
+
+#material-tabs>a:not(.active):hover {
+    background-color: #fff;
+}
+
+@media only screen and (max-width: 520px) {
+    .nav-tabs#material-tabs>li>a {
+        font-size: 11px;
+    }
+}
+
+.yellow-bar {
+    position: absolute;
+    z-index: 10;
+    bottom: 0;
+    height: 3px;
+    background: #458CFF;
+    display: block;
+    left: 0;
+    transition: left .2s ease;
+    -webkit-transition: left .2s ease;
+}
+
+#tab1-tab.active ~ span.yellow-bar {
+    left: 0;
+    width: 135px;
+}
+
+#tab2-tab.active ~ span.yellow-bar {
+    left:130px;
+    width: 135px;
+}
+
+#tab3-tab.active ~ span.yellow-bar {
+    left: 250px;
+    width: 135px;
+}
+
+@media only screen and (max-width: 1000px) {
+    #dropdownTab {
+        display: block;
+    }
+    #material-tabs {
+        margin-right: 0 !important;
+        border-bottom: none !important;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    }
+    #material-tabs>a {
+        width: 100%;
+        position: absolute;
+        text-align: left;
+        display: block;
+        margin-left: 0;
+        background-color: #fff;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    }
+
+    #material-tabs>a.active {
+        background-color: #e3e3e3;
+    }
+
+    #material-tabs>a:not(.active):hover {
+        background-color: #e3e3e3;
+    }
+
+    #tab1-tab {
+        z-index: 101;
+        top: 41px;
+    }
+    #tab2-tab {
+        z-index: 101;
+        top: 82px;
+    }
+    #tab3-tab {
+        z-index: 101;
+        top: 123px;
+    }
+
+    .yellow-bar {
+        transition: top .2s ease !important;
+        left: 10px !important;
+        display: none;
+
+    }
+    .categoryName {
+        margin-left: 1em !important;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .fa-plus {
+        margin-top: -0.15em;
+    }
+}

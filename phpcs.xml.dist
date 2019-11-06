@@ -7,7 +7,7 @@
     <file>./tests</file>
 
     <exclude-pattern>./src/Migrations</exclude-pattern>
-    <exclude-pattern>./assets</exclude-pattern>
+    <exclude-pattern>./client</exclude-pattern>
     <!-- Include the whole PSR2 standard -->
     <rule ref="PSR2">
 		<exclude name="Generic.Files.LineEndings" />

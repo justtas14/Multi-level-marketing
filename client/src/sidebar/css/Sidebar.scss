@@ -1,0 +1,107 @@
+.sidebar {
+  position: fixed;
+  top: 320px;
+  bottom: 0;
+  left: 0;
+  width: 260px;
+  /*min-width: 319px;*/
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
+  overflow: auto;
+}
+
+.fixed {
+  box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
+  position: fixed;
+  width: 260px;
+  height: 320px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+
+@media screen and (max-width: 800px) {
+  .fixed {
+    box-shadow: 0 0 8px 0 rgba(126, 126, 126, 0.75);
+    width: 100%;
+    height: 100%;
+    position: unset;
+  }
+  .sidebar {
+    /*position:relative;*/
+    display:block;
+    margin:auto;
+    top: 0;
+    width: 100%;
+    height: 85px;
+    bottom: auto;
+    z-index: 50;
+  }
+  .sidebar-itemLast {
+  }
+  .sidebar-label {
+    display: inline-block;
+    cursor: pointer;
+  }
+  /deep/ .sidebar-logo {
+    z-index: 999999;
+    max-height: 50px;
+    margin-left: 40px;
+    padding: unset;
+    width: 100%;
+    height: 100%;
+  }
+  .sidebar-menu-inactive {
+    /*display: block;*/
+    position: fixed;
+    /*width: 100%;*/
+    z-index: 20;
+    width: 100%;
+    display: block;
+    animation : adminMenuFadeBack 0.25s ease-out forwards;
+  }
+
+  /deep/ .sidebar-profileContainer-inactive {
+    display: block;
+    position: fixed;
+    z-index: 20;
+    width: 100%;
+    animation : adminMenuFadeBack 0.25s ease-out forwards;
+    /*display: none;*/
+  }
+  /deep/ .sidebar-logoContainer {
+    height: unset;
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    justify-items: center;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  .sidebar, .sidebar-menu {
+    overflow-y: auto;
+  }
+
+  /deep/ .sidebar-logo {
+    width: 100%;
+  }
+
+  .sidebar-menu {
+    margin-top: 1em;
+    position:fixed;
+    display: block;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    width: 260px;
+    top: 320px;
+    right: auto;
+  }
+  /deep/ .sidebar-profileContainer {
+    display: block;
+    position: relative;
+    width: 100%;
+    right: auto
+  }
+}

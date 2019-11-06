@@ -1,0 +1,159 @@
+.sidebar-menu {
+  display: none;
+  animation: none;
+}
+
+.sidebar-menu {
+  bottom: 0;
+  overflow-y: auto;
+}
+
+.sidebar-menu-active {
+  display: block;
+  position: fixed;
+  width: 100%;
+  z-index: 20;
+}
+
+.sidebar-menu-active {
+  animation : adminMenuFade 0.25s ease-out forwards;
+  top: 240px;
+}
+
+.sidebar--active {
+  background-color: #f2f2f2 !important;
+  color: #7f06c4 !important;
+}
+
+.sidebar-item {
+  display: flex;
+  height: 50px;
+  line-height: 50px;
+}
+
+.sidebar-item:hover {
+  background-color: #f2f2f2;
+  color: #7f06c4;
+}
+
+.sidebar-item, .sidebar-itemLast {
+  width: 100%;
+  padding-left: 20px;
+  background-color: #fff;
+  color: #444444;
+  cursor: pointer;
+}
+
+.sidebar-item a, .sidebar-itemLast a  {
+  margin-left: 20px;
+  display: block;
+  color:inherit;
+  line-height: 50px;
+  height: 50px;
+}
+
+.sidebar-itemLast:hover {
+  background-color: #f2f2f2;
+  color: #7f06c4;
+}
+
+
+.sidebar__sectionLabel {
+  padding-left: 40px;
+  height: 50px;
+  line-height: 50px;
+  color: #7f06c4;
+  border-right: 2px solid #f2f2f2;
+  font-size: 1.2em;
+  cursor: default;
+}
+
+.sidebar__sectionLabel:hover {
+  background-color: #fff;
+}
+
+.sidebar-itemLast {
+  align-self: flex-end;
+}
+
+.footer {
+  text-align: center;
+  padding: 0;
+  display: block;
+  box-shadow: inset 0 1px 0 0 #d5d5d5;
+  justify-content: center;
+  color: #5e5e5e;
+}
+
+.footer:hover {
+  background-color: #fff;
+  color: #5e5e5e;
+}
+
+.footer a {
+  margin-left: 0;
+  line-height: 30px;
+  height: 30px;
+}
+
+.materialDesignIcons {
+  align-items: center;
+  justify-content: center;
+  line-height: 50px;
+}
+
+@media screen and (max-width: 800px) {
+  .sidebar-menu-inactive {
+    /*display: block;*/
+    position: fixed;
+    /*width: 100%;*/
+    z-index: 20;
+    width: 100%;
+    display: block;
+    animation : adminMenuFadeBack 0.25s ease-out forwards;
+  }
+}
+
+.sidebar-item--barelyVisible>a {
+  color: lightgrey;
+}
+
+@media screen and (min-width: 801px) {
+  .sidebar-menu {
+    overflow-y: auto;
+  }
+
+  .sidebar-menu {
+    margin-top: 1em;
+    position:fixed;
+    display: block;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    width: 260px;
+    top: 320px;
+    right: auto;
+  }
+}
+
+
+@keyframes adminMenuFade {
+  from {
+    /*opacity: 0;*/
+    transform: translateX(-100%);
+  }
+  to {
+    /*opacity: 1;*/
+    transform: translateX(0px);
+  }
+}
+
+@keyframes adminMenuFadeBack {
+  from {
+    /*opacity: 1;*/
+    transform: translateX(0px);
+  }
+  to {
+    /*opacity: 0;*/
+    transform: translateX(-100%);
+  }
+}
