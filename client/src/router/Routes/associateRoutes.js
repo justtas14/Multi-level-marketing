@@ -3,22 +3,22 @@ export default {
         {
             path: '/associate',
             label: 'Home',
-            icon: "home"
+            icon: 'home',
         },
         {
             path: '/associate/viewer',
             label: 'Team Viewer',
-            icon: 'people'
+            icon: 'people',
         },
         {
             path: '/associate/invite',
             label: 'Invite Associates',
-            icon: 'insert_invitation'
+            icon: 'insert_invitation',
         },
         {
             path: '/associate/profile',
             label: 'Edit Profile',
-            icon: 'edit'
+            icon: 'edit',
         },
-    ]
-}
+    ],
+};

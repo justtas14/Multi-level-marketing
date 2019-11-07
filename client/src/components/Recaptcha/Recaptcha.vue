@@ -5,12 +5,12 @@
 </template>
 
 <script>
-    import './css/Recaptcha.scss';
+import './css/Recaptcha.scss';
 
-    export default {
-        name: "Recaptcha",
-        props: ['siteKey']
-    }
+export default {
+    name: 'Recaptcha',
+    props: ['siteKey'],
+};
 </script>
 
 <style scoped>

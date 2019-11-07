@@ -5,12 +5,12 @@
 </template>
 
 <script>
-    import './css/Success.scss';
+import './css/Success.scss';
 
-    export default {
-        name: "Success",
-        props: ['message']
-    }
+export default {
+    name: 'Success',
+    props: ['message'],
+};
 </script>
 
 <style scoped>

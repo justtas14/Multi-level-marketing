@@ -19,19 +19,19 @@
 </template>
 
 <script>
-    import Log from "./Log";
-    import '../css/logTable.scss';
+import Log from './Log.vue';
+import './css/logTable.scss';
 
-    export default {
-        name: "LogTable",
-        props: ['logs', 'spinner'],
-        components: {
-            Log
-        },
-        methods: {
+export default {
+    name: 'LogTable',
+    props: ['logs', 'spinner'],
+    components: {
+        Log,
+    },
+    methods: {
 
-        }
-    }
+    },
+};
 </script>
 
 <style scoped>

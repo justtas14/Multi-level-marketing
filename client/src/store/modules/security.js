@@ -1,10 +1,9 @@
-import axios from 'axios';
-import SecurityAPI from "../api/SecurityApi/security";
+import SecurityAPI from '../api/SecurityApi/apiCalls';
 
-const AUTHENTICATING = "AUTHENTICATING",
-    AUTHENTICATING_SUCCESS = "AUTHENTICATING_SUCCESS",
-    AUTHENTICATING_ERROR = "AUTHENTICATING_ERROR",
-    PROVIDING_DATA_ON_AUTHENTICATION = "PROVIDING_DATA_ON_AUTHENTICATION";
+const AUTHENTICATING = 'AUTHENTICATING';
+const AUTHENTICATING_SUCCESS = 'AUTHENTICATING_SUCCESS';
+const AUTHENTICATING_ERROR = 'AUTHENTICATING_ERROR';
+const PROVIDING_DATA_ON_AUTHENTICATION = 'PROVIDING_DATA_ON_AUTHENTICATION';
 
 const state = {
     isLoading: false,
@@ -12,35 +11,35 @@ const state = {
     error: null,
     associate: null,
     token: null,
-    isAuthenticated: false
+    isAuthenticated: false,
 };
 
 const getters = {
-    isAuthenticated(state) {
+    isAuthenticated() {
         return state.isAuthenticated;
     },
-    getToken(state) {
+    getToken() {
         return state.token;
     },
-    getAssociate(state) {
+    getAssociate() {
         return state.associate;
     },
-    hasError(state) {
+    hasError() {
         return state.error !== null;
     },
-    isAdmin(state) {
-        return state.associate.roles.includes("ROLE_ADMIN");
+    isAdmin() {
+        return state.associate.roles.includes('ROLE_ADMIN');
     },
-    isUser(state) {
-        return state.associate.roles.includes("ROLE_USER");
-    }
+    isUser() {
+        return state.associate.roles.includes('ROLE_USER');
+    },
 };
 
 const actions = {
-    async login({commit}, payload) {
+    async login({ commit }, payload) {
         commit(AUTHENTICATING);
         try {
-            let response = await SecurityAPI.login(payload.login, payload.password);
+            const response = await SecurityAPI.login(payload.login, payload.password);
             commit(AUTHENTICATING_SUCCESS, response.data);
             return response.data;
         } catch (response) {
@@ -48,49 +47,49 @@ const actions = {
             return null;
         }
     },
-    async loadAssociate({commit, state}) {
-        let response = await SecurityAPI.authenticateMe(state.token);
+    async loadAssociate({ commit }) {
+        const response = await SecurityAPI.authenticateMe(state.token);
         commit(PROVIDING_DATA_ON_AUTHENTICATION, response.data);
         return true;
     },
 };
 
 const mutations = {
-    [AUTHENTICATING](state) {
+    [AUTHENTICATING]() {
         state.isLoading = true;
         state.error = null;
         state.associate = null;
         state.isAuthenticated = false;
     },
-    [AUTHENTICATING_SUCCESS](state, data) {
+    [AUTHENTICATING_SUCCESS](data) {
         state.isLoggedIn = true;
         state.isLoading = false;
         state.error = null;
         state.token = data.token;
         state.isAuthenticated = true;
     },
-    [AUTHENTICATING_ERROR](state, error) {
+    [AUTHENTICATING_ERROR](error) {
         state.isLoading = false;
         state.error = error;
         state.isAuthenticated = false;
         state.associate = null;
     },
-    [PROVIDING_DATA_ON_AUTHENTICATION](state, payload) {
+    [PROVIDING_DATA_ON_AUTHENTICATION](payload) {
         state.isLoggedIn = false;
         state.isLoading = false;
         state.error = null;
         state.associate = payload.associate;
     },
-    logout(state) {
+    logout() {
         state.isAuthenticated = false;
         state.token = null;
         state.associate = null;
-    }
+    },
 };
 
 export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

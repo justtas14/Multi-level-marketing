@@ -7,27 +7,27 @@
 </template>
 
 <script>
-    import './css/LevelBarListItem.scss'
+import './css/LevelBarListItem.scss';
 
-    export default {
-        name: "LevelBarLIstItem",
-        components: {
+export default {
+    name: 'LevelBarLIstItem',
+    components: {
 
-        },
-        props: ['maxLevel', 'level', 'associatesInLevel'],
-        data() {
-            return {
-            }
-        },
-        methods: {
+    },
+    props: ['maxLevel', 'level', 'associatesInLevel'],
+    data() {
+        return {
+        };
+    },
+    methods: {
 
-        },
-        computed: {
+    },
+    computed: {
 
-        },
-        created() {
-        }
-    }
+    },
+    created() {
+    },
+};
 </script>
 
 <style scoped>

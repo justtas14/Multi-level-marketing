@@ -21,105 +21,107 @@
 </template>
 
 <script>
-    import './css/ModalGalleryWrapper.scss'
+import './css/ModalGalleryWrapper.scss';
 
-    import Gallery from "./Gallery";
-    import ModalWrapper from "./ModalWrapper";
-    import ModalFileContainer from "./ModalFileContainer";
-    import modalGalleryConst from "./constants/modalGalleryConst";
-    import { mapActions, mapMutations, mapState } from 'vuex'
-    import EventBus from './EventBus/EventBus';
+import { mapActions, mapMutations, mapState } from 'vuex';
+import Gallery from './Gallery.vue';
+import ModalWrapper from './ModalWrapper.vue';
+import ModalFileContainer from './ModalFileContainer.vue';
+import modalGalleryConst from './constants/modalGalleryConst';
+import EventBus from './EventBus/EventBus';
 
 
-    export default {
-        name: 'ModalGalleryWrapper',
-        props: [],
-        components: {
-            Gallery,
-            ModalWrapper,
-            ModalFileContainer
+export default {
+    name: 'ModalGalleryWrapper',
+    props: [],
+    components: {
+        Gallery,
+        ModalWrapper,
+        ModalFileContainer,
+    },
+    data() {
+        return {
+            constants: {},
+            noTop: true,
+        };
+    },
+    computed: mapState('gallery', {
+        currentPage: state => state.paginationInfo.currentPage,
+        modalState: 'modalState',
+        editorState: 'editor',
+        category: 'category',
+        yesClickFn: 'yesClickFn',
+        files: 'files',
+        notification: 'notification',
+        paginationInfo: 'paginationInfo',
+        imageExtensions: 'imageExtensions',
+        confirm: 'confirm',
+    }),
+    methods: {
+        readUrl(e) {
+            this.readURL(e);
         },
-        data() {
-            return {
-                constants: {},
-                noTop: true
-            }
-        },
-        computed: mapState('gallery', {
-            currentPage: state => state.paginationInfo.currentPage,
-            modalState: 'modalState',
-            editorState: 'editor',
-            category: 'category',
-            yesClickFn: 'yesClickFn',
-            files: 'files',
-            notification: 'notification',
-            paginationInfo: 'paginationInfo',
-            imageExtensions: 'imageExtensions',
-            confirm: 'confirm'
-        }),
-        methods: {
-            readUrl: function (e) {
-                this.readURL(e)
-            },
-            ...mapActions('gallery', [
-                'callDataAxios',
-                'readURL',
-                'handleFiles',
-                'deleteRequestFunction',
-            ]),
-            ...mapMutations('gallery', [
-                'changeModalState',
-                'changeCategory',
-                'changePage',
-                'closeNotification',
-                'showNotification',
-                'changeConfirmation',
-                'changeYesFn'
-            ])
-        },
-        mounted () {
-            const scope = this;
-            EventBus.$on('handleDrop', function (event) {
-                const dt = event.dataTransfer;
-                let files = dt.files;
-                scope.handleFiles(files);
+        ...mapActions('gallery', [
+            'callDataAxios',
+            'readURL',
+            'handleFiles',
+            'deleteRequestFunction',
+        ]),
+        ...mapMutations('gallery', [
+            'changeModalState',
+            'changeCategory',
+            'changePage',
+            'closeNotification',
+            'showNotification',
+            'changeConfirmation',
+            'changeYesFn',
+        ]),
+    },
+    mounted() {
+        const scope = this;
+        EventBus.$on('handleDrop', (event) => {
+            const dt = event.dataTransfer;
+            const { files } = dt;
+            scope.handleFiles(files);
+        });
+        EventBus.$on('delete', (fileName) => {
+            const confirm = {
+                display: 'block',
+                message: `Are you sure you want to delete ${fileName} file?`,
+            };
+            scope.changeConfirmation(confirm);
+        });
+        EventBus.$on('previousPage', () => {
+            const page = null; const
+                action = 'subtract';
+            scope.changePage({ page, action });
+            scope.callDataAxios();
+        });
+        EventBus.$on('nextPage', () => {
+            const action = 'add'; const
+                page = null;
+            scope.changePage({ page, action });
+            scope.callDataAxios();
+        });
+        EventBus.$on('page', (page) => {
+            const action = null;
+            scope.changePage({
+                page,
+                action,
             });
-            EventBus.$on('delete', function (fileName) {
-                const confirm = {
-                    display: 'block',
-                    message: 'Are you sure you want to delete ' + fileName + ' file?'
-                };
-                scope.changeConfirmation(confirm);
-            });
-            EventBus.$on('previousPage', function () {
-                const page = null, action = 'subtract';
-                scope.changePage({page, action});
-                scope.callDataAxios();
-            });
-            EventBus.$on('nextPage', function () {
-                const action = 'add', page = null;
-                scope.changePage({page, action});
-                scope.callDataAxios();
-            });
-            EventBus.$on('page', function (page) {
-                const action = null;
-                scope.changePage({
-                    page,
-                    action
-                });
-                scope.callDataAxios();
-            });
-            EventBus.$on('showNotification', function (msg) {
-                scope.showNotification(msg);
-            });
-            EventBus.$on('closeNotification', function () {
-                scope.closeNotification();
-            });
-        },
-        created() {
-            this.constants = modalGalleryConst;
-        }
-    }
+            scope.callDataAxios();
+        });
+        EventBus.$on('showNotification', (msg) => {
+            scope.showNotification(msg);
+        });
+        EventBus.$on('closeNotification', () => {
+            scope.closeNotification();
+        });
+    },
+    created() {
+        this.constants = modalGalleryConst;
+    },
+};
 </script>
 
 <style>

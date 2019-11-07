@@ -14,27 +14,27 @@
 </template>s
 
 <script>
-    import './css/BusinessShape.scss'
-    import LevelBarListItem from "./LevelBarListItem"
+import './css/BusinessShape.scss';
+import LevelBarListItem from './LevelBarListItem.vue';
 
-    export default {
-        name: "BusinessShape",
-        components: {
-            LevelBarListItem
-        },
-        props: ['associatesInLevels', 'levels', 'maxLevel'],
-        data() {
-            return {
-            }
-        },
-        methods: {
-        },
-        computed: {
+export default {
+    name: 'BusinessShape',
+    components: {
+        LevelBarListItem,
+    },
+    props: ['associatesInLevels', 'levels', 'maxLevel'],
+    data() {
+        return {
+        };
+    },
+    methods: {
+    },
+    computed: {
 
-        },
-        created() {
-        }
-    }
+    },
+    created() {
+    },
+};
 </script>
 
 <style scoped>

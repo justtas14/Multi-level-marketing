@@ -21,7 +21,8 @@
                         </a>
                     </div>
                 </div>
-                <div v-if="isLoading" class="Spinner__Container user__search__spiner" v-bind:style="{top: 0, 'z-index': 9999}">
+                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
+                 v-bind:style="{top: 0, 'z-index': 9999}">
                     <div class="lds-dual-ring"/>
                 </div>
                 <BusinessShape
@@ -36,10 +37,15 @@
         <div class="card" v-if="parent">
             <div class="card-content">
                 <span class="card-title">My Enroller</span>
-                <div style="display: flex; justify-content: center; flex-direction: row; align-items: center">
-                    <div class="associate-enrollerPictureContainer sidebarProfile__pictureContainer">
-                        <img v-if="parent.filePath" class="associate-enrollerPicture sidebar-picture" :src="parent.filePath" />
-                        <img v-else class="associate-enrollerPicture sidebar-picture" :src="profilePicture" />
+                <div style="display: flex; justify-content: center;
+                 flex-direction: row; align-items: center">
+                    <div
+                    class="associate-enrollerPictureContainer sidebarProfile__pictureContainer"
+                    >
+                        <img v-if="parent.filePath"
+                        class="associate-enrollerPicture sidebar-picture" :src="parent.filePath" />
+                        <img v-else class="associate-enrollerPicture sidebar-picture"
+                         :src="profilePicture" />
                     </div>
                     <div class="associate-enrollerDetailsContainer" style="padding-left:0.5em">
                         <p><b>Email</b>: {{ parent.email }}</p>
@@ -64,18 +70,31 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-if="getDirectAssociates" v-for="directAssociate in getDirectAssociates" class="associate-container">
-                            <td class="associate-overflow directAssociatesAbout">{{ directAssociate.fullName }}</td>
-                            <td class="associate-overflow directAssociatesAbout">{{ directAssociate.email }}</td>
-                            <td class="associate-overflow directAssociatesAbout">
-                                <span v-if="directAssociate.mobilePhone">{{ directAssociate.mobilePhone }}</span>
-                                <span v-else>-</span>
-                            </td>
-                            <td class="associate-overflow directAssociatesAbout">
-                                {{ formatDate(directAssociate.joinDate) }}
+                        <span v-if="getDirectAssociates">
+                            <tr :key="key" v-for="(directAssociate, key)
+                            in getDirectAssociates" class="associate-container">
+                                <td class="associate-overflow directAssociatesAbout">
+                                    {{ directAssociate.fullName }}
+                                </td>
+                                <td class="associate-overflow directAssociatesAbout">
+                                    {{ directAssociate.email }}
+                                </td>
+                                <td class="associate-overflow directAssociatesAbout">
+                                    <span v-if="directAssociate.mobilePhone">
+                                        {{ directAssociate.mobilePhone }}
+                                    </span>
+                                    <span v-else>-</span>
+                                </td>
+                                <td class="associate-overflow directAssociatesAbout">
+                                    {{ formatDate(directAssociate.joinDate) }}
+                                </td>
+                            </tr>
+                        </span>
+                        <tr v-else>
+                            <td colspan="4">
+                                You do not have any associates in your direct downline
                             </td>
                         </tr>
-                        <tr v-else><td colspan="4">You do not have any associates in your direct downline</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -84,61 +103,63 @@
 </template>
 
 <script>
-    import BusinessShape from "../../../Components/BusinessShape/BusinessShape";
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-    import profilePicture from '../../../../../../public/assets/images/profile.jpg'
-    import '../../../CommonCss/mobileTable.scss';
-    import './css/Home.scss'
+import {
+    mapActions, mapMutations, mapState, mapGetters,
+} from 'vuex';
+import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
+import profilePicture from '../../../../public/img/profile.jpg';
+import '../../../assets/css/mobileTable.scss';
+import './css/Home.scss';
 
-    export default {
-        name: "AssociateHome",
-        components: {
-            BusinessShape
+export default {
+    name: 'AssociateHome',
+    components: {
+        BusinessShape,
+    },
+    props: [],
+    data() {
+        return {
+            profilePicture,
+        };
+    },
+    methods: {
+        formatDate(date) {
+            const d = new Date(date);
+            return `${(`0${d.getDate()}`).slice(-2)}-${(`0${d.getMonth() + 1}`).slice(-2)}-${d.getFullYear()}`;
         },
-        props: [],
-        data() {
-            return {
-                profilePicture: profilePicture
-            }
+        goToRoute(path) {
+            this.setCurrentPath(path);
+            this.$router.push({ path });
         },
-        methods: {
-            formatDate(date) {
-                const d = new Date(date);
-                return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
-            },
-            goToRoute(path) {
-                this.setCurrentPath(path);
-                this.$router.push({path: path});
-            },
-            ...mapActions('AssociateHome', [
-                'associateHomeApi'
-            ]),
-            ...mapMutations('Sidebar', [
-                'setCurrentPath'
-            ]),
-        },
-        mounted() {
-        },
-        computed: {
+        ...mapActions('AssociateHome', [
+            'associateHomeApi',
+        ]),
+        ...mapMutations('Sidebar', [
+            'setCurrentPath',
+        ]),
+    },
+    mounted() {
+    },
+    computed: {
 
-            ...mapState('AssociateHome', [
-                'parent',
-                'isLoading'
-            ]),
-            ...mapGetters('Security', [
-                'getAssociate',
-            ]),
-            ...mapGetters('AssociateHome', [
-                'getAssociateInLevels',
-                'getDirectAssociates',
-                'getLevels',
-                'getMaxLevel'
-            ]),
-        },
-        async created() {
-            await this.associateHomeApi();
-        }
-    }
+        ...mapState('AssociateHome', [
+            'parent',
+            'isLoading',
+        ]),
+        ...mapGetters('Security', [
+            'getAssociate',
+        ]),
+        ...mapGetters('AssociateHome', [
+            'getAssociateInLevels',
+            'getDirectAssociates',
+            'getLevels',
+            'getMaxLevel',
+        ]),
+    },
+    async created() {
+        await this.associateHomeApi();
+    },
+};
 </script>
 
 <style scoped>

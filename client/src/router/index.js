@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import store from '../Store';
-import Login from "../Pages/Login/Components/Login";
-import AdminHome from '../Pages/Admin/Home/Home';
-import AssociateHome from '../Pages/Associate/Home/Home';
-import Invite from "../Pages/Associate/Invite/Invite";
+import store from '../store';
+import Login from '../views/Login/Components/Login.vue';
+import AdminHome from '../views/Admin/Home/Home.vue';
+import AssociateHome from '../views/Associate/Home/Home.vue';
+import Invite from '../views/Associate/Invite/Invite.vue';
 
 Vue.use(VueRouter);
 
@@ -12,15 +12,15 @@ const routes = [
     { path: '/login', component: Login },
     { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
     { path: '/associate/invite', component: Invite, meta: { requiresAuth: true } },
-    { path: '/admin', component: AdminHome, meta: { requiresAuth: true }}
+    { path: '/admin', component: AdminHome, meta: { requiresAuth: true } },
     // { path: "*", redirect: "/home" }
 ];
 
 
-let router = new VueRouter({
+const router = new VueRouter({
     mode: 'history',
     routes,
-    base: '/'
+    base: '/',
 });
 
 router.beforeEach((to, from, next) => {
@@ -28,15 +28,15 @@ router.beforeEach((to, from, next) => {
         if (!store.getters['Security/isAuthenticated']) {
             console.log('going to login');
             next({
-                path: "/login"
+                path: '/login',
             });
         } else if (store.getters['Security/isAdmin']) {
             next({
-                path: "/admin"
+                path: '/admin',
             });
         } else {
             next({
-                path: "/associate"
+                path: '/associate',
             });
         }
     }
@@ -46,8 +46,8 @@ router.beforeEach((to, from, next) => {
         } else {
             console.log('going to login');
             next({
-                path: "/login",
-                query: { redirect: to.fullPath }
+                path: '/login',
+                query: { redirect: to.fullPath },
             });
         }
     } else {

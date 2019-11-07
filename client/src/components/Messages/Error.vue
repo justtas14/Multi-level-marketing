@@ -5,12 +5,12 @@
 </template>
 
 <script>
-    import './css/Error.scss';
+import './css/Error.scss';
 
-    export default {
-        name: "Error",
-        props: ['message']
-    }
+export default {
+    name: 'Error',
+    props: ['message'],
+};
 </script>
 
 <style scoped>

@@ -3,7 +3,8 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Business Shape</span>
-                <div v-if="isLoading" class="Spinner__Container user__search__spiner" v-bind:style="{top: 0, 'z-index': 9999}">
+                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
+                 v-bind:style="{top: 0, 'z-index': 9999}">
                     <div class="lds-dual-ring"/>
                 </div>
                 <BusinessShape
@@ -14,7 +15,8 @@
                 >
                 </BusinessShape>
                 <div class="adminBusinessShape__buttonContainer">
-                    <a @click="this.downloadCSV" class="waves-effect waves-light btn" target="_blank">Download CSV</a>
+                    <a @click="this.downloadCSV" class="waves-effect waves-light btn"
+                     target="_blank">Download CSV</a>
                 </div>
             </div>
         </div>
@@ -29,46 +31,48 @@
 </template>
 
 <script>
-    import BusinessShape from "../../../Components/BusinessShape/BusinessShape";
-    import './css/Home.scss';
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+import {
+    mapActions, mapState, mapGetters,
+} from 'vuex';
+import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
+import './css/Home.scss';
 
-    export default {
-        name: "AdminHome",
-        components: {
-            BusinessShape
-        },
-        props: [],
-        data() {
-            return {
+export default {
+    name: 'AdminHome',
+    components: {
+        BusinessShape,
+    },
+    props: [],
+    data() {
+        return {
 
-            }
-        },
-        methods: {
+        };
+    },
+    methods: {
 
-            ...mapActions('AdminHome', [
-                'adminHomeApi'
-            ]),
-            ...mapActions('Sidebar', [
-                'downloadCSV'
-            ]),
-        },
-        mounted() {
-        },
-        computed: {
-            ...mapState('AdminHome', [
-                'isLoading'
-            ]),
-            ...mapGetters('AdminHome', [
-                'getAssociateInLevels',
-                'getLevels',
-                'getMaxLevel'
-            ]),
-        },
-        async created() {
-            await this.adminHomeApi();
-        }
-    }
+        ...mapActions('AdminHome', [
+            'adminHomeApi',
+        ]),
+        ...mapActions('Sidebar', [
+            'downloadCSV',
+        ]),
+    },
+    mounted() {
+    },
+    computed: {
+        ...mapState('AdminHome', [
+            'isLoading',
+        ]),
+        ...mapGetters('AdminHome', [
+            'getAssociateInLevels',
+            'getLevels',
+            'getMaxLevel',
+        ]),
+    },
+    async created() {
+        await this.adminHomeApi();
+    },
+};
 </script>
 
 <style scoped>

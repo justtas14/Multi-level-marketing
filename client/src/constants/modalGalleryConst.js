@@ -2,10 +2,10 @@ export default {
     galleryClasses: {
         galleryId: 'modalGallery',
         closeButtonClasses: {
-            closeIcon: 'modalCloseIcon'
-        }
+            closeIcon: 'modalCloseIcon',
+        },
     },
     fileCutLength: 10,
     downloadable: false,
-    uploadable: true
-    }
+    uploadable: true,
+};

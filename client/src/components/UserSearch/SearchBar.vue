@@ -1,5 +1,6 @@
 <template>
-    <tr class="searchBar-container" v-bind:style="{'border-bottom': associatesLength > 0 ? '1px solid rgba(0,0,0,0.12)' : 'unset'}">
+    <tr class="searchBar-container"
+    v-bind:style="{'border-bottom': associatesLength > 0 ? '1px solid rgba(0,0,0,0.12)' : 'unset'}">
         <th width="20%" class="searchBar-inputContainer">
             <md-field>
                 <label>Name</label>
@@ -25,38 +26,39 @@
 </template>
 
 <script>
-    import EventBus from './EventBus/EventBus';
-    import { debounce } from "debounce";
+import './css/SearchBar.scss';
+import { debounce } from 'debounce';
+import EventBus from './EventBus/EventBus';
 
-    export default {
-        name: "SearchBar",
-        props: ['associatesLength'],
-        data() {
-            return {
-                nameInputVal: '',
-                emailInputVal: '',
-                phoneInputVal: ''
-            }
-        },
-        components: {
+export default {
+    name: 'SearchBar',
+    props: ['associatesLength'],
+    data() {
+        return {
+            nameInputVal: '',
+            emailInputVal: '',
+            phoneInputVal: '',
+        };
+    },
+    components: {
 
-        },
-        methods: {
-            handleNameSearchInput : debounce(function (e) {
-                EventBus.$emit('handleSearch', 'name', this.nameInputVal);
-            }, 500),
-            handelPhoneSearchInput: debounce(function (e) {
-                EventBus.$emit('handleSearch', 'phone', this.phoneInputVal);
-            }, 500),
-            handleEmailSearchInput: debounce(function (e) {
-                EventBus.$emit('handleSearch', 'email', this.emailInputVal);
-            }, 500)
-        },
-        computed: {
+    },
+    methods: {
+        handleNameSearchInput: debounce(() => {
+            EventBus.$emit('handleSearch', 'name', this.nameInputVal);
+        }, 500),
+        handelPhoneSearchInput: debounce(() => {
+            EventBus.$emit('handleSearch', 'phone', this.phoneInputVal);
+        }, 500),
+        handleEmailSearchInput: debounce(() => {
+            EventBus.$emit('handleSearch', 'email', this.emailInputVal);
+        }, 500),
+    },
+    computed: {
 
-        }
+    },
 
-    }
+};
 </script>
 
-<style src="../../css/UserSearch/SearchBar.css" scoped></style>
+<style scoped></style>

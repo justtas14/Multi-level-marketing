@@ -1,10 +1,8 @@
-import axios from 'axios';
-
 const state = {
     associates: [],
     paginationInfo: {
-        'numberOfPages': 1,
-        'currentPage': 1
+        numberOfPages: 1,
+        currentPage: 1,
     },
     nameSearchVal: '',
     emailSearchVal: '',
@@ -21,35 +19,37 @@ const actions = {
 };
 
 const mutations = {
-    setSpinnerState: (state, flag) => {
+    setSpinnerState: (flag) => {
         state.spinner = flag;
     },
-    loadData: (state, {...data}) => {
+    loadData: ({ ...data }) => {
         state.associates = data.associates;
         state.paginationInfo.currentPage = data.currentPage;
         state.paginationInfo.numberOfPages = data.numberOfPages;
         state.spinner = false;
     },
-    updateSearchVal: (state, {...params}) => {
+    updateSearchVal: ({ ...params }) => {
         switch (params.name) {
-            case 'name':
-                state.nameSearchVal = params.input;
-                break;
-            case 'email':
-                state.emailSearchVal = params.input;
-                break;
-            case 'phone':
-                state.phoneSearchVal = params.input;
-                break;
+        case 'name':
+            state.nameSearchVal = params.input;
+            break;
+        case 'email':
+            state.emailSearchVal = params.input;
+            break;
+        case 'phone':
+            state.phoneSearchVal = params.input;
+            break;
+        default:
+            break;
         }
     },
-    changePage: (state, {page, action}) => {
+    changePage: ({ page, action }) => {
         if (action == null) {
             state.paginationInfo.currentPage = page;
-        } else if (action == 'add') {
-            state.paginationInfo.currentPage++;
-        } else if (action == 'subtract') {
-            state.paginationInfo.currentPage--;
+        } else if (action === 'add') {
+            state.paginationInfo.currentPage += 1;
+        } else if (action === 'subtract') {
+            state.paginationInfo.currentPage += 1;
         }
     },
 };
@@ -58,5 +58,5 @@ export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

@@ -14,32 +14,32 @@
 </template>
 
 <script>
-    import './css/Messages.scss';
-    import Error from "./Error";
-    import Success from "./Success";
+import './css/Messages.scss';
+import Error from './Error.vue';
+import Success from './Success.vue';
 
-    export default {
-        name: "Messages",
-        components: {
-            Error,
-            Success
-        },
-        props: ['errorMessages', 'successMessages'],
-        data() {
-            return {
+export default {
+    name: 'Messages',
+    components: {
+        Error,
+        Success,
+    },
+    props: ['errorMessages', 'successMessages'],
+    data() {
+        return {
 
-            }
-        },
-        methods: {
+        };
+    },
+    methods: {
 
-        },
-        computed: {
+    },
+    computed: {
 
-        },
-        created() {
+    },
+    created() {
 
-        }
-    }
+    },
+};
 </script>
 
 <style scoped>

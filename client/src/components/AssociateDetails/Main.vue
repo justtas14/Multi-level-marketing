@@ -1,7 +1,11 @@
 <template>
     <div class="userDetails__mainContainer">
-        <div :class="[isParent ? 'userDetails__container__parentInfo' : 'userDetails__container__mainInfo']">
-            <div v-if="isParent" class="userDetails_parentTitleContainer addBottom userDetailsTitle">
+        <div :class=
+        "[isParent ? 'userDetails__container__parentInfo' : 'userDetails__container__mainInfo']"
+        >
+            <div v-if="isParent"
+            class="userDetails_parentTitleContainer addBottom userDetailsTitle"
+            >
                 <span class="card-title">Sponsor details</span>
                 <a @click="goToUserDetails" class="btn">Details</a>
             </div>
@@ -19,30 +23,30 @@
 </template>
 
 <script>
-    import './css/Main.scss';
-    import AssociateInfo from "./AssociateInfo";
+import './css/Main.scss';
+import AssociateInfo from './AssociateInfo.vue';
 
-    export default {
-        name: "Main",
-        props: ['associate', 'deleteAssociate', 'changeParent', 'isParent'],
-        components: {
-            AssociateInfo
-        },
-        data() {
+export default {
+    name: 'Main',
+    props: ['associate', 'deleteAssociate', 'changeParent', 'isParent'],
+    components: {
+        AssociateInfo,
+    },
+    data() {
 
-        },
-        methods: {
-            goToUserDetails: function () {
-
-            }
-        },
-        computed: {
+    },
+    methods: {
+        goToUserDetails() {
 
         },
-        created() {
+    },
+    computed: {
 
-        }
-    }
+    },
+    created() {
+
+    },
+};
 </script>
 
 <style scoped>

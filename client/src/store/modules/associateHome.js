@@ -1,4 +1,4 @@
-import SecurityAPI from "../api/SecurityApi/security";
+import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const state = {
     isLoading: false,
@@ -9,45 +9,37 @@ const state = {
     parent: null,
 };
 const getters = {
-    getAssociateInLevels: (state) => {
-        return JSON.parse(JSON.stringify(state.associatesInLevels));
-    },
-    getDirectAssociates: (state) => {
-        return state.directAssociates;
-    },
-    getLevels: (state) => {
-        return state.levels;
-    },
-    getMaxLevel: (state) => {
-        return state.maxLevel;
-    },
+    getAssociateInLevels: () => JSON.parse(JSON.stringify(state.associatesInLevels)),
+    getDirectAssociates: () => state.directAssociates,
+    getLevels: () => state.levels,
+    getMaxLevel: () => state.maxLevel,
 };
 
 const actions = {
-    async associateHomeApi({commit, state, rootState}) {
+    async associateHomeApi({ commit, rootState }) {
         commit('setIsLoading');
-        let response = await SecurityAPI.authenticateGetApi('/api/associate', rootState.Security.token);
+        const response = await SecurityAPI.authenticateGetApi('/api/associate', rootState.Security.token);
         commit('setAssociateHomePageData', response.data);
-    }
+    },
 };
 
 const mutations = {
-    setIsLoading: (state) => {
+    setIsLoading: () => {
         state.isLoading = true;
     },
-    setAssociateHomePageData: (state, data) => {
+    setAssociateHomePageData: (data) => {
         state.isLoading = false;
         state.associatesInLevels = data.associatesInLevels;
         state.levels = data.levels;
         state.maxLevel = data.maxLevel;
         state.parent = data.parent;
         state.directAssociates = data.directAssociates;
-    }
+    },
 };
 
 export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

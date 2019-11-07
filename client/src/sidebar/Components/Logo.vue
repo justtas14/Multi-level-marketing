@@ -1,6 +1,7 @@
 <template>
     <div class="sidebar-logoContainer">
-        <img v-if="this.checkConfigurationMainLogo" class="sidebar-logo" :src="configuration.mainLogoPath" />
+        <img v-if="this.checkConfigurationMainLogo"
+         class="sidebar-logo" :src="configuration.mainLogoPath" />
         <img v-else class="sidebar-logo" :src="PlumTreeSystemsLogo" />
         <div class="hamburger hamburger--collapse">
             <div class="hamburger-box">
@@ -11,32 +12,34 @@
 </template>
 
 <script>
-    import '../css/Logo.scss'
-    import PlumTreeSystemsLogo from '../../../public/img/plum_tree_logo.png'
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+import '../css/Logo.scss';
+import {
+    mapGetters,
+} from 'vuex';
+import PlumTreeSystemsLogo from '../../../public/img/plum_tree_logo.png';
 
-    export default {
-        name: "Logo",
-        components: {
+export default {
+    name: 'Logo',
+    components: {
 
-        },
-        props: ['configuration'],
-        data() {
-            return {
-                PlumTreeSystemsLogo: PlumTreeSystemsLogo
-            }
-        },
-        methods: {
-        },
-        computed: {
-            ...mapGetters('Sidebar', [
-                'checkConfigurationMainLogo'
-            ]),
-        },
-        created() {
+    },
+    props: ['configuration'],
+    data() {
+        return {
+            PlumTreeSystemsLogo,
+        };
+    },
+    methods: {
+    },
+    computed: {
+        ...mapGetters('Sidebar', [
+            'checkConfigurationMainLogo',
+        ]),
+    },
+    created() {
 
-        }
-    }
+    },
+};
 </script>
 
 <style>

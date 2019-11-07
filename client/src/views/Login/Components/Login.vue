@@ -1,7 +1,8 @@
 <template>
     <div class="login-container">
         <div class="login-logoContainer">
-            <img v-if="this.checkConfigurationMainLogo" style="max-width:100%; max-height: 100px" :src="configuration.mainLogoPath" />
+            <img v-if="this.checkConfigurationMainLogo"
+            style="max-width:100%; max-height: 100px" :src="configuration.mainLogoPath" />
             <img v-else style="max-width:100%; max-height: 100px" :src="plumTreeLogo"/>
         </div>
         <div class="login-title">
@@ -12,13 +13,15 @@
                 <div class="login-item">
                     <div class="input-field col s12">
                         <label for="email">E-mail</label>
-                        <input v-model="email" class="validate" type="text" id="email" name="email"/>
+                        <input v-model="email" class="validate" type="text"
+                         id="email" name="email"/>
                     </div>
                 </div>
                 <div class="login-item">
                     <div class="input-field col s12">
                         <label for="password">Password:</label>
-                        <input v-model="password" class="validate" type="password" id="password" name="password"/>
+                        <input v-model="password" class="validate"
+                         type="password" id="password" name="password"/>
                     </div>
                 </div>
                 <div id="resetPassword">
@@ -50,83 +53,83 @@
 </template>
 
 <script>
-    import '../css/Login.scss'
-    import plumTreeLogo from '../../../../../../public/assets/images/plum_tree_logo.png';
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
-    import Messages from "../../../Components/Messages/Messages";
-    import Error from "../../../Components/Messages/Error";
+import '../css/Login.scss';
+import {
+    mapActions, mapMutations, mapState, mapGetters,
+} from 'vuex';
+import plumTreeLogo from '../../../../public/img/plum_tree_logo.png';
+import Error from '../../../components/Messages/Error.vue';
 
-    export default {
-        name: "Login",
-        components: {
-            Error,
-            Messages
-        },
-        props: [],
-        data() {
-            return {
-                email: "",
-                password: "",
-                plumTreeLogo: plumTreeLogo
+export default {
+    name: 'Login',
+    components: {
+        Error,
+    },
+    props: [],
+    data() {
+        return {
+            email: '',
+            password: '',
+            plumTreeLogo,
+        };
+    },
+    methods: {
+        async performLogin() {
+            const payload = { login: this.email, password: this.password };
+            const { redirect } = this.$route.query;
+
+            await this.login(payload);
+            if (!this.hasError) {
+                await this.loadAssociate();
+                if (typeof redirect !== 'undefined') {
+                    this.$router.push({ path: redirect });
+                } else if (this.isAdmin) {
+                    this.$router.push({ path: '/admin' });
+                } else {
+                    this.$router.push({ path: '/associate' });
+                }
             }
         },
-        methods: {
-            async performLogin() {
-                let payload = {login: this.email, password: this.password},
-                    redirect = this.$route.query.redirect;
 
-                await this.login(payload);
-                if (!this.hasError) {
-                    await this.loadAssociate();
-                    if (typeof redirect !== "undefined") {
-                        this.$router.push({path: redirect});
-                    } else if (this.isAdmin) {
-                        this.$router.push({path: "/admin"})
-                    } else {
-                        this.$router.push({path: "/associate"})
-                    }
-                }
-            },
+        ...mapActions('Security', [
+            'login',
+            'loadAssociate',
+        ]),
+        ...mapMutations('Security', [
+        ]),
+    },
+    computed: {
+        ...mapGetters('Security', [
+            'hasError',
+            'isAdmin',
+            'isAuthenticated',
+        ]),
+        ...mapGetters('Sidebar', [
+            'checkConfigurationMainLogo',
+        ]),
+        ...mapState('Security', [
+            'error',
+            'isLoading',
+            'isLoggedIn',
+        ]),
+        ...mapState('Sidebar', [
+            'configuration',
+        ]),
+    },
+    created() {
+        const { redirect } = this.$route.query;
 
-            ...mapActions('Security', [
-                'login',
-                'loadAssociate'
-            ]),
-            ...mapMutations('Security', [
-            ])
-        },
-        computed: {
-            ...mapGetters('Security', [
-                'hasError',
-                'isAdmin',
-                'isAuthenticated'
-            ]),
-            ...mapGetters('Sidebar', [
-                'checkConfigurationMainLogo'
-            ]),
-            ...mapState('Security', [
-                'error',
-                'isLoading',
-                'isLoggedIn'
-            ]),
-            ...mapState('Sidebar', [
-                'configuration',
-            ])
-        },
-        created() {
-            let redirect = this.$route.query.redirect;
-
-            if (this.isAuthenticated) {
-                if (typeof redirect !== "undefined") {
-                    this.$router.push({path: redirect});
-                } else if (this.isAdmin) {
-                    this.$router.push({path: "/admin"})
-                } else {
-                    this.$router.push({path: "/associate"})
-                }
+        if (this.isAuthenticated) {
+            if (typeof redirect !== 'undefined') {
+                this.$router.push({ path: redirect });
+            } else if (this.isAdmin) {
+                this.$router.push({ path: '/admin' });
+            } else {
+                this.$router.push({ path: '/associate' });
             }
         }
-    }
+    },
+};
 </script>
 
 <style scoped>

@@ -48,7 +48,9 @@
                     <span v-if="associate.postCode">{{ associate.postCode }}</span>
                     <span v-else>-</span>
                 </li>
-                <li class="userDetails__info__item"><b>Date of birth</b>: {{ associate.dateOfBirth }}</li>
+                <li class="userDetails__info__item">
+                    <b>Date of birth</b>: {{ associate.dateOfBirth }}
+                </li>
                 <li class="userDetails__info__item"><b>Join Date</b>: {{ associate.joinDate }}</li>
                 <li class="userDetails__info__item"><b>Level</b>: {{ associate.level }}</li>
                 <hr class="separation__line">
@@ -78,27 +80,29 @@
 </template>
 
 <script>
-    import defaultPicture from '../../../../../public/assets/images/profile.jpg'
+import defaultPicture from '../../../public/img/profile.jpg';
 
-    export default {
-        name: "AssociateInfo",
-        props: ['associate', 'changeParent', 'deleteAssociate'],
-        components: {
+export default {
+    name: 'AssociateInfo',
+    props: ['associate', 'changeParent', 'deleteAssociate'],
+    components: {
 
-        },
-        data() {
+    },
+    data() {
+        return {
+            defaultPicture,
+        };
+    },
+    methods: {
 
-        },
-        methods: {
+    },
+    computed: {
 
-        },
-        computed: {
+    },
+    created() {
 
-        },
-        created() {
-
-        }
-    }
+    },
+};
 </script>
 
 <style scoped>

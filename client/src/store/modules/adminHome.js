@@ -1,5 +1,4 @@
-import axios from 'axios';
-import SecurityAPI from "../api/SecurityApi/security";
+import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const state = {
     isLoading: false,
@@ -8,40 +7,34 @@ const state = {
     maxLevel: null,
 };
 const getters = {
-    getAssociateInLevels: (state) => {
-        return JSON.parse(JSON.stringify(state.associatesInLevels));
-    },
-    getLevels: (state) => {
-        return state.levels;
-    },
-    getMaxLevel: (state) => {
-        return state.maxLevel;
-    }
+    getAssociateInLevels: () => JSON.parse(JSON.stringify(state.associatesInLevels)),
+    getLevels: () => state.levels,
+    getMaxLevel: () => state.maxLevel,
 };
 
 const actions = {
-    async adminHomeApi({commit, state, rootState}) {
+    async adminHomeApi({ commit, rootState }) {
         commit('setIsLoading');
-        let response = await SecurityAPI.authenticateGetApi('/api/admin', rootState.Security.token);
+        const response = await SecurityAPI.authenticateGetApi('/api/admin', rootState.Security.token);
         commit('setAssociateLevelsData', response.data);
-    }
+    },
 };
 
 const mutations = {
-    setIsLoading: (state) => {
+    setIsLoading: () => {
         state.isLoading = true;
     },
-    setAssociateLevelsData: (state, data) => {
+    setAssociateLevelsData: (data) => {
         state.isLoading = false;
         state.associatesInLevels = data.associatesInLevels;
         state.levels = data.levels;
         state.maxLevel = data.maxLevel;
-    }
+    },
 };
 
 export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

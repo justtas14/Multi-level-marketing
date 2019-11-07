@@ -10,7 +10,8 @@
             <div class="lds-dual-ring"/>
         </div>
         <input class="file-upload-input-gallery" multiple type='file'/>
-        <div v-if="!spinner" v-bind:style="{display: (files.length == 0) ? 'block' : 'none'}" id="uploadImageIcon">
+        <div v-if="!spinner" v-bind:style="{display: (files.length == 0) ? 'block' : 'none'}"
+         id="uploadImageIcon">
             <i class="fas fa-file-download"></i>
         </div>
         <div v-if="!spinner" class="image-upload-box"
@@ -37,44 +38,44 @@
     </section>
 </template>
 <script>
-    import './css/GalleryFileList.scss'
-    import GalleryFile from './GalleryFile.vue';
-    import EventBus from './EventBus/EventBus';
-    import { mapMutations, mapState } from 'vuex'
+import './css/GalleryFileList.scss';
+import { mapMutations, mapState } from 'vuex';
+import GalleryFile from './GalleryFile.vue';
+import EventBus from './EventBus/EventBus';
 
-    export default {
-        name: 'GalleryFileList',
-        props: ['files', 'imageExtensions', 'constants'],
-        components: {
-            GalleryFile
+export default {
+    name: 'GalleryFileList',
+    props: ['files', 'imageExtensions', 'constants'],
+    components: {
+        GalleryFile,
+    },
+    data() {
+        return {
+            imageDroppingClass: false,
+        };
+    },
+    computed: mapState('gallery', {
+        spinner: 'spinner',
+    }),
+    methods: {
+        handleDrop(event) {
+            EventBus.$emit('handleDrop', event);
         },
-        data() {
-            return {
-                imageDroppingClass: false,
-            }
-        },
-        computed: mapState('gallery', {
-            spinner: 'spinner'
-        }),
-        methods: {
-            handleDrop: function (event) {
-                EventBus.$emit('handleDrop', event);
-            },
 
-            addImageDropping: function () {
-                this.imageDroppingClass = true;
-            },
-            removeImageDropping: function () {
-                this.imageDroppingClass = false;
-            },
-            ...mapMutations('gallery', [
-                'setSpinnerState'
-            ])
+        addImageDropping() {
+            this.imageDroppingClass = true;
         },
-        mounted() {
-            this.setSpinnerState(true);
-        }
-    }
+        removeImageDropping() {
+            this.imageDroppingClass = false;
+        },
+        ...mapMutations('gallery', [
+            'setSpinnerState',
+        ]),
+    },
+    mounted() {
+        this.setSpinnerState(true);
+    },
+};
 </script>
 
 <style scoped>

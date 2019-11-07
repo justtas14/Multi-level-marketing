@@ -2,10 +2,10 @@ export default {
     galleryClasses: {
         galleryId: 'gallery',
         closeButtonClasses: {
-            closeIcon: 'closeIcon'
-        }
+            closeIcon: 'closeIcon',
+        },
     },
     fileCutLength: 14,
     downloadable: true,
-    uploadable: false
-    }
+    uploadable: false,
+};

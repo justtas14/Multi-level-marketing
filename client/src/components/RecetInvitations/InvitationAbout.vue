@@ -5,45 +5,48 @@
         <td class="associate-overflow invitationAbout"> {{ formatDate(invitation.created) }}</td>
         <td class="invitationAbout" v-if="invitation.used">Yes</td>
         <td class="invitationAbout" v-else>No</td>
-        <td class="invitationAbout"><a @click="sendInvitationId" class="btn">Resend Invitation</a></td>
+        <td class="invitationAbout"><a @click="sendInvitationId"
+         class="btn">Resend Invitation</a></td>
     </tr>
 </template>
 
 <script>
-    import '../../CommonCss/mobileTable.scss';
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+import '../../assets/css/mobileTable.scss';
+import {
+    mapActions,
+} from 'vuex';
 
-    export default {
-        name: "InvitationAbout",
-        props: ['invitation'],
-        data() {
-            return {
+export default {
+    name: 'InvitationAbout',
+    props: ['invitation'],
+    data() {
+        return {
 
-            }
+        };
+    },
+    methods: {
+        formatDate(date) {
+            const d = new Date(date * 1000);
+            return `${(`0${d.getDate()}`).slice(-2)}-${(`0${d.getMonth() + 1}`).slice(-2)}-${d.getFullYear()}`;
         },
-        methods: {
-            formatDate(date) {
-                const d = new Date(date*1000);
-                return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear();
-            },
-            sendInvitationId: async function() {
-                console.log(this.invitation.id);
-                let payload = {
-                    invitationId: this.invitation.id
-                };
-                await this.resendInvitation(payload);
-            },
-            ...mapActions('Invitation', [
-                'resendInvitation'
-            ]),
+        async sendInvitationId() {
+            console.log(this.invitation.id);
+            const payload = {
+                invitationId: this.invitation.id,
+            };
+            await this.resendInvitation(payload);
         },
-        computed: {
+        ...mapActions('Invitation', [
+            'resendInvitation',
+        ]),
+    },
+    computed: {
 
-        },
-        created() {
+    },
+    created() {
 
-        }
-    }
+    },
+};
 </script>
 
 <style scoped>

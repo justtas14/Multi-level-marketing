@@ -1,4 +1,4 @@
-import SecurityAPI from "../api/SecurityApi/security";
+import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const state = {
     isLoading: false,
@@ -10,19 +10,19 @@ const state = {
     pagination: null,
     uniqueAssociateInvitationLink: null,
     siteKey: null,
-    submitLabel: 'send'
+    submitLabel: 'send',
 };
 const getters = {
 
 };
 
 const actions = {
-    async submitInvitationForm({commit, state, rootState}, payload) {
+    async submitInvitationForm({ commit, rootState }, payload) {
         commit('setIsLoadingForm');
-        let response = await SecurityAPI.authenticateInvitationPostApi(
+        const response = await SecurityAPI.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
-            payload
+            payload,
         );
         if (response.data.formErrors) {
             commit('setErrors', response.data.formErrors);
@@ -30,63 +30,63 @@ const actions = {
             commit('setSent', response.data.sent);
         }
     },
-    async resendInvitation({commit, state, rootState}, payload) {
-        let response = await SecurityAPI.authenticateInvitationPostApi(
+    async resendInvitation({ commit, rootState }, payload) {
+        const response = await SecurityAPI.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
-            payload
+            payload,
         );
         commit('setSent', response.data.sent);
     },
-    async changePage({commit, state, rootState}) {
+    async changePage({ commit, rootState }) {
         commit('setIsLoadingSentInvitations');
-        let payload = {
-            page: state.pagination.currentPage
+        const payload = {
+            page: state.pagination.currentPage,
         };
         console.log(payload);
-        let response = await SecurityAPI.authenticateInvitationPostApi(
+        const response = await SecurityAPI.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
-            payload
+            payload,
         );
         commit('setGeneralInvitationInfo', response.data);
     },
-    async invitationHome({commit, state, rootState}, payload = {}) {
+    async invitationHome({ commit, rootState }, payload = {}) {
         commit('setIsLoading');
-        let response = await SecurityAPI.authenticateInvitationPostApi(
+        const response = await SecurityAPI.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
-            payload
+            payload,
         );
         commit('setGeneralInvitationInfo', response.data);
-    }
+    },
 };
 
 const mutations = {
-    setIsLoading: (state) => {
+    setIsLoading: () => {
         state.isLoading = true;
     },
-    setIsLoadingForm: (state) => {
+    setIsLoadingForm: () => {
         state.isLoadingForm = true;
     },
-    setIsLoadingSentInvitations: (state) => {
+    setIsLoadingSentInvitations: () => {
         state.isLoadingSentInvitations = true;
     },
-    setErrors: (state, errors) => {
+    setErrors: (errors) => {
         state.isLoadingForm = false;
         state.formErrors = errors;
     },
-    setSent: (state, sent) => {
+    setSent: (sent) => {
         state.isLoadingForm = false;
         state.formErrors = null;
         state.sent = sent;
     },
-    setNotSent: (state) => {
+    setNotSent: () => {
         state.isLoadingForm = false;
         state.formErrors = null;
         state.sent = null;
     },
-    setGeneralInvitationInfo: (state, data) => {
+    setGeneralInvitationInfo: (data) => {
         state.isLoading = false;
         state.isLoadingSentInvitations = false;
         state.invitations = data.invitations;
@@ -95,13 +95,13 @@ const mutations = {
         state.siteKey = data.siteKey;
         state.submitLabel = data.submitLabel;
     },
-    changePagination: (state, {page, action}) => {
+    changePagination: ({ page, action }) => {
         if (action == null) {
             state.pagination.currentPage = page;
-        } else if (action == 'add') {
-            state.pagination.currentPage++;
-        } else if (action == 'subtract') {
-            state.pagination.currentPage--;
+        } else if (action === 'add') {
+            state.pagination.currentPage += 1;
+        } else if (action === 'subtract') {
+            state.pagination.currentPage -= 1;
         }
     },
 };
@@ -110,5 +110,5 @@ export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

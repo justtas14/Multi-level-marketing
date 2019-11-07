@@ -7,22 +7,22 @@
     </div>
 </template>
 <script>
-    import './css/ModalFileContainer.scss'
+import './css/ModalFileContainer.scss';
 
-    export default {
-        name: 'ModalFileContainer',
-        props: ['category'],
-        data() {
-            return {
+export default {
+    name: 'ModalFileContainer',
+    props: ['category'],
+    data() {
+        return {
 
-            }
+        };
+    },
+    methods: {
+        readUrl(e) {
+            this.$emit('readUrl', e);
         },
-        methods: {
-            readUrl: function (e) {
-                this.$emit('readUrl', e);
-            }
-        }
-    }
+    },
+};
 </script>
 
 <style scoped>

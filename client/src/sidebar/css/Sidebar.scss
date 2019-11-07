@@ -45,7 +45,7 @@
     display: inline-block;
     cursor: pointer;
   }
-  /deep/ .sidebar-logo {
+  .sidebar-logo {
     z-index: 999999;
     max-height: 50px;
     margin-left: 40px;
@@ -63,7 +63,7 @@
     animation : adminMenuFadeBack 0.25s ease-out forwards;
   }
 
-  /deep/ .sidebar-profileContainer-inactive {
+  .sidebar-profileContainer-inactive {
     display: block;
     position: fixed;
     z-index: 20;
@@ -71,7 +71,7 @@
     animation : adminMenuFadeBack 0.25s ease-out forwards;
     /*display: none;*/
   }
-  /deep/ .sidebar-logoContainer {
+  .sidebar-logoContainer {
     height: unset;
     display: grid;
     grid-template-columns: 5fr 1fr;
@@ -84,7 +84,7 @@
     overflow-y: auto;
   }
 
-  /deep/ .sidebar-logo {
+  .sidebar-logo {
     width: 100%;
   }
 
@@ -98,7 +98,7 @@
     top: 320px;
     right: auto;
   }
-  /deep/ .sidebar-profileContainer {
+  .sidebar-profileContainer {
     display: block;
     position: relative;
     width: 100%;

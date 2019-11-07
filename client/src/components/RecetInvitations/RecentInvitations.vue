@@ -19,25 +19,26 @@
             </InvitationAbout>
             </tbody>
         </table>
-        <Pagination v-if="invitations.length > 0" v-bind:paginationInfo="paginationInfo"></Pagination>
+        <Pagination v-if="invitations.length > 0"
+             v-bind:paginationInfo="paginationInfo"></Pagination>
         <p style="margin: 2em 0" v-else>Associate doesn't have any sent invitations</p>
     </div>
 </template>
 
 <script>
-    import '../../CommonCss/mobileTable.scss';
-    import './css/RecentInvitations.scss';
-    import Pagination from "../Pagination/Pagination";
-    import InvitationAbout from "./InvitationAbout";
+import '../../assets/css/mobileTable.scss';
+import './css/RecentInvitations.scss';
+import Pagination from '../Pagination/Pagination.vue';
+import InvitationAbout from './InvitationAbout.vue';
 
-    export default {
-        name: "RecentInvitations",
-        components: {
-            InvitationAbout,
-            Pagination
-        },
-        props: ['invitations', 'paginationInfo']
-    }
+export default {
+    name: 'RecentInvitations',
+    components: {
+        InvitationAbout,
+        Pagination,
+    },
+    props: ['invitations', 'paginationInfo'],
+};
 </script>
 
 <style scoped>

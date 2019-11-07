@@ -13,7 +13,8 @@
              v-bind:style="{border: (imageDroppingClass == false) ?
          '4px dashed #AAAAAA' : '5px dashed #ffffff', display: (isInserted ? 'none' : 'block')}"
         >
-            <input class="file-upload-input-gallery" type='file' accept="image/*" onchange="handleFiles(this.files)"/>
+            <input class="file-upload-input-gallery"
+            type='file' accept="image/*" onchange="handleFiles(this.files)"/>
             <div id="profileUploadImageIcon">
                 <i class="fas fa-file-download"></i>
             </div>
@@ -23,65 +24,65 @@
 
 </template>
 <script>
-    import './css/DragNDrop.scss';
-    import Error from "../Messages/Error";
+import './css/DragNDrop.scss';
+import Error from '../Messages/Error.vue';
 
-    export default {
-        name: 'DragNDrop',
-        props: ['originalProfilePictureUpload', 'submitUploadErrorBlock'],
-        components: {
-            Error
+export default {
+    name: 'DragNDrop',
+    props: ['originalProfilePictureUpload', 'submitUploadErrorBlock'],
+    components: {
+        Error,
+    },
+    data() {
+        return {
+            imageDroppingClass: false,
+            isInserted: false,
+            dragAndDropError: '',
+        };
+    },
+    methods: {
+        handleDrop(event) {
+            const dt = event.dataTransfer;
+            const { files } = dt;
+            this.handleFiles(files);
         },
-        data() {
-            return {
-                imageDroppingClass: false,
-                isInserted: false,
-                dragAndDropError: ''
+        handleFiles(files) {
+            if (this.submitUploadErrorBlock) {
+                this.submitUploadErrorBlock.style.display = 'none';
+            }
+            const imageMimeTypes = ['image/png', 'image/jpeg', 'image/webp'];
+            const fileLength = files.length;
+            if (fileLength === 1) {
+                const file = files[fileLength - 1];
+                if (imageMimeTypes.includes(file.type)) {
+                    this.originalProfilePictureUpload.files = files;
+                    this.dragAndDropError = '';
+                    this.appendFile(file);
+                } else {
+                    this.dragAndDropError = 'Only images are allowed';
+                }
+            } else {
+                this.dragAndDropError = 'Only one file allowed';
             }
         },
-        methods: {
-            handleDrop: function (event) {
-                const dt = event.dataTransfer;
-                let files = dt.files;
-                this.handleFiles(files);
-            },
-            handleFiles: function (files) {
-                if (this.submitUploadErrorBlock) {
-                    this.submitUploadErrorBlock.style.display = 'none';
-                }
-                const imageMimeTypes = ['image/png', 'image/jpeg', 'image/webp'];
-                const fileLength = files.length;
-                if (fileLength === 1) {
-                    const file = files[fileLength-1];
-                    if (imageMimeTypes.includes(file.type)) {
-                        this.originalProfilePictureUpload.files = files;
-                        this.dragAndDropError = '';
-                        this.appendFile(file);
-                    } else {
-                        this.dragAndDropError = 'Only images are allowed';
-                    }
-                } else {
-                    this.dragAndDropError = 'Only one file allowed';
-                }
-            },
-            appendFile: function (file) {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onloadend = () => {
-                    const img = this.profilePicturePreview.querySelector('img');
-                    img.src = reader.result;
-                    this.profilePicturePreview.style.display = 'block';
-                    this.isInserted = true;
-                }
-            },
-            addImageDropping: function () {
-                this.imageDroppingClass = true;
-            },
-            removeImageDropping: function () {
-                this.imageDroppingClass = false;
-            },
+        appendFile(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                const img = this.profilePicturePreview.querySelector('img');
+                img.src = reader.result;
+                this.profilePicturePreview.style.display = 'block';
+                this.isInserted = true;
+            };
         },
-    }
+        addImageDropping() {
+            this.imageDroppingClass = true;
+        },
+        removeImageDropping() {
+            this.imageDroppingClass = false;
+        },
+    },
+};
 </script>
 
 <style scoped>

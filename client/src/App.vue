@@ -8,60 +8,62 @@
 </template>
 
 <script>
-    import './assets/css/Main.scss';
-    import Sidebar from "./sidebar/Components/Sidebar";
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
+import './assets/css/Main.scss';
+import {
+    mapActions, mapMutations, mapState, mapGetters,
+} from 'vuex';
+import Sidebar from './sidebar/Components/Sidebar.vue';
 
-    export default {
-        name: "Main",
-        components: {
-            Sidebar
-        },
-        props: [],
-        data() {
-            return {
-                localStorage: localStorage
-            }
-        },
-        methods: {
+export default {
+    name: 'Main',
+    components: {
+        Sidebar,
+    },
+    props: [],
+    data() {
+        return {
+            localStorage,
+        };
+    },
+    methods: {
 
-            ...mapActions('Security', [
-            ]),
-            ...mapActions('Sidebar', [
-                'configurationApi'
-            ]),
-            ...mapMutations('Security', [
-            ])
-        },
-        mounted() {
-        },
-        computed: {
-            ...mapGetters('Security', [
-                'isAdmin',
-                'getAssociate',
-                'isAuthenticated'
-            ]),
-            ...mapState('Security', [
-                'isLoading'
-            ]),
-        },
-        async created() {
-            await this.configurationApi();
+        ...mapActions('Security', [
+        ]),
+        ...mapActions('Sidebar', [
+            'configurationApi',
+        ]),
+        ...mapMutations('Security', [
+        ]),
+    },
+    mounted() {
+    },
+    computed: {
+        ...mapGetters('Security', [
+            'isAdmin',
+            'getAssociate',
+            'isAuthenticated',
+        ]),
+        ...mapState('Security', [
+            'isLoading',
+        ]),
+    },
+    async created() {
+        await this.configurationApi();
 
-            if (!this.isAuthenticated) {
-                this.$router.push({path: "/login"})
-            }
-
-            // axios.interceptors.response.use(undefined, (err) => {
-            //     return new Promise(() => {
-            //         if (err.response.status === 401) {
-            //             this.$router.push({path: "/login"})
-            //         }
-            //         throw err;
-            //     });
-            // });
+        if (!this.isAuthenticated) {
+            this.$router.push({ path: '/login' });
         }
-    }
+
+    // axios.interceptors.response.use(undefined, (err) => {
+    //     return new Promise(() => {
+    //         if (err.response.status === 401) {
+    //             this.$router.push({path: "/login"})
+    //         }
+    //         throw err;
+    //     });
+    // });
+    },
+};
 </script>
 
 <style scoped>

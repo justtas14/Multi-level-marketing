@@ -26,41 +26,41 @@
 </template>
 
 <script>
-    import './css/Gallery.scss';
-    import Pagination from '../Pagination/Pagination';
-    import Confirmation from "../Confirmation/Confirmation";
-    import Notification from './GalleryNotification';
-    import GalleryFileList from "./GalleryFileList";
-    import { mapMutations } from 'vuex';
+import './css/Gallery.scss';
+import { mapMutations } from 'vuex';
+import Pagination from '../Pagination/Pagination.vue';
+import Confirmation from '../Confirmation/Confirmation.vue';
+import Notification from './GalleryNotification.vue';
+import GalleryFileList from './GalleryFileList.vue';
 
-    export default {
-        name: 'Gallery',
-        props: ['files', 'notification', 'paginationInfo',
-            'imageExtensions', 'constants', 'confirm', 'yesClickFn', 'noTop'],
-        components: {
-            Pagination,
-            Notification,
-            GalleryFileList,
-            Confirmation
+export default {
+    name: 'Gallery',
+    props: ['files', 'notification', 'paginationInfo',
+        'imageExtensions', 'constants', 'confirm', 'yesClickFn', 'noTop'],
+    components: {
+        Pagination,
+        Notification,
+        GalleryFileList,
+        Confirmation,
+    },
+    data() {
+        return {
+        };
+    },
+    mounted() {
+    },
+    methods: {
+        hideConfirmation() {
+            const confirm = {
+                display: 'none',
+            };
+            this.changeConfirmation(confirm);
         },
-        data() {
-            return {
-            }
-        },
-        mounted() {
-        },
-        methods: {
-            hideConfirmation: function () {
-                const confirm = {
-                    display: 'none'
-                };
-                this.changeConfirmation(confirm);
-            },
-            ...mapMutations('gallery', [
-                'changeConfirmation'
-            ])
-        },
-    }
+        ...mapMutations('gallery', [
+            'changeConfirmation',
+        ]),
+    },
+};
 </script>
 
 <style scoped>

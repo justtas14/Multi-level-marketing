@@ -3,28 +3,28 @@ export default {
         {
             path: '/admin',
             label: 'Home',
-            icon: "home"
+            icon: 'home',
         },
         {
             path: '/admin/emailtemplateslist',
             label: 'Email Templates',
-            icon: 'email'
+            icon: 'email',
         },
         {
             path: '/admin/endprelaunch',
             label: 'End Prelaunch',
-            icon: 'stop'
+            icon: 'stop',
         },
         {
             path: '/admin/changecontent',
             label: 'Change Content',
-            icon: 'edit'
+            icon: 'edit',
         },
         {
             path: '/admin/users',
             label: 'User Search',
             icon: 'search',
-            subRoute: ['user_search_details']
+            subRoute: ['user_search_details'],
         },
         {
             path: '/admin/gallery',
@@ -37,4 +37,4 @@ export default {
             icon: 'library_books',
         },
     ],
-}
+};

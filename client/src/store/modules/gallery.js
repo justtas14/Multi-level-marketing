@@ -6,21 +6,21 @@ const state = {
     dataLoaded: false,
     files: [],
     paginationInfo: {
-        'currentPage': 1,
+        currentPage: 1,
     },
     filesPerPage: 20,
     imageExtensions: [],
     category: 'all',
-    yesClickFn: function () {},
+    yesClickFn() {},
     notification: {
         display: 'none',
-        message: ''
+        message: '',
     },
     confirm: {
         display: 'none',
         message: '',
     },
-    spinner: false
+    spinner: false,
 };
 
 const getters = {
@@ -28,7 +28,7 @@ const getters = {
 };
 
 const actions = {
-    async callDataAxios({state, dispatch, commit}, filesPerPage = null) {
+    async callDataAxios({ commit }, filesPerPage = null) {
         if (filesPerPage) {
             state.filesPerPage = filesPerPage;
         }
@@ -36,44 +36,44 @@ const actions = {
             params: {
                 page: state.paginationInfo.currentPage,
                 imageLimit: state.filesPerPage,
-                category: state.category
-            }
+                category: state.category,
+            },
         });
         const data = {
             files: res.data.files,
             pagination: res.data.pagination,
             imageExtensions: res.data.imageExtensions,
-            imageTypes: res.data.imageTypes
+            imageTypes: res.data.imageTypes,
         };
         commit('setSpinnerState', false);
         commit('loadInfo', data);
     },
-    readURL: function ({state, dispatch, commit}, e) {
+    readURL({ dispatch, commit }, e) {
         const input = e.target;
         if (input.files && input.files[0]) {
             const reader = new FileReader();
 
-            reader.onload = (e) => {
+            reader.onload = () => {
                 const file = input.files[0];
                 commit('changeYesFn', () => {
-                    commit('changeConfirmation', {display:'none'});
+                    commit('changeConfirmation', { display: 'none' });
                     dispatch('saveToServer', file);
                     input.value = '';
                 });
                 input.value = '';
-                commit('changeConfirmation', {display: 'block', message: 'Add ' + file.name + ' file?'})
+                commit('changeConfirmation', { display: 'block', message: `Add ${file.name} file?` });
             };
             reader.readAsDataURL(input.files[0]);
         }
     },
-    handleFiles: function ({state, dispatch}, files) {
-        ([...files]).forEach(function (file) {
+    handleFiles({ dispatch }, files) {
+        ([...files]).forEach((file) => {
             dispatch('saveToServer', file);
         });
     },
-    saveToServer: function ({dispatch, state, commit}, file) {
+    saveToServer({ dispatch, commit }, file) {
         if (file.size > constants.maxAllowedSize) {
-            commit('showNotification', 'File ' +file.name+ ' is too large');
+            commit('showNotification', `File ${file.name} is too large`);
         } else if (file.name.length > constants.maxAllowedLength) {
             commit('showNotification', 'File name is too long');
         } else {
@@ -81,100 +81,99 @@ const actions = {
             fd.append('galleryFile', file);
             axios.post(constants.api.uploadFile, fd, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then(res => {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }).then((res) => {
                 switch (state.category) {
-                    case 'images':
-                        if (state.imageTypes.includes(res.data.file.mimeType)) {
-                            commit('insertImage', res.data.file);
-                        }
-                    break;
-                    case 'files' :
-                        if (!state.imageTypes.includes(res.data.file.mimeType)) {
-                            commit('insertImage', res.data.file);
-                        }
-                    break;
-                    default:
+                case 'images':
+                    if (state.imageTypes.includes(res.data.file.mimeType)) {
                         commit('insertImage', res.data.file);
+                    }
+                    break;
+                case 'files':
+                    if (!state.imageTypes.includes(res.data.file.mimeType)) {
+                        commit('insertImage', res.data.file);
+                    }
+                    break;
+                default:
+                    commit('insertImage', res.data.file);
                 }
-                commit('showNotification', 'File '+file.name+' added!');
+                commit('showNotification', `File ${file.name} added!`);
                 dispatch('callDataAxios');
-            }).catch(function (err) {
+            }).catch((err) => {
                 console.log(err);
             });
         }
     },
-    deleteRequestFunction: async function ({dispatch, state, commit}, params) {
-        let response = await axios.post(constants.api.removeFile, {
+    async deleteRequestFunction({ dispatch, commit }, params) {
+        const response = await axios.post(constants.api.removeFile, {
             params: {
                 galleryId: params.fileId,
-                fileId: params.galleryFileId
-            }
+                fileId: params.galleryFileId,
+            },
         });
         if (response.data.fileInUse) {
-            commit('showNotification','File ' + params.fileName + ' is already in use!');
+            commit('showNotification', `File ${params.fileName} is already in use!`);
             return false;
-        } else {
-            commit('deleteFile', params.fileId);
-            commit('subtractPage');
-            dispatch('callDataAxios');
-            commit('showNotification','File ' + params.fileName + ' deleted!');
-            return true;
         }
+        commit('deleteFile', params.fileId);
+        commit('subtractPage');
+        dispatch('callDataAxios');
+        commit('showNotification', `File ${params.fileName} deleted!`);
+        return true;
     },
 };
 
 const mutations = {
-    changeModalState: (state, flag) => {
+    changeModalState: (flag) => {
         state.modalState = flag;
     },
-    changeDataLoadState: (state, flag) => {
+    changeDataLoadState: (flag) => {
         state.dataLoaded = flag;
     },
-    changeEditorState: (state, flag) => {
+    changeEditorState: (flag) => {
         state.editor = flag;
     },
-    changeFilesPerPage: (state, filesPerPage) => {
+    changeFilesPerPage: (filesPerPage) => {
         state.filesPerPage = filesPerPage;
     },
-    changeCategory: (state, category) => {
+    changeCategory: (category) => {
         state.category = category;
     },
-    insertImage: (state, newFile) => {
+    insertImage: (newFile) => {
         if (state.files.length > 7) {
             state.files.pop();
         }
         state.files.unshift(newFile);
     },
-    deleteFile: (state, id) => {
+    deleteFile: (id) => {
         state.files = state.files.filter(file => file.id !== id);
     },
-    subtractPage: (state) => {
-        if (state.files.length === 0 && state.paginationInfo.currentPage != 1) {
-            state.paginationInfo.currentPage--;
+    subtractPage: () => {
+        if (state.files.length === 0 && state.paginationInfo.currentPage !== 1) {
+            state.paginationInfo.currentPage -= 1;
         }
     },
-    changePage: (state, {page, action}) => {
+    changePage: ({ page, action }) => {
         if (action == null) {
             state.paginationInfo.currentPage = page;
-        } else if (action == 'add') {
-            state.paginationInfo.currentPage++;
-        } else if (action == 'subtract') {
-            state.paginationInfo.currentPage--;
+        } else if (action === 'add') {
+            state.paginationInfo.currentPage += 1;
+        } else if (action === 'subtract') {
+            state.paginationInfo.currentPage -= 1;
         }
     },
-    changeYesFn: (state, fn) => {
+    changeYesFn: (fn) => {
         state.yesClickFn = fn;
     },
-    closeNotification: (state) => {
+    closeNotification: () => {
         state.notification.display = 'none';
     },
-    showNotification: (state, msg) => {
+    showNotification: (msg) => {
         state.notification.message = msg;
         state.notification.display = 'block';
     },
-    changeConfirmation: (state, obj) => {
+    changeConfirmation: (obj) => {
         if (obj.message) {
             state.confirm.message = obj.message;
         }
@@ -182,21 +181,21 @@ const mutations = {
             state.confirm.display = obj.display;
         }
     },
-    setSpinnerState: (state, flag) => {
+    setSpinnerState: (flag) => {
         state.spinner = flag;
     },
-    loadInfo: (state, {...data}) => {
+    loadInfo: ({ ...data }) => {
         state.files = data.files;
         state.paginationInfo = data.pagination;
         state.imageExtensions = data.imageExtensions;
         state.imageTypes = data.imageTypes;
         state.spinner = false;
-    }
+    },
 };
 
 export default {
     state,
     getters,
     actions,
-    mutations
+    mutations,
 };

@@ -1,18 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import UserSearch from './modules/user-search'
-import Security from './modules/security'
-import Gallery from './modules/gallery'
-import Logs from "./modules/logs"
-import Sidebar from "./modules/sidebar"
-import AdminHome from "./modules/adminHome"
-import AssociateHome from './modules/associateHome'
-import Invitation from './modules/invitation'
-import VuexPersist from 'vuex-persist'
+import VuexPersist from 'vuex-persist';
+import UserSearch from './modules/user-search';
+import Security from './modules/security';
+import Gallery from './modules/gallery';
+import Logs from './modules/logs';
+import Sidebar from './modules/sidebar';
+import AdminHome from './modules/adminHome';
+import AssociateHome from './modules/associateHome';
+import Invitation from './modules/invitation';
 
 const vuexPersist = new VuexPersist({
     key: 'my-app',
-    storage: window.localStorage
+    storage: window.localStorage,
 });
 
 Vue.use(Vuex);
@@ -21,36 +21,36 @@ export default new Vuex.Store({
     modules: {
         UserSearch: {
             namespaced: true,
-            ...UserSearch
+            ...UserSearch,
         },
         Security: {
             namespaced: true,
-            ...Security
+            ...Security,
         },
         Gallery: {
             namespaced: true,
-            ...Gallery
+            ...Gallery,
         },
         Logs: {
             namespaced: true,
-            ...Logs
+            ...Logs,
         },
         Sidebar: {
             namespaced: true,
-            ...Sidebar
+            ...Sidebar,
         },
         AdminHome: {
             namespaced: true,
-            ...AdminHome
+            ...AdminHome,
         },
         AssociateHome: {
             namespaced: true,
-            ...AssociateHome
+            ...AssociateHome,
         },
         Invitation: {
             namespaced: true,
-            ...Invitation
-        }
+            ...Invitation,
+        },
     },
-    plugins: [vuexPersist.plugin]
-})
+    plugins: [vuexPersist.plugin],
+});

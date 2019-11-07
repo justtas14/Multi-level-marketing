@@ -10,40 +10,42 @@
 </template>
 
 <script>
-    import '../css/Sidebar.scss'
-    import Logo from "./Logo";
-    import Profile from "./Profile";
-    import MenuItems from "./MenuItems";
-    import { mapActions, mapMutations, mapState, mapGetters } from 'vuex';
+import '../css/Sidebar.scss';
+import {
+    mapState, mapGetters,
+} from 'vuex';
+import Logo from './Logo.vue';
+import Profile from './Profile.vue';
+import MenuItems from './MenuItems.vue';
 
-    export default {
-        name: "Sidebar",
-        components: {
-            Logo,
-            Profile,
-            MenuItems
-        },
-        props: [],
-        data() {
-            return {
+export default {
+    name: 'Sidebar',
+    components: {
+        Logo,
+        Profile,
+        MenuItems,
+    },
+    props: [],
+    data() {
+        return {
 
-            }
-        },
-        methods: {
+        };
+    },
+    methods: {
 
-        },
-        computed: {
-            ...mapState('Sidebar', [
-                'configuration'
-            ]),
-            ...mapGetters('Security', [
-                'getAssociate'
-            ]),
-        },
-        created() {
+    },
+    computed: {
+        ...mapState('Sidebar', [
+            'configuration',
+        ]),
+        ...mapGetters('Security', [
+            'getAssociate',
+        ]),
+    },
+    created() {
 
-        }
-    }
+    },
+};
 </script>
 
 <style scoped>
