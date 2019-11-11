@@ -1,7 +1,7 @@
 import axios from 'axios';
 import constants from '../../constants/constants';
 
-const state = {
+const initialState = {
     modalState: false,
     dataLoaded: false,
     files: [],
@@ -28,7 +28,7 @@ const getters = {
 };
 
 const actions = {
-    async callDataAxios({ commit }, filesPerPage = null) {
+    async callDataAxios({ state, commit }, filesPerPage = null) {
         if (filesPerPage) {
             state.filesPerPage = filesPerPage;
         }
@@ -71,7 +71,7 @@ const actions = {
             dispatch('saveToServer', file);
         });
     },
-    saveToServer({ dispatch, commit }, file) {
+    saveToServer({ state, dispatch, commit }, file) {
         if (file.size > constants.maxAllowedSize) {
             commit('showNotification', `File ${file.name} is too large`);
         } else if (file.name.length > constants.maxAllowedLength) {
@@ -125,36 +125,36 @@ const actions = {
 };
 
 const mutations = {
-    changeModalState: (flag) => {
+    changeModalState: (state, flag) => {
         state.modalState = flag;
     },
-    changeDataLoadState: (flag) => {
+    changeDataLoadState: (state, flag) => {
         state.dataLoaded = flag;
     },
-    changeEditorState: (flag) => {
+    changeEditorState: (state, flag) => {
         state.editor = flag;
     },
-    changeFilesPerPage: (filesPerPage) => {
+    changeFilesPerPage: (state, filesPerPage) => {
         state.filesPerPage = filesPerPage;
     },
-    changeCategory: (category) => {
+    changeCategory: (state, category) => {
         state.category = category;
     },
-    insertImage: (newFile) => {
+    insertImage: (state, newFile) => {
         if (state.files.length > 7) {
             state.files.pop();
         }
         state.files.unshift(newFile);
     },
-    deleteFile: (id) => {
+    deleteFile: (state, id) => {
         state.files = state.files.filter(file => file.id !== id);
     },
-    subtractPage: () => {
+    subtractPage: (state) => {
         if (state.files.length === 0 && state.paginationInfo.currentPage !== 1) {
             state.paginationInfo.currentPage -= 1;
         }
     },
-    changePage: ({ page, action }) => {
+    changePage: (state, { page, action }) => {
         if (action == null) {
             state.paginationInfo.currentPage = page;
         } else if (action === 'add') {
@@ -163,17 +163,17 @@ const mutations = {
             state.paginationInfo.currentPage -= 1;
         }
     },
-    changeYesFn: (fn) => {
+    changeYesFn: (state, fn) => {
         state.yesClickFn = fn;
     },
-    closeNotification: () => {
+    closeNotification: (state) => {
         state.notification.display = 'none';
     },
-    showNotification: (msg) => {
+    showNotification: (state, msg) => {
         state.notification.message = msg;
         state.notification.display = 'block';
     },
-    changeConfirmation: (obj) => {
+    changeConfirmation: (state, obj) => {
         if (obj.message) {
             state.confirm.message = obj.message;
         }
@@ -181,10 +181,10 @@ const mutations = {
             state.confirm.display = obj.display;
         }
     },
-    setSpinnerState: (flag) => {
+    setSpinnerState: (state, flag) => {
         state.spinner = flag;
     },
-    loadInfo: ({ ...data }) => {
+    loadInfo: (state, { ...data }) => {
         state.files = data.files;
         state.paginationInfo = data.pagination;
         state.imageExtensions = data.imageExtensions;
@@ -194,7 +194,7 @@ const mutations = {
 };
 
 export default {
-    state,
+    initialState,
     getters,
     actions,
     mutations,

@@ -28,10 +28,6 @@
                     Forgot your password?
                     <a href="#">Click here</a>
                 </div>
-                <div id="loggingLogs">
-                    <span v-if="isLoading">Loading...</span>
-                    <span class="successLoggedIn" v-if="isLoggedIn">Success!</span>
-                </div>
                 <div class="login-buttonWrap">
                     <button
                         class="waves-effect waves-light btn"
@@ -40,14 +36,21 @@
                         :disabled="email.length === 0 || password.length === 0 || isLoading"
                         @click="performLogin()"
                     >
+                    <div v-if="this.isLoading" class="Spinner__Container">
+                        <div class="lds-dual-ring buttonSpinner"/>
+                    </div>
                         Login
                     </button>
                 </div>
-
             </form>
-        </div>
-        <div class="login-errorMessageContainer" v-if="hasError">
-            <Error v-bind:message="error"></Error>
+            <div id="loggingLogs">
+                <div class="login-errorMessageContainer" v-if="hasError">
+                    <Error v-bind:message="error"></Error>
+                </div>
+                <div class="login-successMessageContainer" v-if="isLoggedIn">
+                    <Success v-bind:message="'Success'"></Success>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -59,11 +62,13 @@ import {
 } from 'vuex';
 import plumTreeLogo from '../../../../public/img/plum_tree_logo.png';
 import Error from '../../../components/Messages/Error.vue';
+import Success from '../../../components/Messages/Success.vue';
 
 export default {
     name: 'Login',
     components: {
         Error,
+        Success,
     },
     props: [],
     data() {
@@ -77,10 +82,10 @@ export default {
         async performLogin() {
             const payload = { login: this.email, password: this.password };
             const { redirect } = this.$route.query;
-
             await this.login(payload);
             if (!this.hasError) {
-                await this.loadAssociate();
+                const dependencies = { router: this.$router };
+                await this.loadAssociate(dependencies);
                 if (typeof redirect !== 'undefined') {
                     this.$router.push({ path: redirect });
                 } else if (this.isAdmin) {

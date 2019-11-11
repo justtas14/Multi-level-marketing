@@ -30,16 +30,13 @@
         {% endblock %}
         {% block javascripts %}
             <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
             <script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=#{property?._id}&product=custom-share-buttons"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
-            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
             <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-            <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>
-            <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>
+{#            <script src="{{ asset('assets/js/explorer_runtime_main.js') }}" async></script>#}
+{#            <script src="{{ asset('assets/js/explorer_2.js') }}" async></script>#}
             <script src="{{ asset('assets/js/sidebar.js') }}" async></script>
         {% endblock %}
     </body>

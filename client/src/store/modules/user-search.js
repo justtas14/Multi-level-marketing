@@ -1,4 +1,4 @@
-const state = {
+const initialState = {
     associates: [],
     paginationInfo: {
         numberOfPages: 1,
@@ -19,16 +19,16 @@ const actions = {
 };
 
 const mutations = {
-    setSpinnerState: (flag) => {
+    setSpinnerState: (state, flag) => {
         state.spinner = flag;
     },
-    loadData: ({ ...data }) => {
+    loadData: (state, { ...data }) => {
         state.associates = data.associates;
         state.paginationInfo.currentPage = data.currentPage;
         state.paginationInfo.numberOfPages = data.numberOfPages;
         state.spinner = false;
     },
-    updateSearchVal: ({ ...params }) => {
+    updateSearchVal: (state, { ...params }) => {
         switch (params.name) {
         case 'name':
             state.nameSearchVal = params.input;
@@ -43,7 +43,7 @@ const mutations = {
             break;
         }
     },
-    changePage: ({ page, action }) => {
+    changePage: (state, { page, action }) => {
         if (action == null) {
             state.paginationInfo.currentPage = page;
         } else if (action === 'add') {
@@ -55,7 +55,7 @@ const mutations = {
 };
 
 export default {
-    state,
+    initialState,
     getters,
     actions,
     mutations,

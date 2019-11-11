@@ -1,9 +1,10 @@
 import SecurityAPI from '../api/SecurityApi/apiCalls';
 
-const state = {
+const initialState = {
     isLoading: false,
     isLoadingForm: false,
     isLoadingSentInvitations: false,
+    isResendBtnLoading: true,
     formErrors: null,
     sent: null,
     invitations: null,
@@ -19,10 +20,14 @@ const getters = {
 const actions = {
     async submitInvitationForm({ commit, rootState }, payload) {
         commit('setIsLoadingForm');
-        const response = await SecurityAPI.authenticateInvitationPostApi(
+        const SecurityApiObj = new SecurityAPI(
+            payload.dependencies.logout,
+            payload.dependencies.router,
+        );
+        const response = await SecurityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
-            payload,
+            payload.formData,
         );
         if (response.data.formErrors) {
             commit('setErrors', response.data.formErrors);
@@ -31,29 +36,36 @@ const actions = {
         }
     },
     async resendInvitation({ commit, rootState }, payload) {
-        const response = await SecurityAPI.authenticateInvitationPostApi(
+        commit('setIsLoadingResendBtn');
+        const SecurityApiObj = new SecurityAPI(
+            payload.dependencies.logout,
+            payload.dependencies.router,
+        );
+        const response = await SecurityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
-            payload,
+            payload.params,
         );
         commit('setSent', response.data.sent);
     },
-    async changePage({ commit, rootState }) {
+    async changePage({ state, commit, rootState }, dependencies) {
         commit('setIsLoadingSentInvitations');
         const payload = {
             page: state.pagination.currentPage,
         };
-        console.log(payload);
-        const response = await SecurityAPI.authenticateInvitationPostApi(
+        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
+        const response = await SecurityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
             payload,
         );
         commit('setGeneralInvitationInfo', response.data);
     },
-    async invitationHome({ commit, rootState }, payload = {}) {
+    async invitationHome({ commit, rootState }, dependencies) {
         commit('setIsLoading');
-        const response = await SecurityAPI.authenticateInvitationPostApi(
+        const payload = {};
+        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
+        const response = await SecurityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
             payload,
@@ -63,30 +75,35 @@ const actions = {
 };
 
 const mutations = {
-    setIsLoading: () => {
+    setIsLoading: (state) => {
         state.isLoading = true;
     },
-    setIsLoadingForm: () => {
+    setIsLoadingForm: (state) => {
         state.isLoadingForm = true;
     },
-    setIsLoadingSentInvitations: () => {
+    setIsLoadingSentInvitations: (state) => {
         state.isLoadingSentInvitations = true;
     },
-    setErrors: (errors) => {
+    setIsLoadingResendBtn: (state) => {
+        state.isResendBtnLoading = true;
+    },
+    setErrors: (state, errors) => {
         state.isLoadingForm = false;
         state.formErrors = errors;
     },
-    setSent: (sent) => {
+    setSent: (state, sent) => {
         state.isLoadingForm = false;
+        state.isResendBtnLoading = false;
         state.formErrors = null;
         state.sent = sent;
     },
-    setNotSent: () => {
+    setNotSent: (state) => {
         state.isLoadingForm = false;
+        state.isResendBtnLoading = false;
         state.formErrors = null;
         state.sent = null;
     },
-    setGeneralInvitationInfo: (data) => {
+    setGeneralInvitationInfo: (state, data) => {
         state.isLoading = false;
         state.isLoadingSentInvitations = false;
         state.invitations = data.invitations;
@@ -95,7 +112,7 @@ const mutations = {
         state.siteKey = data.siteKey;
         state.submitLabel = data.submitLabel;
     },
-    changePagination: ({ page, action }) => {
+    changePagination: (state, { page, action }) => {
         if (action == null) {
             state.pagination.currentPage = page;
         } else if (action === 'add') {
@@ -107,7 +124,7 @@ const mutations = {
 };
 
 export default {
-    state,
+    initialState,
     getters,
     actions,
     mutations,

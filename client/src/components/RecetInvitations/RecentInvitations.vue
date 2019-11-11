@@ -15,6 +15,7 @@
                 v-for="(invitation, key) in invitations"
                 :key="key"
                 v-bind:invitation="invitation"
+                v-bind:dependencies="dependencies"
             >
             </InvitationAbout>
             </tbody>
@@ -37,7 +38,7 @@ export default {
         InvitationAbout,
         Pagination,
     },
-    props: ['invitations', 'paginationInfo'],
+    props: ['invitations', 'paginationInfo', 'dependencies'],
 };
 </script>
 

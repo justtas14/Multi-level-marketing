@@ -57,13 +57,13 @@
 }
 
 .login-buttonWrap {
-  margin: 30px auto 20px auto;
+  margin: 50px auto 20px auto;
   width: 75px;
 }
 
-.login-errorMessageContainer, .profile-errorMessageContainer {
+.login-errorMessageContainer, .login-successMessageContainer {
+  width: 50%;
   margin: auto;
-  color: #d92121;
 }
 
 #resetPassword {
@@ -73,13 +73,9 @@
 
 #loggingLogs {
   font-size: 1.1em;
-  height: 20px;
-  margin: 25px auto 0 auto;
+  height: 35px;
+  margin: 20px auto 0 auto;
   text-align: center;
-}
-
-.successLoggedIn {
-  color: #047408;
 }
 
 @media screen and (max-width: 668px) {

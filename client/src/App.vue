@@ -1,5 +1,5 @@
 <template>
-    <div id="main">
+    <div id="app">
       <Sidebar v-if="this.isAuthenticated && this.getAssociate"></Sidebar>
       <keep-alive>
         <router-view></router-view>
@@ -9,6 +9,11 @@
 
 <script>
 import './assets/css/Main.scss';
+import './assets/css/admin.scss';
+import './assets/css/associate.scss';
+import './assets/css/header.scss';
+import './assets/css/hamburgers.scss';
+
 import {
     mapActions, mapMutations, mapState, mapGetters,
 } from 'vuex';
@@ -65,6 +70,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-</style>

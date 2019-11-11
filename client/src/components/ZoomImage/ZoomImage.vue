@@ -13,12 +13,8 @@
         <transition name="enlarge"
                 v-on:before-enter="beforeEnter"
                 v-on:enter="enter"
-                v-on:after-enter="afterEnter"
-                v-on:enter-cancelled="enterCancelled"
                 v-on:before-leave="beforeLeave"
                 v-on:leave="leave"
-                v-on:after-leave="afterLeave"
-                v-on:leave-cancelled="leaveCancelled"
                 v-bind:css="false"
         >
             <img
@@ -33,6 +29,7 @@
 
 <script>
 import './css/zoomImage.scss';
+import Velocity from 'velocity-animate';
 
 export default {
     name: 'zoomImage',
@@ -69,26 +66,25 @@ export default {
         },
 
         beforeEnter(el) {
-            const {style} = el;
             this.setCordinates(this.centeredImage, this.centerImagePosition);
             this.setCordinates(this.currentImage, this.currentImagePosition);
 
             const keepAlignedCentered = () => {
                 const rect = this.centeredImage.getBoundingClientRect();
-                style.left = `${rect.left + this.errorOfCalc}px`;
-                style.top = `${rect.top + this.errorOfCalc}px`;
-                style.bottom = `${rect.bottom + this.errorOfCalc}px`;
-                style.right = `${rect.right + this.errorOfCalc}px`;
+                el.style.left = `${rect.left + this.errorOfCalc}px`;
+                el.style.top = `${rect.top + this.errorOfCalc}px`;
+                el.style.bottom = `${rect.bottom + this.errorOfCalc}px`;
+                el.style.right = `${rect.right + this.errorOfCalc}px`;
             };
 
             window.removeEventListener('resize', keepAlignedCentered);
             window.addEventListener('resize', keepAlignedCentered);
 
-            style.scale = 1;
-            style.left = `${this.currentImagePosition.left}px`;
-            style.top = `${this.currentImagePosition.top}px`;
-            style.bottom = `${this.currentImagePosition.bottom}px`;
-            style.right = `${this.currentImagePosition.right}px`;
+            el.style.scale = 1;
+            el.style.left = `${this.currentImagePosition.left}px`;
+            el.style.top = `${this.currentImagePosition.top}px`;
+            el.style.bottom = `${this.currentImagePosition.bottom}px`;
+            el.style.right = `${this.currentImagePosition.right}px`;
         },
         enter(el, done) {
             Velocity(el, {
@@ -101,7 +97,7 @@ export default {
             done();
         },
 
-        beforeLeave(el) {
+        beforeLeave() {
             this.isLeaving = true;
             setTimeout(() => {
                 this.isLeaving = false;

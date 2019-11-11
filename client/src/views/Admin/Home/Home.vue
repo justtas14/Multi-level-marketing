@@ -3,8 +3,7 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Business Shape</span>
-                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
-                 v-bind:style="{top: 0, 'z-index': 9999}">
+                <div v-if="isLoading" class="Spinner__Container">
                     <div class="lds-dual-ring"/>
                 </div>
                 <BusinessShape
@@ -15,7 +14,7 @@
                 >
                 </BusinessShape>
                 <div class="adminBusinessShape__buttonContainer">
-                    <a @click="this.downloadCSV" class="waves-effect waves-light btn"
+                    <a @click="downloadCsv" class="waves-effect waves-light btn"
                      target="_blank">Download CSV</a>
                 </div>
             </div>
@@ -32,7 +31,7 @@
 
 <script>
 import {
-    mapActions, mapState, mapGetters,
+    mapActions, mapState, mapGetters, mapMutations,
 } from 'vuex';
 import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
 import './css/Home.scss';
@@ -49,12 +48,21 @@ export default {
         };
     },
     methods: {
-
+        downloadCsv() {
+            const dependencies = {
+                logout: this.logout,
+                router: this.$router,
+            };
+            this.downloadCSV(dependencies);
+        },
         ...mapActions('AdminHome', [
             'adminHomeApi',
         ]),
         ...mapActions('Sidebar', [
             'downloadCSV',
+        ]),
+        ...mapMutations('Security', [
+            'logout',
         ]),
     },
     mounted() {
@@ -70,11 +78,14 @@ export default {
         ]),
     },
     async created() {
-        await this.adminHomeApi();
+        const dependencies = {
+            router: this.$router,
+            logout: this.logout,
+        };
+        await this.adminHomeApi(dependencies);
     },
 };
 </script>
 
 <style scoped>
-
 </style>

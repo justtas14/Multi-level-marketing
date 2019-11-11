@@ -14,7 +14,7 @@
                 <a @click="goToRoute(route.path)">{{ route.label }}</a>
             </div>
         </div>
-        <div v-if="isAdmin" @click="this.downloadCSV" class="sidebar-item">
+        <div v-if="isAdmin" @click="downloadCsv" class="sidebar-item">
             <i class="material-icons materialDesignIcons">supervised_user_circle</i>
             <a>Associate csv dump</a>
         </div>
@@ -63,6 +63,13 @@ export default {
         };
     },
     methods: {
+        downloadCsv() {
+            const dependencies = {
+                logout: this.logout,
+                router: this.$router,
+            };
+            this.downloadCSV(dependencies);
+        },
         goToRoute(path) {
             this.setCurrentPath(path);
             this.$router.push({ path });

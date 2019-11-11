@@ -13,7 +13,7 @@ const routes = [
     { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
     { path: '/associate/invite', component: Invite, meta: { requiresAuth: true } },
     { path: '/admin', component: AdminHome, meta: { requiresAuth: true } },
-    // { path: "*", redirect: "/home" }
+    // { path: "*", redirect: "/" }
 ];
 
 

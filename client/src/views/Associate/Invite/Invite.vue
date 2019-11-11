@@ -3,8 +3,7 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Invitation</span>
-                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
-                 v-bind:style="{top: 0, 'z-index': 9999}">
+                <div v-if="isLoading" class="Spinner__Container">
                     <div class="lds-dual-ring"/>
                 </div>
                 <div v-if="this.sent && this.sent.completed === true" style="padding: 20px 0">
@@ -16,6 +15,7 @@
                     v-else-if="this.siteKey"
                     v-bind:siteKey="this.siteKey"
                     v-bind:submitLabel="this.submitLabel"
+                    v-bind:dependencies="this.dependencies"
                 >
                 </Invitation>
             </div>
@@ -23,8 +23,7 @@
         <div v-if="!this.sent" class="card">
             <div class="card-content">
                 <span class="card-title invitationLinkTitle">Invitation link</span>
-                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
-                 v-bind:style="{top: 0, 'z-index': 9999}">
+                <div v-if="isLoading" class="Spinner__Container">
                     <div class="lds-dual-ring"/>
                 </div>
                 <div class="invitationAboutText">
@@ -52,13 +51,13 @@
             <div class="card-content">
                 <span class="card-title">Sent Invitations</span>
                     <div v-if="isLoading || isLoadingSentInvitations"
-                    class="Spinner__Container user__search__spiner"
-                     v-bind:style="{top: 0, 'z-index': 9999}">
+                    class="Spinner__Container">
                         <div class="lds-dual-ring"/>
                     </div>
                     <RecentInvitations
                         v-bind:invitations="invitations"
                         v-bind:paginationInfo="pagination"
+                        v-bind:dependencies="dependencies"
                     >
                     </RecentInvitations>
             </div>
@@ -85,6 +84,7 @@ Vue.component(VueQrcode.name, VueQrcode);
 export default {
     name: 'Invite',
     props: [],
+    dependencies: null,
     components: {
         Invitation,
         invitationLink,
@@ -102,7 +102,7 @@ export default {
         async goToRoute(path) {
             this.setNotSent();
             this.setCurrentPath(path);
-            await this.invitationHome();
+            await this.invitationHome(this.dependencies);
         },
         ...mapMutations('Invitation', [
             'setNotSent',
@@ -116,6 +116,9 @@ export default {
             'changePage',
             'changePage',
         ]),
+        ...mapMutations('Security', [
+            'logout',
+        ]),
     },
     mounted() {
         const barCodeImage = document.querySelector('.barCodeImage');
@@ -125,18 +128,18 @@ export default {
             const page = null; const
                 action = 'subtract';
             this.changePagination({ page, action });
-            await this.changePage();
+            await this.changePage(this.dependencies);
         });
         EventBus.$on('nextPage', async () => {
             const action = 'add'; const
                 page = null;
             this.changePagination({ page, action });
-            await this.changePage();
+            await this.changePage(this.dependencies);
         });
         EventBus.$on('page', async (page) => {
             const action = null;
             this.changePagination({ page, action });
-            await this.changePage();
+            await this.changePage(this.dependencies);
         });
     },
     computed: {
@@ -155,11 +158,15 @@ export default {
         ]),
     },
     async created() {
-        await this.invitationHome();
+        const dependencies = {
+            router: this.$router,
+            logout: this.logout,
+        };
+        this.dependencies = dependencies;
+        await this.invitationHome(dependencies);
     },
 };
 </script>
 
 <style scoped>
-
 </style>

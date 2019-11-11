@@ -1,20 +1,20 @@
 import axios from 'axios';
 import SecurityAPI from '../api/SecurityApi/apiCalls';
 
-const state = {
+const initialState = {
     configuration: null,
     currentPath: '',
 };
 
 const getters = {
-    checkConfigurationMainLogo: () => {
+    checkConfigurationMainLogo: (state) => {
         if (state.configuration) {
             return !!state.configuration.mainLogoPath;
         }
         return false;
     },
 
-    checkConfigurationTermsOfService: () => {
+    checkConfigurationTermsOfService: (state) => {
         if (state.configuration) {
             return !!state.configuration.termsOfServices;
         }
@@ -27,8 +27,9 @@ const actions = {
         const response = await axios.get('/api/configuration');
         commit('setConfiguration', response.data.configuration);
     },
-    async downloadCSV({ rootState }) {
-        const response = await SecurityAPI.downloadCSVApi(rootState.Security.token);
+    async downloadCSV({ rootState }, dependencies) {
+        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
+        const response = await SecurityApiObj.downloadCSVApi(rootState.Security.token);
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
@@ -40,16 +41,16 @@ const actions = {
 };
 
 const mutations = {
-    setConfiguration: (configuration) => {
+    setConfiguration: (state, configuration) => {
         state.configuration = configuration;
     },
-    setCurrentPath: (currentPath) => {
+    setCurrentPath: (state, currentPath) => {
         state.currentPath = currentPath;
     },
 };
 
 export default {
-    state,
+    initialState,
     getters,
     actions,
     mutations,

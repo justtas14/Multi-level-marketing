@@ -5,12 +5,12 @@
             <div class="invitation-item" >
                 <div class="input-field col s12">
                     <input
-                            type="text"
-                            id="invitation_fullName"
-                            name="invitation[fullName]"
-                            required="required"
-                            v-model="fullName"
-                            class="validate"
+                        type="text"
+                        id="invitation_fullName"
+                        name="invitation[fullName]"
+                        required="required"
+                        v-model="fullName"
+                        class="validate"
                     >
                     <label for="invitation_fullName" class="required">Full name</label>
                     <Error v-if="this.formErrors && this.formErrors.invalidFullName"
@@ -20,12 +20,12 @@
             <div class="invitation-item" >
                 <div class="input-field col s12">
                     <input
-                            id="invitation_email"
-                            name="invitation[email]"
-                            required="required"
-                            class="validate"
-                            v-model="invitationEmail"
-                            type="email"
+                        id="invitation_email"
+                        name="invitation[email]"
+                        required="required"
+                        class="validate"
+                        v-model="invitationEmail"
+                        type="email"
                     >
                     <label for="invitation_email" class="required">Email</label>
                     <Error v-if="this.formErrors && this.formErrors.invalidEmail"
@@ -35,15 +35,18 @@
             <Recaptcha v-if="siteKey" v-bind:siteKey="siteKey"/>
             <div class="invitation-buttonWrap">
                 <button
-                        id="invitation_submit"
-                        name="invitation[submit]"
-                        class="waves-effect waves-light btn"
-                        :disabled="invitationEmail.length === 0 ||
-                         fullName.length === 0 || isFormLoading"
-                        type="button"
-                        style="background-color: #3ab54a"
-                        @click="sendInvitation"
+                    id="invitation_submit"
+                    name="invitation[submit]"
+                    class="waves-effect waves-light btn"
+                    :disabled="invitationEmail.length === 0 ||
+                        fullName.length === 0 || isLoadingForm"
+                    type="button"
+                    style="background-color: #3ab54a"
+                    @click="sendInvitation"
                 >
+                <div v-if="this.isLoadingForm" class="Spinner__Container">
+                    <div class="lds-dual-ring buttonSpinner"/>
+                </div>
                     {{ submitLabel }}
                 </button>
             </div>
@@ -68,7 +71,7 @@ export default {
         Messages,
         Error,
     },
-    props: ['siteKey', 'submitLabel'],
+    props: ['siteKey', 'submitLabel', 'dependencies'],
     data() {
         return {
             invitationEmail: '',
@@ -78,8 +81,11 @@ export default {
     methods: {
         sendInvitation() {
             const payload = {
-                invitationEmail: this.invitationEmail,
-                fullName: this.fullName,
+                formData: {
+                    invitationEmail: this.invitationEmail,
+                    fullName: this.fullName,
+                },
+                dependencies: this.dependencies,
             };
             this.submitInvitationForm(payload);
         },
@@ -89,7 +95,7 @@ export default {
     },
     computed: {
         ...mapState('Invitation', [
-            'isFormLoading',
+            'isLoadingForm',
             'formErrors',
         ]),
     },

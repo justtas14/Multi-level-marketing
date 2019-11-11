@@ -21,8 +21,7 @@
                         </a>
                     </div>
                 </div>
-                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
-                 v-bind:style="{top: 0, 'z-index': 9999}">
+                <div v-if="isLoading" class="Spinner__Container">
                     <div class="lds-dual-ring"/>
                 </div>
                 <BusinessShape
@@ -137,6 +136,9 @@ export default {
         ...mapMutations('Sidebar', [
             'setCurrentPath',
         ]),
+        ...mapMutations('Security', [
+            'logout',
+        ]),
     },
     mounted() {
     },
@@ -157,7 +159,11 @@ export default {
         ]),
     },
     async created() {
-        await this.associateHomeApi();
+        const dependencies = {
+            router: this.$router,
+            logout: this.logout,
+        };
+        await this.associateHomeApi(dependencies);
     },
 };
 </script>

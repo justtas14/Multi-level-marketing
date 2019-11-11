@@ -17,6 +17,7 @@ module.exports = {
             mjs: 'never',
             jsx: 'never',
         }],
+        'no-param-reassign': [2, { props: false }],
     },
     parserOptions: {
         parser: 'babel-eslint',

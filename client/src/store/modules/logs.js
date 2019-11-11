@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const state = {
+const initialState = {
     logs: [],
     paginationInfo: {
         numberOfPages: 1,
@@ -14,7 +14,7 @@ const getters = {
 };
 
 const actions = {
-    async findAll({ commit }) {
+    async findAll({ state, commit }) {
         const res = await axios.get('/admin/get-logs', {
             params: {
                 page: state.paginationInfo.currentPage,
@@ -39,16 +39,16 @@ const actions = {
 };
 
 const mutations = {
-    setSpinnerState: (flag) => {
+    setSpinnerState: (state, flag) => {
         state.spinner = flag;
     },
-    loadData: ({ ...data }) => {
+    loadData: (state, { ...data }) => {
         state.logs = data.logs;
         state.paginationInfo.currentPage = data.pagination.currentPage;
         state.paginationInfo.numberOfPages = data.pagination.maxPage;
         state.spinner = false;
     },
-    changePage: ({ page, action }) => {
+    changePage: (state, { page, action }) => {
         if (action == null) {
             state.paginationInfo.currentPage = page;
         } else if (action === 'add') {
@@ -60,7 +60,7 @@ const mutations = {
 };
 
 export default {
-    state,
+    initialState,
     getters,
     actions,
     mutations,
