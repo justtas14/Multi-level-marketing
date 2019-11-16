@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import './css/zoomImage.scss';
 import Velocity from 'velocity-animate';
 
 export default {
@@ -138,5 +137,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/zoomImage.scss';
 </style>

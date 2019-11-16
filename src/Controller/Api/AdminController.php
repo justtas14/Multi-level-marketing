@@ -870,12 +870,12 @@ class AdminController extends AbstractController
      */
     public function removeFile(Request $request, GaufretteFileManager $gaufretteFileManager)
     {
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod('DELETE')) {
             $content = $request->getContent();
             $ids = json_decode($content, true);
 
-            $galleryId = $ids['params']['galleryId'];
-            $fileId = $ids['params']['fileId'];
+            $galleryId = $ids['parameters']['galleryId'];
+            $fileId = $ids['parameters']['fileId'];
 
             $em = $this->getDoctrine()->getManager();
 
@@ -1005,7 +1005,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @OA\Post(
+     * @OA\Get(
      *     path="/api/admin/get-logs",
      *     @OA\Parameter(
      *         in="query",
@@ -1020,7 +1020,7 @@ class AdminController extends AbstractController
      */
 
     /**
-     * @Rest\Post("/admin/get-logs", name="get_logs")
+     * @Rest\Get("/admin/get-logs", name="get_logs")
      * @param Request $request
      * @return Response
      * @throws ExceptionInterface
@@ -1030,7 +1030,7 @@ class AdminController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $logRepository = $em->getRepository(Log::class);
 
-        $page = $request->get('page', 1);
+        $page = $request->query->all()['page'];
 
         if (!is_numeric($page)) {
             throw new WrongPageNumberException();

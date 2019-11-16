@@ -15,7 +15,6 @@
                     v-else-if="this.siteKey"
                     v-bind:siteKey="this.siteKey"
                     v-bind:submitLabel="this.submitLabel"
-                    v-bind:dependencies="this.dependencies"
                 >
                 </Invitation>
             </div>
@@ -57,7 +56,6 @@
                     <RecentInvitations
                         v-bind:invitations="invitations"
                         v-bind:paginationInfo="pagination"
-                        v-bind:dependencies="dependencies"
                     >
                     </RecentInvitations>
             </div>
@@ -77,14 +75,12 @@ import zoomImage from '../../../components/ZoomImage/ZoomImage.vue';
 import share from '../../../components/Share/Share.vue';
 import RecentInvitations from '../../../components/RecetInvitations/RecentInvitations.vue';
 import EventBus from '../../../components/Pagination/EventBus/EventBus';
-import './css/Invite.scss';
 
 Vue.component(VueQrcode.name, VueQrcode);
 
 export default {
     name: 'Invite',
     props: [],
-    dependencies: null,
     components: {
         Invitation,
         invitationLink,
@@ -102,7 +98,7 @@ export default {
         async goToRoute(path) {
             this.setNotSent();
             this.setCurrentPath(path);
-            await this.invitationHome(this.dependencies);
+            await this.invitationHome();
         },
         ...mapMutations('Invitation', [
             'setNotSent',
@@ -128,18 +124,18 @@ export default {
             const page = null; const
                 action = 'subtract';
             this.changePagination({ page, action });
-            await this.changePage(this.dependencies);
+            await this.changePage();
         });
         EventBus.$on('nextPage', async () => {
             const action = 'add'; const
                 page = null;
             this.changePagination({ page, action });
-            await this.changePage(this.dependencies);
+            await this.changePage();
         });
         EventBus.$on('page', async (page) => {
             const action = null;
             this.changePagination({ page, action });
-            await this.changePage(this.dependencies);
+            await this.changePage();
         });
     },
     computed: {
@@ -158,15 +154,11 @@ export default {
         ]),
     },
     async created() {
-        const dependencies = {
-            router: this.$router,
-            logout: this.logout,
-        };
-        this.dependencies = dependencies;
-        await this.invitationHome(dependencies);
+        await this.invitationHome();
     },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/Invite.scss';
 </style>

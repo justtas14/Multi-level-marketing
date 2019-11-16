@@ -39,69 +39,14 @@
     bottom: auto;
     z-index: 50;
   }
-  .sidebar-itemLast {
-  }
   .sidebar-label {
     display: inline-block;
     cursor: pointer;
   }
-  .sidebar-logo {
-    z-index: 999999;
-    max-height: 50px;
-    margin-left: 40px;
-    padding: unset;
-    width: 100%;
-    height: 100%;
-  }
-  .sidebar-menu-inactive {
-    /*display: block;*/
-    position: fixed;
-    /*width: 100%;*/
-    z-index: 20;
-    width: 100%;
-    display: block;
-    animation : adminMenuFadeBack 0.25s ease-out forwards;
-  }
-
-  .sidebar-profileContainer-inactive {
-    display: block;
-    position: fixed;
-    z-index: 20;
-    width: 100%;
-    animation : adminMenuFadeBack 0.25s ease-out forwards;
-    /*display: none;*/
-  }
-  .sidebar-logoContainer {
-    height: unset;
-    display: grid;
-    grid-template-columns: 5fr 1fr;
-    justify-items: center;
-  }
 }
 
 @media screen and (min-width: 801px) {
-  .sidebar, .sidebar-menu {
+  .sidebar{
     overflow-y: auto;
-  }
-
-  .sidebar-logo {
-    width: 100%;
-  }
-
-  .sidebar-menu {
-    margin-top: 1em;
-    position:fixed;
-    display: block;
-    overflow-y:scroll;
-    overflow-x:hidden;
-    width: 260px;
-    top: 320px;
-    right: auto;
-  }
-  .sidebar-profileContainer {
-    display: block;
-    position: relative;
-    width: 100%;
-    right: auto
   }
 }

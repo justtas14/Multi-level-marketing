@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import './css/SearchBar.scss';
 import { debounce } from 'debounce';
 import EventBus from './EventBus/EventBus';
 
@@ -61,4 +60,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+    @import './css/SearchBar.scss';
+</style>

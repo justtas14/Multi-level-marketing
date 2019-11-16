@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import './css/logging.scss';
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Pagination from '../Pagination/Pagination.vue';
 import LogTable from './LogTable.vue';
@@ -23,26 +22,13 @@ export default {
         LogTable,
     },
     methods: {
-        changePage(page) {
-            const params = {
-                page,
-            };
+        loadLogs() {
             this.setSpinnerState(true);
-            this.findBy(params);
-        },
-        loadLogs(page = null) {
-            const params = {};
-            if (page) {
-                params.page = page;
-            }
-
-            this.setSpinnerState(true);
-            this.findBy(params);
+            this.findLogs();
         },
 
         ...mapActions('Logs', [
-            'findBy',
-            'findAll',
+            'findLogs',
         ]),
         ...mapMutations('Logs', [
             'setSpinnerState',
@@ -55,21 +41,22 @@ export default {
             const page = null; const
                 action = 'subtract';
             this.changePage({ page, action });
-            this.loadLogs(this.paginationInfo.currentPage);
+            this.loadLogs();
         });
         PaginationEventBus.$on('nextPage', () => {
             const action = 'add'; const
                 page = null;
             this.changePage({ page, action });
-            this.loadLogs(this.paginationInfo.currentPage);
+            this.loadLogs();
         });
         PaginationEventBus.$on('page', (page) => {
+            console.log(page);
             const action = null;
             this.changePage({
                 page,
                 action,
             });
-            this.loadLogs(this.paginationInfo.currentPage);
+            this.loadLogs();
         });
     },
     computed: {
@@ -82,10 +69,11 @@ export default {
     },
     async created() {
         this.setSpinnerState(true);
-        this.findAll();
+        this.findLogs();
     },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/logging.scss';
 </style>

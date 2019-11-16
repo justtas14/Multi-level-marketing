@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import './css/Main.scss';
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Associate from './Associate.vue';
 import Pagination from '../Pagination/Pagination.vue';
@@ -138,4 +137,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+    @import './css/Main.scss';
+</style>

@@ -51,7 +51,6 @@
 </template>
 
 <script>
-import './css/Associate.scss';
 import defaultPicture from '../../../public/img/profile.jpg';
 import Confirmation from '../Confirmation/Confirmation.vue';
 import changeParentSVG from '../../../public/img/geneology.svg';
@@ -102,4 +101,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+    @import './css/Associate.scss';
+</style>

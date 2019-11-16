@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import './css/Gallery.scss';
 import { mapMutations } from 'vuex';
 import Pagination from '../Pagination/Pagination.vue';
 import Confirmation from '../Confirmation/Confirmation.vue';
@@ -56,12 +55,15 @@ export default {
             };
             this.changeConfirmation(confirm);
         },
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'changeConfirmation',
         ]),
+    },
+    created() {
     },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/Gallery.scss';
 </style>

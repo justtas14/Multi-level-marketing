@@ -20,7 +20,6 @@
 
 <script>
 import Log from './Log.vue';
-import './css/logTable.scss';
 
 export default {
     name: 'LogTable',
@@ -34,6 +33,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/logTable.scss';
 </style>

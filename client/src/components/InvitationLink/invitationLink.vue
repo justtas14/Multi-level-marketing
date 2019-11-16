@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import './css/InvitationLink.scss';
 
 export default {
     props: ['invitationUrl'],
@@ -34,3 +33,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+    @import './css/InvitationLink.scss';
+</style>

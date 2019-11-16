@@ -1,5 +1,6 @@
 import axios from 'axios';
-import constants from '../../constants/constants';
+import constants from '../../components/Gallery/constants/constants';
+import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const initialState = {
     modalState: false,
@@ -28,17 +29,21 @@ const getters = {
 };
 
 const actions = {
-    async callDataAxios({ state, commit }, filesPerPage = null) {
+    async callDataAxios({ state, commit, rootState }, filesPerPage = null) {
         if (filesPerPage) {
             state.filesPerPage = filesPerPage;
         }
-        const res = await axios.get(constants.api.jsonData, {
-            params: {
-                page: state.paginationInfo.currentPage,
-                imageLimit: state.filesPerPage,
-                category: state.category,
-            },
-        });
+        const parameters = {
+            page: state.paginationInfo.currentPage,
+            imageLimit: state.filesPerPage,
+            category: state.category,
+        };
+        const securityApiObj = new SecurityAPI();
+        const res = await securityApiObj.galleryGetApi(
+            constants.api.jsonData,
+            rootState.Security.token,
+            parameters,
+        );
         const data = {
             files: res.data.files,
             pagination: res.data.pagination,
@@ -66,12 +71,20 @@ const actions = {
             reader.readAsDataURL(input.files[0]);
         }
     },
-    handleFiles({ dispatch }, files) {
-        ([...files]).forEach((file) => {
-            dispatch('saveToServer', file);
+    handleFiles({ dispatch }, payload) {
+        ([...payload.files]).forEach((file) => {
+            payload.file = file;
+            dispatch('saveToServer', payload);
         });
     },
-    saveToServer({ state, dispatch, commit }, file) {
+    async saveToServer(
+        {
+            state,
+            dispatch,
+            commit,
+            rootState,
+        }, file,
+    ) {
         if (file.size > constants.maxAllowedSize) {
             commit('showNotification', `File ${file.name} is too large`);
         } else if (file.name.length > constants.maxAllowedLength) {
@@ -79,11 +92,13 @@ const actions = {
         } else {
             const fd = new FormData();
             fd.append('galleryFile', file);
-            axios.post(constants.api.uploadFile, fd, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }).then((res) => {
+            try {
+                const res = await axios.post(constants.api.uploadFile, fd, {
+                    headers: {
+                        Authorization: `Bearer ${rootState.Security.token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
                 switch (state.category) {
                 case 'images':
                     if (state.imageTypes.includes(res.data.file.mimeType)) {
@@ -100,18 +115,23 @@ const actions = {
                 }
                 commit('showNotification', `File ${file.name} added!`);
                 dispatch('callDataAxios');
-            }).catch((err) => {
-                console.log(err);
-            });
+            } catch (e) {
+                rootState.securityAPIObj.unAuthenticate();
+            }
         }
     },
-    async deleteRequestFunction({ dispatch, commit }, params) {
-        const response = await axios.post(constants.api.removeFile, {
-            params: {
-                galleryId: params.fileId,
-                fileId: params.galleryFileId,
-            },
-        });
+    async deleteRequestFunction({ dispatch, commit, rootState }, params) {
+        const parameters = {
+            galleryId: params.fileId,
+            fileId: params.galleryFileId,
+        };
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.galleryDeleteApi(
+            constants.api.removeFile,
+            rootState.Security.token,
+            parameters,
+        );
+
         if (response.data.fileInUse) {
             commit('showNotification', `File ${params.fileName} is already in use!`);
             return false;
@@ -158,9 +178,9 @@ const mutations = {
         if (action == null) {
             state.paginationInfo.currentPage = page;
         } else if (action === 'add') {
-            state.paginationInfo.currentPage += 1;
+            state.paginationInfo.currentPage = Number(state.paginationInfo.currentPage) + 1;
         } else if (action === 'subtract') {
-            state.paginationInfo.currentPage -= 1;
+            state.paginationInfo.currentPage = Number(state.paginationInfo.currentPage) - 1;
         }
     },
     changeYesFn: (state, fn) => {
@@ -194,7 +214,8 @@ const mutations = {
 };
 
 export default {
-    initialState,
+    namespaced: true,
+    state: initialState,
     getters,
     actions,
     mutations,

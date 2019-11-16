@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import './css/Success.scss';
 
 export default {
     name: 'Success',
@@ -13,6 +12,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Success.scss';
 </style>

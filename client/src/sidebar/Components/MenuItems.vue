@@ -1,5 +1,7 @@
 <template>
-    <div class="sidebar-menu">
+    <div class="sidebar-menu"
+    :class="{'sidebar-menu-active': this.hamburgerClicked,
+     'sidebar-menu-inactive' : !this.hamburgerClicked}">
         <div v-if="isAdmin" class="sidebar-item sidebar__sectionLabel">
             Admin
         </div>
@@ -46,7 +48,6 @@
 </template>
 
 <script>
-import '../css/MenuItems.scss';
 import {
     mapActions, mapMutations, mapState, mapGetters,
 } from 'vuex';
@@ -91,10 +92,13 @@ export default {
             'downloadCSV',
         ]),
     },
+    mounted() {
+    },
     computed: {
         ...mapState('Sidebar', [
             'configuration',
             'currentPath',
+            'hamburgerClicked',
         ]),
         ...mapGetters('Sidebar', [
             'checkConfigurationTermsOfService',
@@ -111,5 +115,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import '../css/MenuItems.scss';
 </style>

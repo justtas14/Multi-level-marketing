@@ -1,0 +1,23 @@
+.header-logo {
+    width:70px;
+    height:20px;
+    color: #f1f1f1;
+    top:7px;
+    bottom:5px;
+    margin-left:20px;
+    border-radius:25px 25px 25px 25px;
+}
+
+.header {
+    height:35px;
+    padding-top:5px;
+    background-color:#fff;
+    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.header-logout {
+    float: right;
+    margin-right: 20px;
+    font-size: 14px;
+}

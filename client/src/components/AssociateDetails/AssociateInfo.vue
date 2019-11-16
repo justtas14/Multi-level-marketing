@@ -105,6 +105,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/AssociateInfo.scss'
 </style>

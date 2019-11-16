@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import './css/log.scss';
 
 export default {
     name: 'Log',
@@ -45,6 +44,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/log.scss';
 </style>

@@ -1,0 +1,143 @@
+.associate-mainContainer {
+    -webkit-box-flex:1;
+    -ms-flex:1;
+    flex:1;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+
+}
+
+.associate-contentContainer {
+    width: 63%;
+    margin-left: 35%;
+}
+
+.associate-title {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 48px;
+    font-weight: 100;
+    cursor: default
+}
+
+.associate-levelContainer {
+    width: 63%;
+    padding-right:20px;
+    border-right: 2px solid #3ab54a;
+}
+
+.associate-enrollerContainer {
+    padding-left: 20px;
+    width: 30%;
+}
+
+.card-title {
+    white-space: nowrap;
+}
+
+.associate-levelBarListItem {
+    width:100%;
+    max-width:100%;
+    margin: auto;
+}
+.associate-levelBar {
+    margin: auto;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    color: #fff;
+    cursor: default;
+    margin-bottom: 10px;
+    background-color: #3ab54a;
+}
+
+.associate-buttonContainer {
+    margin: auto auto 1em auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.associate-buttonContainer a {
+    margin-left: 1.5em;
+}
+
+.titleContainer {
+    display: flex;
+}
+
+.associate-searchContainer {
+    background-color: #fff;
+    padding-bottom: 50px;
+    width: 100%;
+}
+
+@media screen and (max-width: 668px) {
+    .associate-mainContainer {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+    }
+    .associate-levelContainer {
+        width: 100%;
+        padding: 0 0 20px 20px;
+        border-right: none;
+        border-bottom: 1px solid #3ab54a;
+    }
+    .associate-enrollerContainer {
+        width: 100%;
+        padding-left: 0;
+    }
+    .associate-enrollerPictureContainer {
+        margin-left: 0;
+    }
+    .associate-enrollerDetailsContainer {
+        margin-left: 0;
+        padding-left: 15%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .associate-contentContainer {
+        margin:auto;
+        width: 80%;
+        position: relative;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .titleContainer {
+        display: block;
+    }
+    .associate-buttonContainer {
+        justify-content: center;
+        margin: 1em 0 2em 0;
+    }
+
+}
+@media screen and (max-width: 450px) {
+    .associate-buttonContainer {
+        display: block;
+        justify-content: center;
+        margin: 1em 0 2em 0;
+    }
+    #teamViewerBtn {
+        display: block;
+    }
+    #inviteAssociateBtn {
+        display: block;
+        margin-bottom: 1em;
+    }
+
+}

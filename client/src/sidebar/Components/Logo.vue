@@ -3,7 +3,8 @@
         <img v-if="this.checkConfigurationMainLogo"
          class="sidebar-logo" :src="configuration.mainLogoPath" />
         <img v-else class="sidebar-logo" :src="PlumTreeSystemsLogo" />
-        <div class="hamburger hamburger--collapse">
+        <div @click="toggleMenu" class="hamburger hamburger--collapse"
+         :class="{'is-active': this.hamburgerClicked}">
             <div class="hamburger-box">
                 <div class="hamburger-inner"></div>
             </div>
@@ -12,9 +13,10 @@
 </template>
 
 <script>
-import '../css/Logo.scss';
 import {
     mapGetters,
+    mapMutations,
+    mapState,
 } from 'vuex';
 import PlumTreeSystemsLogo from '../../../public/img/plum_tree_logo.png';
 
@@ -30,10 +32,22 @@ export default {
         };
     },
     methods: {
+        toggleMenu() {
+            this.setHamburgerClicked(!this.hamburgerClicked);
+        },
+
+        ...mapMutations('Sidebar', [
+            'setHamburgerClicked',
+        ]),
+    },
+    mounted() {
     },
     computed: {
         ...mapGetters('Sidebar', [
             'checkConfigurationMainLogo',
+        ]),
+        ...mapState('Sidebar', [
+            'hamburgerClicked',
         ]),
     },
     created() {
@@ -42,6 +56,6 @@ export default {
 };
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+    @import '../css/Logo.scss';
 </style>

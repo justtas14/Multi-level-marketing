@@ -20,11 +20,8 @@ const getters = {
 const actions = {
     async submitInvitationForm({ commit, rootState }, payload) {
         commit('setIsLoadingForm');
-        const SecurityApiObj = new SecurityAPI(
-            payload.dependencies.logout,
-            payload.dependencies.router,
-        );
-        const response = await SecurityApiObj.authenticateInvitationPostApi(
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
             payload.formData,
@@ -37,35 +34,32 @@ const actions = {
     },
     async resendInvitation({ commit, rootState }, payload) {
         commit('setIsLoadingResendBtn');
-        const SecurityApiObj = new SecurityAPI(
-            payload.dependencies.logout,
-            payload.dependencies.router,
-        );
-        const response = await SecurityApiObj.authenticateInvitationPostApi(
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
             payload.params,
         );
         commit('setSent', response.data.sent);
     },
-    async changePage({ state, commit, rootState }, dependencies) {
+    async changePage({ state, commit, rootState }) {
         commit('setIsLoadingSentInvitations');
         const payload = {
             page: state.pagination.currentPage,
         };
-        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
-        const response = await SecurityApiObj.authenticateInvitationPostApi(
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
             payload,
         );
         commit('setGeneralInvitationInfo', response.data);
     },
-    async invitationHome({ commit, rootState }, dependencies) {
+    async invitationHome({ commit, rootState }) {
         commit('setIsLoading');
         const payload = {};
-        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
-        const response = await SecurityApiObj.authenticateInvitationPostApi(
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
             rootState.Security.token,
             payload,
@@ -124,7 +118,8 @@ const mutations = {
 };
 
 export default {
-    initialState,
+    namespaced: true,
+    state: initialState,
     getters,
     actions,
     mutations,

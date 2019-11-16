@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import './css/share.scss';
 
 export default {
     name: 'share',
@@ -54,3 +53,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+    @import './css/share.scss';
+</style>

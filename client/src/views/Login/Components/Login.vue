@@ -56,7 +56,6 @@
 </template>
 
 <script>
-import '../css/Login.scss';
 import {
     mapActions, mapMutations, mapState, mapGetters,
 } from 'vuex';
@@ -84,8 +83,8 @@ export default {
             const { redirect } = this.$route.query;
             await this.login(payload);
             if (!this.hasError) {
-                const dependencies = { router: this.$router };
-                await this.loadAssociate(dependencies);
+                await this.setCookie();
+                await this.loadAssociate();
                 if (typeof redirect !== 'undefined') {
                     this.$router.push({ path: redirect });
                 } else if (this.isAdmin) {
@@ -98,6 +97,7 @@ export default {
 
         ...mapActions('Security', [
             'login',
+            'setCookie',
             'loadAssociate',
         ]),
         ...mapMutations('Security', [
@@ -137,5 +137,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import '../css/Login.scss';
 </style>

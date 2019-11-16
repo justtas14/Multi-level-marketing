@@ -91,7 +91,6 @@ label {
     margin:10px;
     border-radius:5px;
     box-shadow: 0 2px 3px rgba(0,0,0,.3)
-
 }
 
 .hide {
@@ -237,5 +236,27 @@ label {
 @media only screen and (max-width: 992px) {
     .fa-plus {
         margin-top: -0.15em;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+    .categoryName {
+        font-size: 0.83em;
+        white-space: nowrap
+    }
+
+    #tab1-tab.active ~ span.yellow-bar {
+        top: 35px !important;
+        width: 100px !important;
+    }
+
+    #tab2-tab.active ~ span.yellow-bar {
+        top: 68px !important;
+        width: 100px !important;
+    }
+
+    #tab3-tab.active ~ span.yellow-bar {
+        top: 102px !important;
+        width: 100px !important;
     }
 }

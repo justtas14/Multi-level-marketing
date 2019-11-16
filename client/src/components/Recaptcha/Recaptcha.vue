@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import './css/Recaptcha.scss';
 
 export default {
     name: 'Recaptcha',
@@ -13,6 +12,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Recaptcha.scss';
 </style>

@@ -10,7 +10,7 @@
                 </div>
                 <div class="v-dialog-body">
                     <div v-if="addPicture" class="confirmImageContainer">
-                        <img svg-inline src="../../../images/geneology.svg"
+                        <img svg-inline src="../../../public/img/geneology.svg"
                          class="confirmImage" alt="svg" />
                         <div class="content">
                             {{confirm.message}}
@@ -29,7 +29,6 @@
 </template>
 <script>
 import 'v-slim-dialog/dist/v-slim-dialog.css';
-import './css/Confirmation.scss';
 
 export default {
     name: 'Confirmation',
@@ -51,6 +50,6 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped lang="scss">
+    @import './css/Confirmation.scss';
 </style>

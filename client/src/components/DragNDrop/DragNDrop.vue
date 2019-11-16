@@ -24,7 +24,6 @@
 
 </template>
 <script>
-import './css/DragNDrop.scss';
 import Error from '../Messages/Error.vue';
 
 export default {
@@ -85,5 +84,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/DragNDrop.scss';
 </style>

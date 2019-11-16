@@ -7,7 +7,6 @@
     </div>
 </template>
 <script>
-import './css/ModalFileContainer.scss';
 
 export default {
     name: 'ModalFileContainer',
@@ -25,6 +24,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/ModalFileContainer.scss';
 </style>

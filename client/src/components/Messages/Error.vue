@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import './css/Error.scss';
 
 export default {
     name: 'Error',
@@ -13,6 +12,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Error.scss';
 </style>

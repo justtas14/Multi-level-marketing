@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import '../../assets/css/mobileTable.scss';
-import './css/InvitationAbout.scss';
 import {
     mapActions,
     mapState,
@@ -27,7 +25,7 @@ import {
 
 export default {
     name: 'InvitationAbout',
-    props: ['invitation', 'dependencies'],
+    props: ['invitation'],
     data() {
         return {
             pressedBtnInvId: null,
@@ -45,7 +43,6 @@ export default {
                     params: {
                         invitationId: this.invitation.id,
                     },
-                    dependencies: this.dependencies,
                 };
                 await this.resendInvitation(payload);
             }
@@ -65,6 +62,7 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import '../../assets/css/mobileTable.scss';
+    @import './css/InvitationAbout.scss';
 </style>

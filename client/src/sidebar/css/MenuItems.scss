@@ -104,9 +104,9 @@
 
 @media screen and (max-width: 800px) {
   .sidebar-menu-inactive {
-    /*display: block;*/
+    top: 240px;
+    display: block;
     position: fixed;
-    /*width: 100%;*/
     z-index: 20;
     width: 100%;
     display: block;

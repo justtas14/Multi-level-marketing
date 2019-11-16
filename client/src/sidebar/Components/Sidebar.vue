@@ -10,17 +10,13 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import '../css/Sidebar.scss';
+
 import {
     mapState, mapGetters,
 } from 'vuex';
-import sidebarJS from '../../assets/js/sidebar';
 import Logo from './Logo.vue';
 import Profile from './Profile.vue';
 import MenuItems from './MenuItems.vue';
-
-Vue.use(sidebarJS);
 
 export default {
     name: 'Sidebar',
@@ -52,6 +48,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import '../css/Sidebar.scss';
 </style>

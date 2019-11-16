@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import './css/ModalWrapper.scss';
 import { mapMutations, mapState } from 'vuex';
 
 export default {
@@ -45,13 +44,13 @@ export default {
     },
 
     computed: {
-        ...mapState('gallery', {
+        ...mapState('Gallery', {
             modalState: 'modalState',
         }),
     },
 
     methods: {
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'changeModalState',
             'changePage',
         ]),
@@ -68,5 +67,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/ModalWrapper.scss';
 </style>

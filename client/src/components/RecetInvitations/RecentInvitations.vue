@@ -15,7 +15,6 @@
                 v-for="(invitation, key) in invitations"
                 :key="key"
                 v-bind:invitation="invitation"
-                v-bind:dependencies="dependencies"
             >
             </InvitationAbout>
             </tbody>
@@ -27,8 +26,6 @@
 </template>
 
 <script>
-import '../../assets/css/mobileTable.scss';
-import './css/RecentInvitations.scss';
 import Pagination from '../Pagination/Pagination.vue';
 import InvitationAbout from './InvitationAbout.vue';
 
@@ -38,10 +35,13 @@ export default {
         InvitationAbout,
         Pagination,
     },
-    props: ['invitations', 'paginationInfo', 'dependencies'],
+    props: ['invitations', 'paginationInfo'],
+    created() {
+    },
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import '../../assets/css/mobileTable.scss';
+    @import './css/RecentInvitations.scss';
 </style>

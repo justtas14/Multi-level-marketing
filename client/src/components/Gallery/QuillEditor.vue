@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import './css/QuillEditor.scss';
 import Vue from 'vue';
 import axios from 'axios';
 import VueQuill from 'vue-quill';
@@ -127,10 +126,10 @@ export default {
                 this.callDataAxios(21);
             }
         },
-        ...mapActions('gallery', [
+        ...mapActions('Gallery', [
             'callDataAxios',
         ]),
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'changeModalState',
             'changeCategory',
             'changeFilesPerPage',
@@ -146,5 +145,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/QuillEditor.scss';
 </style>

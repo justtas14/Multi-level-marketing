@@ -13,10 +13,10 @@ const getters = {
 };
 
 const actions = {
-    async adminHomeApi({ commit, rootState }, dependencies) {
+    async adminHomeApi({ commit, rootState }) {
         commit('setIsLoading');
-        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
-        const response = await SecurityApiObj.authenticateGetApi('/api/admin', rootState.Security.token);
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateGetApi('/api/admin', rootState.Security.token);
         commit('setAssociateLevelsData', response.data);
     },
 };
@@ -32,9 +32,9 @@ const mutations = {
         state.maxLevel = data.maxLevel;
     },
 };
-
 export default {
-    initialState,
+    namespaced: true,
+    state: initialState,
     getters,
     actions,
     mutations,

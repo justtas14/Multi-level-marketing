@@ -14,7 +14,6 @@
     </div>
 </template>
 <script>
-import './css/GalleryNotification.scss';
 import EventBus from './EventBus/EventBus';
 
 export default {
@@ -33,6 +32,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/GalleryNotification.scss';
 </style>

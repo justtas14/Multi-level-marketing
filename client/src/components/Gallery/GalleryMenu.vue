@@ -47,7 +47,6 @@
     </div>
 </template>
 <script>
-import './css/GalleryMenu.scss';
 
 export default {
     name: 'CategoryMenu',
@@ -86,6 +85,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/GalleryMenu.scss';
 </style>

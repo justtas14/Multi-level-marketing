@@ -34,7 +34,6 @@ import {
     mapActions, mapState, mapGetters, mapMutations,
 } from 'vuex';
 import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
-import './css/Home.scss';
 
 export default {
     name: 'AdminHome',
@@ -49,11 +48,7 @@ export default {
     },
     methods: {
         downloadCsv() {
-            const dependencies = {
-                logout: this.logout,
-                router: this.$router,
-            };
-            this.downloadCSV(dependencies);
+            this.downloadCSV();
         },
         ...mapActions('AdminHome', [
             'adminHomeApi',
@@ -78,14 +73,11 @@ export default {
         ]),
     },
     async created() {
-        const dependencies = {
-            router: this.$router,
-            logout: this.logout,
-        };
-        await this.adminHomeApi(dependencies);
+        await this.adminHomeApi();
     },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/Home.scss';
 </style>

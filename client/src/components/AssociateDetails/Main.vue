@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import './css/Main.scss';
 import AssociateInfo from './AssociateInfo.vue';
 
 export default {
@@ -49,6 +48,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Main.scss';
 </style>

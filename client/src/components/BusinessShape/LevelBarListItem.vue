@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import './css/LevelBarListItem.scss';
 
 export default {
     name: 'LevelBarLIstItem',
@@ -30,6 +29,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+   @import './css/LevelBarListItem.scss';
 </style>

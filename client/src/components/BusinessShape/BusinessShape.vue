@@ -14,7 +14,6 @@
 </template>s
 
 <script>
-import './css/BusinessShape.scss';
 import LevelBarListItem from './LevelBarListItem.vue';
 
 export default {
@@ -37,6 +36,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/BusinessShape.scss';
 </style>

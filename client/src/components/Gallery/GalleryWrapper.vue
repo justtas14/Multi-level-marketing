@@ -25,6 +25,8 @@ import Gallery from './Gallery.vue';
 import CategoryMenu from './GalleryMenu.vue';
 import galleryConst from './constants/galleryConst';
 import EventBus from './EventBus/EventBus';
+import PaginationEventBus from '../Pagination/EventBus/EventBus';
+
 
 export default {
     name: 'GalleryWrapper',
@@ -38,16 +40,18 @@ export default {
             constants: {},
         };
     },
-    computed: mapState('gallery', {
-        currentPage: state => state.paginationInfo.currentPage,
-        category: 'category',
-        yesClickFn: 'yesClickFn',
-        files: 'files',
-        confirm: 'confirm',
-        notification: 'notification',
-        paginationInfo: 'paginationInfo',
-        imageExtensions: 'imageExtensions',
-    }),
+    computed: {
+        ...mapState('Gallery', {
+            currentPage: state => state.paginationInfo.currentPage,
+            category: 'category',
+            yesClickFn: 'yesClickFn',
+            files: 'files',
+            confirm: 'confirm',
+            notification: 'notification',
+            paginationInfo: 'paginationInfo',
+            imageExtensions: 'imageExtensions',
+        }),
+    },
     methods: {
         readUrl(e) {
             this.readURL(e);
@@ -56,13 +60,13 @@ export default {
             this.changeCategory(category);
             this.callDataAxios();
         },
-        ...mapActions('gallery', [
+        ...mapActions('Gallery', [
             'callDataAxios',
             'readURL',
             'handleFiles',
             'deleteRequestFunction',
         ]),
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'changeCategory',
             'changePage',
             'closeNotification',
@@ -70,6 +74,9 @@ export default {
             'changeConfirmation',
             'changeYesFn',
             'changeFilesPerPage',
+        ]),
+        ...mapMutations('Security', [
+            'logout',
         ]),
     },
     mounted() {
@@ -86,19 +93,19 @@ export default {
             };
             scope.changeConfirmation(confirm);
         });
-        EventBus.$on('previousPage', () => {
+        PaginationEventBus.$on('previousPage', () => {
             const page = null; const
                 action = 'subtract';
             scope.changePage({ page, action });
             scope.callDataAxios();
         });
-        EventBus.$on('nextPage', () => {
-            const action = 'add'; const
-                page = null;
+        PaginationEventBus.$on('nextPage', () => {
+            const page = null;
+            const action = 'add';
             scope.changePage({ page, action });
-            scope.callDataAxios();
+            // scope.callDataAxios();
         });
-        EventBus.$on('page', (page) => {
+        PaginationEventBus.$on('page', (page) => {
             const action = null;
             scope.changePage({
                 page,
@@ -136,5 +143,5 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 </style>

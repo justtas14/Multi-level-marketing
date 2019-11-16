@@ -22,10 +22,20 @@
     margin-top: 5px;
     align-items: center;
     word-break: break-word;
+    padding: 2px 16px;
 }
 
 .modal .modal-content {
     padding: 0;
+}
+
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 @-webkit-keyframes animatetop {
@@ -36,4 +46,26 @@
 @keyframes animatetop {
     from {top:-300px; opacity:0}
     to {top:10px; opacity:1}
+}
+
+@media only screen and (max-width: 800px) {
+    #notify {
+        width: 200px;
+        top: 100px;
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.5s;
+        animation-name: animatetop;
+        animation-duration: 0.5s
+    }
+
+    @-webkit-keyframes animatetop {
+        from {top:-150px; opacity:0}
+        to {top:100px; opacity:1}
+    }
+
+    @keyframes animatetop {
+        from {top:-150px; opacity:0}
+        to {top:100px; opacity:1}
+    }
+
 }

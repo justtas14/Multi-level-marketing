@@ -6,7 +6,7 @@
              @dragleave.prevent.stop="removeImageDropping"
              @drop.prevent.stop="removeImageDropping"
     >
-        <div v-if="spinner" class="Spinner__Container" v-bind:style="{top: 0, 'z-index': 9999}">
+        <div v-if="spinner" class="Spinner__Container">
             <div class="lds-dual-ring"/>
         </div>
         <input class="file-upload-input-gallery" multiple type='file'/>
@@ -38,7 +38,6 @@
     </section>
 </template>
 <script>
-import './css/GalleryFileList.scss';
 import { mapMutations, mapState } from 'vuex';
 import GalleryFile from './GalleryFile.vue';
 import EventBus from './EventBus/EventBus';
@@ -54,7 +53,7 @@ export default {
             imageDroppingClass: false,
         };
     },
-    computed: mapState('gallery', {
+    computed: mapState('Gallery', {
         spinner: 'spinner',
     }),
     methods: {
@@ -68,7 +67,7 @@ export default {
         removeImageDropping() {
             this.imageDroppingClass = false;
         },
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'setSpinnerState',
         ]),
     },
@@ -78,6 +77,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/GalleryFileList.scss';
 </style>

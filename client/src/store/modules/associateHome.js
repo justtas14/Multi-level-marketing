@@ -16,10 +16,10 @@ const getters = {
 };
 
 const actions = {
-    async associateHomeApi({ commit, rootState }, dependencies) {
+    async associateHomeApi({ commit, rootState }) {
         commit('setIsLoading');
-        const SecurityApiObj = new SecurityAPI(dependencies.logout, dependencies.router);
-        const response = await SecurityApiObj.authenticateGetApi('/api/associate', rootState.Security.token);
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateGetApi('/api/associate', rootState.Security.token);
         commit('setAssociateHomePageData', response.data);
     },
 };
@@ -39,7 +39,8 @@ const mutations = {
 };
 
 export default {
-    initialState,
+    namespaced: true,
+    state: initialState,
     getters,
     actions,
     mutations,

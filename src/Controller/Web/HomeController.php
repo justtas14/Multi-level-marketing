@@ -23,6 +23,7 @@ use PlumTreeSystems\UserBundle\Service\JWTManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,6 +81,33 @@ class HomeController extends AbstractController
         ];
 
         return new JsonResponse($payload, JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * @Route("/api/setCookie", name="setCookie")
+     * @param Request $request
+     * @return Response
+     */
+    public function setCookies(Request $request)
+    {
+        /** @var User $user */
+        $token = $request->request->all()['token'];
+        $response = new Response('ok');
+        $cookie = new Cookie('authToken', $token);
+        $response->headers->setCookie($cookie);
+        $response->headers->set('Access-Control-Allow-Credentials', 'True');
+        return $response;
+    }
+
+    /**
+     * @Route("/api/unsetCookie", name="unsetCookie")
+     * @return Response
+     */
+    public function unsetCookies()
+    {
+        $response = new Response('ok');
+        $response->headers->clearCookie('authToken');
+        return $response;
     }
 
 //    /**

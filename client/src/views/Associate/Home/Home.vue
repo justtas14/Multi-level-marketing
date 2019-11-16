@@ -32,7 +32,6 @@
                 ></BusinessShape>
             </div>
         </div>
-
         <div class="card" v-if="parent">
             <div class="card-content">
                 <span class="card-title">My Enroller</span>
@@ -68,28 +67,28 @@
                             <th class="associate-overflow">Join Date</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <span v-if="getDirectAssociates">
-                            <tr :key="key" v-for="(directAssociate, key)
-                            in getDirectAssociates" class="associate-container">
-                                <td class="associate-overflow directAssociatesAbout">
-                                    {{ directAssociate.fullName }}
-                                </td>
-                                <td class="associate-overflow directAssociatesAbout">
-                                    {{ directAssociate.email }}
-                                </td>
-                                <td class="associate-overflow directAssociatesAbout">
-                                    <span v-if="directAssociate.mobilePhone">
-                                        {{ directAssociate.mobilePhone }}
-                                    </span>
-                                    <span v-else>-</span>
-                                </td>
-                                <td class="associate-overflow directAssociatesAbout">
-                                    {{ formatDate(directAssociate.joinDate) }}
-                                </td>
-                            </tr>
-                        </span>
-                        <tr v-else>
+                    <tbody v-if="getDirectAssociates">
+                        <tr :key="key" v-for="(directAssociate, key)
+                        in getDirectAssociates" class="associate-container">
+                            <td class="associate-overflow directAssociatesAbout">
+                                {{ directAssociate.fullName }}
+                            </td>
+                            <td class="associate-overflow directAssociatesAbout">
+                                {{ directAssociate.email }}
+                            </td>
+                            <td class="associate-overflow directAssociatesAbout">
+                                <span v-if="directAssociate.mobilePhone">
+                                    {{ directAssociate.mobilePhone }}
+                                </span>
+                                <span v-else>-</span>
+                            </td>
+                            <td class="associate-overflow directAssociatesAbout">
+                                {{ formatDate(directAssociate.joinDate) }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <tr>
                             <td colspan="4">
                                 You do not have any associates in your direct downline
                             </td>
@@ -107,8 +106,6 @@ import {
 } from 'vuex';
 import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
 import profilePicture from '../../../../public/img/profile.jpg';
-import '../../../assets/css/mobileTable.scss';
-import './css/Home.scss';
 
 export default {
     name: 'AssociateHome',
@@ -159,15 +156,12 @@ export default {
         ]),
     },
     async created() {
-        const dependencies = {
-            router: this.$router,
-            logout: this.logout,
-        };
-        await this.associateHomeApi(dependencies);
+        await this.associateHomeApi();
     },
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+@import '../../../assets/css/mobileTable.scss';
+@import './css/Home.scss';
 </style>

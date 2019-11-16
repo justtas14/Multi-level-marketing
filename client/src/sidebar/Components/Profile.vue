@@ -1,5 +1,7 @@
 <template>
-    <div class="sidebar-profileContainer">
+    <div class="sidebar-profileContainer"
+    :class="{'sidebar-profileContainer-active': this.hamburgerClicked,
+     'sidebar-profileContainer-inactive': !this.hamburgerClicked}">
         <a @click="redirectToEditProfile">
             <div class="sidebarProfile__container">
                 <div class="sidebarProfile__pictureContainer">
@@ -21,7 +23,10 @@
 </template>
 
 <script>
-import '../css/Profile.scss';
+import {
+    mapMutations,
+    mapState,
+} from 'vuex';
 import defaultPicture from '../../../public/img/profile.jpg';
 
 export default {
@@ -42,15 +47,21 @@ export default {
         associateName(name, n) {
             return (name.length > n) ? `${name.substr(0, n - 1)}&hellip;` : name;
         },
+        ...mapMutations('Sidebar', [
+        ]),
+    },
+    mounted() {
     },
     computed: {
-
+        ...mapState('Sidebar', [
+            'hamburgerClicked',
+        ]),
     },
     created() {
     },
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import '../css/Profile.scss';
 </style>

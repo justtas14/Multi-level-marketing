@@ -41,7 +41,6 @@
 </template>
 <script>
 import EventBus from './EventBus/EventBus';
-import './css/Pagination.scss';
 
 export default {
     name: 'Pagination',
@@ -67,5 +66,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    @import './css/Pagination.scss';
 </style>

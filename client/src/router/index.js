@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import store from '../store';
+import store from '../store/index';
 import Login from '../views/Login/Components/Login.vue';
 import AdminHome from '../views/Admin/Home/Home.vue';
 import AssociateHome from '../views/Associate/Home/Home.vue';
 import Invite from '../views/Associate/Invite/Invite.vue';
+import GalleryHomePage from '../views/Admin/Gallery/GalleryHomePage.vue';
+import Logs from '../views/Admin/Logs/Logs.vue';
 
 Vue.use(VueRouter);
 
@@ -13,6 +15,8 @@ const routes = [
     { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
     { path: '/associate/invite', component: Invite, meta: { requiresAuth: true } },
     { path: '/admin', component: AdminHome, meta: { requiresAuth: true } },
+    { path: '/admin/gallery', component: GalleryHomePage, meta: { requiresAuth: true } },
+    { path: '/admin/logs', component: Logs, meta: { requiresAuth: true } },
     // { path: "*", redirect: "/" }
 ];
 

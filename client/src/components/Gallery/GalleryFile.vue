@@ -11,7 +11,7 @@
             <a class="fileDownload" @click="oneClickFile(file.id, file.galleryFile.originalName)">
                 <div class="overlay-effect" v-bind:class="{hoverImageEffect : hoverImage}"></div>
                 <v-lazy-image
-                        v-bind:src="determineSrc()"
+                    :src="determineSrc()"
                     src-placeholder=""
                     class="gallery__img"
                     v-bind:alt="file.galleryFile.originalName">
@@ -43,7 +43,6 @@
     </div>
 </template>
 <script>
-import './css/GalleryFile.scss';
 import { mapMutations, mapActions } from 'vuex';
 import VLazyImage from 'v-lazy-image';
 import defaultFile from '../../../public/img/defaultFile.png';
@@ -51,6 +50,7 @@ import wordImage from '../../../public/img/word.png';
 import pdfImage from '../../../public/img/pdf.png';
 import excelImage from '../../../public/img/excel.png';
 import EventBus from './EventBus/EventBus';
+import Parameters from '../../../parameters';
 
 export default {
     name: 'GalleryFile',
@@ -94,7 +94,7 @@ export default {
         },
         oneClickFile(fileId, fileName) {
             if (!this.isDeleted) {
-                this.$store.commit('gallery/changeModalState', false);
+                this.$store.commit('Gallery/changeModalState', false);
                 EventBus.$emit('oneClickFile', fileId, fileName, this.determineSrc(), this.file.filePath);
             }
         },
@@ -107,7 +107,8 @@ export default {
         },
         determineSrc() {
             if (this.isImage()) {
-                return this.file.filePath;
+                const paramObj = new Parameters();
+                return `${paramObj.getApiHostUrl(process.env.VUE_APP_HOST_URL)}${this.file.filePath}`;
             } if (this.isPDF()) {
                 return pdfImage;
             } if (this.isDOCX()) {
@@ -132,17 +133,17 @@ export default {
         isXLSX() {
             return this.fileExtension === 'xlsx';
         },
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'changeYesFn',
             'changeConfirmation',
         ]),
-        ...mapActions('gallery', [
+        ...mapActions('Gallery', [
             'deleteRequestFunction',
         ]),
     },
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/GalleryFile.scss';
 </style>

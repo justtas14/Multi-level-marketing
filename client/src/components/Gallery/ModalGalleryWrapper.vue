@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import './css/ModalGalleryWrapper.scss';
-
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Gallery from './Gallery.vue';
 import ModalWrapper from './ModalWrapper.vue';
@@ -45,7 +43,7 @@ export default {
             noTop: true,
         };
     },
-    computed: mapState('gallery', {
+    computed: mapState('Gallery', {
         currentPage: state => state.paginationInfo.currentPage,
         modalState: 'modalState',
         editorState: 'editor',
@@ -61,13 +59,13 @@ export default {
         readUrl(e) {
             this.readURL(e);
         },
-        ...mapActions('gallery', [
+        ...mapActions('Gallery', [
             'callDataAxios',
             'readURL',
             'handleFiles',
             'deleteRequestFunction',
         ]),
-        ...mapMutations('gallery', [
+        ...mapMutations('Gallery', [
             'changeModalState',
             'changeCategory',
             'changePage',
@@ -124,5 +122,6 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+    @import './css/ModalGalleryWrapper.scss';
 </style>

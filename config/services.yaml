@@ -71,3 +71,7 @@ services:
 
     PlumTreeSystems\UserBundle\Controller\TokenSecurityUserController:
         class: PlumTreeSystems\UserBundle\Controller\TokenSecurityUserController
+
+    pts_user.jwt.authenticator:
+        class: App\Security\Authenticator\JWTAuthenticator
+        arguments: ['@pts_user.jwt.manager']

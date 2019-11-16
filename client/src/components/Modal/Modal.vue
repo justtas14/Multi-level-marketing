@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import './css/Modal.scss';
 
 export default {
     name: 'Modal',
@@ -39,6 +38,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Modal.scss';
 </style>

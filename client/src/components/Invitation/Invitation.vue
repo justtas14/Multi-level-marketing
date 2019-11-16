@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import './css/Invitation.scss';
 import {
     mapActions, mapState,
 } from 'vuex';
@@ -71,7 +70,7 @@ export default {
         Messages,
         Error,
     },
-    props: ['siteKey', 'submitLabel', 'dependencies'],
+    props: ['siteKey', 'submitLabel'],
     data() {
         return {
             invitationEmail: '',
@@ -105,6 +104,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Invitation.scss';
 </style>

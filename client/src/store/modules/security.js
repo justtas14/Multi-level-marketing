@@ -47,10 +47,21 @@ const actions = {
             return null;
         }
     },
-    async loadAssociate({ commit, state }, dependencies) {
-        const SecurityApiObj = new SecurityAPI(() => commit('logout'), dependencies.router);
-        const response = await
-        SecurityApiObj.authenticateMe(state.token);
+    async setCookie({ state }) {
+        const securityApiObj = new SecurityAPI();
+        const res = await securityApiObj.setCookie(state.token);
+        console.log('cookieResponse', res);
+    },
+
+    async unsetCookie({ state }) {
+        const securityApiObj = new SecurityAPI();
+        const res = await securityApiObj.unsetCookie(state.token);
+        console.log(res);
+    },
+
+    async loadAssociate({ commit, state }) {
+        const securityApiObj = new SecurityAPI();
+        const response = await securityApiObj.authenticateMe(state.token);
         commit('providingDataOnAuth', response.data);
     },
 };
@@ -90,7 +101,8 @@ const mutations = {
 };
 
 export default {
-    initialState,
+    namespaced: true,
+    state: initialState,
     getters,
     actions,
     mutations,

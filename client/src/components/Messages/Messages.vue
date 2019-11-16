@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import './css/Messages.scss';
 import Error from './Error.vue';
 import Success from './Success.vue';
 
@@ -42,6 +41,6 @@ export default {
 };
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    @import './css/Messages.scss';
 </style>

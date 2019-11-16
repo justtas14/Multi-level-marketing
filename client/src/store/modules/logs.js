@@ -1,4 +1,4 @@
-import axios from 'axios';
+import ApiCalls from '../api/SecurityApi/apiCalls';
 
 const initialState = {
     logs: [],
@@ -14,21 +14,14 @@ const getters = {
 };
 
 const actions = {
-    async findAll({ state, commit }) {
-        const res = await axios.get('/admin/get-logs', {
-            params: {
-                page: state.paginationInfo.currentPage,
-            },
-        });
-        const data = {
-            logs: res.data.logs,
-            pagination: res.data.pagination,
-        };
-        commit('setSpinnerState', false);
-        commit('loadData', data);
-    },
-    async findBy({ commit }, params) {
-        const res = await axios.get('/admin/get-logs', params);
+    async findLogs({ state, commit, rootState }) {
+        console.log(state.paginationInfo.currentPage);
+        const apiCallsObj = new ApiCalls();
+        const res = await apiCallsObj.getLogs(
+            '/api/admin/get-logs',
+            state.paginationInfo.currentPage,
+            rootState.Security.token,
+        );
         const data = {
             logs: res.data.logs,
             pagination: res.data.pagination,
@@ -60,7 +53,8 @@ const mutations = {
 };
 
 export default {
-    initialState,
+    namespaced: true,
+    state: initialState,
     getters,
     actions,
     mutations,
