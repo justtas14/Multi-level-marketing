@@ -5,14 +5,15 @@
         <td class="associate-overflow invitationAbout"> {{ formatDate(invitation.created) }}</td>
         <td class="invitationAbout" v-if="invitation.used">Yes</td>
         <td class="invitationAbout" v-else>No</td>
-        <td class="invitationAbout">
-            <a @click="sendInvitationId" class="btn">
-                <div v-if="isResendBtnLoading===true && pressedBtnInvId === invitation.id"
-                class="Spinner__Container resendBtnSpinnerContainer">
-                    <div class="lds-dual-ring resendBtnSpinner"/>
-                </div>
+        <td class="invitationAbout resendBtnContainer">
+            <a @click="sendInvitationId" class="btn resendBtn"
+             :disabled="isResendBtnLoading===true && pressedBtnInvId === invitation.id">
                 Resend Invitation
             </a>
+            <div v-if="isResendBtnLoading===true && pressedBtnInvId === invitation.id"
+             class="progress">
+                    <div class="indeterminate"></div>
+            </div>
          </td>
     </tr>
 </template>
@@ -52,6 +53,7 @@ export default {
         ]),
     },
     computed: {
+
         ...mapState('Invitation', [
             'isResendBtnLoading',
         ]),

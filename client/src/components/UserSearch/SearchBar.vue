@@ -16,7 +16,7 @@
         <th width="20%" class="searchBar-inputPhoneContainer">
             <md-field>
                 <label>Phone</label>
-                <md-input @input="handelPhoneSearchInput" v-model="phoneInputVal"></md-input>
+                <md-input @input="handlePhoneSearchInput" v-model="phoneInputVal"></md-input>
             </md-field>
         </th>
         <th width="10%" class="searchBar-inputLevelContainer cantInput">Level</th>
@@ -43,13 +43,13 @@ export default {
 
     },
     methods: {
-        handleNameSearchInput: debounce(() => {
+        handleNameSearchInput: debounce(function nameSearchtFun() {
             EventBus.$emit('handleSearch', 'name', this.nameInputVal);
         }, 500),
-        handelPhoneSearchInput: debounce(() => {
+        handlePhoneSearchInput: debounce(function phoneSearchFun() {
             EventBus.$emit('handleSearch', 'phone', this.phoneInputVal);
         }, 500),
-        handleEmailSearchInput: debounce(() => {
+        handleEmailSearchInput: debounce(function emailSearchFun() {
             EventBus.$emit('handleSearch', 'email', this.emailInputVal);
         }, 500),
     },

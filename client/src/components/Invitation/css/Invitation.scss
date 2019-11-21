@@ -2,6 +2,7 @@
     margin: 1em auto auto auto;
     width: unset !important;
     text-align: center;
+    height: 45px;
 }
 
 #invitation_submit {
@@ -11,4 +12,9 @@
 .invitation-item {
     margin: auto;
     width: 80%;
+}
+
+.progress {
+    width: 200px;
+    margin: auto;
 }

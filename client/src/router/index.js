@@ -7,6 +7,8 @@ import AssociateHome from '../views/Associate/Home/Home.vue';
 import Invite from '../views/Associate/Invite/Invite.vue';
 import GalleryHomePage from '../views/Admin/Gallery/GalleryHomePage.vue';
 import Logs from '../views/Admin/Logs/Logs.vue';
+import UserSearchHome from '../views/Admin/UserSearch/UserSearchHome.vue';
+import Profile from '../views/Associate/Profile/Profile.vue';
 
 Vue.use(VueRouter);
 
@@ -14,9 +16,11 @@ const routes = [
     { path: '/login', component: Login },
     { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
     { path: '/associate/invite', component: Invite, meta: { requiresAuth: true } },
+    { path: '/associate/profile', component: Profile, meta: { requiresAuth: true } },
     { path: '/admin', component: AdminHome, meta: { requiresAuth: true } },
     { path: '/admin/gallery', component: GalleryHomePage, meta: { requiresAuth: true } },
     { path: '/admin/logs', component: Logs, meta: { requiresAuth: true } },
+    { path: '/admin/users', component: UserSearchHome, meta: { requiresAuth: true } },
     // { path: "*", redirect: "/" }
 ];
 

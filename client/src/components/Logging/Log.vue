@@ -24,22 +24,20 @@ export default {
     },
     methods: {
         checkTime(i) {
-            let hours;
-            if (i < 10) {
-                hours = `0${i}`;
+            let time = i;
+            if (time < 10) {
+                time = `0${i}`;
             }
-            return hours;
+            return time;
         },
     },
     created() {
         // TODO use lib moment js
         const d = new Date(this.log.createdAt);
-        let m = d.getMinutes();
-        let s = d.getSeconds();
-        m = this.checkTime(m);
-        s = this.checkTime(s);
+        const minutes = this.checkTime(d.getMinutes());
+        const seconds = this.checkTime(d.getSeconds());
         this.dateString = `${(`0${d.getDate()}`).slice(-2)}-${(`0${d.getMonth() + 1}`).slice(-2)}-${
-            d.getFullYear()} ${d.getHours()}:${m}:${s}`;
+            d.getFullYear()} ${d.getHours()}:${minutes}:${seconds}`;
     },
 };
 </script>

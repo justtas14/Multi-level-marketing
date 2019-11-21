@@ -4,16 +4,25 @@
             <th width="70%" class="logHeader message">Message</th>
             <th width="30%" class="logHeader created">Log Created</th>
         </thead>
-        <tbody id="associatesWrapper">
-        <div v-if="spinner" class="Spinner__Container user__search__spiner"
-             v-bind:style="{top: 0, left: 0, right:0, bottom: 0, 'z-index': 9999}">
-            <div class="lds-dual-ring"/>
-        </div>
-        <Log
-            v-bind:key="log.id"
-            v-for="log in logs"
-            v-bind:log="log"
-        />
+        <tbody id="associatesWrapper" v-if="logs.length > 0">
+            <div v-if="spinner" class="Spinner__Container user__search__spiner"
+                v-bind:style="{top: 0, left: 0, right:0, bottom: 0, 'z-index': 9999}">
+                <div class="lds-dual-ring"/>
+            </div>
+            <Log
+                v-bind:key="log.id"
+                v-for="log in logs"
+                v-bind:log="log"
+            />
+        </tbody>
+        <tbody v-else>
+             <tr class="log-container">
+                <td class="log-itemContainer">
+                    No logs to display
+                </td>
+                <td class="log-itemContainer">
+                </td>
+            </tr>
         </tbody>
     </table>
 </template>

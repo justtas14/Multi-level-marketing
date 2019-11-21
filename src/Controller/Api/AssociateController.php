@@ -126,7 +126,7 @@ final class AssociateController extends AbstractController
      */
 
     /**
-     * @Rest\Put("/associate/profile", name="associate_profile")
+     * @Rest\Patch("/associate/profile", name="associate_profile")
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
      * @param GaufretteFileManager $fileManager
@@ -251,7 +251,7 @@ final class AssociateController extends AbstractController
 
     /**
      * @OA\Post(
-     *     path="/api/associate/profile",
+     *     path="/api/associate/invite",
      *     @OA\Parameter(
      *         in="path",
      *         name="invitationId",

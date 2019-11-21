@@ -15,7 +15,6 @@ const getters = {
 };
 
 const actions = {
-
 };
 
 const mutations = {
@@ -47,9 +46,9 @@ const mutations = {
         if (action == null) {
             state.paginationInfo.currentPage = page;
         } else if (action === 'add') {
-            state.paginationInfo.currentPage += 1;
+            state.paginationInfo.currentPage = Number(state.paginationInfo.currentPage) + 1;
         } else if (action === 'subtract') {
-            state.paginationInfo.currentPage += 1;
+            state.paginationInfo.currentPage = Number(state.paginationInfo.currentPage) - 1;
         }
     },
 };

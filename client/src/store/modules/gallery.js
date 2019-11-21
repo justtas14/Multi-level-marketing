@@ -71,10 +71,9 @@ const actions = {
             reader.readAsDataURL(input.files[0]);
         }
     },
-    handleFiles({ dispatch }, payload) {
-        ([...payload.files]).forEach((file) => {
-            payload.file = file;
-            dispatch('saveToServer', payload);
+    handleFiles({ dispatch }, files) {
+        ([...files]).forEach((file) => {
+            dispatch('saveToServer', file);
         });
     },
     async saveToServer(

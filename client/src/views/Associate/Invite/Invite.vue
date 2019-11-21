@@ -9,7 +9,7 @@
                 <div v-if="this.sent && this.sent.completed === true" style="padding: 20px 0">
                     Invitation has been sent successfully to the "{{ sent.address }}" email address
                 </div>
-                <a @click="goToRoute('invite')" v-if="this.sent && this.sent.completed === true"
+                <a @click="goToRoute()" v-if="this.sent && this.sent.completed === true"
                    class="waves-effect waves-light btn">Send another one</a>
                 <Invitation
                     v-else-if="this.siteKey"
@@ -95,10 +95,9 @@ export default {
         };
     },
     methods: {
-        async goToRoute(path) {
+        async goToRoute() {
             this.setNotSent();
-            this.setCurrentPath(path);
-            await this.invitationHome();
+            window.location.reload();
         },
         ...mapMutations('Invitation', [
             'setNotSent',

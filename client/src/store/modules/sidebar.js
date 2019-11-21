@@ -4,7 +4,7 @@ import SecurityAPI from '../api/SecurityApi/apiCalls';
 const initialState = {
     configuration: null,
     currentPath: '',
-    hamburgerClicked: false,
+    hamburgerClicked: null,
 };
 
 const getters = {

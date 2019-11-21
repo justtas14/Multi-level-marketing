@@ -107,8 +107,7 @@ export default {
         },
         determineSrc() {
             if (this.isImage()) {
-                const paramObj = new Parameters();
-                return `${paramObj.getApiHostUrl(process.env.VUE_APP_HOST_URL)}${this.file.filePath}`;
+                return `${Parameters.API_HOST_URL}${this.file.filePath}`;
             } if (this.isPDF()) {
                 return pdfImage;
             } if (this.isDOCX()) {

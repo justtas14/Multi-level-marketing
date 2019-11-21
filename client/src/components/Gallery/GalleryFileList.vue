@@ -58,6 +58,7 @@ export default {
     }),
     methods: {
         handleDrop(event) {
+            event.preventDefault();
             EventBus.$emit('handleDrop', event);
         },
 

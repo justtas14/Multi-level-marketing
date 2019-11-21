@@ -33,8 +33,7 @@ export default {
     },
     mounted() {
         EventBus.$on('oneClickFile', (fileId, fileName, filePath, downloadPath) => {
-            const paramObj = new Parameters();
-            window.location.href = `${paramObj.getApiHostUrl(process.env.VUE_APP_HOST_URL)}${downloadPath}`;
+            window.location.href = `${Parameters.API_HOST_URL}${downloadPath}`;
         });
     },
     computed: {

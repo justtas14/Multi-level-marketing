@@ -12,7 +12,7 @@
 <script>
 
 import {
-    mapState, mapGetters,
+    mapState, mapGetters, mapMutations,
 } from 'vuex';
 import Logo from './Logo.vue';
 import Profile from './Profile.vue';
@@ -32,7 +32,9 @@ export default {
         };
     },
     methods: {
-
+        ...mapMutations('Sidebar', [
+            'setHamburgerClicked',
+        ]),
     },
     computed: {
         ...mapState('Sidebar', [
@@ -43,7 +45,7 @@ export default {
         ]),
     },
     created() {
-
+        this.setHamburgerClicked(null);
     },
 };
 </script>

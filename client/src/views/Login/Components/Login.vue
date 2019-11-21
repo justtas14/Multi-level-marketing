@@ -33,14 +33,15 @@
                         class="waves-effect waves-light btn"
                         style="background-color:#3ab54a"
                         type="button"
-                        :disabled="email.length === 0 || password.length === 0 || isLoading"
+                        :disabled="email.length === 0 || password.length === 0
+                         || isLoading || isLoggedIn"
                         @click="performLogin()"
                     >
-                    <div v-if="this.isLoading" class="Spinner__Container">
-                        <div class="lds-dual-ring buttonSpinner"/>
-                    </div>
                         Login
                     </button>
+                    <div v-if="isLoading" class="progress">
+                        <div class="indeterminate"></div>
+                    </div>
                 </div>
             </form>
             <div id="loggingLogs">

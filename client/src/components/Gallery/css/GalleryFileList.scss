@@ -15,6 +15,12 @@
     right: 0;
 }
 
+.image-dropping {
+    background-color: #cccccc;
+    opacity: 0.4;
+    z-index: 2000;
+}
+
 #uploadImageIcon {
     position: absolute;
     left: 0;

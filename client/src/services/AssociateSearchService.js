@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const searchUrl = '/admin/api/associates';
+const searchUrl = '/api/admin/associates';
 
-export async function findAll() {
-    return axios.get(searchUrl)
+export async function findAll(token) {
+    return axios.get(searchUrl, { headers: { Authorization: `Bearer ${token}` } })
         .then(response => ({
             associates: response.data.associates,
             numberOfPages: response.data.pagination.maxPages,
@@ -11,11 +11,13 @@ export async function findAll() {
         }));
 }
 
-export async function findBy(params) {
-    return axios.get(searchUrl, { params })
-        .then(response => ({
-            associates: response.data.associates,
-            numberOfPages: response.data.pagination.maxPages,
-            currentPage: response.data.pagination.currentPage,
-        }));
+export async function findBy(params, token) {
+    return axios.get(searchUrl, {
+        params,
+        headers: { Authorization: `Bearer ${token}` },
+    }).then(response => ({
+        associates: response.data.associates,
+        numberOfPages: response.data.pagination.maxPages,
+        currentPage: response.data.pagination.currentPage,
+    }));
 }

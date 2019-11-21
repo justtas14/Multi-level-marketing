@@ -9,7 +9,11 @@
 export default {
     name: 'Recaptcha',
     props: ['siteKey'],
+    methods: {
+
+    },
 };
+
 </script>
 
 <style lang="scss" scoped>

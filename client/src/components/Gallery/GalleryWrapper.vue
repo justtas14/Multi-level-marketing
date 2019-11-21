@@ -58,6 +58,9 @@ export default {
         },
         categorizeFiles(category) {
             this.changeCategory(category);
+            const page = 1; const
+                action = null;
+            this.changePage({ page, action });
             this.callDataAxios();
         },
         ...mapActions('Gallery', [
@@ -83,6 +86,7 @@ export default {
         const scope = this;
         EventBus.$on('handleDrop', (event) => {
             const dt = event.dataTransfer;
+            console.log(dt.files);
             const { files } = dt;
             scope.handleFiles(files);
         });
@@ -103,7 +107,7 @@ export default {
             const page = null;
             const action = 'add';
             scope.changePage({ page, action });
-            // scope.callDataAxios();
+            scope.callDataAxios();
         });
         PaginationEventBus.$on('page', (page) => {
             const action = null;

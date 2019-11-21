@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar-menu"
-    :class="{'sidebar-menu-active': this.hamburgerClicked,
-     'sidebar-menu-inactive' : !this.hamburgerClicked}">
+    :class="{'sidebar-menu-active': this.hamburgerClicked === true,
+     'sidebar-menu-inactive' : this.hamburgerClicked === false}">
         <div v-if="isAdmin" class="sidebar-item sidebar__sectionLabel">
             Admin
         </div>

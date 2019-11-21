@@ -56,7 +56,7 @@ export default {
                 emailField: this.props.emailSearch,
             };
             this.setSpinnerState(true);
-            findBy(params).then((response) => {
+            findBy(params, this.token).then((response) => {
                 this.loadData(response);
             });
         },
@@ -71,7 +71,7 @@ export default {
             }
 
             this.setSpinnerState(true);
-            findBy(params).then((response) => {
+            findBy(params, this.token).then((response) => {
                 this.loadData(response);
             });
         },
@@ -116,7 +116,9 @@ export default {
         });
     },
     computed: {
-
+        ...mapState('Security', {
+            token: 'token',
+        }),
         ...mapState('UserSearch', {
             spinner: 'spinner',
             paginationInfo: 'paginationInfo',
@@ -128,7 +130,7 @@ export default {
     },
     created() {
         this.setSpinnerState(true);
-        findAll().then((response) => {
+        findAll(this.token).then((response) => {
             this.loadData(response);
             this.isStarting = false;
         });

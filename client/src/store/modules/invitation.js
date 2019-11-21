@@ -110,9 +110,9 @@ const mutations = {
         if (action == null) {
             state.pagination.currentPage = page;
         } else if (action === 'add') {
-            state.pagination.currentPage += 1;
+            state.pagination.currentPage = Number(state.paginationInfo.currentPage) + 1;
         } else if (action === 'subtract') {
-            state.pagination.currentPage -= 1;
+            state.pagination.currentPage = Number(state.paginationInfo.currentPage) - 1;
         }
     },
 };

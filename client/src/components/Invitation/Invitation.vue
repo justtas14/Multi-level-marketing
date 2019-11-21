@@ -44,11 +44,11 @@
                     style="background-color: #3ab54a"
                     @click="sendInvitation"
                 >
-                <div v-if="this.isLoadingForm" class="Spinner__Container">
-                    <div class="lds-dual-ring buttonSpinner"/>
-                </div>
                     {{ submitLabel }}
                 </button>
+                <div class="progress" v-if="isLoadingForm">
+                    <div class="indeterminate"></div>
+                </div>
             </div>
         </form>
     </div>

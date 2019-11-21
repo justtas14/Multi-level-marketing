@@ -87,7 +87,7 @@
                             </td>
                         </tr>
                     </tbody>
-                    <tbody v-else>
+                    <tbody v-else-if="!isLoading">
                         <tr>
                             <td colspan="4">
                                 You do not have any associates in your direct downline

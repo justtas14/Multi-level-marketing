@@ -33,7 +33,11 @@ export default {
     },
     methods: {
         toggleMenu() {
-            this.setHamburgerClicked(!this.hamburgerClicked);
+            if (this.hamburgerClicked === null) {
+                this.setHamburgerClicked(true);
+            } else {
+                this.setHamburgerClicked(!this.hamburgerClicked);
+            }
         },
 
         ...mapMutations('Sidebar', [

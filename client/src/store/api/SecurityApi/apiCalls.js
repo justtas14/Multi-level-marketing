@@ -9,6 +9,7 @@ export default class SecurityApiCalls {
     }
 
     setCookie(token) {
+        const scope = this;
         try {
             return axios.post('http://prelaunchbuilder.local/api/setCookie', {
                 token,
@@ -17,12 +18,13 @@ export default class SecurityApiCalls {
                 withCredentials: true,
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     unsetCookie(token) {
+        const scope = this;
         try {
             return axios.post('http://prelaunchbuilder.local/api/unsetCookie', {
                 token,
@@ -30,34 +32,37 @@ export default class SecurityApiCalls {
                 headers: { Authorization: `Bearer ${token}` },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     authenticateMe(token) {
+        const scope = this;
         try {
             return axios.post('/api/associate/me', {
                 token,
             }, { headers: { Authorization: `Bearer ${token}` } });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     authenticateGetApi(url, token) {
+        const scope = this;
         try {
             return axios.get(url, {
                 headers: { Authorization: `Bearer ${token}` },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     authenticateInvitationPostApi(url, token, data) {
+        const scope = this;
         try {
             return axios.post(url, {
                 email: data.invitationEmail,
@@ -68,12 +73,13 @@ export default class SecurityApiCalls {
                 headers: { Authorization: `Bearer ${token}` },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     downloadCSVApi(token) {
+        const scope = this;
         try {
             return axios.get('/api/admin/csv', {
                 responseType: 'blob',
@@ -84,12 +90,13 @@ export default class SecurityApiCalls {
                 },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     galleryGetApi(url, token, parameters) {
+        const scope = this;
         try {
             return axios.get(url, {
                 params: {
@@ -100,12 +107,13 @@ export default class SecurityApiCalls {
                 headers: { Authorization: `Bearer ${token}` },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     galleryDeleteApi(url, token, parameters) {
+        const scope = this;
         try {
             return axios.delete(url, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -114,12 +122,13 @@ export default class SecurityApiCalls {
                 },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }
 
     getLogs(url, parameters, token) {
+        const scope = this;
         try {
             return axios.get(url, {
                 params: {
@@ -128,7 +137,7 @@ export default class SecurityApiCalls {
                 headers: { Authorization: `Bearer ${token}` },
             });
         } catch (e) {
-            this.unAuthenticate();
+            scope.unAuthenticate();
         }
         return false;
     }

@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar-profileContainer"
-    :class="{'sidebar-profileContainer-active': this.hamburgerClicked,
-     'sidebar-profileContainer-inactive': !this.hamburgerClicked}">
+    :class="{'sidebar-profileContainer-active': this.hamburgerClicked === true,
+     'sidebar-profileContainer-inactive': this.hamburgerClicked === false}">
         <a @click="redirectToEditProfile">
             <div class="sidebarProfile__container">
                 <div class="sidebarProfile__pictureContainer">
