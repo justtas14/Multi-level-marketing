@@ -173,6 +173,7 @@ body {
   color: #3ab54a;
 }
 
+
 .card__container {
   margin: 10px auto 10px auto;
   padding: 0 20px
@@ -230,6 +231,35 @@ input:focus+label {
   box-shadow: unset!important;
 }
 
+.registration__datepicker>div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.registration__datepicker>div>select {
+  margin-left: 10px;
+}
+.registration__datepicker>div>select:first-child {
+  margin-left: 0;
+}
+
+#user_update_associate_mobilePhone, #user_registration_associate_mobilePhone {
+  display: flex
+}
+#user_update_associate_mobilePhone_country, #user_registration_associate_mobilePhone_country {
+  flex: 1;
+}
+
+#user_update_associate_mobilePhone_number, #user_registration_associate_mobilePhone_number {
+  flex: 3;
+}
+
+select {
+  border-radius: 0;
+  border: 1px solid lightgrey;
+}
+
 .SVG_Line {
   stroke: #3ab54a;
 }
@@ -279,6 +309,21 @@ select {
 .input-field>label {
   -webkit-transform: translateY(0)!important;
   transform: translateY(0)!important;
+}
+
+.registration__input--forceBorder select {
+  display: block!important;
+}
+
+.registration__input--forceBorder input {
+  border: 1px solid lightgrey!important;
+  padding-left: 0.5em!important;
+  -webkit-box-sizing: border-box!important;
+  box-sizing: border-box!important;
+}
+
+.registration__input--forceSelectDisplay select {
+  display: block!important;
 }
 
 .Node__Container {

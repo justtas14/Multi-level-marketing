@@ -15,6 +15,7 @@ import Sidebar from './store/modules/sidebar';
 import AdminHome from './store/modules/adminHome';
 import AssociateHome from './store/modules/associateHome';
 import Invitation from './store/modules/invitation';
+import Profile from './store/modules/profile';
 
 store.registerModule('UserSearch', UserSearch);
 store.registerModule('Security', Security);
@@ -24,6 +25,7 @@ store.registerModule('Sidebar', Sidebar);
 store.registerModule('AdminHome', AdminHome);
 store.registerModule('AssociateHome', AssociateHome);
 store.registerModule('Invitation', Invitation);
+store.registerModule('Profile', Profile);
 
 VuexPersist(store);
 

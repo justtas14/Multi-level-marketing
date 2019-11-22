@@ -97,7 +97,6 @@ export default {
     methods: {
         async goToRoute() {
             this.setNotSent();
-            window.location.reload();
         },
         ...mapMutations('Invitation', [
             'setNotSent',

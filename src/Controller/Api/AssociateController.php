@@ -118,7 +118,7 @@ final class AssociateController extends AbstractController
     }
 
     /**
-     * @OA\Put(
+     * @OA\Patch(
      *     path="/api/associate/profile",
      *     @OA\Response(response="200",
      *     description="Returns information about current associate or updates current associate")
@@ -169,9 +169,9 @@ final class AssociateController extends AbstractController
                 $email = $user->getEmail();
                 $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
                 if ($checkEmailExist && $currentEmail !== $email) {
-                    $formErrors = ['invalidEmail' => 'This email already exists'];
+                    $formErrors['invalidEmail'] = 'This email already exists';
                 } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
-                    $formErrors = ['invalidPassword' => 'Old password is not correct'];
+                    $formErrors['invalidPassword'] = 'Old password is not correct';
                 } else {
                     if ($savedProfilePicture) {
                         if ($user->getAssociate()->getProfilePicture() === null) {
@@ -207,7 +207,7 @@ final class AssociateController extends AbstractController
                 $form->get('associate')->get('mobilePhone')->get('country')
                     ->setData($phoneUtil->getRegionCodeForCountryCode($phoneNumber->getCountryCode()));
             } catch (NumberParseException $e) {
-                $formErrors = ['phoneError' => 'Prior mobile is invalid'];
+                $formErrors['phoneError'] = 'Prior mobile is invalid';
             }
         }
 

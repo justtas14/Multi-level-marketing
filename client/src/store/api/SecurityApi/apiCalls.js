@@ -78,6 +78,22 @@ export default class SecurityApiCalls {
         return false;
     }
 
+    profileUpdate(url, token, data = null) {
+        const scope = this;
+        console.log(data);
+        try {
+            return axios.patch(url, {
+                data,
+            }, {
+                headers: { Authorization: `Bearer ${token}` },
+                'Content-Type': 'multipart/form-data',
+            });
+        } catch (e) {
+            scope.unAuthenticate();
+        }
+        return false;
+    }
+
     downloadCSVApi(token) {
         const scope = this;
         try {
