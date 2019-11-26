@@ -25,9 +25,9 @@ class RecaptchaManager
         $env = $this->parameterBag->get('kernel.environment');
 
         if (!$recaptchaResponse && $env !== 'test') {
-//            return 'Please check the captcha form';
+            return 'Please check the captcha form';
         } elseif (!$responseKeys["success"] && $env !== 'test') {
-//            return 'You are the spammer!';
+            return 'You are the spammer!';
         }
         return '';
     }

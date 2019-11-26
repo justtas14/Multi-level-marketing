@@ -782,6 +782,10 @@ class AdminController extends AbstractController
             throw new WrongPageNumberException();
         }
 
+        if ($page == 0) {
+            $page++;
+        }
+
         $category = $request->get('category', 'all');
         $imageLimit = $request->get('imageLimit', 20);
 

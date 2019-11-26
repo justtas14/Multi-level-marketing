@@ -21,7 +21,12 @@
                 />
             </div>
         </div>
-        <Pagination v-bind:paginationInfo="paginationInfo"/>
+        <Pagination
+         @previousPage="previousPage"
+          @nextPage="nextPage"
+           @specificPage="specificPage"
+        v-bind:paginationInfo="paginationInfo"
+        />
     </div>
 </template>
 
@@ -49,6 +54,16 @@ export default {
     mounted() {
     },
     methods: {
+        previousPage() {
+            this.$emit('previousPage');
+        },
+        nextPage() {
+            this.$emit('nextPage');
+        },
+        specificPage(n) {
+            this.$emit('page', n);
+        },
+
         hideConfirmation() {
             const confirm = {
                 display: 'none',

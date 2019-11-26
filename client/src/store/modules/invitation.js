@@ -4,7 +4,7 @@ const initialState = {
     isLoading: false,
     isLoadingForm: false,
     isLoadingSentInvitations: false,
-    isResendBtnLoading: true,
+    isResendBtnLoading: false,
     formErrors: null,
     sent: null,
     invitations: null,
@@ -12,6 +12,7 @@ const initialState = {
     uniqueAssociateInvitationLink: null,
     siteKey: null,
     submitLabel: 'send',
+    verifyResponseKey: null,
 };
 const getters = {
 
@@ -40,7 +41,11 @@ const actions = {
             rootState.Security.token,
             payload.params,
         );
-        commit('setSent', response.data.sent);
+        if (response.data.formErrors) {
+            commit('setErrors', response.data.formErrors);
+        } else {
+            commit('setSent', response.data.sent);
+        }
     },
     async changePage({ state, commit, rootState }) {
         commit('setIsLoadingSentInvitations');
@@ -83,6 +88,7 @@ const mutations = {
     },
     setErrors: (state, errors) => {
         state.isLoadingForm = false;
+        state.isResendBtnLoading = false;
         state.formErrors = errors;
     },
     setSent: (state, sent) => {
@@ -114,6 +120,9 @@ const mutations = {
         } else if (action === 'subtract') {
             state.pagination.currentPage = Number(state.paginationInfo.currentPage) - 1;
         }
+    },
+    changeRecaptchaKey: (state, verifyResponseKey) => {
+        state.verifyResponseKey = verifyResponseKey;
     },
 };
 

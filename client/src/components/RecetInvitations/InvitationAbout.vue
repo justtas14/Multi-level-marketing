@@ -22,6 +22,7 @@
 import {
     mapActions,
     mapState,
+    mapMutations,
 } from 'vuex';
 
 export default {
@@ -43,19 +44,27 @@ export default {
                 const payload = {
                     params: {
                         invitationId: this.invitation.id,
+                        verifyResponseKey: this.verifyResponseKey,
                     },
                 };
                 await this.resendInvitation(payload);
+                this.changeRecaptchaKey(null);
+                this.pressedBtnInvId = null;
+                window.scroll(0, 0);
             }
         },
         ...mapActions('Invitation', [
             'resendInvitation',
+        ]),
+        ...mapMutations('Invitation', [
+            'changeRecaptchaKey',
         ]),
     },
     computed: {
 
         ...mapState('Invitation', [
             'isResendBtnLoading',
+            'verifyResponseKey',
         ]),
     },
     created() {

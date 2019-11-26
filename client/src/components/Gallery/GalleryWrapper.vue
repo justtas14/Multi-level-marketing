@@ -7,6 +7,9 @@
             v-bind:imageExtensions="imageExtensions"
             v-bind:constants="constants"
             v-bind:confirm="confirm"
+             @previousPage="previousPage"
+             @nextPage="nextPage"
+             @specificPage="specificPage"
     >
         <template v-slot:category>
             <CategoryMenu
@@ -25,7 +28,6 @@ import Gallery from './Gallery.vue';
 import CategoryMenu from './GalleryMenu.vue';
 import galleryConst from './constants/galleryConst';
 import EventBus from './EventBus/EventBus';
-import PaginationEventBus from '../Pagination/EventBus/EventBus';
 
 
 export default {
@@ -53,6 +55,28 @@ export default {
         }),
     },
     methods: {
+        previousPage() {
+            const page = null; const
+                action = 'subtract';
+            this.changePage({ page, action });
+            this.callDataAxios();
+        },
+        nextPage() {
+            const page = null;
+            const action = 'add';
+            this.changePage({ page, action });
+            this.callDataAxios();
+        },
+        specificPage(n) {
+            const page = n;
+            const action = null;
+            this.changePage({
+                page,
+                action,
+            });
+            this.callDataAxios();
+        },
+
         readUrl(e) {
             this.readURL(e);
         },
@@ -86,7 +110,6 @@ export default {
         const scope = this;
         EventBus.$on('handleDrop', (event) => {
             const dt = event.dataTransfer;
-            console.log(dt.files);
             const { files } = dt;
             scope.handleFiles(files);
         });
@@ -96,26 +119,6 @@ export default {
                 display: 'block',
             };
             scope.changeConfirmation(confirm);
-        });
-        PaginationEventBus.$on('previousPage', () => {
-            const page = null; const
-                action = 'subtract';
-            scope.changePage({ page, action });
-            scope.callDataAxios();
-        });
-        PaginationEventBus.$on('nextPage', () => {
-            const page = null;
-            const action = 'add';
-            scope.changePage({ page, action });
-            scope.callDataAxios();
-        });
-        PaginationEventBus.$on('page', (page) => {
-            const action = null;
-            scope.changePage({
-                page,
-                action,
-            });
-            scope.callDataAxios();
         });
         EventBus.$on('showNotification', (msg) => {
             scope.showNotification(msg);

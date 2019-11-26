@@ -49,7 +49,7 @@
                     <Error v-bind:message="error"></Error>
                 </div>
                 <div class="login-successMessageContainer" v-if="isLoggedIn">
-                    <Success v-bind:message="'Success'"></Success>
+                    <Success v-bind:message="'Logged in!'"></Success>
                 </div>
             </div>
         </div>

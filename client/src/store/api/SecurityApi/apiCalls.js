@@ -69,6 +69,7 @@ export default class SecurityApiCalls {
                 fullName: data.fullName,
                 invitationId: data.invitationId,
                 page: data.page,
+                verifyResponseKey: data.verifyResponseKey,
             }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -80,13 +81,14 @@ export default class SecurityApiCalls {
 
     profileUpdate(url, token, data = null) {
         const scope = this;
-        console.log(data);
         try {
-            return axios.patch(url, {
+            return axios.post(url, {
                 data,
             }, {
-                headers: { Authorization: `Bearer ${token}` },
-                'Content-Type': 'multipart/form-data',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
             });
         } catch (e) {
             scope.unAuthenticate();

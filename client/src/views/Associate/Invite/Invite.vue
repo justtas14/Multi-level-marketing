@@ -22,9 +22,6 @@
         <div v-if="!this.sent" class="card">
             <div class="card-content">
                 <span class="card-title invitationLinkTitle">Invitation link</span>
-                <div v-if="isLoading" class="Spinner__Container">
-                    <div class="lds-dual-ring"/>
-                </div>
                 <div class="invitationAboutText">
                     Below is an invitation link, you can share it with
                     your potential associates, so they can begin their
@@ -35,7 +32,10 @@
                     <share v-bind:invitationUrl="this.uniqueAssociateInvitationLink"/>
                 </div>
                 <div class="barCodeImageContainer">
-                    <zoomImage v-bind:imageSrc="imageSrc">
+                    <content-loader v-if="isLoading" height="80">
+                        <rect x="160" y="-10" width="80" height="85" />
+                    </content-loader>
+                    <zoomImage v-else v-bind:imageSrc="imageSrc">
                     </zoomImage>
                 </div>
                 <qrcode
@@ -49,11 +49,12 @@
         <div v-if="!this.sent" class="card">
             <div class="card-content">
                 <span class="card-title">Sent Invitations</span>
-                    <div v-if="isLoading || isLoadingSentInvitations"
+                    <div v-if="isLoading"
                     class="Spinner__Container">
                         <div class="lds-dual-ring"/>
                     </div>
                     <RecentInvitations
+                        v-else
                         v-bind:invitations="invitations"
                         v-bind:paginationInfo="pagination"
                     >
@@ -65,6 +66,7 @@
 
 <script>
 import Vue from 'vue';
+import { ContentLoader } from 'vue-content-loader';
 import VueQrcode from '@chenfengyuan/vue-qrcode';
 import {
     mapActions, mapMutations, mapState, mapGetters,
@@ -74,8 +76,10 @@ import invitationLink from '../../../components/InvitationLink/invitationLink.vu
 import zoomImage from '../../../components/ZoomImage/ZoomImage.vue';
 import share from '../../../components/Share/Share.vue';
 import RecentInvitations from '../../../components/RecetInvitations/RecentInvitations.vue';
-import EventBus from '../../../components/Pagination/EventBus/EventBus';
 
+const SocialSharing = require('vue-social-sharing');
+
+Vue.use(SocialSharing);
 Vue.component(VueQrcode.name, VueQrcode);
 
 export default {
@@ -87,6 +91,7 @@ export default {
         zoomImage,
         share,
         RecentInvitations,
+        ContentLoader,
     },
     data() {
         return {
@@ -115,26 +120,6 @@ export default {
         ]),
     },
     mounted() {
-        const barCodeImage = document.querySelector('.barCodeImage');
-        this.imageSrc = barCodeImage.getAttribute('src');
-
-        EventBus.$on('previousPage', async () => {
-            const page = null; const
-                action = 'subtract';
-            this.changePagination({ page, action });
-            await this.changePage();
-        });
-        EventBus.$on('nextPage', async () => {
-            const action = 'add'; const
-                page = null;
-            this.changePagination({ page, action });
-            await this.changePage();
-        });
-        EventBus.$on('page', async (page) => {
-            const action = null;
-            this.changePagination({ page, action });
-            await this.changePage();
-        });
     },
     computed: {
         ...mapState('Invitation', [
@@ -153,6 +138,8 @@ export default {
     },
     async created() {
         await this.invitationHome();
+        const barCodeImage = document.querySelector('.barCodeImage');
+        this.imageSrc = barCodeImage.getAttribute('src');
     },
 };
 </script>

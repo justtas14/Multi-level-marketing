@@ -1,9 +1,7 @@
 <template>
     <div id="app">
       <Sidebar v-if="this.isAuthenticated && this.getAssociate"></Sidebar>
-      <keep-alive>
-        <router-view></router-view>
-      </keep-alive>
+    <router-view></router-view>
     </div>
 </template>
 

@@ -118,7 +118,7 @@ final class AssociateController extends AbstractController
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Post(
      *     path="/api/associate/profile",
      *     @OA\Response(response="200",
      *     description="Returns information about current associate or updates current associate")
@@ -126,7 +126,7 @@ final class AssociateController extends AbstractController
      */
 
     /**
-     * @Rest\Patch("/associate/profile", name="associate_profile")
+     * @Rest\Post("/associate/profile", name="associate_profile")
      * @param UserPasswordEncoderInterface $encoder
      * @param Request $request
      * @param GaufretteFileManager $fileManager
@@ -161,14 +161,19 @@ final class AssociateController extends AbstractController
 
         $form = $this->createForm(UserUpdateType::class, $user);
 
-        $form->handleRequest($request);
+
+        if ($request->request->all()['data']) {
+            $form->submit($request->request->all()['data']);
+        }
 
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $plainPassword = $form['oldPassword']->getData();
                 $email = $user->getEmail();
                 $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
-                if ($checkEmailExist && $currentEmail !== $email) {
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $formErrors['invalidEmail'] = 'Invalid email';
+                } elseif ($checkEmailExist && $currentEmail !== $email) {
                     $formErrors['invalidEmail'] = 'This email already exists';
                 } elseif (!$encoder->isPasswordValid($user, $plainPassword)) {
                     $formErrors['invalidPassword'] = 'Old password is not correct';
@@ -214,6 +219,11 @@ final class AssociateController extends AbstractController
         $em->refresh($user);
         $em->refresh($user->getAssociate());
 
+        $errors = $form->getErrors(true);
+
+        foreach ($errors as $error) {
+            $formErrors[$error->getOrigin()->getName()] = $error->getMessage();
+        }
 
         $serializer = new Serializer(
             [new DateTimeNormalizer('Y-m-d h:i:s'), $associateNormalizer, new JsonEncoder()]
@@ -371,7 +381,7 @@ final class AssociateController extends AbstractController
             }
             /** @var AssociateRepository $associateRepo */
             $associateRepo = $em->getRepository(Associate::class);
-            $recaptchaResponse = $request->request->get('g-recaptcha-response');
+            $recaptchaResponse = $request->request->get('verifyResponseKey');
             $recaptchaError = $recaptchaManager->validateRecaptcha($recaptchaResponse, $secretKey);
 
             if ($recaptchaError) {

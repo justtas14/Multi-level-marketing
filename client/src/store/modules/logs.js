@@ -15,7 +15,6 @@ const getters = {
 
 const actions = {
     async findLogs({ state, commit, rootState }) {
-        console.log(state.paginationInfo.currentPage);
         const apiCallsObj = new ApiCalls();
         const res = await apiCallsObj.getLogs(
             '/api/admin/get-logs',

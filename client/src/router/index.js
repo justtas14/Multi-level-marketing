@@ -34,7 +34,6 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.path === '/') {
         if (!store.getters['Security/isAuthenticated']) {
-            console.log('going to login');
             next({
                 path: '/login',
             });
@@ -52,7 +51,6 @@ router.beforeEach((to, from, next) => {
         if (store.getters['Security/isAuthenticated']) {
             next();
         } else {
-            console.log('going to login');
             next({
                 path: '/login',
                 query: { redirect: to.fullPath },

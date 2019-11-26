@@ -4,21 +4,34 @@
             <i class="fa fa-share-alt" aria-hidden="true"></i>
         </button>
         <div class="socialLinks" v-else>
-            <button data-network="facebook" :data-url="invitationUrl"
-             class="facebook st-custom-button"><i class="fab fa-facebook"></i>
-             </button>
-            <button data-network="twitter" :data-url="invitationUrl"
-             class="twitter st-custom-button"><i class="fab fa-twitter"></i>
-             </button>
-            <button data-network="messenger" :data-url="invitationUrl"
-             class="messenger st-custom-button"><i class="fab fa-facebook-messenger"></i>
-             </button>
-            <button data-network="linkedin" :data-url="invitationUrl"
-             class="linkedin st-custom-button"><i class="fab fa-linkedin"></i>
-             </button>
-            <button data-network="whatsapp" :data-url="invitationUrl"
-             class="whatsapp st-custom-button"><i class="fab fa-whatsapp"></i>
-             </button>
+            <social-sharing :url="invitationUrl"
+            title="The Progressive JavaScript Framework"
+            description="Intuitive, Fast and Composable MVVM for building interactive interfaces."
+            inline-template>
+                <div>
+                    <network network="email">
+                        <i class="fa fa-envelope socialIcons"></i>
+                    </network>
+                    <network network="facebook">
+                        <i class="fab fa-facebook socialIcons"></i>
+                    </network>
+                    <network network="linkedin">
+                        <i class="fab fa-linkedin socialIcons"></i>
+                    </network>
+                    <network network="reddit">
+                        <i class="fab fa-reddit socialIcons"></i>
+                    </network>
+                    <network network="skype">
+                        <i class="fab fa-skype socialIcons"></i>
+                    </network>
+                    <network network="twitter">
+                        <i class="fab fa-twitter socialIcons"></i>
+                    </network>
+                    <network network="whatsapp">
+                        <i class="fab fa-whatsapp socialIcons"></i>
+                    </network>
+                </div>
+            </social-sharing>
         </div>
     </div>
 </template>

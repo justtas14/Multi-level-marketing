@@ -22,7 +22,11 @@
                 />
             </tbody>
         </table>
-        <Pagination v-bind:paginationInfo="paginationInfo"/>
+        <Pagination
+            @previousPage="previousPage"
+            @nextPage="nextPage"
+            @specificPage="specificPage"
+        v-bind:paginationInfo="paginationInfo"/>
     </div>
 </template>
 
@@ -33,7 +37,6 @@ import Pagination from '../Pagination/Pagination.vue';
 import SearchBar from './SearchBar.vue';
 import { findAll, findBy } from '../../services/AssociateSearchService';
 import EventBus from './EventBus/EventBus';
-import EventBusFromPagination from '../Pagination/EventBus/EventBus';
 
 export default {
     name: 'Main',
@@ -49,6 +52,28 @@ export default {
         };
     },
     methods: {
+        previousPage() {
+            const page = null; const
+                action = 'subtract';
+            this.changePage({ page, action });
+            this.loadAppropriateAssociates(this.paginationInfo.currentPage);
+        },
+        nextPage() {
+            const action = 'add'; const
+                page = null;
+            this.changePage({ page, action });
+            this.loadAppropriateAssociates(this.paginationInfo.currentPage);
+        },
+        specificPage(n) {
+            const page = n;
+            const action = null;
+            this.changePage({
+                page,
+                action,
+            });
+            this.loadAppropriateAssociates(this.paginationInfo.currentPage);
+        },
+
         changePage(page) {
             const params = {
                 page,
@@ -93,26 +118,6 @@ export default {
             };
             this.updateSearchVal(params);
             this.loadAppropriateAssociates();
-        });
-        EventBusFromPagination.$on('previousPage', () => {
-            const page = null; const
-                action = 'subtract';
-            this.changePage({ page, action });
-            this.loadAppropriateAssociates(this.paginationInfo.currentPage);
-        });
-        EventBusFromPagination.$on('nextPage', () => {
-            const action = 'add'; const
-                page = null;
-            this.changePage({ page, action });
-            this.loadAppropriateAssociates(this.paginationInfo.currentPage);
-        });
-        EventBusFromPagination.$on('page', (page) => {
-            const action = null;
-            this.changePage({
-                page,
-                action,
-            });
-            this.loadAppropriateAssociates(this.paginationInfo.currentPage);
         });
     },
     computed: {

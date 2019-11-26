@@ -6,6 +6,7 @@
     <div class="card">
       <div class="card-content">
         <span class="card-title">Edit profile</span>
+        <Success v-if="this.formUpdated" v-bind:message="'Profile Updated!'"></Success>
         <form
           name="user_update"
           method="post"
@@ -21,7 +22,7 @@
               id="user_update_associate_fullName"
               name="user_update[associate][fullName]"
               required="required"
-              v-model="formData.fullName"
+              v-model="formData.associate.fullName"
             >
           </div>
           <div class="input-field registration__input--forceBorder">
@@ -36,6 +37,8 @@
               required="required"
               v-model="formData.email"
             >
+            <Error v-if="this.formErrors && this.formErrors.invalidEmail"
+            v-bind:message="this.formErrors.invalidEmail"></Error>
           </div>
           <div class="input-field registration__input--forceBorder">
             <label
@@ -49,6 +52,8 @@
               required="required"
               v-model="formData.oldPassword"
             >
+            <Error v-if="this.formErrors && this.formErrors.invalidPassword"
+              v-bind:message="this.formErrors.invalidPassword"></Error>
           </div>
           <div class="input-field registration__input--forceBorder">
             <label for="user_update_newPassword_first">New Password</label>
@@ -57,8 +62,10 @@
               id="user_update_newPassword_first"
               name="user_update[newPassword][first]"
               class="password-field"
-              v-model="formData.newPassword"
+              v-model="formData.newPassword.first"
             >
+            <Error v-if="this.formErrors && this.formErrors.first"
+              v-bind:message="this.formErrors.first"></Error>
           </div>
           <div class="input-field registration__input--forceBorder">
             <label for="user_update_newPassword_second">Repeat Password</label>
@@ -67,7 +74,7 @@
               id="user_update_newPassword_second"
               name="user_update[newPassword][second]"
               class="password-field"
-              v-model="formData.newPasswordRepeat"
+              v-model="formData.newPassword.second"
             >
           </div>
           <div class="input-field registration__input--forceBorder">
@@ -80,7 +87,7 @@
               id="user_update_associate_address"
               name="user_update[associate][address]"
               required="required"
-              v-model="formData.address"
+              v-model="formData.associate.address"
             >
           </div>
           <div class="input-field registration__input--forceBorder">
@@ -89,7 +96,7 @@
               type="text"
               id="user_update_associate_address2"
               name="user_update[associate][address2]"
-              v-model="formData.address2"
+              v-model="formData.associate.address2"
             >
           </div>
           <div class="input-field registration__input--forceBorder">
@@ -102,7 +109,7 @@
               id="user_update_associate_city"
               name="user_update[associate][city]"
               required="required"
-              v-model="formData.city"
+              v-model="formData.associate.city"
             >
           </div>
           <div class="input-field registration__input--forceBorder">
@@ -115,7 +122,7 @@
               id="user_update_associate_postcode"
               name="user_update[associate][postcode]"
               required="required"
-              v-model="formData.postcode"
+              v-model="formData.associate.postcode"
             >
           </div>
           <div class="input-field registration__input--forceSelectDisplay
@@ -126,8 +133,8 @@
             >Country</label>
             <Countries v-bind:id="'user_update_associate_country'"
              v-bind:name="'user_update[associate][country]'"
-             v-bind:value="formData.country"
-             v-model="formData.country"
+             v-bind:value="formData.associate.country"
+             v-model="formData.associate.country"
              >
              </Countries>
           </div>
@@ -136,18 +143,20 @@
             <div id="user_update_associate_mobilePhone">
                 <Telephones v-bind:name="'user_update[associate][mobilePhone][country]'"
                 v-bind:id="'user_update_associate_mobilePhone_country'"
-                v-bind:value="formData.mobilePhoneCountry"
-                v-model="formData.mobilePhoneCountry"
+                v-bind:value="formData.associate.mobilePhone.country"
+                v-model="formData.associate.mobilePhone.country"
                 ></Telephones>
                 <input
                 type="text"
                 id="user_update_associate_mobilePhone_number"
                 name="user_update[associate][mobilePhone][number]"
                 required="required"
-                v-model="formData.mobilePhone"
+                v-model="formData.associate.mobilePhone.number"
               ></div>
             <Error v-if="this.formErrors && this.formErrors.phoneError"
               v-bind:message="this.formErrors.phoneError"></Error>
+            <Error v-if="this.formErrors && this.formErrors.mobilePhone"
+            v-bind:message="this.formErrors.mobilePhone"></Error>
           </div>
           <div class="input-field registration__input--forceBorder">
             <label for="user_update_associate_homePhone">Home phone</label>
@@ -155,7 +164,7 @@
               type="text"
               id="user_update_associate_homePhone"
               name="user_update[associate][homePhone]"
-              v-model="formData.homePhone"
+              v-model="formData.associate.homePhone"
             >
           </div>
           <div class="input-field">
@@ -186,7 +195,7 @@
                 id="user_update_associate_agreedToEmailUpdates"
                 name="user_update[associate][agreedToEmailUpdates]"
                 class="filled-in"
-                v-model="formData.agreedToEmailUpdates"
+                v-model="formData.associate.agreedToEmailUpdates"
               >
               <span>I agree to receive email updates</span>
             </label>
@@ -198,7 +207,7 @@
                 id="user_update_associate_agreedToTextMessageUpdates"
                 name="user_update[associate][agreedToTextMessageUpdates]"
                 class="filled-in"
-                v-model="formData.agreedToTextMessageUpdates"
+                v-model="formData.associate.agreedToTextMessageUpdates"
               >
               <span>I agree to receive text message updates</span>
             </label>
@@ -214,21 +223,25 @@
                 name="user_update[associate][agreedToTermsOfService]"
                 required="required"
                 class="filled-in"
-                v-model="formData.agreedToTermsOfService"
+                v-model="formData.associate.agreedToTermsOfService"
               >
               <span>I agree to the terms of service</span>
             </label>
           </div>
           <div class="profile-buttonWrap">
-            <div>
+            <div id="userUpdateButtonWrapper">
                 <button
                   type="button"
                   id="user_update_associate_submit"
                   name="user_update[associate][submit]"
                   class="waves-effect waves-light btn"
                   style="background-color:#3ab54a"
+                  :disabled="isLoadingForm || isEmptyRequiredFields()"
                   @click="updateProfile()"
                 >Save </button>
+                <div class="progress" v-if="isLoadingForm">
+                    <div class="indeterminate"></div>
+                </div>
               </div>
           </div>
         </form>
@@ -239,13 +252,12 @@
 
 <script>
 import {
-    mapActions, mapState,
+    mapActions, mapState, mapMutations,
 } from 'vuex';
 import Countries from '../../../components/FormFields/Countries.vue';
 import Telephones from '../../../components/FormFields/Telephones.vue';
 import Error from '../../../components/Messages/Error.vue';
-
-//  :disabled="isLoadingForm || isEmptyRequiredFields()"
+import Success from '../../../components/Messages/Success.vue';
 
 export default {
     name: 'Profile',
@@ -253,87 +265,99 @@ export default {
         Countries,
         Telephones,
         Error,
+        Success,
     },
     props: [],
     data() {
         return {
             formData: {
-                fullName: '',
                 email: '',
                 oldPassword: '',
-                newPassword: '',
-                newPasswordRepeat: '',
-                address: '',
-                address2: '',
-                city: '',
-                postcode: '',
-                country: '',
-                mobilePhoneCountry: '',
-                mobilePhone: '',
-                homePhone: '',
-                profilePicture: null,
-                agreedToEmailUpdates: false,
-                agreedToTextMessageUpdates: false,
-                agreedToTermsOfService: false,
+                newPassword: {
+                    first: '',
+                    second: '',
+                },
+                associate: {
+                    fullName: '',
+                    address: '',
+                    address2: '',
+                    city: '',
+                    postcode: '',
+                    country: '',
+                    mobilePhone: {
+                        country: '',
+                        number: '',
+                    },
+                    homePhone: '',
+                    profilePicture: null,
+                    agreedToEmailUpdates: false,
+                    agreedToTextMessageUpdates: false,
+                    agreedToTermsOfService: false,
+                },
             },
         };
     },
     methods: {
         async updateProfile() {
-            const profileFormData = new FormData();
-            profileFormData.set('fullName', this.formData.fullName);
-            profileFormData.set('email', this.formData.email);
-            profileFormData.set('oldPassword', this.formData.oldPassword);
-            profileFormData.set('newPassword', this.formData.newPassword);
-            profileFormData.set('newPasswordRepeat', this.formData.newPasswordRepeat);
-            profileFormData.set('address', this.formData.address);
-            profileFormData.set('address2', this.formData.address2);
-            profileFormData.set('city', this.formData.city);
-            profileFormData.set('postcode', this.formData.postcode);
-            profileFormData.set('country', this.formData.country);
-            profileFormData.set('mobilePhoneCountry', this.formData.mobilePhoneCountry);
-            profileFormData.set('mobilePhone', this.formData.mobilePhone);
-            profileFormData.set('homePhone', this.formData.homePhone);
-            profileFormData.set('agreedToTextMessageUpdates', this.formData.agreedToTextMessageUpdates);
-            profileFormData.set('agreedToSocialMediaUpdates', this.formData.agreedToSocialMediaUpdates);
-            profileFormData.set('agreedToTermsOfService', this.formData.agreedToTermsOfService);
-            profileFormData.append('profilePicture', this.formData.profilePicture);
+            const formData = new FormData();
+            // const validFormData = JSON.parse(JSON.stringify(this.formData));
+            formData.append('data', 'Hello!');
+            console.log(formData.entries());
+            const res = await this.submitForm(formData);
+            if (res) {
+                this.setAssociate(res);
+            }
 
-          
-
-            const form = document.querySelector('[name=user_update]');
-            const formData = new FormData(form);
-            console.log(formData);
+            window.scrollTo(0, 0);
         },
         readUrl(e) {
             const files = e.target.files || e.dataTransfer.files;
             const [file] = files;
-            this.formData.profilePicture = file;
+            this.formData.associate.profilePicture = file;
         },
         isEmptyRequiredFields() {
-            return this.formData.email === '' || this.formData.fullName === '' || this.formData.oldPassword === ''
-             || this.formData.address === '' || this.formData.city === '' || this.formData.postcode === ''
-             || this.formData.mobilePhoneCountry === '' || this.formData.mobilePhone === '' || this.formData.agreedToTermsOfService === false;
+            return this.formData.email === '' || this.formData.associate.fullName === '' || this.formData.oldPassword === ''
+             || this.formData.associate.address === '' || this.formData.associate.city === '' || this.formData.associate.postcode === ''
+             || this.formData.associate.mobilePhone.country === '' || this.formData.associate.mobilePhone.number === ''
+             || this.formData.associate.agreedToTermsOfService === false;
         },
         ...mapActions('Profile', [
             'home',
             'submitForm',
         ]),
+        ...mapMutations('Security', [
+            'setAssociate',
+        ]),
+        ...mapMutations('Profile', [
+            'profileUpdate',
+        ]),
     },
     mounted() {
-        this.formData = { ...this.associate, id: undefined, roles: undefined };
+        this.formData.email = this.associate.email;
+        this.formData.associate.fullName = this.associate.fullName;
+        this.formData.associate.address = this.associate.address;
+        this.formData.associate.address2 = this.associate.address2;
+        this.formData.associate.city = this.associate.city;
+        this.formData.associate.postcode = this.associate.postcode;
+        this.formData.associate.country = this.associate.country;
+        this.formData.associate.homePhone = this.associate.homePhone;
+        this.formData.associate.agreedToEmailUpdates = this.associate.agreedToEmailUpdates;
+        this.formData.associate.agreedToTextMessageUpdates = this.associate
+            .agreedToTextMessageUpdates;
+        this.formData.associate.agreedToTermsOfService = this.associate.agreedToTermsOfService;
     },
     computed: {
         ...mapState('Profile', [
             'isLoadingForm',
             'formErrors',
+            'formUpdated',
         ]),
         ...mapState('Security', [
             'associate',
         ]),
     },
     async created() {
-        console.log(this.associate);
+        this.profileUpdate(false);
         await this.home();
     },
 };

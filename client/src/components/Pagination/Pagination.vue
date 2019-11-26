@@ -40,7 +40,6 @@
     </ul>
 </template>
 <script>
-import EventBus from './EventBus/EventBus';
 
 export default {
     name: 'Pagination',
@@ -54,13 +53,13 @@ export default {
     },
     methods: {
         previousPage() {
-            EventBus.$emit('previousPage');
+            this.$emit('previousPage');
         },
         nextPage() {
-            EventBus.$emit('nextPage');
+            this.$emit('nextPage');
         },
         page(n) {
-            EventBus.$emit('page', n);
+            this.$emit('specificPage', n);
         },
     },
 };

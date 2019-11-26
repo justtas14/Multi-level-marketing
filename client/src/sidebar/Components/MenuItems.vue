@@ -74,6 +74,9 @@ export default {
         goToRoute(path) {
             this.setCurrentPath(path);
             this.$router.push({ path });
+            if (this.hamburgerClicked) {
+                this.setHamburgerClicked(false);
+            }
         },
         isCurrentRoute(path) {
             return this.currentPath === path;
@@ -87,6 +90,7 @@ export default {
         ]),
         ...mapMutations('Sidebar', [
             'setCurrentPath',
+            'setHamburgerClicked',
         ]),
         ...mapActions('Sidebar', [
             'downloadCSV',

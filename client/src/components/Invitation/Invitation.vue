@@ -39,7 +39,7 @@
                     name="invitation[submit]"
                     class="waves-effect waves-light btn"
                     :disabled="invitationEmail.length === 0 ||
-                        fullName.length === 0 || isLoadingForm"
+                        fullName.length === 0 || isLoadingForm || this.verifyResponseKey===null"
                     type="button"
                     style="background-color: #3ab54a"
                     @click="sendInvitation"
@@ -56,7 +56,7 @@
 
 <script>
 import {
-    mapActions, mapState,
+    mapActions, mapState, mapMutations,
 } from 'vuex';
 import Recaptcha from '../Recaptcha/Recaptcha.vue';
 import Messages from '../Messages/Messages.vue';
@@ -78,24 +78,30 @@ export default {
         };
     },
     methods: {
-        sendInvitation() {
+        async sendInvitation() {
             const payload = {
                 formData: {
                     invitationEmail: this.invitationEmail,
                     fullName: this.fullName,
+                    verifyResponseKey: this.verifyResponseKey,
                 },
                 dependencies: this.dependencies,
             };
-            this.submitInvitationForm(payload);
+            await this.submitInvitationForm(payload);
+            this.changeRecaptchaKey(null);
         },
         ...mapActions('Invitation', [
             'submitInvitationForm',
+        ]),
+        ...mapMutations('Invitation', [
+            'changeRecaptchaKey',
         ]),
     },
     computed: {
         ...mapState('Invitation', [
             'isLoadingForm',
             'formErrors',
+            'verifyResponseKey',
         ]),
     },
     created() {

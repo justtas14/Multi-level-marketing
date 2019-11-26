@@ -19,7 +19,11 @@
             </InvitationAbout>
             </tbody>
         </table>
-        <Pagination v-if="invitations.length > 0"
+        <Pagination
+            @previousPage="previousPage"
+            @nextPage="nextPage"
+            @specificPage="specificPage"
+            v-if="invitations.length > 0"
              v-bind:paginationInfo="paginationInfo"></Pagination>
         <p style="margin: 2em 0" v-else>Associate doesn't have any sent invitations</p>
     </div>
@@ -36,6 +40,26 @@ export default {
         Pagination,
     },
     props: ['invitations', 'paginationInfo'],
+    methods: {
+        async previousPage() {
+            const page = null; const
+                action = 'subtract';
+            this.changePagination({ page, action });
+            await this.changePage();
+        },
+        async nextPage() {
+            const action = 'add'; const
+                page = null;
+            this.changePagination({ page, action });
+            await this.changePage();
+        },
+        async specificPage(n) {
+            const page = n;
+            const action = null;
+            this.changePagination({ page, action });
+            await this.changePage();
+        },
+    },
     created() {
     },
 };
