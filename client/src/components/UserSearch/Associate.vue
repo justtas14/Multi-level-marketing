@@ -3,7 +3,7 @@
         <td class="associate-profilePictureContainer">
             <div class="userDetails__picture__container mobileUserPictureContainer">
                 <img class="userDetails__picture mobileUserPicture"
-                     v-if="associate.filePath" :src="associate.filePath" />
+                     v-if="associate.filePath" :src="getPicture()" />
                 <img class="userDetails__picture mobileUserPicture"
                      v-else :src="defaultPicture" />
             </div>
@@ -11,7 +11,7 @@
         <td class="associate-itemContainer user__search__fullName">
             <div class="userDetails__picture__container">
                 <img class="userDetails__picture"
-                     v-if="associate.filePath" :src="associate.filePath" />
+                     v-if="associate.filePath" :src="getPicture()" />
                 <img class="userDetails__picture"
                      v-else :src="defaultPicture" />
             </div>
@@ -54,6 +54,7 @@
 import defaultPicture from '../../../public/img/profile.jpg';
 import Confirmation from '../Confirmation/Confirmation.vue';
 import changeParentSVG from '../../../public/img/geneology.svg';
+import Parameters from '../../../parameters';
 
 export default {
     name: 'Associate',
@@ -74,6 +75,9 @@ export default {
         };
     },
     methods: {
+        getPicture() {
+            return `${Parameters.API_HOST_URL}${this.associate.filePath}`;
+        },
         showConfirmation(message) {
             this.confirm.message = message;
             this.confirm.display = 'block';

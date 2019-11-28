@@ -26,7 +26,7 @@ export default {
         return {
             mainAction: {
                 fun: (id) => {
-                    window.location.href = `/admin/users/${id}`;
+                    this.$router.push(`/admin/user/${id}`);
                 },
                 confirm: false,
             },

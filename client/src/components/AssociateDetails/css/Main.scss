@@ -25,25 +25,24 @@
   margin: 0; padding: 0;
 }
 
-.userDetails__container {
-  display: flex;
-  padding-top: 1em;
+.userDetails_parentTitleContainer {
+  span {
+    flex: 2;
+  }
 }
 
-.userDetails__mainContainer {
-  display: flex;
-  justify-content: center;
-  margin: 0.5em;
+.userDetails_parentTitleContainer {
+  button {
+    flex: 1;
+    height: 32px;
+    line-height: 32px;
+  }
 }
 
-.userDetails_parentTitleContainer a {
-  flex: 1;
-  height: 32px;
-  line-height: 32px;
-}
-
-.userDetails_parentTitleContainer span {
-  flex: 2;
+.userDetails_parentTitleContainer {
+  button {
+    flex: 2;
+  }
 }
 
 @media screen and (max-width: 1330px) {
@@ -57,29 +56,25 @@
     align-self: center;
     margin-left: 3.5em;
   }
-  .userDetails_parentTitleContainer a {
-    flex: 1;
+  .userDetails_parentTitleContainer {
+    button {
+      flex: 1;
+    }
   }
-  .userDetails_parentTitleContainer span {
-    flex: 3;
+  .userDetails_parentTitleContainer {
+    button {
+      flex: 3;
+    }
   }
+  .userDetails_parentTitleContainer  {
+    span {
+      flex: 5;
+    }
+  }
+
 }
 
 @media screen and (max-width: 901px) {
-  .userDetails__container {
-    display: block;
-  }
-  .userDetails__info {
-  }
-
-  .userDetails__picture__container {
-    width: 150px;
-    height: 100%;
-    min-width: 150px;
-    text-align: center;
-    margin: auto;
-  }
-
   .userDetails__picture {
     display: inline-block;
   }

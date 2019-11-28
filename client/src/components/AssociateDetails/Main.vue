@@ -1,5 +1,4 @@
 <template>
-    <div class="userDetails__mainContainer">
         <div :class=
         "[isParent ? 'userDetails__container__parentInfo' : 'userDetails__container__mainInfo']"
         >
@@ -7,19 +6,15 @@
             class="userDetails_parentTitleContainer addBottom userDetailsTitle"
             >
                 <span class="card-title">Sponsor details</span>
-                <a @click="goToUserDetails" class="btn">Details</a>
+                <button @click="goToUserDetails" class="btn">Details</button>
             </div>
             <span v-else class="card-title addBottom userDetailsTitle">Associate details</span>
             <hr class="separation__line">
-            <div class="userDetails__container">
-                <AssociateInfo
-                    v-bind:associate="associate"
-                    v-bind:changeParent="changeParent"
-                    v-bind:deleteAssociate="deleteAssociate"
-                />
-            </div>
+            <AssociateInfo
+                v-bind:associate="associate"
+                v-bind:isParent="isParent"
+            />
         </div>
-    </div>
 </template>
 
 <script>
@@ -27,16 +22,18 @@ import AssociateInfo from './AssociateInfo.vue';
 
 export default {
     name: 'Main',
-    props: ['associate', 'deleteAssociate', 'changeParent', 'isParent'],
+    props: ['associate', 'isParent'],
     components: {
         AssociateInfo,
     },
     data() {
+        return {
 
+        };
     },
     methods: {
         goToUserDetails() {
-
+            this.$router.push({ path: `/admin/user/${this.associate.id}` });
         },
     },
     computed: {

@@ -14,10 +14,10 @@
                     v-bind:noTop="noTop"
                 />
                 <Confirmation
-                        @hideConfirmation="hideConfirmation"
-                        v-bind:confirm="confirm"
-                        v-bind:style="{display: confirm.display}"
-                        v-bind:yesClickFn="yesClickFn"
+                    @hideConfirmation="hideConfirmation"
+                    v-bind:confirm="confirm"
+                    v-bind:style="{display: confirm.display}"
+                    v-bind:yesClickFn="yesClickFn"
                 />
             </div>
         </div>

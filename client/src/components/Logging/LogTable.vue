@@ -17,7 +17,7 @@
         </tbody>
         <tbody v-else>
              <tr class="log-container">
-                <td class="log-itemContainer">
+                <td v-if="!spinner" class="log-itemContainer">
                     No logs to display
                 </td>
                 <td class="log-itemContainer">

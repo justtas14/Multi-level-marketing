@@ -39,6 +39,7 @@ const actions = {
         );
 
         commit('setHomeInfo', response.data);
+        return response.data;
     },
 };
 

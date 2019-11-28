@@ -22,12 +22,11 @@
 import {
     mapActions,
     mapState,
-    mapMutations,
 } from 'vuex';
 
 export default {
     name: 'InvitationAbout',
-    props: ['invitation'],
+    props: ['invitation', 'isTheSamePage'],
     data() {
         return {
             pressedBtnInvId: null,
@@ -44,27 +43,24 @@ export default {
                 const payload = {
                     params: {
                         invitationId: this.invitation.id,
-                        verifyResponseKey: this.verifyResponseKey,
                     },
                 };
                 await this.resendInvitation(payload);
-                this.changeRecaptchaKey(null);
                 this.pressedBtnInvId = null;
-                window.scroll(0, 0);
+                if (!this.isTheSamePage) {
+                    console.log('push');
+                    this.$router.push({ path: '/associate/invite' });
+                }
             }
         },
         ...mapActions('Invitation', [
             'resendInvitation',
-        ]),
-        ...mapMutations('Invitation', [
-            'changeRecaptchaKey',
         ]),
     },
     computed: {
 
         ...mapState('Invitation', [
             'isResendBtnLoading',
-            'verifyResponseKey',
         ]),
     },
     created() {

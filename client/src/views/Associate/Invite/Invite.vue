@@ -57,6 +57,7 @@
                         v-else
                         v-bind:invitations="invitations"
                         v-bind:paginationInfo="pagination"
+                        v-bind:isTheSamePage="true"
                     >
                     </RecentInvitations>
             </div>

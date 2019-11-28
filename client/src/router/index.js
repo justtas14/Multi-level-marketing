@@ -9,6 +9,7 @@ import GalleryHomePage from '../views/Admin/Gallery/GalleryHomePage.vue';
 import Logs from '../views/Admin/Logs/Logs.vue';
 import UserSearchHome from '../views/Admin/UserSearch/UserSearchHome.vue';
 import Profile from '../views/Associate/Profile/Profile.vue';
+import AssociateDetailsHome from '../views/Admin/AssociateDetails/AssociateDetailsHome.vue';
 
 Vue.use(VueRouter);
 
@@ -21,7 +22,8 @@ const routes = [
     { path: '/admin/gallery', component: GalleryHomePage, meta: { requiresAuth: true } },
     { path: '/admin/logs', component: Logs, meta: { requiresAuth: true } },
     { path: '/admin/users', component: UserSearchHome, meta: { requiresAuth: true } },
-    // { path: "*", redirect: "/" }
+    { path: '/admin/user/:id', component: AssociateDetailsHome, meta: { requiresAuth: true } },
+    { path: '*', redirect: '/' },
 ];
 
 

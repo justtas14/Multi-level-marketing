@@ -144,6 +144,8 @@ final class AssociateController extends AbstractController
     ) {
         $formErrors = [];
         $updated = false;
+        $country = 'GB';
+        $number = '';
 
         $em = $this->getDoctrine()->getManager();
         /**
@@ -161,9 +163,13 @@ final class AssociateController extends AbstractController
 
         $form = $this->createForm(UserUpdateType::class, $user);
 
+        $formData = $request->request->all();
 
-        if ($request->request->all()['data']) {
-            $form->submit($request->request->all()['data']);
+        if ($formData) {
+            if ($request->files->all()) {
+                $formData['associate']['profilePicture'] = $request->files->all()['associate']['profilePicture'];
+            }
+            $form->submit($formData);
         }
 
         if ($form->isSubmitted()) {
@@ -202,6 +208,8 @@ final class AssociateController extends AbstractController
                     $databaseLogger->info($associate->getFullName(). ' profile updated');
 
                     $updated = true;
+                    $profilePicture = $associate->getProfilePicture();
+                    $profilePicture->setUploadedFileReference(null);
                 }
             }
         } else {
@@ -211,13 +219,17 @@ final class AssociateController extends AbstractController
                 $form->get('associate')->get('mobilePhone')->get('number')->setData($phoneNumber->getNationalNumber());
                 $form->get('associate')->get('mobilePhone')->get('country')
                     ->setData($phoneUtil->getRegionCodeForCountryCode($phoneNumber->getCountryCode()));
+                $number = $form->get('associate')->get('mobilePhone')->get('number')->getData();
+                $country = $form->get('associate')->get('mobilePhone')->get('country')->getData();
             } catch (NumberParseException $e) {
                 $formErrors['phoneError'] = 'Prior mobile is invalid';
             }
         }
 
+        $associate = $user->getAssociate();
+
         $em->refresh($user);
-        $em->refresh($user->getAssociate());
+        $em->refresh($associate);
 
         $errors = $form->getErrors(true);
 
@@ -230,7 +242,7 @@ final class AssociateController extends AbstractController
         );
 
         $serializedAssociate = $serializer->normalize(
-            $user->getAssociate(),
+            $associate,
             null,
             ['attributes' => [
                 'id',
@@ -253,7 +265,11 @@ final class AssociateController extends AbstractController
         $data = [
             'associate' => $serializedAssociate,
             'formErrors' => $formErrors,
-            'updated' => $updated
+            'updated' => $updated,
+            'mobilePhone' => [
+                'country' => $country,
+                'number' => $number,
+            ]
         ];
 
         return new JsonResponse($data);
@@ -384,7 +400,7 @@ final class AssociateController extends AbstractController
             $recaptchaResponse = $request->request->get('verifyResponseKey');
             $recaptchaError = $recaptchaManager->validateRecaptcha($recaptchaResponse, $secretKey);
 
-            if ($recaptchaError) {
+            if ($recaptchaError && !$invitationId) {
                 $formErrors['generalError'] = $recaptchaError;
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
                 $formErrors['invalidEmail'] = 'Associate already exists';

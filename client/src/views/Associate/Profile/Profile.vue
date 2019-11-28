@@ -140,7 +140,10 @@
           </div>
           <div class="input-field registration__input--forceBorder">
             <label class="required">Mobile phone</label>
-            <div id="user_update_associate_mobilePhone">
+            <content-loader v-if="isLoading" height="20" >
+                        <rect width="400" height="20" />
+            </content-loader>
+            <div v-else id="user_update_associate_mobilePhone">
                 <Telephones v-bind:name="'user_update[associate][mobilePhone][country]'"
                 v-bind:id="'user_update_associate_mobilePhone_country'"
                 v-bind:value="formData.associate.mobilePhone.country"
@@ -254,10 +257,12 @@
 import {
     mapActions, mapState, mapMutations,
 } from 'vuex';
+import { ContentLoader } from 'vue-content-loader';
 import Countries from '../../../components/FormFields/Countries.vue';
 import Telephones from '../../../components/FormFields/Telephones.vue';
 import Error from '../../../components/Messages/Error.vue';
 import Success from '../../../components/Messages/Success.vue';
+import BuildFormData from '../../../services/BuildFormData';
 
 export default {
     name: 'Profile',
@@ -266,6 +271,7 @@ export default {
         Telephones,
         Error,
         Success,
+        ContentLoader,
     },
     props: [],
     data() {
@@ -299,10 +305,8 @@ export default {
     },
     methods: {
         async updateProfile() {
-            const formData = new FormData();
-            // const validFormData = JSON.parse(JSON.stringify(this.formData));
-            formData.append('data', 'Hello!');
-            console.log(formData.entries());
+            const buildFormDataObj = new BuildFormData();
+            const formData = buildFormDataObj.jsonToFormData(this.formData);
             const res = await this.submitForm(formData);
             if (res) {
                 this.setAssociate(res);
@@ -349,6 +353,7 @@ export default {
     computed: {
         ...mapState('Profile', [
             'isLoadingForm',
+            'isLoading',
             'formErrors',
             'formUpdated',
         ]),
@@ -358,7 +363,8 @@ export default {
     },
     async created() {
         this.profileUpdate(false);
-        await this.home();
+        const res = await this.home();
+        this.formData.associate.mobilePhone = res.mobilePhone;
     },
 };
 </script>

@@ -15,6 +15,7 @@
                 v-for="(invitation, key) in invitations"
                 :key="key"
                 v-bind:invitation="invitation"
+                v-bind:isTheSamePage="isTheSamePage"
             >
             </InvitationAbout>
             </tbody>
@@ -39,7 +40,7 @@ export default {
         InvitationAbout,
         Pagination,
     },
-    props: ['invitations', 'paginationInfo'],
+    props: ['invitations', 'paginationInfo', 'isTheSamePage'],
     methods: {
         async previousPage() {
             const page = null; const

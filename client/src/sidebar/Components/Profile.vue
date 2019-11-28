@@ -6,7 +6,7 @@
             <div class="sidebarProfile__container">
                 <div class="sidebarProfile__pictureContainer">
                     <img v-if="associate && associate.profilePicture"
-                    class="sidebar-picture" :src="associate.filePath" />
+                    class="sidebar-picture" :src="getPicture()" />
                     <img v-else class="sidebar-picture" :src="defaultPicture"/>
                 </div>
                 <div class="sidebarProfile__labelContainer">
@@ -28,6 +28,8 @@ import {
     mapState,
 } from 'vuex';
 import defaultPicture from '../../../public/img/profile.jpg';
+import Parameters from '../../../parameters';
+
 
 export default {
     name: 'Profile',
@@ -41,6 +43,9 @@ export default {
         };
     },
     methods: {
+        getPicture() {
+            return `${Parameters.API_HOST_URL}${this.associate.filePath}`;
+        },
         redirectToEditProfile() {
             this.$router.push({ path: '/associate/profile' });
         },

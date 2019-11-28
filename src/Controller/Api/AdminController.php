@@ -569,13 +569,13 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/admin/users/{id}",
+     * @OA\Post(
+     *     path="/api/admin/users",
      *      @OA\Parameter(
-     *         in="path",
+     *         in="query",
      *         name="id",
      *         required=true,
-     *         description="Entered id into url route parameter",
+     *         description="Received id querry param",
      *         @OA\Schema(type="int")
      *      ),
      *      @OA\Parameter(
@@ -606,13 +606,12 @@ class AdminController extends AbstractController
      *         description="Associate to delete id",
      *         @OA\Schema(type="int")
      *      ),
-     *     @OA\Response(response="200", description="Returns information about user details and user search table page")
+     *     @OA\Response(response="200", description="Returns information about specific user")
      * )
      */
 
     /**
-     * @Rest\Get("/admin/users/{id}", name="user_search_details")
-     * @param $id
+     * @Rest\Post("/admin/users", name="user_search_details")
      * @param Request $request
      * @param AssociateManager $associateManager
      * @param AssociateNormalizer $associateNormalizer
@@ -620,13 +619,15 @@ class AdminController extends AbstractController
      * @throws ExceptionInterface
      */
     public function userSearchDetails(
-        $id,
         Request $request,
         AssociateManager $associateManager,
         AssociateNormalizer $associateNormalizer
     ) {
         $formError = '';
         $formSuccess = '';
+        $id = null;
+        $successType = null;
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -637,25 +638,33 @@ class AdminController extends AbstractController
         if (!is_numeric($page)) {
             throw new WrongPageNumberException();
         }
-        /** @var Associate $associateToDisplay */
-        $associateToDisplay = $associateManager->getAssociate($id);
+
+        if ($request->request->all() && array_key_exists('associateId', $request->request->all())) {
+            /** @var Associate $associateToDisplay */
+            $associateToDisplay = $associateManager->getAssociate($request->request->all()['associateId']);
+            $id = $request->request->all()['associateId'];
+        }
 
         $form = $this->createForm(AssociateModificationType::class);
 
-        $form->handleRequest($request);
+        if (array_key_exists('associateParentId', $request->request->all())
+            || array_key_exists('deleteAssociateId', $request->request->all())
+        ) {
+            $form->submit($request->request->all());
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $associateParentId = $form['associateParentId']->getData();
-            $associateId = $form['associateId']->getData();
             $deleteAssociateId = $form['deleteAssociateId']->getData();
-            if ($associateParentId != null && $associateId != null) {
-                if ($associateParentId === $associateId) {
+            if ($associateParentId != null && $id != null) {
+                if ($associateParentId === $id) {
                     $formError = 'Cannot change associate parent';
-                } elseif ($associateManager->isAncestor($associateParentId, $associateId, false)) {
+                } elseif ($associateManager->isAncestor($associateParentId, $id, false)) {
                     $formError = 'Cannot change associate parent';
                 } else {
-                    $associateManager->changeAssociateParent($associateId, $associateParentId);
+                    $associateManager->changeAssociateParent($id, $associateParentId);
                     $formSuccess = 'Parent successfully changed';
+                    $successType = "parent";
                 }
             } elseif ($deleteAssociateId != null) {
                 $deleteAssociate = $associateManager->getAssociate($deleteAssociateId);
@@ -674,21 +683,20 @@ class AdminController extends AbstractController
                         /** @var User $deleteAssociateUser */
                         $associateManager->deleteUser($deleteAssociateUser);
                         $formSuccess = 'User ' .$deleteAssociateFullName. ' deleted';
+                        $successType = "delete";
                     }
                 }
             }
         }
 
-        $user = $em->getRepository(User::class)->findOneBy(['associate' => $associateToDisplay]);
-
         $invitationRepository = $em->getRepository(Invitation::class);
 
-        $allInvitations = $invitationRepository->findBy(['sender' => $user]);
+        $allInvitations = $invitationRepository->findBy(['sender' => $associateToDisplay]);
 
         $numberOfPages = $this->numberOfPages(count($allInvitations), self::INVITATION_LIMIT, $page);
 
         $invitations = $invitationRepository->findBy(
-            ['sender' => $user],
+            ['sender' => $associateToDisplay],
             ['created' => 'DESC'],
             self::INVITATION_LIMIT,
             self::INVITATION_LIMIT * ($page-1)
@@ -709,6 +717,8 @@ class AdminController extends AbstractController
             );
         }
 
+        $maxLevel = max($associateInLevels);
+
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $associateNormalizer]);
         $serializedAssociate = $serializer->normalize(
             $associateToDisplay,
@@ -716,20 +726,38 @@ class AdminController extends AbstractController
             ['attributes' => ['fullName', 'email', 'mobilePhone', 'level', 'joinDate', 'id']]
         );
 
+        $associateParent = $associateToDisplay->getParent();
+
+        if ($associateParent->getId() == -1) {
+            $serializedParent = null;
+        } else {
+            $serializedParent = $serializer->normalize(
+                $associateParent,
+                null,
+                ['attributes' => ['id', 'email', 'fullName', 'mobilePhone']]
+            );
+        }
+
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), new ObjectNormalizer()]);
         $serializedInvitations = $serializer->normalize(
             $invitations,
             null,
-            ['attributes' => ['id', 'email', 'fullName', 'sender', 'used', 'created']]
+            ['attributes' => ['id', 'email', 'fullName', 'used', 'created']]
         );
 
 
         $data = [
             'formError' => $formError,
-            'formSuccess' => $formSuccess,
+            'formSuccess' => [
+                'message' => $formSuccess,
+                'type' => $successType,
+            ],
             'associate' => $serializedAssociate,
+            'associateParent' => $serializedParent,
             'invitations' => $serializedInvitations,
             'associatesInLevels' => $associateInLevels,
+            'maxLevel' => $maxLevel,
+            'levels' => $level,
             'pagination' => [
                 'currentPage' => $page,
                 'numberOfPages' => $numberOfPages

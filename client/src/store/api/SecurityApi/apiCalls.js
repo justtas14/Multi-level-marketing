@@ -79,12 +79,10 @@ export default class SecurityApiCalls {
         return false;
     }
 
-    profileUpdate(url, token, data = null) {
+    profileUpdate(url, token, formData = null) {
         const scope = this;
         try {
-            return axios.post(url, {
-                data,
-            }, {
+            return axios.post(url, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
@@ -153,6 +151,21 @@ export default class SecurityApiCalls {
                     page: parameters,
                 },
                 headers: { Authorization: `Bearer ${token}` },
+            });
+        } catch (e) {
+            scope.unAuthenticate();
+        }
+        return false;
+    }
+
+    associateInfo(url, formData, token) {
+        const scope = this;
+        try {
+            return axios.post(url, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
             });
         } catch (e) {
             scope.unAuthenticate();

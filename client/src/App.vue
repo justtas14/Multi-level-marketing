@@ -1,7 +1,7 @@
 <template>
     <div id="app">
       <Sidebar v-if="this.isAuthenticated && this.getAssociate"></Sidebar>
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
     </div>
 </template>
 

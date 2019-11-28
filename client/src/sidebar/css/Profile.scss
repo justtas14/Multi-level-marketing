@@ -18,6 +18,19 @@
   color: black;
 }
 
+.sidebar-pictureContainer {
+  padding: 20px 0 20px 0;
+  width:100%;
+  flex:1;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #fff;
+  border-bottom: 1px solid #f2f2f2;
+}
+
 .sidebarProfile__pictureContainer {
   width: 100px;
   height: 100px;
@@ -31,6 +44,7 @@
   height: 100%;
   width: 100%;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .sidebarProfile__labelContainer {
