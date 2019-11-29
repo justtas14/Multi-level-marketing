@@ -1,0 +1,12 @@
+.userDetails__mainContainer {
+    display: flex;
+    justify-content: center;
+    margin: 0.5em;
+  }
+
+
+@media screen and (max-width: 1330px) {
+    .userDetails__mainContainer {
+      display: block;
+    }
+  }
