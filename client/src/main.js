@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import { MdField } from 'vue-material/dist/components';
 import VueClipboards from 'vue-clipboards';
-import VueQuill from 'vue-quill';
 import VuexPersist from './store/plugins/VuexPersist';
 import App from './App.vue';
 import './registerServiceWorker';
@@ -34,10 +33,8 @@ store.registerModule('EndPrelaunch', EndPrelaunch);
 VuexPersist(store);
 
 Vue.config.productionTip = false;
-Vue.use(VueQuill);
 Vue.use(MdField);
 Vue.use(VueClipboards);
-
 
 new Vue({
     router,

@@ -221,21 +221,24 @@ class AdminController extends AbstractController
      */
     public function endPrelaunch(Request $request, ConfigurationManager $cm, LoggerInterface $databaseLogger)
     {
-        $formSuccess = true;
-        $prelaunchEnded = true;
+        $formSuccess = false;
         $em = $this->getDoctrine()->getManager();
 
         $configuration = $cm->getConfiguration();
 
         $form = $this->createForm(EndPrelaunchType::class, $configuration);
 
-        $form->handleRequest($request);
+        $formData = $request->request->all();
+
+        if ($formData) {
+            $formData['prelaunchEnded'] = $formData['prelaunchEnded'] === 'true' ? true : false;
+            $form->submit($formData);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($configuration);
             $em->flush();
             if ($configuration->hasPrelaunchEnded()) {
-                $prelaunchEnded = true;
                 $databaseLogger->info('Prelaunch successfully ended');
             }
             $formSuccess = true;
@@ -245,7 +248,6 @@ class AdminController extends AbstractController
         $hasPrelaunchEnded = $configuration->hasPrelaunchEnded();
 
         $data = [
-            'prelaunchEnded' => $prelaunchEnded,
             'formSuccess' => $formSuccess,
             'configurationContent' => $configurationContent,
             'hasPrelaunchEnded' => $hasPrelaunchEnded

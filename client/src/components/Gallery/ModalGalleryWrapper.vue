@@ -1,9 +1,9 @@
 <template>
-    <ModalWrapper>
-        <template v-slot:fileInputContainer>
+    <Modal>
+        <template v-slot:header>
             <ModalFileContainer @readUrl="readUrl" v-bind:category="category"/>
         </template>
-        <template v-slot:gallery>
+        <template v-slot:body>
             <Gallery
                 v-bind:yesClickFn="yesClickFn"
                 v-bind:files="files"
@@ -17,13 +17,13 @@
                 <template v-slot:category></template>
             </Gallery>
         </template>
-    </ModalWrapper>
+    </Modal>
 </template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 import Gallery from './Gallery.vue';
-import ModalWrapper from './ModalWrapper.vue';
+import Modal from '../Modal/Modal.vue';
 import ModalFileContainer from './ModalFileContainer.vue';
 import modalGalleryConst from './constants/modalGalleryConst';
 import EventBus from './EventBus/EventBus';
@@ -34,7 +34,7 @@ export default {
     props: [],
     components: {
         Gallery,
-        ModalWrapper,
+        Modal,
         ModalFileContainer,
     },
     data() {

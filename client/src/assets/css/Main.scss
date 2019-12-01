@@ -386,6 +386,13 @@ select {
   word-break: break-word;
 }
 
+.ql-editor {
+  min-height: 320px;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",
+  Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  font-size: 100%;
+}
+
 @media screen and (max-width: 668px) {
   .invitation-container {
       width: 80%;

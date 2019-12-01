@@ -1,6 +1,7 @@
 <template>
     <div id="quillApp">
-        <quill v-model="content" :config="config" ref="quillEditor"></quill>
+        <quill v-model="content" v-on:input="updateValue"
+         :config="config" ref="quillEditor"></quill>
         <ModalGalleryWrapper/>
     </div>
 </template>
@@ -14,12 +15,13 @@ import { mapActions, mapMutations } from 'vuex';
 import ModalGalleryWrapper from './ModalGalleryWrapper.vue';
 import constants from './constants/constants';
 import EventBus from './EventBus/EventBus';
+import '../../assets/css/quill.snow.css';
 
 Vue.use(VueQuill);
 
 export default {
     name: 'QuillEditor',
-    props: [],
+    props: ['configurationContent'],
     components: {
         ModalGalleryWrapper,
     },
@@ -35,7 +37,7 @@ export default {
             ],
             config: {
                 modules: {
-                    syntax: true,
+                    syntax: false,
                     toolbar: {
                         container: [
                             ['bold', 'italic', 'underline', 'strike'],
@@ -76,7 +78,7 @@ export default {
         };
     },
     mounted() {
-        const inputData = document.querySelector('input[type=hidden]').value;
+        const inputData = this.configurationContent;
         const quillEditor = document.querySelector('.ql-editor');
         let quillHTML;
 
@@ -92,9 +94,6 @@ export default {
             quillHTML = inputData;
         }
         quillEditor.innerHTML = quillHTML;
-
-        const form = document.querySelector('form');
-        form.addEventListener('submit', this.callback, false);
 
         EventBus.$on('oneClickFile', (fileId, fileName, filePath) => {
             axios.post(constants.api.uploadEditorFile, filePath).then((res) => {
@@ -112,10 +111,8 @@ export default {
         },
     },
     methods: {
-        callback() {
-            const emailBody = document.querySelector('input[type=hidden]');
-            emailBody.value = JSON.stringify(this.content);
-            return true;
+        updateValue() {
+            this.$emit('input', JSON.stringify(this.content));
         },
         mediaQuerryResponse() {
             if (this.mqls[0].matches) {

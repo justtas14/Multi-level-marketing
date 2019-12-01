@@ -25,7 +25,6 @@ export default {
     props: [],
     data() {
         return {
-            localStorage,
         };
     },
     methods: {
@@ -56,15 +55,6 @@ export default {
         if (!this.isAuthenticated) {
             this.$router.push({ path: '/login' });
         }
-
-    // axios.interceptors.response.use(undefined, (err) => {
-    //     return new Promise(() => {
-    //         if (err.response.status === 401) {
-    //             this.$router.push({path: "/login"})
-    //         }
-    //         throw err;
-    //     });
-    // });
     },
 };
 </script>

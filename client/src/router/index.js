@@ -32,11 +32,12 @@ const routes = [
 const router = new VueRouter({
     mode: 'history',
     routes,
+    saveScrollPosition: true,
     base: '/',
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/') {
+    if (to.path === '/' && to.path !== '/login') {
         if (!store.getters['Security/isAuthenticated']) {
             next({
                 path: '/login',
