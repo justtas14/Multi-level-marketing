@@ -21,7 +21,6 @@
 <script>
 import {
     mapActions,
-    mapState,
 } from 'vuex';
 
 export default {
@@ -30,6 +29,7 @@ export default {
     data() {
         return {
             pressedBtnInvId: null,
+            isResendBtnLoading: false,
         };
     },
     methods: {
@@ -45,10 +45,11 @@ export default {
                         invitationId: this.invitation.id,
                     },
                 };
+                this.isResendBtnLoading = true;
                 await this.resendInvitation(payload);
+                this.isResendBtnLoading = false;
                 this.pressedBtnInvId = null;
                 if (!this.isTheSamePage) {
-                    console.log('push');
                     this.$router.push({ path: '/associate/invite' });
                 }
             }
@@ -58,10 +59,6 @@ export default {
         ]),
     },
     computed: {
-
-        ...mapState('Invitation', [
-            'isResendBtnLoading',
-        ]),
     },
     created() {
 

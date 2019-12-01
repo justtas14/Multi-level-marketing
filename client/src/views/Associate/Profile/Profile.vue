@@ -140,8 +140,8 @@
           </div>
           <div class="input-field registration__input--forceBorder">
             <label class="required">Mobile phone</label>
-            <content-loader v-if="isLoading" height="20" >
-                        <rect width="400" height="20" />
+            <content-loader v-if="isLoading" :height='28' >
+                        <rect :width='400' :height='28' />
             </content-loader>
             <div v-else id="user_update_associate_mobilePhone">
                 <Telephones v-bind:name="'user_update[associate][mobilePhone][country]'"
@@ -276,6 +276,8 @@ export default {
     props: [],
     data() {
         return {
+            isLoading: false,
+            isLoadingForm: false,
             formData: {
                 email: '',
                 oldPassword: '',
@@ -307,10 +309,12 @@ export default {
         async updateProfile() {
             const buildFormDataObj = new BuildFormData();
             const formData = buildFormDataObj.jsonToFormData(this.formData);
+            this.isLoadingForm = true;
             const res = await this.submitForm(formData);
             if (res) {
                 this.setAssociate(res);
             }
+            this.isLoadingForm = false;
 
             window.scrollTo(0, 0);
         },
@@ -352,8 +356,6 @@ export default {
     },
     computed: {
         ...mapState('Profile', [
-            'isLoadingForm',
-            'isLoading',
             'formErrors',
             'formUpdated',
         ]),
@@ -363,8 +365,10 @@ export default {
     },
     async created() {
         this.profileUpdate(false);
+        this.isLoading = true;
         const res = await this.home();
         this.formData.associate.mobilePhone = res.mobilePhone;
+        this.isLoading = false;
     },
 };
 </script>

@@ -6,7 +6,7 @@
             <div class="user__name">{{ associate.fullName }}</div>
             <button
                 v-if="!isParent"
-                :disabled="isLoadingBtn"
+                :disabled="isLoadingBtn.delete || isLoadingBtn.parent"
                 @click="deleteUser()"
                 class="btn btnAction">
                 Delete user
@@ -15,10 +15,13 @@
                 v-else
                 @click="changeParent()"
                 class="btn btnAction"
-                :disabled="isLoadingBtn">
+                :disabled="isLoadingBtn.delete || isLoadingBtn.parent">
             Change parent
             </button>
-            <div class="progress" v-if="isLoadingBtn">
+            <div class="progress" v-if="isLoadingBtn.delete">
+                <div class="indeterminate"></div>
+            </div>
+            <div class="progress" v-if="isLoadingBtn.parent">
                 <div class="indeterminate"></div>
             </div>
         </div>
@@ -141,9 +144,13 @@ export default {
             parentConfirm: {
                 message: () => {},
             },
-            isLoadingBtn: false,
+            isLoadingBtn: {
+                parent: false,
+                delete: false,
+            },
             yesClickFn: async () => {},
             mainAction: {
+                fun: () => {},
                 confirm: {
                     message: () => {},
                 },
@@ -162,9 +169,16 @@ export default {
         },
         changeParent() {
             this.modalDisplay = 'block';
-            this.mainAction.confirm.message = associateName => `Are you sure want to change {{ associate.fullName }} parent to ${associateName}?`;
-            this.yesClickFn = async () => {
-
+            this.mainAction.confirm.message = associateName => `Are you sure want to change ${this.stateAssociate.fullName} parent to ${associateName}?`;
+            this.mainAction.fun = async (associateId) => {
+                this.modalDisplay = 'none';
+                this.isLoadingBtn.parent = true;
+                const formData = new FormData();
+                formData.append('associateParentId', associateId);
+                formData.append('associateId', this.associateUrlId);
+                await this.buttonAction(formData);
+                this.isLoadingBtn.parent = false;
+                window.scroll(0, 0);
             };
         },
         deleteUser() {
@@ -174,15 +188,16 @@ export default {
             };
             this.yesClickFn = async () => {
                 this.confirm.display = 'none';
-                this.isLoadingBtn = true;
+                this.isLoadingBtn.delete = true;
                 const formData = new FormData();
                 formData.append('deleteAssociateId', this.associate.id);
                 formData.append('associateId', this.associateUrlId);
                 const res = await this.buttonAction(formData);
-                if (res.deleted) {
-                    console.log('push', res.formSuccess);
+                if (res.formSuccess.type === 'delete') {
+                    this.$router.push({ path: '/admin/users', query: { userDeleted: true } });
                 }
-                this.isLoadingBtn = false;
+                this.isLoadingBtn.delete = false;
+                window.scroll(0, 0);
             };
         },
 
@@ -193,6 +208,7 @@ export default {
     computed: {
         ...mapState('AssociateDetails', [
             'associateUrlId',
+            'stateAssociate',
         ]),
     },
     created() {

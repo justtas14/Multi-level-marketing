@@ -11,8 +11,8 @@
             <span v-else class="card-title addBottom userDetailsTitle">Associate details</span>
             <hr class="separation__line">
             <AssociateInfo
-                v-bind:associate="associate"
                 v-bind:isParent="isParent"
+                v-bind:associate="associate"
             />
         </div>
 </template>

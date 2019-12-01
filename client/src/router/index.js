@@ -10,6 +10,7 @@ import Logs from '../views/Admin/Logs/Logs.vue';
 import UserSearchHome from '../views/Admin/UserSearch/UserSearchHome.vue';
 import Profile from '../views/Associate/Profile/Profile.vue';
 import AssociateDetailsHome from '../views/Admin/AssociateDetails/AssociateDetailsHome.vue';
+import EndPrelaunch from '../views/Admin/EndPrelaunch/EndPrelaunch.vue';
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,7 @@ const routes = [
     { path: '/admin/logs', component: Logs, meta: { requiresAuth: true } },
     { path: '/admin/users', component: UserSearchHome, meta: { requiresAuth: true } },
     { path: '/admin/user/:id', component: AssociateDetailsHome, meta: { requiresAuth: true } },
+    { path: '/admin/endprelaunch', component: EndPrelaunch, meta: { requiresAuth: true } },
     { path: '*', redirect: '/' },
 ];
 

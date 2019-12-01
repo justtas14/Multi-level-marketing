@@ -17,6 +17,7 @@ import AssociateHome from './store/modules/associateHome';
 import Invitation from './store/modules/invitation';
 import Profile from './store/modules/profile';
 import AssociateDetails from './store/modules/associateDetails';
+import EndPrelaunch from './store/modules/endprelaunch';
 
 store.registerModule('UserSearch', UserSearch);
 store.registerModule('Security', Security);
@@ -28,6 +29,7 @@ store.registerModule('AssociateHome', AssociateHome);
 store.registerModule('Invitation', Invitation);
 store.registerModule('Profile', Profile);
 store.registerModule('AssociateDetails', AssociateDetails);
+store.registerModule('EndPrelaunch', EndPrelaunch);
 
 VuexPersist(store);
 

@@ -6,7 +6,6 @@ const initialState = {
         numberOfPages: 1,
         currentPage: 1,
     },
-    spinner: false,
 };
 
 const getters = {
@@ -25,20 +24,15 @@ const actions = {
             logs: res.data.logs,
             pagination: res.data.pagination,
         };
-        commit('setSpinnerState', false);
         commit('loadData', data);
     },
 };
 
 const mutations = {
-    setSpinnerState: (state, flag) => {
-        state.spinner = flag;
-    },
     loadData: (state, { ...data }) => {
         state.logs = data.logs;
         state.paginationInfo.currentPage = data.pagination.currentPage;
         state.paginationInfo.numberOfPages = data.pagination.maxPage;
-        state.spinner = false;
     },
     changePage: (state, { page, action }) => {
         if (action == null) {

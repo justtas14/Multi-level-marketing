@@ -116,6 +116,7 @@ export default {
     data() {
         return {
             profilePicture,
+            isLoading: false,
         };
     },
     methods: {
@@ -143,7 +144,6 @@ export default {
 
         ...mapState('AssociateHome', [
             'parent',
-            'isLoading',
         ]),
         ...mapGetters('Security', [
             'getAssociate',
@@ -156,7 +156,9 @@ export default {
         ]),
     },
     async created() {
+        this.isLoading = true;
         await this.associateHomeApi();
+        this.isLoading = false;
     },
 };
 </script>

@@ -5,7 +5,7 @@
             <th width="30%" class="logHeader created">Log Created</th>
         </thead>
         <tbody id="associatesWrapper" v-if="logs.length > 0">
-            <div v-if="spinner" class="Spinner__Container user__search__spiner"
+            <div v-if="isLoading" class="Spinner__Container user__search__spiner"
                 v-bind:style="{top: 0, left: 0, right:0, bottom: 0, 'z-index': 9999}">
                 <div class="lds-dual-ring"/>
             </div>
@@ -17,7 +17,7 @@
         </tbody>
         <tbody v-else>
              <tr class="log-container">
-                <td v-if="!spinner" class="log-itemContainer">
+                <td v-if="!isLoading" class="log-itemContainer">
                     No logs to display
                 </td>
                 <td class="log-itemContainer">
@@ -32,7 +32,7 @@ import Log from './Log.vue';
 
 export default {
     name: 'LogTable',
-    props: ['logs', 'spinner'],
+    props: ['logs', 'isLoading'],
     components: {
         Log,
     },

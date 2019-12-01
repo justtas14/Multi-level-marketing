@@ -1,5 +1,9 @@
 <template>
     <div>
+        <div v-if="isLoading || isLoadingSentInvitations"
+            class="Spinner__Container">
+                <div class="lds-dual-ring"/>
+        </div>
         <table class="mobileTable" v-if="invitations.length > 0">
             <thead>
             <tr>
@@ -40,26 +44,19 @@ export default {
         InvitationAbout,
         Pagination,
     },
-    props: ['invitations', 'paginationInfo', 'isTheSamePage'],
+    props: ['invitations', 'paginationInfo', 'isTheSamePage', 'isLoading', 'isLoadingSentInvitations'],
     methods: {
-        async previousPage() {
-            const page = null; const
-                action = 'subtract';
-            this.changePagination({ page, action });
-            await this.changePage();
+        previousPage() {
+            this.$emit('previousPage');
         },
-        async nextPage() {
-            const action = 'add'; const
-                page = null;
-            this.changePagination({ page, action });
-            await this.changePage();
+        nextPage() {
+            this.$emit('nextPage');
         },
-        async specificPage(n) {
-            const page = n;
-            const action = null;
-            this.changePagination({ page, action });
-            await this.changePage();
+        specificPage(n) {
+            this.$emit('specificPage', n);
         },
+    },
+    computed: {
     },
     created() {
     },

@@ -5,7 +5,7 @@
                 <SearchBar v-bind:associatesLength="this.associates.length"/>
             </thead>
             <tbody id="associatesWrapper">
-                <div v-if="spinner" class="Spinner__Container user__search__spiner"
+                <div v-if="isLoading" class="Spinner__Container user__search__spiner"
                  v-bind:style="{top: 0, 'z-index': 9999}">
                     <div class="lds-dual-ring"/>
                 </div>
@@ -49,6 +49,7 @@ export default {
     data() {
         return {
             isStarting: true,
+            isLoading: false,
         };
     },
     methods: {
@@ -80,8 +81,9 @@ export default {
                 nameField: this.props.nameSearch,
                 emailField: this.props.emailSearch,
             };
-            this.setSpinnerState(true);
+            this.isLoading = true;
             findBy(params, this.token).then((response) => {
+                this.isLoading = false;
                 this.loadData(response);
             });
         },
@@ -95,8 +97,9 @@ export default {
                 params.page = page;
             }
 
-            this.setSpinnerState(true);
+            this.isLoading = true;
             findBy(params, this.token).then((response) => {
+                this.isLoading = false;
                 this.loadData(response);
             });
         },
@@ -104,7 +107,6 @@ export default {
         ...mapActions('UserSearch', [
         ]),
         ...mapMutations('UserSearch', [
-            'setSpinnerState',
             'loadData',
             'updateSearchVal',
             'changePage',
@@ -125,7 +127,6 @@ export default {
             token: 'token',
         }),
         ...mapState('UserSearch', {
-            spinner: 'spinner',
             paginationInfo: 'paginationInfo',
             associates: 'associates',
             nameSearchVal: 'nameSearchVal',
@@ -134,8 +135,9 @@ export default {
         }),
     },
     created() {
-        this.setSpinnerState(true);
+        this.isLoading = true;
         findAll(this.token).then((response) => {
+            this.isLoading = false;
             this.loadData(response);
             this.isStarting = false;
         });

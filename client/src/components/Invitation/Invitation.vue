@@ -73,6 +73,7 @@ export default {
     props: ['siteKey', 'submitLabel'],
     data() {
         return {
+            isLoadingForm: false,
             invitationEmail: '',
             fullName: '',
         };
@@ -87,7 +88,9 @@ export default {
                 },
                 dependencies: this.dependencies,
             };
+            this.isLoadingForm = true;
             await this.submitInvitationForm(payload);
+            this.isLoadingForm = false;
             this.changeRecaptchaKey(null);
         },
         ...mapActions('Invitation', [
@@ -99,7 +102,6 @@ export default {
     },
     computed: {
         ...mapState('Invitation', [
-            'isLoadingForm',
             'formErrors',
             'verifyResponseKey',
         ]),

@@ -3,6 +3,8 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">User Search</span>
+                <Success v-if="this.formSuccess.type === 'delete' && $route.query.userDeleted"
+              v-bind:message="this.formSuccess.message"></Success>
                 <Main v-bind:mainAction="this.mainAction"
                  v-bind:mainActionLabel="'Details'"></Main>
             </div>
@@ -11,15 +13,17 @@
 </template>
 
 <script>
-// import {
-//     mapState,
-// } from 'vuex';
+import {
+    mapState,
+} from 'vuex';
 import Main from '../../../components/UserSearch/Main.vue';
+import Success from '../../../components/Messages/Success.vue';
 
 export default {
     name: 'UserSearchHome',
     components: {
         Main,
+        Success,
     },
     props: [],
     data() {
@@ -37,6 +41,9 @@ export default {
     mounted() {
     },
     computed: {
+        ...mapState('AssociateDetails', [
+            'formSuccess',
+        ]),
     },
     created() {
     },

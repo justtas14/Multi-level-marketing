@@ -624,7 +624,10 @@ class AdminController extends AbstractController
         AssociateNormalizer $associateNormalizer
     ) {
         $formError = '';
-        $formSuccess = '';
+        $formSuccess = [
+            'type' => '',
+            'message' => '',
+        ];
         $id = null;
         $successType = null;
 
@@ -634,6 +637,10 @@ class AdminController extends AbstractController
         $em = $this->getDoctrine()->getManager();
 
         $page = $request->get('page', 1);
+
+        if ($request->request->all() && array_key_exists('page', $request->request->all())) {
+            $page = $request->request->all()['page'];
+        }
 
         if (!is_numeric($page)) {
             throw new WrongPageNumberException();
@@ -684,6 +691,16 @@ class AdminController extends AbstractController
                         $associateManager->deleteUser($deleteAssociateUser);
                         $formSuccess = 'User ' .$deleteAssociateFullName. ' deleted';
                         $successType = "delete";
+
+                        $data = [
+                            'formError' => $formError,
+                            'formSuccess' => [
+                                'message' => $formSuccess,
+                                'type' => $successType,
+                            ]
+                        ];
+
+                        return new JsonResponse($data);
                     }
                 }
             }
@@ -709,6 +726,7 @@ class AdminController extends AbstractController
         $level = $associateManager->getNumberOfLevels($associateToDisplay->getAssociateId());
 
         $associateInLevels = [];
+        $maxLevel = 1;
 
         for ($i = 1; $i <= $level; $i++) {
             $associateInLevels[$i] = $associateManager->getNumberOfAssociatesInDownline(
@@ -716,14 +734,33 @@ class AdminController extends AbstractController
                 $associateToDisplay->getAssociateId()
             );
         }
-
-        $maxLevel = max($associateInLevels);
+        if (sizeof($associateInLevels)) {
+            $maxLevel = max($associateInLevels);
+        }
 
         $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $associateNormalizer]);
         $serializedAssociate = $serializer->normalize(
             $associateToDisplay,
             null,
-            ['attributes' => ['fullName', 'email', 'mobilePhone', 'level', 'joinDate', 'id']]
+            ['attributes' => [
+                'id',
+                'fullName',
+                'email',
+                'address',
+                'address2',
+                'level',
+                'dateOfBirth',
+                'joinDate',
+                'city',
+                'postcode',
+                'country',
+                'mobilePhone',
+                'homePhone',
+                'agreedToEmailUpdates',
+                'agreedToTextMessageUpdates',
+                'agreedToSocialMediaUpdates',
+                'agreedToTermsOfService',
+            ]]
         );
 
         $associateParent = $associateToDisplay->getParent();
@@ -734,7 +771,25 @@ class AdminController extends AbstractController
             $serializedParent = $serializer->normalize(
                 $associateParent,
                 null,
-                ['attributes' => ['id', 'email', 'fullName', 'mobilePhone']]
+                ['attributes' => [
+                    'id',
+                    'fullName',
+                    'email',
+                    'address',
+                    'address2',
+                    'city',
+                    'level',
+                    'postcode',
+                    'dateOfBirth',
+                    'joinDate',
+                    'country',
+                    'mobilePhone',
+                    'homePhone',
+                    'agreedToEmailUpdates',
+                    'agreedToTextMessageUpdates',
+                    'agreedToSocialMediaUpdates',
+                    'agreedToTermsOfService',
+                ]]
             );
         }
 

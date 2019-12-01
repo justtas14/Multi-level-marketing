@@ -1,7 +1,6 @@
 import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const initialState = {
-    isLoading: false,
     associatesInLevels: null,
     levels: null,
     maxLevel: null,
@@ -17,7 +16,6 @@ const getters = {
 
 const actions = {
     async associateHomeApi({ commit, rootState }) {
-        commit('setIsLoading');
         const securityApiObj = new SecurityAPI();
         const response = await securityApiObj.authenticateGetApi('/api/associate', rootState.Security.token);
         commit('setAssociateHomePageData', response.data);
@@ -25,11 +23,7 @@ const actions = {
 };
 
 const mutations = {
-    setIsLoading: (state) => {
-        state.isLoading = true;
-    },
     setAssociateHomePageData: (state, data) => {
-        state.isLoading = false;
         state.associatesInLevels = data.associatesInLevels;
         state.levels = data.levels;
         state.maxLevel = data.maxLevel;

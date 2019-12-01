@@ -1,10 +1,6 @@
 import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const initialState = {
-    isLoading: false,
-    isLoadingForm: false,
-    isLoadingSentInvitations: false,
-    isResendBtnLoading: false,
     formErrors: null,
     sent: null,
     invitations: null,
@@ -20,7 +16,6 @@ const getters = {
 
 const actions = {
     async submitInvitationForm({ commit, rootState }, payload) {
-        commit('setIsLoadingForm');
         const securityApiObj = new SecurityAPI();
         const response = await securityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
@@ -34,7 +29,6 @@ const actions = {
         }
     },
     async resendInvitation({ commit, rootState }, payload) {
-        commit('setIsLoadingResendBtn');
         const securityApiObj = new SecurityAPI();
         const response = await securityApiObj.authenticateInvitationPostApi(
             '/api/associate/invite',
@@ -48,7 +42,6 @@ const actions = {
         }
     },
     async changePage({ state, commit, rootState }) {
-        commit('setIsLoadingSentInvitations');
         const payload = {
             page: state.pagination.currentPage,
         };
@@ -61,7 +54,6 @@ const actions = {
         commit('setGeneralInvitationInfo', response.data);
     },
     async invitationHome({ commit, rootState }) {
-        commit('setIsLoading');
         const payload = {};
         const securityApiObj = new SecurityAPI();
         const response = await securityApiObj.authenticateInvitationPostApi(
@@ -74,38 +66,18 @@ const actions = {
 };
 
 const mutations = {
-    setIsLoading: (state) => {
-        state.isLoading = true;
-    },
-    setIsLoadingForm: (state) => {
-        state.isLoadingForm = true;
-    },
-    setIsLoadingSentInvitations: (state) => {
-        state.isLoadingSentInvitations = true;
-    },
-    setIsLoadingResendBtn: (state) => {
-        state.isResendBtnLoading = true;
-    },
     setErrors: (state, errors) => {
-        state.isLoadingForm = false;
-        state.isResendBtnLoading = false;
         state.formErrors = errors;
     },
     setSent: (state, sent) => {
-        state.isLoadingForm = false;
-        state.isResendBtnLoading = false;
         state.formErrors = null;
         state.sent = sent;
     },
     setNotSent: (state) => {
-        state.isLoadingForm = false;
-        state.isResendBtnLoading = false;
         state.formErrors = null;
         state.sent = null;
     },
     setGeneralInvitationInfo: (state, data) => {
-        state.isLoading = false;
-        state.isLoadingSentInvitations = false;
         state.invitations = data.invitations;
         state.pagination = data.pagination;
         state.uniqueAssociateInvitationLink = data.uniqueAssociateInvitationLink;
@@ -116,9 +88,9 @@ const mutations = {
         if (action == null) {
             state.pagination.currentPage = page;
         } else if (action === 'add') {
-            state.pagination.currentPage = Number(state.paginationInfo.currentPage) + 1;
+            state.pagination.currentPage = Number(state.pagination.currentPage) + 1;
         } else if (action === 'subtract') {
-            state.pagination.currentPage = Number(state.paginationInfo.currentPage) - 1;
+            state.pagination.currentPage = Number(state.pagination.currentPage) - 1;
         }
     },
     changeRecaptchaKey: (state, verifyResponseKey) => {

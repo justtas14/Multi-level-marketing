@@ -1,8 +1,6 @@
 import SecurityAPI from '../api/SecurityApi/apiCalls';
 
 const initialState = {
-    isLoading: false,
-    isLoadingForm: false,
     formErrors: null,
     formUpdated: false,
 };
@@ -12,7 +10,6 @@ const getters = {
 
 const actions = {
     async submitForm({ commit, rootState }, profileFormData) {
-        commit('setIsLoadingForm');
         commit('profileUpdate', false);
         const securityApiObj = new SecurityAPI();
         const response = await securityApiObj.profileUpdate(
@@ -31,7 +28,6 @@ const actions = {
         return false;
     },
     async home({ commit, rootState }) {
-        commit('setIsLoading');
         const securityApiObj = new SecurityAPI();
         const response = await securityApiObj.profileUpdate(
             '/api/associate/profile',
@@ -44,18 +40,10 @@ const actions = {
 };
 
 const mutations = {
-    setIsLoading: (state) => {
-        state.isLoading = true;
-    },
-    setIsLoadingForm: (state) => {
-        state.isLoadingForm = true;
-    },
     setErrors: (state, errors) => {
-        state.isLoadingForm = false;
         state.formErrors = errors;
     },
     setHomeInfo: (state, data) => {
-        state.isLoading = false;
         state.formErrors = data.formErrors;
     },
     profileUpdate: (state, flag) => {

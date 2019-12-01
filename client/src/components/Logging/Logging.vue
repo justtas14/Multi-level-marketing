@@ -2,7 +2,7 @@
     <div id="loggingApp">
         <LogTable
             v-bind:logs="logs"
-            v-bind:spinner="spinner"
+            v-bind:isLoading="isLoading"
         ></LogTable>
         <Pagination
             @previousPage="previousPage"
@@ -24,53 +24,58 @@ export default {
         Pagination,
         LogTable,
     },
+    data() {
+        return {
+            isLoading: false,
+        };
+    },
     methods: {
-        previousPage() {
+        async previousPage() {
             const page = null; const
                 action = 'subtract';
             this.changePage({ page, action });
-            this.loadLogs();
+            await this.loadLogs();
         },
-        nextPage() {
+        async nextPage() {
             const action = 'add'; const
                 page = null;
             this.changePage({ page, action });
-            this.loadLogs();
+            await this.loadLogs();
         },
-        specificPage(n) {
+        async specificPage(n) {
             const page = n;
             const action = null;
             this.changePage({
                 page,
                 action,
             });
-            this.loadLogs();
+            await this.loadLogs();
         },
 
-        loadLogs() {
-            this.setSpinnerState(true);
-            this.findLogs();
+        async loadLogs() {
+            this.isLoading = true;
+            await this.findLogs();
+            this.isLoading = false;
         },
 
         ...mapActions('Logs', [
             'findLogs',
         ]),
         ...mapMutations('Logs', [
-            'setSpinnerState',
             'loadData',
             'changePage',
         ]),
     },
     computed: {
         ...mapState('Logs', {
-            spinner: 'spinner',
             paginationInfo: 'paginationInfo',
             logs: 'logs',
         }),
     },
     async created() {
-        this.setSpinnerState(true);
+        this.isLoading = true;
         this.findLogs();
+        this.isLoading = false;
     },
 };
 </script>

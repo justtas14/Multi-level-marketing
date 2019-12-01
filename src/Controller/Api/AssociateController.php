@@ -166,6 +166,12 @@ final class AssociateController extends AbstractController
         $formData = $request->request->all();
 
         if ($formData) {
+            $formData['associate']['agreedToEmailUpdates'] = $formData['associate']['agreedToEmailUpdates'] === 'true' ?
+                true : false;
+            $formData['associate']['agreedToTextMessageUpdates'] =
+                $formData['associate']['agreedToTextMessageUpdates'] === 'true' ? true : false;
+            $formData['associate']['agreedToTermsOfService'] =
+                $formData['associate']['agreedToTermsOfService'] === 'true' ? true : false;
             if ($request->files->all()) {
                 $formData['associate']['profilePicture'] = $request->files->all()['associate']['profilePicture'];
             }

@@ -9,7 +9,7 @@
                 <div v-if="this.sent && this.sent.completed === true" style="padding: 20px 0">
                     Invitation has been sent successfully to the "{{ sent.address }}" email address
                 </div>
-                <a @click="goToRoute()" v-if="this.sent && this.sent.completed === true"
+                <a @click="setNotSend" v-if="this.sent && this.sent.completed === true"
                    class="waves-effect waves-light btn">Send another one</a>
                 <Invitation
                     v-else-if="this.siteKey"
@@ -19,7 +19,7 @@
                 </Invitation>
             </div>
         </div>
-        <div v-if="!this.sent" class="card">
+        <div v-show="!this.sent" class="card">
             <div class="card-content">
                 <span class="card-title invitationLinkTitle">Invitation link</span>
                 <div class="invitationAboutText">
@@ -32,10 +32,11 @@
                     <share v-bind:invitationUrl="this.uniqueAssociateInvitationLink"/>
                 </div>
                 <div class="barCodeImageContainer">
-                    <content-loader v-if="isLoading" height="80">
-                        <rect x="160" y="-10" width="80" height="85" />
+                    <content-loader v-if="isLoading" :height="110">
+                        <rect :x="147" :y="-10" :width="110" :height="110" />
                     </content-loader>
-                    <zoomImage v-else v-bind:imageSrc="imageSrc">
+                    <zoomImage v-else
+                     v-bind:imageSrc="barCodeImage ? barCodeImage.getAttribute('src') : ''">
                     </zoomImage>
                 </div>
                 <qrcode
@@ -43,21 +44,22 @@
                     :options="{ width: 200 }"
                     tag="img"
                     class="barCodeImage"
+                    ref="qrCode"
                 ></qrcode>
             </div>
         </div>
-        <div v-if="!this.sent" class="card">
+        <div v-show="!this.sent" class="card">
             <div class="card-content">
                 <span class="card-title">Sent Invitations</span>
-                    <div v-if="isLoading"
-                    class="Spinner__Container">
-                        <div class="lds-dual-ring"/>
-                    </div>
                     <RecentInvitations
-                        v-else
                         v-bind:invitations="invitations"
+                        v-bind:isLoading="isLoading"
+                        v-bind:isLoadingSentInvitations="isLoadingSentInvitations"
                         v-bind:paginationInfo="pagination"
                         v-bind:isTheSamePage="true"
+                        @previousPage="previousPage"
+                        @nextPage="nextPage"
+                        @specificPage="specificPage"
                     >
                     </RecentInvitations>
             </div>
@@ -96,14 +98,45 @@ export default {
     },
     data() {
         return {
+            isLoading: false,
+            isLoadingSentInvitations: false,
             messageTooltip: null,
             imageSrc: null,
+            barCodeImage: null,
         };
     },
     methods: {
-        async goToRoute() {
+        async setNotSend() {
+            this.isLoading = true;
+            await this.invitationHome();
+            this.isLoading = false;
             this.setNotSent();
         },
+        async nextPage() {
+            const action = 'add'; const
+                page = null;
+            this.changePagination({ page, action });
+            this.isLoadingSentInvitations = true;
+            await this.changePage();
+            this.isLoadingSentInvitations = false;
+        },
+        async previousPage() {
+            const page = null; const
+                action = 'subtract';
+            this.changePagination({ page, action });
+            this.isLoadingSentInvitations = true;
+            await this.changePage();
+            this.isLoadingSentInvitations = false;
+        },
+        async specificPage(n) {
+            const page = n;
+            const action = null;
+            this.changePagination({ page, action });
+            this.isLoadingSentInvitations = true;
+            await this.changePage();
+            this.isLoadingSentInvitations = false;
+        },
+
         ...mapMutations('Invitation', [
             'setNotSent',
             'changePagination',
@@ -114,7 +147,6 @@ export default {
         ...mapActions('Invitation', [
             'invitationHome',
             'changePage',
-            'changePage',
         ]),
         ...mapMutations('Security', [
             'logout',
@@ -124,8 +156,6 @@ export default {
     },
     computed: {
         ...mapState('Invitation', [
-            'isLoading',
-            'isLoadingSentInvitations',
             'sent',
             'siteKey',
             'submitLabel',
@@ -138,9 +168,10 @@ export default {
         ]),
     },
     async created() {
+        this.isLoading = true;
         await this.invitationHome();
-        const barCodeImage = document.querySelector('.barCodeImage');
-        this.imageSrc = barCodeImage.getAttribute('src');
+        this.barCodeImage = this.$refs.qrCode.$el;
+        this.isLoading = false;
     },
 };
 </script>

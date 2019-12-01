@@ -4,12 +4,11 @@
             <div class="card-content">
                 <Error v-if="this.formError"
               v-bind:message="this.formError"></Error>
-                <div class="userDetails__mainContainer">
                     <Success v-if="this.formSuccess.type === 'parent'"
               v-bind:message="this.formSuccess.message"></Success>
                 <div class="userDetails__mainContainer">
                     <Main
-                        v-bind:associate="associate"
+                        v-bind:associate="stateAssociate"
                         v-bind:isParent="false"
                     >
                     </Main>
@@ -20,7 +19,6 @@
                     >
                     </Main>
                 </div>
-            </div>
             </div>
         </div>
         <div class="card">
@@ -40,15 +38,15 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Sent Invitations</span>
-                <div v-if="isLoading"
-                    class="Spinner__Container">
-                        <div class="lds-dual-ring"/>
-                    </div>
                     <RecentInvitations
-                        v-else
                         v-bind:invitations="invitations"
                         v-bind:paginationInfo="pagination"
+                        v-bind:isLoading="isLoading"
+                        v-bind:isLoadingSentInvitations="isLoadingSentInvitations"
                         v-bind:isTheSamePage="false"
+                        @previousPage="previousPage"
+                        @nextPage="nextPage"
+                        @specificPage="specificPage"
                     >
                     </RecentInvitations>
             </div>
@@ -79,11 +77,40 @@ export default {
     data() {
         return {
             currentAssociateId: null,
+            isLoading: false,
+            isLoadingSentInvitations: false,
         };
     },
     methods: {
+        async nextPage() {
+            const action = 'add'; const
+                page = null;
+            await this.appendPageFormDataAndChange(page, action);
+        },
+        async previousPage() {
+            const page = null; const
+                action = 'subtract';
+            await this.appendPageFormDataAndChange(page, action);
+        },
+        async specificPage(n) {
+            const page = n;
+            const action = null;
+            await this.appendPageFormDataAndChange(page, action);
+        },
+
+        async appendPageFormDataAndChange(page, action) {
+            this.changePagination({ page, action });
+            const formData = new FormData();
+            formData.append('associateId', this.associateUrlId);
+            formData.append('page', this.pagination.currentPage);
+            this.isLoadingSentInvitations = true;
+            await this.associateInfo(formData);
+            this.isLoadingSentInvitations = false;
+        },
+
         ...mapMutations('AssociateDetails', [
             'setAssociateUrlId',
+            'changePagination',
         ]),
         ...mapActions('AssociateDetails', [
             'associateInfo',
@@ -95,8 +122,7 @@ export default {
 
         ...mapState('AssociateDetails', [
             'associateUrlId',
-            'isLoading',
-            'associate',
+            'stateAssociate',
             'associateParent',
             'invitations',
             'formError',
@@ -110,8 +136,10 @@ export default {
     async created() {
         this.setAssociateUrlId(this.$route.params.id);
         const formData = new FormData();
-        formData.append('associateId', this.associateUrlId);
+        formData.append('associateId', this.$route.params.id);
+        this.isLoading = true;
         await this.associateInfo(formData);
+        this.isLoading = false;
     },
 };
 </script>
