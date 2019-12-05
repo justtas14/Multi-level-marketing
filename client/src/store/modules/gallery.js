@@ -5,12 +5,12 @@ import SecurityAPI from '../api/SecurityApi/apiCalls';
 const initialState = {
     modalState: false,
     dataLoaded: false,
+    clickFile: () => {},
     files: [],
     paginationInfo: {
         currentPage: 1,
     },
     filesPerPage: 20,
-    imageExtensions: [],
     category: 'all',
     yesClickFn() {},
     notification: {
@@ -47,7 +47,6 @@ const actions = {
         const data = {
             files: res.data.files,
             pagination: res.data.pagination,
-            imageExtensions: res.data.imageExtensions,
             imageTypes: res.data.imageTypes,
         };
         commit('setSpinnerState', false);
@@ -156,6 +155,9 @@ const mutations = {
     changeFilesPerPage: (state, filesPerPage) => {
         state.filesPerPage = filesPerPage;
     },
+    changeClickFile: (state, func) => {
+        state.clickFile = func;
+    },
     changeCategory: (state, category) => {
         state.category = category;
     },
@@ -206,7 +208,6 @@ const mutations = {
     loadInfo: (state, { ...data }) => {
         state.files = data.files;
         state.paginationInfo = data.pagination;
-        state.imageExtensions = data.imageExtensions;
         state.imageTypes = data.imageTypes;
         state.spinner = false;
     },

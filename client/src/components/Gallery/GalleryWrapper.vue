@@ -4,12 +4,11 @@
             v-bind:files="files"
             v-bind:notification="notification"
             v-bind:paginationInfo="paginationInfo"
-            v-bind:imageExtensions="imageExtensions"
             v-bind:constants="constants"
             v-bind:confirm="confirm"
              @previousPage="previousPage"
              @nextPage="nextPage"
-             @specificPage="specificPage"
+             @page="specificPage"
     >
         <template v-slot:category>
             <CategoryMenu

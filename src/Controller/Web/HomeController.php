@@ -40,14 +40,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
-     * @return Response
-     */
-    public function indexAction(): Response
-    {
-        return $this->render('main.html.twig', []);
-    }
+//    /**
+//     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
+//     * @return Response
+//     */
+//    public function indexAction(): Response
+//    {
+//        return $this->render('main.html.twig', []);
+//    }
 
     /**
      * @Route("/api/configuration", name="configuration")

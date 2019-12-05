@@ -40,6 +40,7 @@
                     </zoomImage>
                 </div>
                 <qrcode
+                    v-if="this.uniqueAssociateInvitationLink"
                     :value="this.uniqueAssociateInvitationLink"
                     :options="{ width: 200 }"
                     tag="img"

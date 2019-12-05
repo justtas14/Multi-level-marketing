@@ -27,7 +27,6 @@
 
 <script>
 import { debounce } from 'debounce';
-import EventBus from './EventBus/EventBus';
 
 export default {
     name: 'SearchBar',
@@ -44,13 +43,13 @@ export default {
     },
     methods: {
         handleNameSearchInput: debounce(function nameSearchtFun() {
-            EventBus.$emit('handleSearch', 'name', this.nameInputVal);
+            this.$emit('handleSearch', 'name', this.nameInputVal);
         }, 500),
         handlePhoneSearchInput: debounce(function phoneSearchFun() {
-            EventBus.$emit('handleSearch', 'phone', this.phoneInputVal);
+            this.$emit('handleSearch', 'phone', this.phoneInputVal);
         }, 500),
         handleEmailSearchInput: debounce(function emailSearchFun() {
-            EventBus.$emit('handleSearch', 'email', this.emailInputVal);
+            this.$emit('handleSearch', 'email', this.emailInputVal);
         }, 500),
     },
     computed: {

@@ -14,7 +14,7 @@
 
 <script>
 import {
-    mapState,
+    mapState, mapMutations,
 } from 'vuex';
 import Main from '../../../components/UserSearch/Main.vue';
 import Success from '../../../components/Messages/Success.vue';
@@ -37,6 +37,9 @@ export default {
         };
     },
     methods: {
+
+        ...mapMutations('Sidebar', [
+        ]),
     },
     mounted() {
     },

@@ -17,6 +17,8 @@ import Invitation from './store/modules/invitation';
 import Profile from './store/modules/profile';
 import AssociateDetails from './store/modules/associateDetails';
 import EndPrelaunch from './store/modules/endprelaunch';
+import ChangeContent from './store/modules/changecontent';
+import EmailTemplates from './store/modules/emailTemplates';
 
 store.registerModule('UserSearch', UserSearch);
 store.registerModule('Security', Security);
@@ -29,6 +31,8 @@ store.registerModule('Invitation', Invitation);
 store.registerModule('Profile', Profile);
 store.registerModule('AssociateDetails', AssociateDetails);
 store.registerModule('EndPrelaunch', EndPrelaunch);
+store.registerModule('ChangeContent', ChangeContent);
+store.registerModule('EmailTemplates', EmailTemplates);
 
 VuexPersist(store);
 

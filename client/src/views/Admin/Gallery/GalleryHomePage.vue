@@ -11,11 +11,10 @@
 </template>
 
 <script>
-// import {
-//     mapActions, mapState, mapGetters, mapMutations,
-// } from 'vuex';
+import {
+    mapMutations,
+} from 'vuex';
 import GalleryWrapper from '../../../components/Gallery/GalleryWrapper.vue';
-import EventBus from '../../../components/Gallery/EventBus/EventBus';
 import Parameters from '../../../../parameters';
 
 export default {
@@ -30,10 +29,14 @@ export default {
         };
     },
     methods: {
+
+        ...mapMutations('Gallery', [
+            'changeClickFile',
+        ]),
     },
     mounted() {
-        EventBus.$on('oneClickFile', (fileId, fileName, filePath, downloadPath) => {
-            window.location.href = `${Parameters.API_HOST_URL}${downloadPath}`;
+        this.changeClickFile((fileId, fileName, fileSrc, filePath) => {
+            window.location.href = `${Parameters.API_HOST_URL}${filePath}`;
         });
     },
     computed: {

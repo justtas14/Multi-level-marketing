@@ -5,6 +5,6 @@ export default {
         jsonData: '/api/admin/jsonGallery',
         uploadFile: '/api/admin/uploadGalleryFile',
         removeFile: '/api/admin/removeFile',
-        uploadEditorFile: '/api/admin/uploadFile',
     },
+    imageExtensions: ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'],
 };

@@ -6,7 +6,7 @@ export default {
             icon: 'home',
         },
         {
-            path: '/admin/emailtemplateslist',
+            path: '/admin/emailtemplates',
             label: 'Email Templates',
             icon: 'email',
         },

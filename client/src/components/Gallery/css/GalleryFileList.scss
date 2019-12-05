@@ -102,6 +102,9 @@ figure {
     #gallery{
         grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
     }
+    #modalGallery {
+        grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    }
 }
 
 @media only screen and (max-width: 1200px) {
@@ -110,6 +113,11 @@ figure {
     }
 }
 
+@media only screen and (max-width: 1000px) {
+    #modalGallery{
+        grid-gap: 50px 25px;
+    }
+}
 
 @media only screen and (max-width: 900px) {
     #gallery{
@@ -123,6 +131,10 @@ figure {
     #gallery{
         grid-gap: 50px;
     }
+    #modalGallery {
+        grid-gap: 50px;
+        grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
+    }
 }
 
 @media only screen and (max-width: 800px) {
@@ -130,6 +142,12 @@ figure {
         grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
         grid-gap: 50px;
         margin-top: 25px;
+    }
+}
+
+@media only screen and (max-width: 550px) {
+    #modalGallery {
+        grid-template-columns: minmax(0,1fr) minmax(0,1fr);
     }
 }
 
@@ -142,5 +160,17 @@ figure {
 @media only screen and (max-width: 450px) {
     #gallery {
         grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #modalGallery {
+        grid-template-columns: minmax(0,1fr)
+    }
+}
+
+@media only screen and (max-width: 381px) {
+    #modalGallery {
+        grid-template-columns: minmax(0,1fr);
     }
 }

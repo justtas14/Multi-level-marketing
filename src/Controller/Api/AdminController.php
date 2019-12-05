@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\CustomNormalizer\AssociateNormalizer;
+use App\CustomNormalizer\ConfigurationNormalizer;
 use App\Entity\Associate;
 use App\Entity\Configuration;
 use App\Entity\Gallery;
@@ -50,7 +51,6 @@ class AdminController extends AbstractController
     const ASSOCIATE_LIMIT = 10;
     const INVITATION_LIMIT = 10;
     const LOG_LIMIT = 20;
-    const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'bmp', 'gif', 'png', 'webp', 'ico'];
 
     /**
      * @OA\Get(
@@ -184,7 +184,6 @@ class AdminController extends AbstractController
             'formErrors' => $formErrors,
             'emailTemplate' => $serializedTemplate,
             'title' => $title,
-            'emailBody' => $emailTemplate->getEmailBody(),
             'availableParameters' => $availableParameters
         ];
 
@@ -295,12 +294,17 @@ class AdminController extends AbstractController
      * @Rest\Post("/admin/changecontent", name="change_content")
      * @param Request $request
      * @param ConfigurationManager $cm
+     * @param ConfigurationNormalizer $configurationNormalizer
+     * @param GaufretteFileManager $fileManager
      * @return Response
-     * @throws \Exception
      * @throws ExceptionInterface
      */
-    public function changeContent(Request $request, ConfigurationManager $cm, GaufretteFileManager $fileManager)
-    {
+    public function changeContent(
+        Request $request,
+        ConfigurationManager $cm,
+        ConfigurationNormalizer $configurationNormalizer,
+        GaufretteFileManager $fileManager
+    ) {
         $contentChanged = false;
         $em = $this->getDoctrine()->getManager();
 
@@ -310,7 +314,11 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(ChangeContentType::class, $tempConfiguration);
 
-        $form->handleRequest($request);
+        $formData = $request->request->all();
+
+        if ($formData) {
+            $form->submit($formData);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mainLogoFileId = $form['hiddenMainLogoFile']->getData();
@@ -324,23 +332,6 @@ class AdminController extends AbstractController
                     $originalFile = $em->getRepository(Gallery::class)->find($termsOfServicesFileId)->getGalleryFile();
                     $configuration->setTermsOfServices($originalFile);
                 }
-            } else {
-                if ($tempConfiguration->getMainLogo()) {
-                    if ($configuration->getMainLogo()) {
-                        $logo = $configuration->getMainLogo();
-                        $configuration->setMainLogo(null);
-                        $fileManager->removeEntity($logo);
-                    }
-                    $configuration->setMainLogo($tempConfiguration->getMainLogo());
-                }
-                if ($tempConfiguration->getTermsOfServices()) {
-                    if ($configuration->getTermsOfServices()) {
-                        $temp = $configuration->getTermsOfServices();
-                        $configuration->setTermsOfServices(null);
-                        $fileManager->removeEntity($temp);
-                    }
-                    $configuration->setTermsOfServices($tempConfiguration->getTermsOfServices());
-                }
             }
             if ($tempConfiguration->getTosDisclaimer()) {
                 $configuration->setTosDisclaimer($tempConfiguration->getTosDisclaimer());
@@ -350,19 +341,16 @@ class AdminController extends AbstractController
             $contentChanged = true;
         }
 
+        $em->refresh($configuration);
+
         $serializer = new Serializer(
-            [new DateTimeNormalizer('Y-m-d h:i:s'), new ObjectNormalizer(), new JsonEncoder()]
+            [new DateTimeNormalizer('Y-m-d h:i:s'), $configurationNormalizer, new JsonEncoder()]
         );
 
         $serializedConfiguration = $serializer->normalize(
             $configuration,
             null,
             ['attributes' => [
-                'id',
-                'mainLogo',
-                'termsOfService',
-                'landingContent',
-                'hasPrelaunchEnded',
                 'tosDisclaimer'
             ]]
         );
@@ -918,7 +906,6 @@ class AdminController extends AbstractController
 
         $data = [
             'files' => $serializedFiles,
-            'imageExtensions' => self::IMAGE_EXTENSIONS,
             'imageTypes' => $this->getImageTypes(),
             'pagination' => [
                 'numberOfPages' => $numberOfPages,
@@ -991,42 +978,6 @@ class AdminController extends AbstractController
                 ['fileInUse' => $fileInUse],
                 JsonResponse::HTTP_OK
             );
-        } else {
-            return new Response('', 200);
-        }
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/admin/uploadFile",
-     *     @OA\Parameter(
-     *         in="query",
-     *         name="filePath",
-     *         required=true,
-     *         description="Gallery file path",
-     *         @OA\Schema(type="string")
-     *      ),
-     *     @OA\Response(response="200",
-     *     description="Returns absolute url formed with gallery file path")
-     * )
-     */
-
-    /**
-     * @Rest\Post("/admin/uploadFile", name="upload_file")
-     * @param Request $request
-     * @return JsonResponse|Response
-     */
-    public function uploadEditorImage(
-        Request $request
-    ) {
-        if ($request->isMethod('POST')) {
-            $filePath = $request->getContent();
-
-            $baseUrl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
-
-            $absoluteUrl = $baseUrl . $filePath;
-
-            return new JsonResponse($absoluteUrl, 200);
         } else {
             return new Response('', 200);
         }

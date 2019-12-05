@@ -15,7 +15,7 @@
             </div>
             <transition name="fadeIn">
                 <a v-show="tabsVisible || !smallWindow" id="tab1-tab"
-                 @click="$emit('categorise-files', 'all')"
+                 @click="$emit('categorise-files', 'all'); tabsVisible=false"
                 :class="{'active': category === 'all' }">
                     <span class="categoryName">
                         <i class="material-icons categoryIcons">dynamic_feed</i>
@@ -24,7 +24,7 @@
             </transition>
             <transition name="fadeIn">
                 <a v-show="tabsVisible || !smallWindow" id="tab2-tab"
-                @click="$emit('categorise-files', 'images')"
+                @click="$emit('categorise-files', 'images'); tabsVisible=false"
                  :class="{'active': category === 'images' }">
                     <span class="categoryName" style="margin-left: 14px">
                         <i class="material-icons categoryIcons">image</i>
@@ -34,7 +34,7 @@
             </transition>
             <transition name="fadeIn">
                 <a v-show="tabsVisible || !smallWindow" id="tab3-tab"
-                    @click="$emit('categorise-files', 'files')"
+                    @click="$emit('categorise-files', 'files'); tabsVisible=false"
                     :class="{'active': category === 'files' }"
                 >
                     <span class="categoryName">

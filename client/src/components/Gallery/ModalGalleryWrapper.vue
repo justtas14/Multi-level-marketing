@@ -1,5 +1,5 @@
 <template>
-    <Modal>
+    <Modal @closeModal="closeModal">
         <template v-slot:header>
             <ModalFileContainer @readUrl="readUrl" v-bind:category="category"/>
         </template>
@@ -9,10 +9,12 @@
                 v-bind:files="files"
                 v-bind:notification="notification"
                 v-bind:paginationInfo="paginationInfo"
-                v-bind:imageExtensions="imageExtensions"
                 v-bind:constants="constants"
                 v-bind:confirm="confirm"
                 v-bind:noTop="noTop"
+                @previousPage="previousPage"
+                @nextPage="nextPage"
+                @page="specificPage"
             >
                 <template v-slot:category></template>
             </Gallery>
@@ -59,6 +61,36 @@ export default {
         readUrl(e) {
             this.readURL(e);
         },
+        closeModal() {
+            this.$emit('closeModal');
+            const page = 1;
+            const action = null;
+            this.changePage({
+                page,
+                action,
+            });
+        },
+        previousPage() {
+            const page = null; const
+                action = 'subtract';
+            this.changePage({ page, action });
+            this.callDataAxios();
+        },
+        nextPage() {
+            const action = 'add'; const
+                page = null;
+            this.changePage({ page, action });
+            this.callDataAxios();
+        },
+        specificPage(n) {
+            const page = n;
+            const action = null;
+            this.changePage({
+                page,
+                action,
+            });
+            this.callDataAxios();
+        },
         ...mapActions('Gallery', [
             'callDataAxios',
             'readURL',
@@ -88,26 +120,6 @@ export default {
                 message: `Are you sure you want to delete ${fileName} file?`,
             };
             scope.changeConfirmation(confirm);
-        });
-        EventBus.$on('previousPage', () => {
-            const page = null; const
-                action = 'subtract';
-            scope.changePage({ page, action });
-            scope.callDataAxios();
-        });
-        EventBus.$on('nextPage', () => {
-            const action = 'add'; const
-                page = null;
-            scope.changePage({ page, action });
-            scope.callDataAxios();
-        });
-        EventBus.$on('page', (page) => {
-            const action = null;
-            scope.changePage({
-                page,
-                action,
-            });
-            scope.callDataAxios();
         });
         EventBus.$on('showNotification', (msg) => {
             scope.showNotification(msg);

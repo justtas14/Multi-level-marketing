@@ -187,4 +187,34 @@ export default class SecurityApiCalls {
         }
         return false;
     }
+
+    changeContent(url, formData, token) {
+        const scope = this;
+        try {
+            return axios.post(url, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+        } catch (e) {
+            scope.unAuthenticate();
+        }
+        return false;
+    }
+
+    emailTemplates(url, formData, token) {
+        const scope = this;
+        try {
+            return axios.post(url, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+        } catch (e) {
+            scope.unAuthenticate();
+        }
+        return false;
+    }
 }

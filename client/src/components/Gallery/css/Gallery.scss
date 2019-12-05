@@ -8,11 +8,6 @@
 //     }
 // }
 
-// @media only screen and (max-width: 1350px) {
-//     /deep/ #modalGallery {
-//         grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
-//     }
-// }
 
 // @media only screen and (max-width: 1200px) {
 //     /deep/ .addTop {
@@ -20,11 +15,7 @@
 //     }
 // }
 
-// @media only screen and (max-width: 1000px) {
-//     /deep/ #modalGallery{
-//         grid-gap: 50px 25px;
-//     }
-// }
+
 
 // @media only screen and (max-width: 992px) {
 //     /deep/ .pagination li.pages {
@@ -35,33 +26,21 @@
 // }
 
 
-// @media only screen and (max-width: 850px) {
-//     /deep/ #modalGallery {
-//         grid-gap: 50px;
-//         grid-template-columns: minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);
-//     }
-// }
-
 @media only screen and (max-width: 800px) {
     // /deep/ .top {
     //     top: 10px !important;
     // }
 }
 
-// @media only screen and (max-width: 550px) {
-//     /deep/ #modalGallery {
-//         grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-//     }
-// }
 
 @media only screen and (max-width: 400px) {
-    // /deep/ #modalGallery {
-    //     grid-template-columns: minmax(0,1fr)
-    // }
+    .galleryContainer {
+        margin: 25px 25px 100px 25px;
+    }
 }
 
-// @media only screen and (max-width: 381px) {
-//     /deep/ #modalGallery {
-//         grid-template-columns: minmax(0,1fr);
-//     }
-// }
+
+
+
+
+

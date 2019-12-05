@@ -14,8 +14,8 @@ class ChangeContentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('mainLogo', PTSFileType::class, ['multiple' => false, 'required' => false])
-            ->add('termsOfServices', PTSFileType::class, ['multiple' => false, 'required' => false])
+//            ->add('mainLogo', PTSFileType::class, ['multiple' => false, 'required' => false])
+//            ->add('termsOfServices', PTSFileType::class, ['multiple' => false, 'required' => false])
             ->add('hiddenMainLogoFile', HiddenType::class, ['mapped' => false, 'required' => false])
             ->add('hiddenTermsOfServiceFile', HiddenType::class, ['mapped' => false, 'required' => false])
             ->add('tosDisclaimer', TextareaType::class, [

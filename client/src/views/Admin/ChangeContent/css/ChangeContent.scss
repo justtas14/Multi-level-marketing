@@ -1,0 +1,22 @@
+.addMargin {
+    margin-left: 0.5em;
+}
+
+#mainLogoImagePreview img, #termsOfServicesImagePreview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+#change_content_tosDisclaimer {
+    height: 100px;
+    resize: vertical;
+}
+
+.progress {
+    width: 87px;
+}
+
+.submitButtonWraper {
+    height: 40px;
+}

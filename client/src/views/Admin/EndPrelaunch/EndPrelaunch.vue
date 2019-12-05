@@ -41,7 +41,7 @@
                 >
                 </QuillEditor>
             </div>
-            <div>
+            <div id="buttonWraper">
             <button
                 type="button"
                 id="end_prelaunch_Submit"
@@ -97,6 +97,7 @@ export default {
             this.isLoadingForm = true;
             await this.home(formData);
             this.isLoadingForm = false;
+            window.scroll(0, 0);
         },
 
         ...mapMutations('EndPrelaunch', [
@@ -119,7 +120,6 @@ export default {
         this.setFormSuccess(false);
         this.isLoading = true;
         const res = await this.home();
-        console.log(res);
         this.isLoading = false;
         this.formData.prelaunchEnded = res.hasPrelaunchEnded;
         this.formData.configurationContent = res.configurationContent;

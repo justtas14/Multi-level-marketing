@@ -11,6 +11,9 @@ import UserSearchHome from '../views/Admin/UserSearch/UserSearchHome.vue';
 import Profile from '../views/Associate/Profile/Profile.vue';
 import AssociateDetailsHome from '../views/Admin/AssociateDetails/AssociateDetailsHome.vue';
 import EndPrelaunch from '../views/Admin/EndPrelaunch/EndPrelaunch.vue';
+import ChangeContent from '../views/Admin/ChangeContent/ChangeContent.vue';
+import EmailTemplate from '../views/Admin/EmailTemplates/EmailTemplate.vue';
+import EmailtemplatesList from '../views/Admin/EmailTemplates/EmailTemplatesList.vue';
 
 Vue.use(VueRouter);
 
@@ -25,7 +28,11 @@ const routes = [
     { path: '/admin/users', component: UserSearchHome, meta: { requiresAuth: true } },
     { path: '/admin/user/:id', component: AssociateDetailsHome, meta: { requiresAuth: true } },
     { path: '/admin/endprelaunch', component: EndPrelaunch, meta: { requiresAuth: true } },
-    { path: '*', redirect: '/' },
+    { path: '/admin/changecontent', component: ChangeContent, meta: { requiresAuth: true } },
+    { path: '/admin/emailtemplates', component: EmailtemplatesList, meta: { requiresAuth: true } },
+    { path: '/admin/emailtemplate/:type', component: EmailTemplate, meta: { requiresAuth: true } },
+
+    // { path: '*', redirect: '/' },
 ];
 
 
@@ -37,7 +44,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/' && to.path !== '/login') {
+    if (to.path === '/') {
         if (!store.getters['Security/isAuthenticated']) {
             next({
                 path: '/login',

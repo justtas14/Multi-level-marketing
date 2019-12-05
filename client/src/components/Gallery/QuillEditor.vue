@@ -2,19 +2,18 @@
     <div id="quillApp">
         <quill v-model="content" v-on:input="updateValue"
          :config="config" ref="quillEditor"></quill>
-        <ModalGalleryWrapper/>
+        <ModalGalleryWrapper v-bind:style="{display: modalDisplay}"
+         @closeModal="modalDisplay='none'"/>
     </div>
 </template>
 
 <script>
 import Vue from 'vue';
-import axios from 'axios';
 import VueQuill from 'vue-quill';
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
-import { mapActions, mapMutations } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import ModalGalleryWrapper from './ModalGalleryWrapper.vue';
-import constants from './constants/constants';
-import EventBus from './EventBus/EventBus';
+import modalGalleryConst from './constants/modalGalleryConst';
 import '../../assets/css/quill.snow.css';
 
 Vue.use(VueQuill);
@@ -28,13 +27,10 @@ export default {
     data() {
         return {
             scope: this,
+            modalDisplay: 'none',
             content: {
                 ops: [],
             },
-            mqls: [
-                window.matchMedia('(max-width: 550px)'),
-                window.matchMedia('(max-width: 1350px)'),
-            ],
             config: {
                 modules: {
                     syntax: false,
@@ -51,12 +47,12 @@ export default {
                         ],
                         handlers: {
                             image: () => {
-                                this.changeModalState(true);
+                                this.modalDisplay = 'block';
                                 this.changeFilesPerPage(21);
                                 this.changeCategory('images');
 
-                                for (let i = 0; i < this.mqls.length; i += 1) {
-                                    this.mqls[i].addListener(this.mediaQuerryResponse);
+                                for (let i = 0; i < modalGalleryConst.mqls.length; i += 1) {
+                                    modalGalleryConst.mqls[i].addListener(this.mediaQuerryResponse);
                                 }
 
                                 const w = window.innerWidth;
@@ -95,29 +91,29 @@ export default {
         }
         quillEditor.innerHTML = quillHTML;
 
-        EventBus.$on('oneClickFile', (fileId, fileName, filePath) => {
-            axios.post(constants.api.uploadEditorFile, filePath).then((res) => {
-                const url = res.data;
-                const range = this.editor.getSelection;
-                this.editor.insertEmbed(range.index, 'image', `${url}`);
-            }).catch((err) => {
-                console.log(err);
-            });
+        this.changeClickFile((fileId, fileName, fileSrc, filePath) => {
+            this.modalDisplay = 'none';
+            const range = this.editor.getSelection;
+            this.editor.insertEmbed(range.index, 'image', `${filePath}`);
         });
     },
     computed: {
         editor() {
             return this.$refs.quillEditor.editor;
         },
+
+        ...mapState('Security', [
+            'token',
+        ]),
     },
     methods: {
         updateValue() {
             this.$emit('input', JSON.stringify(this.content));
         },
         mediaQuerryResponse() {
-            if (this.mqls[0].matches) {
+            if (modalGalleryConst.mqls[0].matches) {
                 this.callDataAxios(14);
-            } else if (this.mqls[1].matches) {
+            } else if (modalGalleryConst.mqls[1].matches) {
                 this.callDataAxios(15);
             } else {
                 this.callDataAxios(21);
@@ -127,11 +123,10 @@ export default {
             'callDataAxios',
         ]),
         ...mapMutations('Gallery', [
-            'changeModalState',
             'changeCategory',
             'changeFilesPerPage',
-            'changeEditorState',
             'changeDataLoadState',
+            'changeClickFile',
         ]),
     },
     created() {

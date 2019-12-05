@@ -2,7 +2,9 @@
     <div id="user-search">
         <table id="table">
             <thead>
-                <SearchBar v-bind:associatesLength="this.associates.length"/>
+                <SearchBar
+                    @handleSearch="handleSearch"
+                    v-bind:associatesLength="this.associates.length"/>
             </thead>
             <tbody id="associatesWrapper">
                 <div v-if="isLoading" class="Spinner__Container user__search__spiner"
@@ -36,7 +38,6 @@ import Associate from './Associate.vue';
 import Pagination from '../Pagination/Pagination.vue';
 import SearchBar from './SearchBar.vue';
 import { findAll, findBy } from '../../services/AssociateSearchService';
-import EventBus from './EventBus/EventBus';
 
 export default {
     name: 'Main',
@@ -53,6 +54,14 @@ export default {
         };
     },
     methods: {
+        handleSearch(name, input) {
+            const params = {
+                name,
+                input,
+            };
+            this.updateSearchVal(params);
+            this.loadAppropriateAssociates();
+        },
         previousPage() {
             const page = null; const
                 action = 'subtract';
@@ -75,18 +84,6 @@ export default {
             this.loadAppropriateAssociates(this.paginationInfo.currentPage);
         },
 
-        changePage(page) {
-            const params = {
-                page,
-                nameField: this.props.nameSearch,
-                emailField: this.props.emailSearch,
-            };
-            this.isLoading = true;
-            findBy(params, this.token).then((response) => {
-                this.isLoading = false;
-                this.loadData(response);
-            });
-        },
         loadAppropriateAssociates(page = null) {
             const params = {
                 nameField: this.nameSearchVal,
@@ -113,14 +110,6 @@ export default {
         ]),
     },
     mounted() {
-        EventBus.$on('handleSearch', (name, input) => {
-            const params = {
-                name,
-                input,
-            };
-            this.updateSearchVal(params);
-            this.loadAppropriateAssociates();
-        });
     },
     computed: {
         ...mapState('Security', {

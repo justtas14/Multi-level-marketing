@@ -5,7 +5,6 @@
             <div class="galleryContainer">
                 <GalleryFileList
                     v-bind:files="files"
-                    v-bind:imageExtensions="imageExtensions"
                     v-bind:constants="constants"
                 />
                 <Notification
@@ -39,8 +38,7 @@ import GalleryFileList from './GalleryFileList.vue';
 
 export default {
     name: 'Gallery',
-    props: ['files', 'notification', 'paginationInfo',
-        'imageExtensions', 'constants', 'confirm', 'yesClickFn', 'noTop'],
+    props: ['files', 'notification', 'paginationInfo', 'constants', 'confirm', 'yesClickFn', 'noTop'],
     components: {
         Pagination,
         Notification,

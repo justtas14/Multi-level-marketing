@@ -30,7 +30,6 @@
         >
                 <GalleryFile
                     v-bind:file="file"
-                    v-bind:imageExtensions="imageExtensions"
                     v-bind:constants="constants"
                 />
         </figure>
@@ -44,7 +43,7 @@ import EventBus from './EventBus/EventBus';
 
 export default {
     name: 'GalleryFileList',
-    props: ['files', 'imageExtensions', 'constants'],
+    props: ['files', 'constants'],
     components: {
         GalleryFile,
     },

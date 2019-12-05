@@ -8,10 +8,10 @@
              @mouseover="hoverImage = true"
              @mouseleave="hoverImage = false"
         >
-            <a class="fileDownload" @click="oneClickFile(file.id, file.galleryFile.originalName)">
+            <a class="fileDownload" @click="oneClickFile()">
                 <div class="overlay-effect" v-bind:class="{hoverImageEffect : hoverImage}"></div>
                 <v-lazy-image
-                    :src="determineSrc()"
+                    :src="fileSrc.determineSrc()"
                     src-placeholder=""
                     class="gallery__img"
                     v-bind:alt="file.galleryFile.originalName">
@@ -43,24 +43,20 @@
     </div>
 </template>
 <script>
-import { mapMutations, mapActions } from 'vuex';
+import { mapMutations, mapActions, mapState } from 'vuex';
 import VLazyImage from 'v-lazy-image';
-import defaultFile from '../../../public/img/defaultFile.png';
-import wordImage from '../../../public/img/word.png';
-import pdfImage from '../../../public/img/pdf.png';
-import excelImage from '../../../public/img/excel.png';
 import EventBus from './EventBus/EventBus';
-import Parameters from '../../../parameters';
+import FileSrc from './Services/fileSrc';
 
 export default {
     name: 'GalleryFile',
-    props: ['file', 'imageExtensions', 'gallery', 'constants'],
+    props: ['file', 'gallery', 'constants'],
     data() {
         return {
-            fileExtension: this.getFileExtension(),
             hoverCard: false,
             hoverImage: false,
             isDeleted: false,
+            fileSrc: null,
         };
     },
     components: {
@@ -92,45 +88,15 @@ export default {
                 }
             });
         },
-        oneClickFile(fileId, fileName) {
+        oneClickFile() {
             if (!this.isDeleted) {
-                this.$store.commit('Gallery/changeModalState', false);
-                EventBus.$emit('oneClickFile', fileId, fileName, this.determineSrc(), this.file.filePath);
+                this.clickFile(
+                    this.file.id,
+                    this.file.galleryFile.originalName,
+                    this.fileSrc.determineSrc(),
+                    this.file.filePath,
+                );
             }
-        },
-        getFileExtension() {
-            let { originalName } = this.file.galleryFile;
-            originalName = this.reverse(originalName);
-            let fileExtension = this.reverse(originalName.substr(0, originalName.indexOf('.')));
-            fileExtension = fileExtension.toLowerCase();
-            return fileExtension;
-        },
-        determineSrc() {
-            if (this.isImage()) {
-                return `${Parameters.API_HOST_URL}${this.file.filePath}`;
-            } if (this.isPDF()) {
-                return pdfImage;
-            } if (this.isDOCX()) {
-                return wordImage;
-            } if (this.isXLSX()) {
-                return excelImage;
-            }
-            return defaultFile;
-        },
-        reverse(str) {
-            return str.split('').reverse().join('');
-        },
-        isImage() {
-            return this.imageExtensions.includes(this.fileExtension);
-        },
-        isPDF() {
-            return this.fileExtension === 'pdf';
-        },
-        isDOCX() {
-            return this.fileExtension === 'docx';
-        },
-        isXLSX() {
-            return this.fileExtension === 'xlsx';
         },
         ...mapMutations('Gallery', [
             'changeYesFn',
@@ -139,6 +105,15 @@ export default {
         ...mapActions('Gallery', [
             'deleteRequestFunction',
         ]),
+    },
+    computed: {
+        ...mapState('Gallery', [
+            'clickFile',
+        ]),
+    },
+    created() {
+        const fileSrc = new FileSrc(this.file.galleryFile.originalName, this.file.filePath);
+        this.fileSrc = fileSrc;
     },
 };
 </script>

@@ -47,12 +47,14 @@ export default {
             return `${Parameters.API_HOST_URL}${this.associate.filePath}`;
         },
         redirectToEditProfile() {
+            this.setCurrentPath('/associate/profile');
             this.$router.push({ path: '/associate/profile' });
         },
         associateName(name, n) {
             return (name.length > n) ? `${name.substr(0, n - 1)}&hellip;` : name;
         },
         ...mapMutations('Sidebar', [
+            'setCurrentPath',
         ]),
     },
     mounted() {
