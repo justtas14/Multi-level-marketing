@@ -16,6 +16,7 @@ import {
     mapActions, mapMutations, mapState, mapGetters,
 } from 'vuex';
 import Sidebar from './sidebar/Components/Sidebar.vue';
+import Parameters from '../parameters';
 
 export default {
     name: 'Main',
@@ -30,11 +31,14 @@ export default {
     methods: {
 
         ...mapActions('Security', [
+            'setCookie',
+            'loadAssociate',
         ]),
         ...mapActions('Sidebar', [
             'configurationApi',
         ]),
         ...mapMutations('Security', [
+            'authenticatingSuccess',
         ]),
     },
     mounted() {
@@ -52,8 +56,23 @@ export default {
     async created() {
         await this.configurationApi();
 
+        const urlString = window.location.href;
+        const url = new URL(urlString);
+        const token = url.searchParams.get('token');
+
+        if (token) {
+            this.authenticatingSuccess(token);
+            await this.setCookie();
+            await this.loadAssociate();
+            if (this.isAdmin) {
+                this.$router.push({ path: '/admin' });
+            } else {
+                this.$router.push({ path: '/associate' });
+            }
+        }
+
         if (!this.isAuthenticated) {
-            this.$router.push({ path: '/login' });
+            window.location.href = `${Parameters.API_HOST_URL}/authenticateFlow`;
         }
     },
 };

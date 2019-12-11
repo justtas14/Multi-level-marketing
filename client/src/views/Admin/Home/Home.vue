@@ -22,8 +22,7 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Associate Explorer</span>
-                <div>
-                </div>
+                <rootExplorer></rootExplorer>
             </div>
         </div>
     </div>
@@ -34,11 +33,13 @@ import {
     mapActions, mapState, mapGetters, mapMutations,
 } from 'vuex';
 import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
+import rootExplorer from '../../../components/RootExplorer/rootExplorer.vue';
 
 export default {
     name: 'AdminHome',
     components: {
         BusinessShape,
+        rootExplorer,
     },
     props: [],
     data() {

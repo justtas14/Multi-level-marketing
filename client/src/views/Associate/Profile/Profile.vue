@@ -3,6 +3,12 @@
     class="admin-contentContainer"
     style="overflow:hidden"
   >
+    <div class="card" v-if="checkEndPrelaunch">
+      <div class="card-content">
+          <div class="landingContent" v-html="configuration.landingContent">
+          </div>
+      </div>
+    </div>
     <div class="card">
       <div class="card-content">
         <span class="card-title">Edit profile</span>
@@ -177,19 +183,14 @@
                 id="user_update_associate_profilePicture"
                 name="user_update[associate][profilePicture]"
                 @change="readUrl"
+                ref="originalProfilePictureUpload"
               ></div>
-            <!-- <div id="profilePicturePreview">
-              <img src="">
-            </div>
-
-            <div
-              id="dragAndDropError"
-              class="error__block"
-              style="margin-top: 0.25em"
-            >
-            </div>
-            <div id="submitUploadErrorBlock">
-            </div> -->
+              <DragAndDrop
+               v-bind:originalProfilePictureUpload="this.$refs.originalProfilePictureUpload"
+               >
+               </DragAndDrop>
+            <Error v-if="this.formErrors && this.formErrors.profilePictureError"
+              v-bind:message="this.formErrors.profilePictureError"></Error>
           </div>
           <div class="input-field">
             <label style="position: unset!important;">
@@ -255,7 +256,7 @@
 
 <script>
 import {
-    mapActions, mapState, mapMutations,
+    mapActions, mapState, mapMutations, mapGetters,
 } from 'vuex';
 import { ContentLoader } from 'vue-content-loader';
 import Countries from '../../../components/FormFields/Countries.vue';
@@ -263,6 +264,7 @@ import Telephones from '../../../components/FormFields/Telephones.vue';
 import Error from '../../../components/Messages/Error.vue';
 import Success from '../../../components/Messages/Success.vue';
 import BuildFormData from '../../../services/BuildFormData';
+import DragAndDrop from '../../../components/DragNDrop/DragNDrop.vue';
 
 export default {
     name: 'Profile',
@@ -270,6 +272,7 @@ export default {
         Countries,
         Telephones,
         Error,
+        DragAndDrop,
         Success,
         ContentLoader,
     },
@@ -297,7 +300,6 @@ export default {
                         number: '',
                     },
                     homePhone: '',
-                    profilePicture: null,
                     agreedToEmailUpdates: false,
                     agreedToTextMessageUpdates: false,
                     agreedToTermsOfService: false,
@@ -308,6 +310,7 @@ export default {
     methods: {
         async updateProfile() {
             const buildFormDataObj = new BuildFormData();
+            this.formData.associate.profilePicture = this.profilePicture;
             const formData = buildFormDataObj.jsonToFormData(this.formData);
             this.isLoadingForm = true;
             const res = await this.submitForm(formData);
@@ -320,8 +323,7 @@ export default {
         },
         readUrl(e) {
             const files = e.target.files || e.dataTransfer.files;
-            const [file] = files;
-            this.formData.associate.profilePicture = file;
+            this.handeFilesFunc(files);
         },
         isEmptyRequiredFields() {
             return this.formData.email === '' || this.formData.associate.fullName === '' || this.formData.oldPassword === ''
@@ -338,6 +340,7 @@ export default {
         ]),
         ...mapMutations('Profile', [
             'profileUpdate',
+            'setProfilePicture',
         ]),
     },
     mounted() {
@@ -358,9 +361,17 @@ export default {
         ...mapState('Profile', [
             'formErrors',
             'formUpdated',
+            'handeFilesFunc',
+            'profilePicture',
         ]),
         ...mapState('Security', [
             'associate',
+        ]),
+        ...mapState('Sidebar', [
+            'configuration',
+        ]),
+        ...mapGetters('Sidebar', [
+            'checkEndPrelaunch',
         ]),
     },
     async created() {

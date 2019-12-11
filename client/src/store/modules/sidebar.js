@@ -10,14 +10,15 @@ const initialState = {
 const getters = {
     checkConfigurationMainLogo: (state) => {
         if (state.configuration) {
-            return !!state.configuration.mainLogoPath;
+            return !!state.configuration.mainLogo.filePath;
         }
         return false;
     },
+    checkEndPrelaunch: state => state.configuration.hasPrelaunchEnded,
 
     checkConfigurationTermsOfService: (state) => {
         if (state.configuration) {
-            return !!state.configuration.termsOfServices;
+            return !!state.configuration.termsOfServices.filePath;
         }
         return false;
     },

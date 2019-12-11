@@ -8,10 +8,7 @@
         <div v-if="isAdmin">
             <div :key="route.path" v-for="route in adminRoutes"
             @click="goToRoute(route.path)" class="sidebar-item"
-                :class="{'sidebar--active' : isCurrentRoute(route.path)}">
-    <!--                {% if currentRoute == route.route or
-                         ((route.subRoute is defined and not null)
-                        and currentRoute in route.subRoute) %}sidebar&#45;&#45;active{% endif %}"-->
+                :class="{'sidebar--active' : isCurrentRoute(route.path, route.subPaths)}">
                 <i class="material-icons materialDesignIcons">{{ route.icon }}</i>
                 <a @click="goToRoute(route.path)">{{ route.label }}</a>
             </div>
@@ -36,12 +33,12 @@
             <a @click="loggingOut">{{ 'Logout' }}</a>
         </div>
         <div class="sidebar-item footer" >
-<!--            <div v-if="this.checkConfigurationTermsOfService" class="downloadCSV"
-                 onclick="goToRoute('{{ configuration.termsOfServices|downloadUrlParser }}')" >-->
-<!--                <a href="{{ configuration.termsOfServices|downloadUrlParser }}">
-                        Download Terms of service
-                    </a>-->
-<!--            </div>-->
+           <div v-if="this.checkConfigurationTermsOfService" class="downloadCSV"
+                 @click="downloadTermsOfServices">
+                <a @click="downloadTermsOfServices">
+                    Download Terms of service
+                </a>
+            </div>
             <div class="copyRight">© Copyright Something</div>
         </div>
     </div>
@@ -53,6 +50,7 @@ import {
 } from 'vuex';
 import adminRoutes from '../../router/Routes/adminRoutes';
 import associateRoutes from '../../router/Routes/associateRoutes';
+import Parameters from '../../../parameters';
 
 export default {
     name: 'MenuItems',
@@ -71,6 +69,9 @@ export default {
             };
             this.downloadCSV(dependencies);
         },
+        downloadTermsOfServices() {
+            window.location.href = `${Parameters.API_HOST_URL}${this.configuration.termsOfServices.filePath}`;
+        },
         goToRoute(path) {
             this.setCurrentPath(path);
             this.$router.push({ path });
@@ -78,12 +79,20 @@ export default {
                 this.setHamburgerClicked(false);
             }
         },
-        isCurrentRoute(path) {
-            return this.currentPath === path;
+        isCurrentRoute(path, subPaths) {
+            let isSubPath = false;
+            if (subPaths) {
+                subPaths.forEach((subPath) => {
+                    if (this.currentPath.startsWith(subPath)) {
+                        isSubPath = true;
+                    }
+                });
+            }
+            return this.currentPath === path || isSubPath;
         },
         loggingOut() {
             this.logout();
-            this.$router.push({ path: '/login' });
+            this.$router.push({ path: '/' });
         },
         ...mapMutations('Security', [
             'logout',
@@ -106,6 +115,7 @@ export default {
         ]),
         ...mapGetters('Sidebar', [
             'checkConfigurationTermsOfService',
+            'checkEndPrelaunch',
         ]),
         ...mapGetters('Security', [
             'getAssociate',

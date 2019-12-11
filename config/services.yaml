@@ -48,6 +48,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.controller, connection: default }
 
+    App\EventListener\LoginListener:
+        arguments:
+            $em: '@doctrine.orm.entity_manager'
+            $dispatcher: '@debug.event_dispatcher.inner'
+        tags:
+            - { name: 'kernel.event_listener', event: 'security.interactive_login' }
+
     App\EventListener\HTTPExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

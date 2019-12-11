@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '../store/index';
-import Login from '../views/Login/Components/Login.vue';
+// import Login from '../views/Login/Components/Login.vue';
 import AdminHome from '../views/Admin/Home/Home.vue';
 import AssociateHome from '../views/Associate/Home/Home.vue';
 import Invite from '../views/Associate/Invite/Invite.vue';
@@ -18,19 +18,19 @@ import EmailtemplatesList from '../views/Admin/EmailTemplates/EmailTemplatesList
 Vue.use(VueRouter);
 
 const routes = [
-    { path: '/login', component: Login },
-    { path: '/associate', component: AssociateHome, meta: { requiresAuth: true } },
-    { path: '/associate/invite', component: Invite, meta: { requiresAuth: true } },
-    { path: '/associate/profile', component: Profile, meta: { requiresAuth: true } },
-    { path: '/admin', component: AdminHome, meta: { requiresAuth: true } },
-    { path: '/admin/gallery', component: GalleryHomePage, meta: { requiresAuth: true } },
-    { path: '/admin/logs', component: Logs, meta: { requiresAuth: true } },
-    { path: '/admin/users', component: UserSearchHome, meta: { requiresAuth: true } },
-    { path: '/admin/user/:id', component: AssociateDetailsHome, meta: { requiresAuth: true } },
-    { path: '/admin/endprelaunch', component: EndPrelaunch, meta: { requiresAuth: true } },
-    { path: '/admin/changecontent', component: ChangeContent, meta: { requiresAuth: true } },
-    { path: '/admin/emailtemplates', component: EmailtemplatesList, meta: { requiresAuth: true } },
-    { path: '/admin/emailtemplate/:type', component: EmailTemplate, meta: { requiresAuth: true } },
+    // { path: '/login', component: Login },
+    { path: '/associate', component: AssociateHome, meta: { requiresAuth: true, associate: true } },
+    { path: '/associate/invite', component: Invite, meta: { requiresAuth: true, associate: true } },
+    { path: '/associate/profile', component: Profile, meta: { requiresAuth: true, associate: true } },
+    { path: '/admin', component: AdminHome, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/gallery', component: GalleryHomePage, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/logs', component: Logs, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/users', component: UserSearchHome, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/user/:id', component: AssociateDetailsHome, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/endprelaunch', component: EndPrelaunch, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/changecontent', component: ChangeContent, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/emailtemplates', component: EmailtemplatesList, meta: { requiresAuth: true, admin: true } },
+    { path: '/admin/emailtemplate/:type', component: EmailTemplate, meta: { requiresAuth: true, admin: true } },
 
     // { path: '*', redirect: '/' },
 ];
@@ -44,12 +44,8 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/') {
-        if (!store.getters['Security/isAuthenticated']) {
-            next({
-                path: '/login',
-            });
-        } else if (store.getters['Security/isAdmin']) {
+    if (to.path === '/' && store.getters['Security/isAuthenticated']) {
+        if (store.getters['Security/isAdmin']) {
             next({
                 path: '/admin',
             });
@@ -59,17 +55,23 @@ router.beforeEach((to, from, next) => {
             });
         }
     }
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters['Security/isAuthenticated']) {
+    if (to.matched.some(record => record.meta.associate)) {
+        if (store.getters['Security/isUser']) {
             next();
         } else {
             next({
-                path: '/login',
-                query: { redirect: to.fullPath },
+                path: '/admin',
             });
         }
-    } else {
-        next();
+    }
+    if (to.matched.some(record => record.meta.admin)) {
+        if (store.getters['Security/isAdmin']) {
+            next();
+        } else {
+            next({
+                path: '/associate',
+            });
+        }
     }
 });
 

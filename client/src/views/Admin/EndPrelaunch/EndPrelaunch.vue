@@ -7,6 +7,7 @@
       <div class="card-content quillEditorCard">
         <span class="card-title">End Prelaunch</span>
         <Success v-if="formSuccess" v-bind:message="'Form Updated'"></Success>
+        <Error v-if="errorMessage" v-bind:message="errorMessage"></Error>
         <main id="main">
           <form
             name="end_prelaunch"
@@ -47,7 +48,7 @@
                 id="end_prelaunch_Submit"
                 name="end_prelaunch[Submit]"
                 class="waves-effect waves-light btn"
-                :disabled="isLoadingForm"
+                :disabled="isLoadingForm || isLoading"
                 @click="submitForm"
               >Save
               </button>
@@ -68,6 +69,7 @@ import {
 } from 'vuex';
 import { ContentLoader } from 'vue-content-loader';
 import Success from '../../../components/Messages/Success.vue';
+import Error from '../../../components/Messages/Error.vue';
 import QuillEditor from '../../../components/Gallery/QuillEditor.vue';
 
 export default {
@@ -76,6 +78,7 @@ export default {
         Success,
         QuillEditor,
         ContentLoader,
+        Error,
     },
     props: [],
     data() {
@@ -98,8 +101,12 @@ export default {
             await this.home(formData);
             this.isLoadingForm = false;
             window.scroll(0, 0);
+            await this.configurationApi();
         },
 
+        ...mapActions('Sidebar', [
+            'configurationApi',
+        ]),
         ...mapMutations('EndPrelaunch', [
             'setFormSuccess',
         ]),
@@ -114,6 +121,7 @@ export default {
 
         ...mapState('EndPrelaunch', [
             'formSuccess',
+            'errorMessage',
         ]),
     },
     async created() {

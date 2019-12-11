@@ -5,7 +5,7 @@ import store from '../..';
 export default class SecurityApiCalls {
     unAuthenticate() {
         store.commit('logout');
-        router.push('/login');
+        router.push('/');
     }
 
     setCookie(token) {

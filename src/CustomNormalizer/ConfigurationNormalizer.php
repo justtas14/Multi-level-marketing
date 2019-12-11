@@ -4,6 +4,7 @@ namespace App\CustomNormalizer;
 
 use App\Entity\Configuration;
 use App\Entity\Gallery;
+use App\Service\ConfigurationManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,17 +19,20 @@ class ConfigurationNormalizer implements ContextAwareNormalizerInterface
     private $normalizer;
     private $gaufretteFileManager;
     private $entityManager;
+    private $cm;
 
     public function __construct(
         UrlGeneratorInterface $router,
         ObjectNormalizer $normalizer,
         GaufretteFileManager $gaufretteFileManager,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ConfigurationManager $cm
     ) {
         $this->router = $router;
         $this->normalizer = $normalizer;
         $this->gaufretteFileManager = $gaufretteFileManager;
         $this->entityManager = $entityManager;
+        $this->cm = $cm;
     }
 
     public function normalize($entity, $format = null, array $context = [])
@@ -52,6 +56,9 @@ class ConfigurationNormalizer implements ContextAwareNormalizerInterface
             )['0']->getId();
             $data['termsOfServices']['fileName'] = $entity->getTermsOfServices()->getOriginalName();
         }
+
+        $data['hasPrelaunchEnded'] = $entity->hasPrelaunchEnded();
+        $data['landingContent'] = $this->cm->getParsedLandingContent($entity->getLandingContent());
 
         return $data;
     }

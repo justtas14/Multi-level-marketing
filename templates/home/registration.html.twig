@@ -36,7 +36,6 @@
                 </div>
                 <main id="main registration">
                     {{ form_start(registration) }}
-                    {{ form_row(registration._token) }}
                     <div class="input-field registration__input--forceBorder">
                         {{ form_label(registration.associate.fullName) }}
                         {{ form_widget(registration.associate.fullName) }}

@@ -1,6 +1,12 @@
 <template>
     <div class="admin-contentContainer">
-        <div class="card">
+        <div class="card" v-if="checkEndPrelaunch">
+            <div class="card-content">
+                <div class="landingContent" v-html="configuration.landingContent">
+                </div>
+            </div>
+        </div>
+        <div class="card" v-show="!checkEndPrelaunch">
             <div class="card-content">
                 <span class="card-title">Invitation</span>
                 <div v-if="isLoading" class="Spinner__Container">
@@ -19,7 +25,7 @@
                 </Invitation>
             </div>
         </div>
-        <div v-show="!this.sent" class="card">
+        <div v-show="!this.sent && !checkEndPrelaunch" class="card">
             <div class="card-content">
                 <span class="card-title invitationLinkTitle">Invitation link</span>
                 <div class="invitationAboutText">
@@ -49,7 +55,7 @@
                 ></qrcode>
             </div>
         </div>
-        <div v-show="!this.sent" class="card">
+        <div v-show="!this.sent && !checkEndPrelaunch" class="card">
             <div class="card-content">
                 <span class="card-title">Sent Invitations</span>
                     <RecentInvitations
@@ -167,12 +173,22 @@ export default {
         ...mapGetters('Invitation', [
 
         ]),
+
+        ...mapState('Sidebar', [
+            'configuration',
+        ]),
+        ...mapGetters('Sidebar', [
+            'checkEndPrelaunch',
+        ]),
     },
     async created() {
-        this.isLoading = true;
-        await this.invitationHome();
-        this.barCodeImage = this.$refs.qrCode.$el;
-        this.isLoading = false;
+        if (!this.checkEndPrelaunch) {
+            console.log(this.checkEndPrelaunch);
+            this.isLoading = true;
+            await this.invitationHome();
+            this.barCodeImage = this.$refs.qrCode.$el;
+            this.isLoading = false;
+        }
     },
 };
 </script>

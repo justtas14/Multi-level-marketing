@@ -10,11 +10,11 @@
 <script>
 import Vue from 'vue';
 import VueQuill from 'vue-quill';
-import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 import { mapActions, mapMutations, mapState } from 'vuex';
 import ModalGalleryWrapper from './ModalGalleryWrapper.vue';
 import modalGalleryConst from './constants/modalGalleryConst';
 import '../../assets/css/quill.snow.css';
+import DeltaToHtml from './Services/deltaToHtml';
 
 Vue.use(VueQuill);
 
@@ -74,27 +74,14 @@ export default {
         };
     },
     mounted() {
-        const inputData = this.configurationContent;
         const quillEditor = document.querySelector('.ql-editor');
-        let quillHTML;
+        const deltaToHtmlObj = new DeltaToHtml(this.configurationContent, this.content);
+        quillEditor.innerHTML = deltaToHtmlObj.deltaToHtml();
 
-        try {
-            this.content = JSON.parse(inputData);
-            const cfg = {
-                inlineStyles: true,
-                allowBackgroundClasses: true,
-            };
-            const converter = new QuillDeltaToHtmlConverter(this.content.ops, cfg);
-            quillHTML = converter.convert();
-        } catch (e) {
-            quillHTML = inputData;
-        }
-        quillEditor.innerHTML = quillHTML;
-
-        this.changeClickFile((fileId, fileName, fileSrc, filePath) => {
+        this.changeClickFile((fileId, fileName, fileSrc) => {
             this.modalDisplay = 'none';
             const range = this.editor.getSelection;
-            this.editor.insertEmbed(range.index, 'image', `${filePath}`);
+            this.editor.insertEmbed(range.index, 'image', `${fileSrc}`);
         });
     },
     computed: {

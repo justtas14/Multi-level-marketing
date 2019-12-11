@@ -35,6 +35,8 @@ security:
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
 
             form_login:
+                default_target_path: 'http://localhost:8080'
+                always_use_default_target_path: true
                 login_path: login
                 check_path: login
 
@@ -43,7 +45,7 @@ security:
     access_control:
 #         - { path: ^/admin, roles: ROLE_ADMIN }
 #         - { path: ^/associate, roles: ROLE_USER }
-         - { path: ^/landingpage, roles: ROLE_USER }
+#         - { path: ^/landingpage, roles: ROLE_USER }
          - { path: ^/api/admin, roles: ROLE_ADMIN }
          - { path: ^/api/token, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/api/configuration, roles: IS_AUTHENTICATED_ANONYMOUSLY }

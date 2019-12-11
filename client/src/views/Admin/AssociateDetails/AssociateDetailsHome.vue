@@ -35,7 +35,7 @@
                 ></BusinessShape>
             </div>
         </div>
-        <div class="card">
+        <div class="card" v-if="!checkEndPrelaunch">
             <div class="card-content">
                 <span class="card-title">Sent Invitations</span>
                     <RecentInvitations
@@ -56,7 +56,7 @@
 
 <script>
 import {
-    mapState, mapActions, mapMutations,
+    mapState, mapActions, mapMutations, mapGetters,
 } from 'vuex';
 import Main from '../../../components/AssociateDetails/Main.vue';
 import RecentInvitations from '../../../components/RecetInvitations/RecentInvitations.vue';
@@ -119,7 +119,9 @@ export default {
     mounted() {
     },
     computed: {
-
+        ...mapGetters('Sidebar', [
+            'checkEndPrelaunch',
+        ]),
         ...mapState('AssociateDetails', [
             'associateUrlId',
             'stateAssociate',

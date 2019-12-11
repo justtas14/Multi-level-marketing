@@ -2,6 +2,7 @@ import ApiCalls from '../api/SecurityApi/apiCalls';
 
 const initialState = {
     formSuccess: false,
+    errorMessage: '',
     hasPrelaunchEnded: false,
     configurationContent: '',
 };
@@ -28,6 +29,7 @@ const mutations = {
         state.formSuccess = data.formSuccess;
         state.hasPrelaunchEnded = data.hasPrelaunchEnded;
         state.configurationContent = data.configurationContent;
+        state.errorMessage = data.errorMessage;
     },
 
     setFormSuccess(state, flag) {

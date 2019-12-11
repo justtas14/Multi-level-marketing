@@ -1,11 +1,18 @@
 <template>
     <div class="admin-contentContainer">
+        <div class="card" v-if="checkEndPrelaunch">
+            <div class="card-content">
+                <div class="landingContent" v-html="configuration.landingContent">
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-content">
                 <div class="titleContainer">
                     <span class="card-title">My Team</span>
                     <div class="associate-buttonContainer">
                         <a
+                            v-if="!checkEndPrelaunch"
                             @click="goToRoute('/associate/invite')"
                             id="inviteAssociateBtn"
                             class="btn"
@@ -148,11 +155,17 @@ export default {
         ...mapGetters('Security', [
             'getAssociate',
         ]),
+        ...mapGetters('Sidebar', [
+            'checkEndPrelaunch',
+        ]),
         ...mapGetters('AssociateHome', [
             'getAssociateInLevels',
             'getDirectAssociates',
             'getLevels',
             'getMaxLevel',
+        ]),
+        ...mapState('Sidebar', [
+            'configuration',
         ]),
     },
     async created() {

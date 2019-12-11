@@ -2,7 +2,7 @@
     <div class="login-container">
         <div class="login-logoContainer">
             <img v-if="this.checkConfigurationMainLogo"
-            style="max-width:100%; max-height: 100px" :src="configuration.mainLogoPath" />
+            style="max-width:100%; max-height: 100px" :src="getMainLogo()" />
             <img v-else style="max-width:100%; max-height: 100px" :src="plumTreeLogo"/>
         </div>
         <div class="login-title">
@@ -26,7 +26,7 @@
                 </div>
                 <div id="resetPassword">
                     Forgot your password?
-                    <a href="#">Click here</a>
+                    <a :href="goToForgotPassword()" target="_blank">Click here</a>
                 </div>
                 <div class="login-buttonWrap">
                     <button
@@ -49,7 +49,7 @@
                     <Error v-bind:message="error"></Error>
                 </div>
                 <div class="login-successMessageContainer" v-if="isLoggedIn">
-                    <Success v-bind:message="'Logged in!'"></Success>
+                    <div class="success">Logged in!</div>
                 </div>
             </div>
         </div>
@@ -62,13 +62,14 @@ import {
 } from 'vuex';
 import plumTreeLogo from '../../../../public/img/plum_tree_logo.png';
 import Error from '../../../components/Messages/Error.vue';
-import Success from '../../../components/Messages/Success.vue';
+// import Success from '../../../components/Messages/Success.vue';
+import Parameters from '../../../../parameters';
 
 export default {
     name: 'Login',
     components: {
         Error,
-        Success,
+        // Success,
     },
     props: [],
     data() {
@@ -94,6 +95,14 @@ export default {
                     this.$router.push({ path: '/associate' });
                 }
             }
+        },
+
+        goToForgotPassword() {
+            return `${Parameters.API_HOST_URL}/restorePassword`;
+        },
+
+        getMainLogo() {
+            return `${Parameters.API_HOST_URL}${this.configuration.mainLogo.filePath}`;
         },
 
         ...mapActions('Security', [

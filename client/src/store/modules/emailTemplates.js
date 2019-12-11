@@ -6,8 +6,6 @@ const initialState = {
     emailTemplate: {
         emailBody: '',
         emailSubject: '',
-        emailType: '',
-
     },
     title: '',
     formError: '',
@@ -37,11 +35,15 @@ const mutations = {
         state.availableParameters = data.availableParameters;
         state.emailTemplate = data.emailTemplate;
         state.formSuccess = data.formSuccess;
-        state.formError = data.formErrors;
+        state.formError = data.formError;
     },
 
     setUrlType(state, type) {
         state.urlType = type;
+    },
+
+    setFormSuccess(state, flag) {
+        state.formSuccess = flag;
     },
 };
 

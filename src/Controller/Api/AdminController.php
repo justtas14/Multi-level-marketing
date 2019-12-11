@@ -122,7 +122,7 @@ class AdminController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
         $title = "";
-        $formErrors = [];
+        $formError = '';
         $emailTemplate = [];
         $availableParameters = [];
         $formSuccess = false;
@@ -157,11 +157,15 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(EmailTemplateType::class, $emailTemplate);
 
-        $form->handleRequest($request);
+        $formData = $request->request->all();
+
+        if ($formData) {
+            $form->submit($formData);
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$emailTemplate->getEmailBody() || !$emailTemplate->getEmailSubject()) {
-                $formErrors = ['emptyValues' => 'Please do not leave empty values'];
+                $formError = 'Please do not leave empty values';
             } else {
                 $em->persist($emailTemplate);
                 $em->flush();
@@ -176,12 +180,12 @@ class AdminController extends AbstractController
         $serializedTemplate = $serializer->normalize(
             $emailTemplate,
             null,
-            ['attributes' => ['id', 'emailSubject', 'emailBody', 'emailType']]
+            ['attributes' => ['emailSubject', 'emailBody']]
         );
 
         $data = [
             'formSuccess' => $formSuccess,
-            'formErrors' => $formErrors,
+            'formError' => $formError,
             'emailTemplate' => $serializedTemplate,
             'title' => $title,
             'availableParameters' => $availableParameters
@@ -221,6 +225,7 @@ class AdminController extends AbstractController
     public function endPrelaunch(Request $request, ConfigurationManager $cm, LoggerInterface $databaseLogger)
     {
         $formSuccess = false;
+        $errorMessage = '';
         $em = $this->getDoctrine()->getManager();
 
         $configuration = $cm->getConfiguration();
@@ -235,18 +240,23 @@ class AdminController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($configuration);
-            $em->flush();
-            if ($configuration->hasPrelaunchEnded()) {
-                $databaseLogger->info('Prelaunch successfully ended');
+            if (!$configuration->getLandingContent()) {
+                $errorMessage = 'Landing content cannot be empty!';
+            } else {
+                $em->persist($configuration);
+                $em->flush();
+                if ($configuration->hasPrelaunchEnded()) {
+                    $databaseLogger->info('Prelaunch successfully ended');
+                }
+                $formSuccess = true;
             }
-            $formSuccess = true;
         }
 
         $configurationContent = $configuration->getLandingContent();
         $hasPrelaunchEnded = $configuration->hasPrelaunchEnded();
 
         $data = [
+            'errorMessage' => $errorMessage,
             'formSuccess' => $formSuccess,
             'configurationContent' => $configurationContent,
             'hasPrelaunchEnded' => $hasPrelaunchEnded
@@ -326,6 +336,9 @@ class AdminController extends AbstractController
             if ($mainLogoFileId || $termsOfServicesFileId) {
                 if ($mainLogoFileId) {
                     $originalFile = $em->getRepository(Gallery::class)->find($mainLogoFileId)->getGalleryFile();
+                    if (!$originalFile->getContextValue('public')) {
+                        $originalFile->addContext('public', 1);
+                    }
                     $configuration->setMainLogo($originalFile);
                 }
                 if ($termsOfServicesFileId) {

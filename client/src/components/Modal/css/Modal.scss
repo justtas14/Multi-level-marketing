@@ -40,9 +40,9 @@
 .close {
   color: white;
   float: right;
-  font-size: 40px;
-  width: 40px;
-  height: 40px;
+  font-size: 34px;
+  width: 34px;
+  height: 34px;
   font-weight: bold;
 }
 
@@ -60,6 +60,7 @@
 
 .modal-body {
   padding: 2px 16px;
+  margin: 1em 0 0 0;
 }
 
 @media screen and (max-width: 800px) {

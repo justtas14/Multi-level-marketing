@@ -1,5 +1,5 @@
 <template>
-    <div id="myModal" class="modal" ref="modalRef">
+    <div id="myModal" class="modal" ref="modalRef" @click="watchForBoundaries">
         <div class="modal-content">
             <a @click="closeModal" id="closeBtn" class="styles_closeButton__20ID4">
                 <svg class="styles_closeIcon__1QwbI close" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 36 36">
@@ -30,19 +30,18 @@ export default {
         closeModal() {
             this.$emit('closeModal');
         },
+        watchForBoundaries(event) {
+            if (event.target.getAttribute('id') === this.$refs.modalRef.getAttribute('id')) {
+                this.closeModal();
+            }
+        },
     },
     computed: {
 
     },
     mounted() {
-        window.onclick = (event) => {
-            if (event.target === this.$refs.modalRef) {
-                this.$emit('closeModal');
-            }
-        };
     },
     created() {
-
     },
 };
 </script>

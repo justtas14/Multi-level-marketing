@@ -18,7 +18,9 @@ use App\Service\AssociateManager;
 use App\Service\BlacklistManager;
 use App\Service\ConfigurationManager;
 use App\Service\InvitationManager;
+use App\Service\RecaptchaManager;
 use App\Service\ResetPasswordManager;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use PlumTreeSystems\UserBundle\Service\JWTManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages;
@@ -50,6 +52,24 @@ class HomeController extends AbstractController
 //    }
 
     /**
+     * @Route("/authenticateFlow", name="authentication")
+     * @param JWTManager $jwtManager
+     * @return JsonResponse|RedirectResponse
+     */
+    public function authenticateFlow(JWTManager $jwtManager)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user) {
+            $token = $jwtManager->createToken($user);
+            return $this->redirect('http://localhost:8080?token='.$token);
+        } else {
+            return $this->redirectToRoute('login');
+        }
+    }
+
+
+    /**
      * @Route("/api/configuration", name="configuration")
      * @param Request $request
      * @param ConfigurationNormalizer $configurationNormalizer
@@ -72,7 +92,7 @@ class HomeController extends AbstractController
         $serializedConfiguration = $configurationSerializer->normalize(
             $configuration,
             null,
-            ['attributes' => ['termsOfServices', 'mainLogo']]
+            ['attributes' => ['termsOfServices', 'mainLogo', 'landingContent']]
         );
 
 
@@ -136,6 +156,7 @@ class HomeController extends AbstractController
      * @param ConfigurationManager $cm
      * @param AssociateManager $associateManager
      * @param LoggerInterface $databaseLogger
+     * @param RecaptchaManager $recaptchaManager
      * @param string $siteKey
      * @param string $secretKey
      * @return Response
@@ -147,10 +168,18 @@ class HomeController extends AbstractController
         ConfigurationManager $cm,
         AssociateManager $associateManager,
         LoggerInterface $databaseLogger,
+        RecaptchaManager $recaptchaManager,
         string $siteKey,
         string $secretKey
     ) {
         $em = $this->getDoctrine()->getManager();
+
+        $configuration = $cm->getConfiguration();
+
+        if ($configuration->hasPrelaunchEnded()) {
+            return $this->redirectToRoute('landingpage');
+        }
+
         $invitation = $invitationManager->findInvitation($code);
         $parentAssociate = $associateManager->findByUserName($code);
 
@@ -162,7 +191,6 @@ class HomeController extends AbstractController
             return $this->render('home/linkstate.html.twig');
         }
 
-        $configuration = $cm->getConfiguration();
         $termsOfServices = $configuration->getTermsOfServices();
 
         $disclaimer = $configuration->getTosDisclaimer();
@@ -184,12 +212,11 @@ class HomeController extends AbstractController
             $checkEmailExist = $em->getRepository(User::class)->findBy(['email' => $email]);
 
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
+            $recaptchaError = $recaptchaManager->validateRecaptcha($recaptchaResponse, $secretKey);
             $env = $this->getParameter('kernel.environment');
 
-            if (!$recaptchaResponse && $env !== 'test') {
-                $this->addFlash('error', 'Please check the captcha form');
-            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"] && $env !== 'test') {
-                $this->addFlash('error', 'You are the spammer!');
+            if ($recaptchaError && $env !== 'test') {
+                $this->addFlash('error', $recaptchaError);
             } elseif ($checkEmailExist) {
                 $this->addFlash('error', 'This email already exist');
             } else {
@@ -217,7 +244,7 @@ class HomeController extends AbstractController
 
                 $databaseLogger->info($associate->getFullName(). ' registered');
 
-                return $this->redirectToRoute('home');
+                $this->addFlash('success', 'Registered!');
             }
         }
 
@@ -249,6 +276,7 @@ class HomeController extends AbstractController
      * @param InvitationManager $invitationManager
      * @param BlacklistManager $blacklistManager
      * @param LoggerInterface $databaseLogger
+     * @param RecaptchaManager $recaptchaManager
      * @param string $siteKey
      * @param string $secretKey
      * @return Response
@@ -259,18 +287,17 @@ class HomeController extends AbstractController
         InvitationManager $invitationManager,
         BlacklistManager $blacklistManager,
         LoggerInterface $databaseLogger,
+        RecaptchaManager $recaptchaManager,
         string $siteKey,
         string $secretKey
     ) {
         $em = $this->getDoctrine()->getManager();
 
-        $user = $em->getRepository(Associate::class)->find($id);
+        $associate = $em->getRepository(Associate::class)->find($id);
 
-        if (!$user) {
+        if (!$associate) {
             throw new NotFoundHttpException('Cannot find associate', null, 404);
         }
-
-        $associate = $user->getAssociate();
 
         $form = $this->createForm(InvitationType::class, null, ['label' => 'get invited']);
         $form->handleRequest($request);
@@ -283,12 +310,11 @@ class HomeController extends AbstractController
             $associateRepo = $em->getRepository(Associate::class);
 
             $recaptchaResponse = $request->request->get('g-recaptcha-response');
+            $recaptchaError = $recaptchaManager->validateRecaptcha($recaptchaResponse, $secretKey);
             $env = $this->getParameter('kernel.environment');
 
-            if (!$recaptchaResponse && $env !== 'test') {
-                $this->addFlash('error', 'Please check the captcha form');
-            } elseif (!$this->recaptchaResponse($recaptchaResponse, $secretKey)["success"] && $env !== 'test') {
-                $this->addFlash('error', 'You are the spammer!');
+            if ($recaptchaError && $env !== 'test') {
+                $this->addFlash('error', $recaptchaError);
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->addFlash('error', 'Invalid email');
             } elseif ($associateRepo->findAssociatesFilterCount(((new AssociateFilter())->setEmail($email))) > 0) {
@@ -337,8 +363,6 @@ class HomeController extends AbstractController
      */
     public function landingPage(ConfigurationManager $cm)
     {
-        $em = $this->getDoctrine()->getManager();
-
         $configuration = $cm->getConfiguration();
 
         if (!$configuration->hasPrelaunchEnded()) {

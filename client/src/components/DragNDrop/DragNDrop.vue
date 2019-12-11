@@ -1,7 +1,7 @@
 <template>
     <div id="DragAndDrop">
-        <div id="profilePicturePreview">
-            <img src="">
+        <div id="profilePicturePreview" v-bind:style="{display: isInserted ? 'block' : 'none'}">
+            <img ref="img" src="">
         </div>
         <div class="profile-image-upload-box"
              @drop="handleDrop"
@@ -14,7 +14,7 @@
          '4px dashed #AAAAAA' : '5px dashed #ffffff', display: (isInserted ? 'none' : 'block')}"
         >
             <input class="file-upload-input-gallery"
-            type='file' accept="image/*" onchange="handleFiles(this.files)"/>
+            type='file' accept="image/*" @change="handleFiles(this.files)"/>
             <div id="profileUploadImageIcon">
                 <i class="fas fa-file-download"></i>
             </div>
@@ -24,11 +24,14 @@
 
 </template>
 <script>
+import {
+    mapMutations,
+} from 'vuex';
 import Error from '../Messages/Error.vue';
 
 export default {
     name: 'DragNDrop',
-    props: ['originalProfilePictureUpload', 'submitUploadErrorBlock'],
+    props: ['originalProfilePictureUpload'],
     components: {
         Error,
     },
@@ -46,33 +49,37 @@ export default {
             this.handleFiles(files);
         },
         handleFiles(files) {
-            if (this.submitUploadErrorBlock) {
-                this.submitUploadErrorBlock.style.display = 'none';
-            }
             const imageMimeTypes = ['image/png', 'image/jpeg', 'image/webp'];
             const fileLength = files.length;
+            console.log(fileLength, files);
             if (fileLength === 1) {
                 const file = files[fileLength - 1];
                 if (imageMimeTypes.includes(file.type)) {
                     this.originalProfilePictureUpload.files = files;
                     this.dragAndDropError = '';
                     this.appendFile(file);
-                } else {
-                    this.dragAndDropError = 'Only images are allowed';
+                    return true;
                 }
-            } else {
-                this.dragAndDropError = 'Only one file allowed';
+                this.dragAndDropError = 'Only images are allowed';
+                this.originalProfilePictureUpload.value = '';
+                this.isInserted = false;
+                return false;
             }
+            this.isInserted = false;
+            this.dragAndDropError = 'Only one file allowed';
+            this.originalProfilePictureUpload.value = '';
+            return false;
         },
         appendFile(file) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = () => {
-                const img = this.profilePicturePreview.querySelector('img');
+                const { img } = this.$refs;
                 img.src = reader.result;
-                this.profilePicturePreview.style.display = 'block';
                 this.isInserted = true;
+                this.setProfilePicture(file);
             };
+            return true;
         },
         addImageDropping() {
             this.imageDroppingClass = true;
@@ -80,6 +87,14 @@ export default {
         removeImageDropping() {
             this.imageDroppingClass = false;
         },
+
+        ...mapMutations('Profile', [
+            'changeHandeFilesFunc',
+            'setProfilePicture',
+        ]),
+    },
+    created() {
+        this.changeHandeFilesFunc(this.handleFiles);
     },
 };
 </script>

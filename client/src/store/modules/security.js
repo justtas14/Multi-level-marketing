@@ -73,11 +73,11 @@ const mutations = {
         state.associate = null;
         state.isAuthenticated = false;
     },
-    authenticatingSuccess(state, { response }) {
+    authenticatingSuccess(state, token) {
         state.isLoggedIn = true;
         state.isLoading = false;
         state.error = null;
-        state.token = response.data.token;
+        state.token = token;
         state.isAuthenticated = true;
     },
     authenticatingError(state, error) {

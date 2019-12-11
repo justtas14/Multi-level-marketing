@@ -82,6 +82,8 @@
               </div>
             </div>
           </main>
+          <a v-if="checkConfigurationTermsOfService" style="cursor: pointer"
+          @click="downloadTermsOfServices">Download Terms of service</a>
         </form>
       </div>
       <ModalGalleryWrapper v-bind:style="{display: modalDisplay}"
@@ -92,12 +94,13 @@
 
 <script>
 import {
-    mapActions, mapState, mapMutations,
+    mapActions, mapState, mapMutations, mapGetters,
 } from 'vuex';
 import { ContentLoader } from 'vue-content-loader';
 import Success from '../../../components/Messages/Success.vue';
 import ModalGalleryWrapper from '../../../components/Gallery/ModalGalleryWrapper.vue';
 import modalGalleryConst from '../../../components/Gallery/constants/modalGalleryConst';
+import Parameters from '../../../../parameters';
 
 export default {
     name: 'ChangeContent',
@@ -156,6 +159,10 @@ export default {
                 this.callDataAxios(21);
             }
         },
+
+        downloadTermsOfServices() {
+            window.location.href = `${Parameters.API_HOST_URL}${this.configuration.termsOfServices.filePath}`;
+        },
         ...mapActions('Gallery', [
             'callDataAxios',
         ]),
@@ -198,6 +205,12 @@ export default {
     },
     computed: {
 
+        ...mapState('Sidebar', [
+            'configuration',
+        ]),
+        ...mapGetters('Sidebar', [
+            'checkConfigurationTermsOfService',
+        ]),
         ...mapState('ChangeContent', [
             'formData',
             'output',

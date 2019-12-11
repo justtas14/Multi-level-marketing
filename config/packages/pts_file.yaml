@@ -3,4 +3,5 @@ plum_tree_systems_file:
   provider_configs:
     local:
       directory: '%kernel.root_dir%/../public/files'
+      web_root: '/files'
   file_class: 'App\Entity\File'
