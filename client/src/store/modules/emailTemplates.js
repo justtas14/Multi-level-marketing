@@ -24,7 +24,6 @@ const actions = {
             formData,
             rootState.Security.token,
         );
-        console.log(response.data);
         commit('setGeneralInfo', response.data);
     },
 };

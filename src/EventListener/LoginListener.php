@@ -14,11 +14,13 @@ class LoginListener
     private $em;
     private $dispatcher;
     private $user;
+    private $mainUrl;
 
-    public function __construct(EntityManagerInterface $em, EventDispatcher $dispatcher)
+    public function __construct(EntityManagerInterface $em, EventDispatcher $dispatcher, string $mainUrl)
     {
         $this->em = $em;
         $this->dispatcher = $dispatcher;
+        $this->mainUrl = $mainUrl;
     }
 
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
@@ -29,8 +31,11 @@ class LoginListener
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if ($this->user && $event->getResponse()->getTargetUrl() === 'http://prelaunchbuilder.local/') {
-            $event->setResponse(new RedirectResponse('http://localhost:8080'));
+        if ($this->user && $event->getRequest()->getPathInfo() == '/login') {
+            $event->setResponse(new RedirectResponse($this->mainUrl, 302, [
+                'Access-Control-Allow-Origin' => 'True'
+            ]));
         }
+        return;
     }
 }

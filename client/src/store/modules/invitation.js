@@ -9,6 +9,7 @@ const initialState = {
     siteKey: null,
     submitLabel: 'send',
     verifyResponseKey: null,
+    recaptchaResetFunc: () => {},
 };
 const getters = {
 
@@ -95,6 +96,9 @@ const mutations = {
     },
     changeRecaptchaKey: (state, verifyResponseKey) => {
         state.verifyResponseKey = verifyResponseKey;
+    },
+    recaptchaReset: (state, func) => {
+        state.recaptchaResetFunc = func;
     },
 };
 

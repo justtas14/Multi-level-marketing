@@ -91,11 +91,12 @@ export default {
             return this.currentPath === path || isSubPath;
         },
         loggingOut() {
-            this.logout();
-            this.$router.push({ path: '/' });
+            this.setLogout(true);
+            window.location.href = '/';
         },
         ...mapMutations('Security', [
-            'logout',
+            'logoutAction',
+            'setLogout',
         ]),
         ...mapMutations('Sidebar', [
             'setCurrentPath',

@@ -81,7 +81,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/emailtemplateslist", name="email_template_list")
      */
     public function emailTemplateList()
     {

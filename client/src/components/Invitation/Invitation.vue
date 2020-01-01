@@ -28,8 +28,6 @@
                         type="email"
                     >
                     <label for="invitation_email" class="required">Email</label>
-                    <Error v-if="this.formErrors && this.formErrors.invalidEmail"
-                     v-bind:message="this.formErrors.invalidEmail"></Error>
                 </div>
             </div>
             <Recaptcha v-if="siteKey" v-bind:siteKey="siteKey"/>
@@ -91,6 +89,7 @@ export default {
             this.isLoadingForm = true;
             await this.submitInvitationForm(payload);
             this.isLoadingForm = false;
+            this.recaptchaResetFunc();
             this.changeRecaptchaKey(null);
         },
         ...mapActions('Invitation', [
@@ -104,6 +103,7 @@ export default {
         ...mapState('Invitation', [
             'formErrors',
             'verifyResponseKey',
+            'recaptchaResetFunc',
         ]),
     },
     created() {

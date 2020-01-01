@@ -51,7 +51,6 @@ export default {
         handleFiles(files) {
             const imageMimeTypes = ['image/png', 'image/jpeg', 'image/webp'];
             const fileLength = files.length;
-            console.log(fileLength, files);
             if (fileLength === 1) {
                 const file = files[fileLength - 1];
                 if (imageMimeTypes.includes(file.type)) {

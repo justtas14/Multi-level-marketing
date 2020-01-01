@@ -11,6 +11,7 @@ use App\Entity\Invitation;
 use App\Entity\InvitationBlacklist;
 use App\Entity\User;
 use App\Service\InvitationManager;
+use App\Tests\Reusables\LoginOperations;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
@@ -20,6 +21,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class HomeControllerTest extends WebTestCase
 {
+    use LoginOperations;
+
     /**
      * @var ReferenceRepository
      */
@@ -96,7 +99,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
 
-        $form = $crawler->selectButton('get invited')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('myemail@gmail.com');
         $form->get('invitation')['fullName']->setValue('myemail');
@@ -142,7 +145,7 @@ class HomeControllerTest extends WebTestCase
         $em->persist($emailTemplateInvitation);
         $em->flush();
 
-        $form = $crawler->selectButton('get invited')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('myemail@gmail.com');
         $form->get('invitation')['fullName']->setValue('myemail');
@@ -173,14 +176,14 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
 
-        $form = $crawler->selectButton('get invited')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('myemaifa');
         $form->get('invitation')['fullName']->setValue('myemail');
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Invalid email',
             $crawler->filter('div.error__block')->html()
         );
@@ -189,14 +192,14 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
 
-        $form = $crawler->selectButton('get invited')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue('AidanNewman@dayrep.com');
         $form->get('invitation')['fullName']->setValue('myemail');
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Associate with this email already exists',
             $crawler->filter('div.error__block')->html()
         );
@@ -205,7 +208,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
 
-        $form = $crawler->selectButton('get invited')->form();
+        $form = $crawler->selectButton('send')->form();
 
         /** @var InvitationBlacklist $invitationBlackList */
         $invitationBlackList = $this->fixtures->getReference('invitationBlackListEmail');
@@ -216,7 +219,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'The person with this email has opted out of this service',
             $crawler->filter('div.error__block')->html()
         );
@@ -227,14 +230,14 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->followRedirect();
 
-        $form = $crawler->selectButton('get invited')->form();
+        $form = $crawler->selectButton('send')->form();
 
         $form->get('invitation')['email']->setValue($currentAssociateEmail);
         $form->get('invitation')['fullName']->setValue('myemail');
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Associate with this email already exists',
             $crawler->filter('div.error__block')->html()
         );
@@ -361,7 +364,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'The link is either expired or already used',
             $client->getResponse()->getContent()
         );
@@ -377,7 +380,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'The link is either expired or already used',
             $client->getResponse()->getContent()
         );
@@ -415,7 +418,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Date of birth is required',
             $crawler->filter('div.error__block')->html()
         );
@@ -450,7 +453,7 @@ class HomeControllerTest extends WebTestCase
 
         $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'The password fields must match.',
             $client->getResponse()->getContent()
         );
@@ -485,29 +488,12 @@ class HomeControllerTest extends WebTestCase
 
         $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'This value should not be blank.',
             $client->getResponse()->getContent()
         );
     }
 
-    /**
-     *  Testing main page redirection when not logged in
-     */
-    public function testRedirectToLogin()
-    {
-        $client = $this->makeClient();
-
-        $client->request('GET', '/');
-
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-
-        $client->followRedirect();
-
-        $this->assertEquals('/login', $client->getRequest()->getRequestUri());
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-    }
 
     /**
      *  Testing opt out controller functionality
@@ -537,7 +523,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Successfully opted out of the service',
             $client->getResponse()->getContent()
         );
@@ -546,7 +532,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'You have already opted out of the service',
             $client->getResponse()->getContent()
         );
@@ -577,7 +563,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Bad Request',
             $crawler->filter('h2.exception-http')->html()
         );
@@ -628,7 +614,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'This email doesnt exist',
             $crawler->filter('div.error__block')->html()
         );
@@ -668,7 +654,7 @@ class HomeControllerTest extends WebTestCase
 
         $crawler = $client->submit($form);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'Passsword cannot be empty',
             $crawler->filter('div.error__block')->html()
         );
@@ -691,7 +677,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'There is no user with this code or its already expired',
             $client->getResponse()->getContent()
         );
@@ -720,7 +706,7 @@ class HomeControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'There is no user with this code or its already expired',
             $client->getResponse()->getContent()
         );
@@ -732,17 +718,11 @@ class HomeControllerTest extends WebTestCase
      *  - Login as admin because it will be needed later to change main logo. Then, request to /logo api when main logo
      *is empty.
      *  - Expected to get 200 status code and appropriate response headers about default file plum_tree_logo.jpg.
-     *
-     *  - Request to /admin/changecontent api, change main logo, and then go back to /logo api when main logo is not
-     * empty.
-     *  - Expected to get 200 status code and appropriate response headers about uploaded main logo profile.jpg.
      */
     public function testGetMainLogo()
     {
         $this->setOutputCallback(function () {
         });
-
-        $container = $this->getContainer();
 
         /** @var EntityManager $em */
         $em = $this->fixtures->getManager();
@@ -767,61 +747,61 @@ class HomeControllerTest extends WebTestCase
             'image/png',
             $client->getResponse()->headers->all()['content-type']['0']
         );
+    }
 
-        $crawler = $client->request('GET', '/admin/changecontent');
+    /**
+     *  Testing authentication flow
+     *
+     *  - Request to /authentication/false and without logged in user.
+     *  - Expected to get 302 redirect status and be redirected to /login page.
+     *
+     *  - Request to /authentication/true and with logged in user.
+     *  - Expected to get 302 redirect status and be redirected to /logout page.
+     *
+     *  - Request to /authentication/false and with logged in user.
+     *  - Expected to get 302 redirect status and be redirected to main page with token as a querry param.
+     */
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    public function testAuthenticationFlow()
+    {
+        $container = $this->getContainer();
 
-        $path = $client->getContainer()->getParameter('kernel.project_dir').'/var/test_files';
+        /** @var EntityManager $em */
+        $em = $this->fixtures->getManager();
 
-        $form = $crawler->selectButton('Update')->form();
+        $client = $this->makeClient();
 
-        /** @var FileFormField $fileInput */
-        $fileInput = $form->get('change_content')['mainLogo'];
-        $fileInput->upload($path.'/test.png');
+        /** @var User $user */
+        $user = $this->fixtures->getReference('user2');
 
-        $files = $form->getPhpFiles();
-        $files['change_content']['mainLogo']['type'] = 'image/jpeg';
-        $files['change_content']['termsOfServices']['type'] = 'image/jpeg';
-        $csrf_protection = $form['change_content']['_token'];
+        $em->refresh($user);
 
-        $client->request(
-            'POST',
-            '/admin/changecontent',
-            [
-                'change_content' => [
-                    '_token' => $csrf_protection->getValue(),
-                    'Submit' => true
-                ]
-            ],
-            $files
-        );
+        $client->request('GET', '/authenticateFlow/false');
 
-        $configuration = $em->getRepository(Configuration::class)->findOneBy([]);
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
 
-        $em->refresh($configuration);
+        $this->assertEquals('/login', $client->getResponse()->getTargetUrl());
 
-        $this->assertNotNull($configuration->getMainLogo());
+        $this->loginAs($user, 'main');
 
-        $client->request('HEAD', '/logo');
+        $client = $this->makeClient();
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $client->request('GET', '/authenticateFlow/true');
 
-        $this->assertEquals(
-            'attachment; filename="test.png";',
-            $client->getResponse()->headers->all()['content-disposition']['0']
-        );
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
 
-        $gaufretteFilteManager = $container->get('pts_file.manager');
+        $this->assertEquals('/logout', $client->getResponse()->getTargetUrl());
 
-        $em = $container->get('doctrine.orm.default_entity_manager');
+        $mainUrl = $container->getParameter('mainUrl');
 
-        $fileObj = $em->getRepository(\App\Entity\File::class);
+        $jwtManager = $client->getContainer()->get('pts_user.jwt.manager');
 
-        $allFiles = $fileObj->findAll();
+        $token = $this->getToken($jwtManager, $user);
 
-        foreach ($allFiles as $file) {
-            $gaufretteFilteManager->remove($file);
-        }
+        $client->request('GET', '/authenticateFlow/false');
+
+        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+
+        $this->assertEquals($mainUrl.'?token='.$token, $client->getResponse()->getTargetUrl());
     }
 }

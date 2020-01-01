@@ -71,6 +71,11 @@
     font-size: 12pt
 }
 
+.SVG_Line {
+    stroke: #3ab54a;
+    stroke-width: 1px
+  }
+
 .Node__Title > :first-child {
     white-space: nowrap;
     overflow: hidden;
@@ -97,11 +102,6 @@
     justify-content: space-between;
     align-content: center;
     height: 40px
-}
-
-.SVG_Line {
-    stroke: #b9b9b9;
-    stroke-width: 1px
 }
 
 body {
@@ -131,6 +131,11 @@ code {
     opacity: .3;
     position: absolute
 }
+.Node__Container {
+    border: 2px solid #7f06c4;
+    background-color: #7f06c421;
+    border-radius: 17px;
+  }
 
 .lds-dual-ring {
     display: inline-block;
@@ -190,3 +195,13 @@ code {
     position: relative;
     min-height: 70px
 }
+
+@media only screen and (max-width: 900px) {
+    .NodeMatrix__Container {
+        display: none;
+    }
+    div#rootExplorer::after {
+        content: "Currently, the team viewer is only available to desktop users."
+    }
+  }
+  

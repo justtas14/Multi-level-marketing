@@ -1,5 +1,11 @@
 <template>
     <div class="admin-contentContainer">
+        <div class="card" v-if="checkEndPrelaunch">
+            <div class="card-content">
+                <div class="landingContent" v-html="this.getLandingContent">
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Business Shape</span>
@@ -22,7 +28,7 @@
         <div class="card">
             <div class="card-content">
                 <span class="card-title">Associate Explorer</span>
-                <rootExplorer></rootExplorer>
+                <rootExplorer v-bind:path="'/api/admin/explorer'"></rootExplorer>
             </div>
         </div>
     </div>
@@ -71,6 +77,10 @@ export default {
             'getAssociateInLevels',
             'getLevels',
             'getMaxLevel',
+        ]),
+        ...mapGetters('Sidebar', [
+            'checkEndPrelaunch',
+            'getLandingContent',
         ]),
     },
     async created() {

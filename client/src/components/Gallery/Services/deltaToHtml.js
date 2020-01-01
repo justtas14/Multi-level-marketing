@@ -3,7 +3,7 @@ import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 export default class DeltaToHtml {
     constructor(delta, content = null) {
         this.delta = delta;
-        this.condent = content;
+        this.content = content;
     }
 
     deltaToHtml() {

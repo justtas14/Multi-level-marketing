@@ -89,7 +89,7 @@ class AssociateType extends AbstractType
             ])
             ->add('profilePicture', PTSFileType::class, [
                 'multiple' => false,
-                'required' => false
+                'required' => false,
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Save',

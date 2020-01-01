@@ -5,7 +5,7 @@
   >
     <div class="card" v-if="checkEndPrelaunch">
       <div class="card-content">
-          <div class="landingContent" v-html="configuration.landingContent">
+          <div class="landingContent" v-html="this.getLandingContent">
           </div>
       </div>
     </div>
@@ -231,6 +231,8 @@
               >
               <span>I agree to the terms of service</span>
             </label>
+            <Error v-if="this.formErrors && this.formErrors.agreedToTermsOfService"
+              v-bind:message="this.formErrors.agreedToTermsOfService"></Error>
           </div>
           <div class="profile-buttonWrap">
             <div id="userUpdateButtonWrapper">
@@ -372,6 +374,7 @@ export default {
         ]),
         ...mapGetters('Sidebar', [
             'checkEndPrelaunch',
+            'getLandingContent',
         ]),
     },
     async created() {

@@ -8,7 +8,7 @@
         <td class="invitationAbout resendBtnContainer">
             <a @click="sendInvitationId" class="btn resendBtn"
              :disabled="isResendBtnLoading===true && pressedBtnInvId === invitation.id">
-                Resend Invitation
+                Resend <i class="material-icons resend">cached</i>
             </a>
             <div v-if="isResendBtnLoading===true && pressedBtnInvId === invitation.id"
              class="progress">
@@ -52,6 +52,7 @@ export default {
                 if (!this.isTheSamePage) {
                     this.$router.push({ path: '/associate/invite' });
                 }
+                window.scroll(0, 0);
             }
         },
         ...mapActions('Invitation', [

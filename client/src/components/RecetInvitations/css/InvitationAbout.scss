@@ -13,3 +13,17 @@
 .progress {
   width: 180px;
 }
+
+.resend {
+  font-size: 24px;
+  vertical-align: middle;
+}
+
+@media screen and (max-width: 420px) {
+  .resendBtn {
+    width: 120px;
+  }
+  .progress {
+    width: 120px;
+  }
+}

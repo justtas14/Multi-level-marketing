@@ -9,7 +9,7 @@
                 v-bind:level="index"
             />
         </div>
-        <p v-else>Associate doesn't have any children</p>
+        <p style="text-align:center" v-else>Associate doesn't have any children</p>
     </ul>
 </template>s
 

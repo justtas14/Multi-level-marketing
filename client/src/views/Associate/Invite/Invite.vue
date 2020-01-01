@@ -2,7 +2,7 @@
     <div class="admin-contentContainer">
         <div class="card" v-if="checkEndPrelaunch">
             <div class="card-content">
-                <div class="landingContent" v-html="configuration.landingContent">
+                <div class="landingContent" v-html="this.getLandingContent">
                 </div>
             </div>
         </div>
@@ -179,15 +179,15 @@ export default {
         ]),
         ...mapGetters('Sidebar', [
             'checkEndPrelaunch',
+            'getLandingContent',
         ]),
     },
     async created() {
         if (!this.checkEndPrelaunch) {
-            console.log(this.checkEndPrelaunch);
             this.isLoading = true;
             await this.invitationHome();
-            this.barCodeImage = this.$refs.qrCode.$el;
             this.isLoading = false;
+            this.barCodeImage = this.$refs.qrCode.$el;
         }
     },
 };

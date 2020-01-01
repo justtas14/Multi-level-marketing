@@ -4,11 +4,14 @@
 namespace App\Tests\Controller;
 
 use App\Service\CreateAdmin;
+use App\Tests\Reusables\LoginOperations;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class AdminControllerFindAssociatesTest extends WebTestCase
 {
+    use LoginOperations;
+
     /**
      * @var ReferenceRepository
      */
@@ -238,7 +241,17 @@ class AdminControllerFindAssociatesTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $client->request('GET', '/admin/api/associates');
+        $jwtManager = $client->getContainer()->get('pts_user.jwt.manager');
+
+        $token = $this->getToken($jwtManager, $user1);
+
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
@@ -277,8 +290,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(3, $responseArr['pagination']['maxPages']);
         $this->assertEquals(1, $responseArr['pagination']['currentPage']);
 
-
-        $client->request('GET', '/admin/api/associates', ['page' => '2']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['page' => '2'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -315,7 +333,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(3, $responseArr['pagination']['maxPages']);
         $this->assertEquals(2, $responseArr['pagination']['currentPage']);
 
-        $client->request('GET', '/admin/api/associates', ['page' => '3']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['page' => '3'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -352,34 +376,45 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(3, $responseArr['pagination']['maxPages']);
         $this->assertEquals(3, $responseArr['pagination']['currentPage']);
 
-        $client->request('GET', '/admin/api/associates', ['page' => '4']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['page' => '4'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
-            'Page 4 doesnt exist',
-            $client->getResponse()->getContent()
-        );
 
-        $client->request('GET', '/admin/api/associates', ['page' => '-4']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['page' => '-4'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
-            'Page -4 doesnt exist',
-            $client->getResponse()->getContent()
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['page' => '-saf'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
         );
-
-        $client->request('GET', '/admin/api/associates', ['page' => '-saf']);
 
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
 
-        $this->assertContains(
-            'Page not found',
-            $client->getResponse()->getContent()
-        );
 
-        $client->request('GET', '/admin/api/associates', ['nameField' => 'S']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['nameField' => 'S'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -416,7 +451,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(2, $responseArr['pagination']['maxPages']);
         $this->assertEquals(1, $responseArr['pagination']['currentPage']);
 
-        $client->request('GET', '/admin/api/associates', ['nameField' => 'S', 'page' => '2']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['nameField' => 'S', 'page' => '2'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -453,7 +494,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(2, $responseArr['pagination']['maxPages']);
         $this->assertEquals(2, $responseArr['pagination']['currentPage']);
 
-        $client->request('GET', '/admin/api/associates', ['nameField' => 'Is']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['nameField' => 'Is'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -490,8 +537,13 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(1, $responseArr['pagination']['maxPages']);
         $this->assertEquals(1, $responseArr['pagination']['currentPage']);
 
-
-        $client->request('GET', '/admin/api/associates', ['nameField' => 'Is', 'emailField' => 'AU']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['nameField' => 'Is', 'emailField' => 'AU'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -528,8 +580,14 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(1, $responseArr['pagination']['maxPages']);
         $this->assertEquals(1, $responseArr['pagination']['currentPage']);
 
-        $client->request('GET', '/admin/api/associates', ['nameField' => 'Is',
-            'emailField' => 'AU', 'telephoneField' => '2']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['nameField' => 'Is',
+                'emailField' => 'AU', 'telephoneField' => '2'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -553,8 +611,14 @@ class AdminControllerFindAssociatesTest extends WebTestCase
         $this->assertEquals(1, $responseArr['pagination']['maxPages']);
         $this->assertEquals(1, $responseArr['pagination']['currentPage']);
 
-        $client->request('GET', '/admin/api/associates', ['nameField' => 'Isff',
-            'emailField' => 'AU', 'telephoneField' => '2']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/associates',
+            ['nameField' => 'Isff',
+                'emailField' => 'AU', 'telephoneField' => '2'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 

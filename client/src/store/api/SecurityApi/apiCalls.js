@@ -1,11 +1,10 @@
 import axios from 'axios';
-import router from '../../../router';
 import store from '../..';
 
 export default class SecurityApiCalls {
     unAuthenticate() {
-        store.commit('logout');
-        router.push('/');
+        store.commit('setLogout', true);
+        window.location.href = '/';
     }
 
     setCookie(token) {

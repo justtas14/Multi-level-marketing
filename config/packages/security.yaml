@@ -27,7 +27,7 @@ security:
             anonymous: true
             user_checker: pts_user.security.checker
             logout:
-                path: logout
+                success_handler: security.logout_success_handler
 
             # activate different ways to authenticate
 
@@ -35,8 +35,6 @@ security:
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
 
             form_login:
-                default_target_path: 'http://localhost:8080'
-                always_use_default_target_path: true
                 login_path: login
                 check_path: login
 

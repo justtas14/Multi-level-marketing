@@ -69,6 +69,7 @@ final class AssociateController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
+        $maxLevel = 1;
 
         $level = $associateManager->getNumberOfLevels($user->getAssociate()->getAssociateId());
 
@@ -80,8 +81,9 @@ final class AssociateController extends AbstractController
                 $user->getAssociate()->getAssociateId()
             );
         }
-
-        $maxLevel = max($associateInLevels);
+        if (sizeof($associateInLevels) > 0) {
+            $maxLevel = max($associateInLevels);
+        }
 
         $directAssociates = $associateManager->getAllDirectAssociates($user->getAssociate()->getAssociateId());
 
@@ -120,6 +122,84 @@ final class AssociateController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/associate/profile",
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="email",
+     *         required=true,
+     *         description="Associate email",
+     *         @OA\Schema(type="string")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="oldPassword",
+     *         required=true,
+     *         description="Associate old password",
+     *         @OA\Schema(type="string")
+     *      ),
+     *      @OA\Parameter(
+     *         in="formData",
+     *         name="newPassword",
+     *         required=false,
+     *         description="Associate old password",
+     *         @OA\Schema(
+     *             @OA\Property(
+     *                 property="first",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="second",
+     *                 type="string"
+     *             ),
+     *             example={"first": "123456", "second": "123456"}
+     *          )
+     *      @OA\Parameter(
+     *         in="formData",
+     *         name="associate",
+     *         required=false,
+     *         description="Associate old password",
+     *         @OA\Schema(
+     *             @OA\Property(
+     *                 property="fullName",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="address",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="address2",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="city",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="postcode",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="country",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="mobilePhone",
+     *                 type="object"
+     *             ),
+     *             @OA\Property(
+     *                 property="agreedToEmailUpdates",
+     *                 type="boolean"
+     *             ),
+     *             @OA\Property(
+     *                 property="agreedToTextMessageUpdates",
+     *                 type="boolean"
+     *             ),
+     *             @OA\Property(
+     *                 property="agreedToTermsOfService",
+     *                 type="boolean"
+     *             ),
+     *         )
+     *      ),
      *     @OA\Response(response="200",
      *     description="Returns information about current associate or updates current associate")
      * )
@@ -215,7 +295,9 @@ final class AssociateController extends AbstractController
 
                     $updated = true;
                     $profilePicture = $associate->getProfilePicture();
-                    $profilePicture->setUploadedFileReference(null);
+                    if ($profilePicture) {
+                        $profilePicture->setUploadedFileReference(null);
+                    }
                 }
             }
         } else {
@@ -297,6 +379,20 @@ final class AssociateController extends AbstractController
      *         required=false,
      *         description="Received page querry param",
      *         @OA\Schema(type="int", default="1")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="email",
+     *         required=false,
+     *         description="Email to send invitation to",
+     *         @OA\Schema(type="string")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="fullName",
+     *         required=false,
+     *         description="Full Name to send invitation to",
+     *         @OA\Schema(type="string")
      *      ),
      *     @OA\Response(response="200",
      *     description="Returns information about associate invitation page or sends new invitation")
@@ -505,9 +601,23 @@ final class AssociateController extends AbstractController
         return new JsonResponse($associateManager->getDirectDownlineAssociates($id), JsonResponse::HTTP_OK);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/admin/me",
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="token",
+     *         required=true,
+     *         description="JWT token",
+     *         @OA\Schema(type="string")
+     *      ),
+     *     @OA\Response(response="200",
+     *     description="Gets associate")
+     * )
+     */
 
     /**
-     * @Route("/associate/me", name="me")
+     * @Rest\Post("/associate/me", name="me")
      * @param Request $request
      * @param JWTManager $JWTManager
      * @param AssociateNormalizer $associateNormalizer

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import SecurityAPI from '../api/SecurityApi/apiCalls';
+import DeltaToHtml from '../../components/Gallery/Services/deltaToHtml';
 
 const initialState = {
     configuration: null,
@@ -21,6 +22,10 @@ const getters = {
             return !!state.configuration.termsOfServices.filePath;
         }
         return false;
+    },
+    getLandingContent: (state) => {
+        const deltaToHtmlObj = new DeltaToHtml(state.configuration.landingContent);
+        return deltaToHtmlObj.deltaToHtml();
     },
 };
 

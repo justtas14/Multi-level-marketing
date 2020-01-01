@@ -58,7 +58,7 @@ class ConfigurationNormalizer implements ContextAwareNormalizerInterface
         }
 
         $data['hasPrelaunchEnded'] = $entity->hasPrelaunchEnded();
-        $data['landingContent'] = $this->cm->getParsedLandingContent($entity->getLandingContent());
+        $data['landingContent'] = $entity->getLandingContent();
 
         return $data;
     }

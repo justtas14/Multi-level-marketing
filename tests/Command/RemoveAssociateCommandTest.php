@@ -66,7 +66,7 @@ class RemoveAssociateCommandTest extends WebTestCase
 
         $em->refresh($user);
 
-        $this->assertContains('Associate successfully removed', $output);
+        $this->assertStringContainsString('Associate successfully removed', $output);
 
         $invitations = $em->getRepository(Invitation::class)->findBy(['sender' => $email]);
 
@@ -81,7 +81,7 @@ class RemoveAssociateCommandTest extends WebTestCase
             ]
         )->getDisplay();
 
-        $this->assertContains('Associate does not exist', $output);
+        $this->assertStringContainsString('Associate does not exist', $output);
 
         $email = 'd@gmail.com';
 
@@ -92,10 +92,9 @@ class RemoveAssociateCommandTest extends WebTestCase
             ]
         )->getDisplay();
 
-        $this->assertContains('User not found', $output);
+        $this->assertStringContainsString('User not found', $output);
 
         $user = $em->find(User::class, 1);
-
 
         $output = $this->runCommand(
             'app:remove:associate',
@@ -104,7 +103,7 @@ class RemoveAssociateCommandTest extends WebTestCase
             ]
         )->getDisplay();
 
-        $this->assertContains('Associate has children!', $output);
+        $this->assertStringContainsString('Associate has children!', $output);
 
         $user = $em->find(User::class, 2);
 
@@ -115,6 +114,6 @@ class RemoveAssociateCommandTest extends WebTestCase
             ]
         )->getDisplay();
 
-        $this->assertContains('User is not admin!', $output);
+        $this->assertStringContainsString('User is not admin!', $output);
     }
 }

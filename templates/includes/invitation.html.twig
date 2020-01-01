@@ -28,7 +28,9 @@
     </div>
 </div>
 <div class="recaptcha-container">
-    <div class="g-recaptcha" data-sitekey="{{ siteKey }}"></div>
+    <div class="g-recaptcha" style="transform:scale(0.77);
+    -webkit-transform:scale(0.77);
+    transform-origin:0 0;-webkit-transform-origin:0 0;"  data-sitekey="{{ siteKey }}"></div>
 </div>
 <div class="invitation-buttonWrap">
     {{ form_widget(invitation.submit, { 'attr': {'style': 'background-color:#3ab54a'} }) }}

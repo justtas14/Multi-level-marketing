@@ -338,16 +338,6 @@ select {
   border: 1px solid lightgrey;
 }
 
-.SVG_Line {
-  stroke: #3ab54a;
-}
-
-.Node__Container {
-  border: 2px solid #7f06c4;
-  background-color: #7f06c421;
-  border-radius: 17px;
-}
-
 .card {
   border-radius: 5px;
 }
@@ -361,15 +351,6 @@ select {
   outline: none;
   opacity: 0;
   display: none;
-}
-
-@media only screen and (max-width: 900px) {
-  .NodeMatrix__Container {
-      display: none;
-  }
-  div#rootExplorer::after {
-      content: "Currently, the team viewer is only available to desktop users."
-  }
 }
 
 

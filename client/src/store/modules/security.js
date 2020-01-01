@@ -8,11 +8,15 @@ const initialState = {
     associate: null,
     token: null,
     isAuthenticated: false,
+    logout: false,
 };
 
 const getters = {
     isAuthenticated(state) {
         return state.isAuthenticated;
+    },
+    isLogouting(state) {
+        return state.logout;
     },
     getToken(state) {
         return state.token;
@@ -92,11 +96,14 @@ const mutations = {
         state.error = null;
         state.associate = payload.associate;
     },
-    logout(state) {
+    logoutAction(state) {
         state.isAuthenticated = false;
         state.token = null;
         state.associate = null;
         state.isLoggedIn = false;
+    },
+    setLogout(state, flag) {
+        state.logout = flag;
     },
     setAssociate(state, associate) {
         state.associate = associate;

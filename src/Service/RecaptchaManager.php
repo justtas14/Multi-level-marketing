@@ -17,18 +17,21 @@ class RecaptchaManager
 
     public function validateRecaptcha($recaptchaResponse, $secretKey)
     {
-        $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secretKey) .
-            '&response=' . urlencode($recaptchaResponse);
-        $response = file_get_contents($url);
-        $responseKeys = json_decode($response, true);
-
         $env = $this->parameterBag->get('kernel.environment');
 
-        if (!$recaptchaResponse && $env !== 'test') {
-            return 'Please check the captcha form';
-        } elseif (!$responseKeys["success"] && $env !== 'test') {
-            return 'You are the spammer!';
+        if ($env !== 'test') {
+            $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secretKey) .
+                '&response=' . urlencode($recaptchaResponse);
+            $response = file_get_contents($url);
+            $responseKeys = json_decode($response, true);
+
+            if (!$recaptchaResponse) {
+                return 'Please check the captcha form';
+            } elseif (!$responseKeys["success"]) {
+                return 'You are the spammer!';
+            }
         }
+
         return '';
     }
 }

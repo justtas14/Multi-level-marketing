@@ -17,7 +17,6 @@ use App\Form\AssociateModificationType;
 use App\Form\EditorImageType;
 use App\Form\EmailTemplateType;
 use App\Form\EndPrelaunchType;
-use App\Form\UserSearchType;
 use App\Repository\AssociateRepository;
 use App\CustomNormalizer\GalleryNormalizer;
 use App\Service\AssociateManager;
@@ -69,6 +68,7 @@ class AdminController extends AbstractController
         AssociateManager $associateManager
     ) {
         $level = $associateManager->getNumberOfLevels();
+        $maxLevel = 1;
 
         $associateInLevels = [];
 
@@ -77,7 +77,10 @@ class AdminController extends AbstractController
                 $i
             );
         }
-        $maxLevel = max($associateInLevels);
+
+        if (sizeof($associateInLevels) > 0) {
+            $maxLevel = max($associateInLevels);
+        }
 
         $data = [
             'associatesInLevels' => $associateInLevels,
@@ -100,9 +103,16 @@ class AdminController extends AbstractController
      *      ),
      *     @OA\Parameter(
      *         in="formData",
-     *         name="landingContent",
-     *         required=false,
-     *         description="Landing content string",
+     *         name="emailBody",
+     *         required=true,
+     *         description="Email body string",
+     *         @OA\Schema(type="string")
+     *      ),
+     *      @OA\Parameter(
+     *         in="formData",
+     *         name="emailSubject",
+     *         required=true,
+     *         description="Email subject string",
      *         @OA\Schema(type="string")
      *      ),
      *     @OA\Response(response="200",
@@ -160,17 +170,17 @@ class AdminController extends AbstractController
         $formData = $request->request->all();
 
         if ($formData) {
-            $form->submit($formData);
+            if (!$formData['emailBody'] || !$formData['emailSubject']) {
+                $formError = 'Please do not leave empty values';
+            } else {
+                $form->submit($formData);
+            }
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$emailTemplate->getEmailBody() || !$emailTemplate->getEmailSubject()) {
-                $formError = 'Please do not leave empty values';
-            } else {
-                $em->persist($emailTemplate);
-                $em->flush();
-                $formSuccess = true;
-            }
+            $em->persist($emailTemplate);
+            $em->flush();
+            $formSuccess = true;
         }
 
         $serializer = new Serializer(
@@ -295,6 +305,13 @@ class AdminController extends AbstractController
      *         required=false,
      *         description="Terms of services file id",
      *         @OA\Schema(type="int")
+     *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="tosDisclaimer",
+     *         required=false,
+     *         description="Terms Of Service Disclaimer",
+     *         @OA\Schema(type="string")
      *      ),
      *     @OA\Response(response="200", description="Change content page info in json format")
      * )
@@ -574,32 +591,25 @@ class AdminController extends AbstractController
     /**
      * @OA\Post(
      *     path="/api/admin/users",
-     *      @OA\Parameter(
-     *         in="query",
-     *         name="id",
-     *         required=true,
-     *         description="Received id querry param",
-     *         @OA\Schema(type="int")
-     *      ),
-     *      @OA\Parameter(
+     *     @OA\Parameter(
      *         in="query",
      *         name="page",
      *         required=false,
      *         description="Received page querry param",
      *         @OA\Schema(type="int", default="1")
      *      ),
+     *     @OA\Parameter(
+     *         in="formData",
+     *         name="associateId",
+     *         required=true,
+     *         description="Associate id",
+     *         @OA\Schema(type="int")
+     *      ),
      *      @OA\Parameter(
      *         in="formData",
      *         name="associateParentId",
      *         required=false,
      *         description="Associate parent id",
-     *         @OA\Schema(type="int")
-     *      ),
-     *     @OA\Parameter(
-     *         in="formData",
-     *         name="associateId",
-     *         required=false,
-     *         description="Associate id",
      *         @OA\Schema(type="int")
      *      ),
      *     @OA\Parameter(
@@ -633,6 +643,7 @@ class AdminController extends AbstractController
         ];
         $id = null;
         $successType = null;
+        $associateToDisplay = null;
 
         /** @var User $user */
         $user = $this->getUser();
@@ -653,6 +664,10 @@ class AdminController extends AbstractController
             /** @var Associate $associateToDisplay */
             $associateToDisplay = $associateManager->getAssociate($request->request->all()['associateId']);
             $id = $request->request->all()['associateId'];
+        }
+
+        if (!$associateToDisplay) {
+            throw new NotFoundHttpException("User with id ".$id." is not found");
         }
 
         $form = $this->createForm(AssociateModificationType::class);
@@ -721,10 +736,6 @@ class AdminController extends AbstractController
             self::INVITATION_LIMIT,
             self::INVITATION_LIMIT * ($page-1)
         );
-
-        if (!$associateToDisplay) {
-            throw new NotFoundHttpException("User with id ".$id." is not found");
-        }
 
         $level = $associateManager->getNumberOfLevels($associateToDisplay->getAssociateId());
 
@@ -959,41 +970,37 @@ class AdminController extends AbstractController
      */
     public function removeFile(Request $request, GaufretteFileManager $gaufretteFileManager)
     {
-        if ($request->isMethod('DELETE')) {
-            $content = $request->getContent();
-            $ids = json_decode($content, true);
+        $content = $request->getContent();
+        $ids = json_decode($content, true);
 
-            $galleryId = $ids['parameters']['galleryId'];
-            $fileId = $ids['parameters']['fileId'];
+        $galleryId = $ids['params']['galleryId'];
+        $fileId = $ids['params']['fileId'];
 
-            $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
 
-            /** @var Configuration $cm */
-            $cm = $em->getRepository(Configuration::class)->findOneBy([]);
+        /** @var Configuration $cm */
+        $cm = $em->getRepository(Configuration::class)->findOneBy([]);
 
-            $fileInUse = false;
+        $fileInUse = false;
 
-            if (($cm->getTermsOfServices() && $cm->getTermsOfServices()->getId() === $fileId)
-                || ($cm->getMainLogo() && $cm->getMainLogo()->getId() === $fileId)) {
-                $fileInUse = true;
-            } else {
-                $file = $em->getRepository(\App\Entity\File::class)->find($fileId);
-                $galleryFile = $em->getRepository(Gallery::class)->find($galleryId);
-
-                $gaufretteFileManager->remove($file);
-                $em->remove($file);
-                $em->remove($galleryFile);
-
-                $em->flush();
-            }
-
-            return new JsonResponse(
-                ['fileInUse' => $fileInUse],
-                JsonResponse::HTTP_OK
-            );
+        if (($cm->getTermsOfServices() && $cm->getTermsOfServices()->getId() === $fileId)
+            || ($cm->getMainLogo() && $cm->getMainLogo()->getId() === $fileId)) {
+            $fileInUse = true;
         } else {
-            return new Response('', 200);
+            $file = $em->getRepository(\App\Entity\File::class)->find($fileId);
+            $galleryFile = $em->getRepository(Gallery::class)->find($galleryId);
+
+            $gaufretteFileManager->remove($file);
+            $em->remove($file);
+            $em->remove($galleryFile);
+
+            $em->flush();
         }
+
+        return new JsonResponse(
+            ['fileInUse' => $fileInUse],
+            JsonResponse::HTTP_OK
+        );
     }
 
     /**
@@ -1023,35 +1030,31 @@ class AdminController extends AbstractController
         Request $request,
         GalleryNormalizer $galleryNormalizer
     ) {
-        if ($request->isMethod('POST')) {
-            $galleryFile = new Gallery();
+        $galleryFile = new Gallery();
 
-            $form = $this->createForm(EditorImageType::class, $galleryFile);
-            $form->submit($request->files->all());
+        $form = $this->createForm(EditorImageType::class, $galleryFile);
+        $form->submit($request->files->all());
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
 
-                $em->persist($galleryFile);
-                $em->flush();
+            $em->persist($galleryFile);
+            $em->flush();
 
-                $galleryFile->getGalleryFile()->setUploadedFileReference(null);
-                $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer, new JsonEncoder()]);
-                $serializedFile = $serializer->normalize(
-                    $galleryFile,
-                    null,
-                    ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
-                );
+            $galleryFile->getGalleryFile()->setUploadedFileReference(null);
+            $serializer = new Serializer([new DateTimeNormalizer('Y-m-d'), $galleryNormalizer, new JsonEncoder()]);
+            $serializedFile = $serializer->normalize(
+                $galleryFile,
+                null,
+                ['attributes' => ['id', 'galleryFile', 'mimeType', 'created']]
+            );
 
-                return new JsonResponse(
-                    [
-                        'file' => $serializedFile
-                    ],
-                    JsonResponse::HTTP_OK
-                );
-            } else {
-                return new Response('', 200);
-            }
+            return new JsonResponse(
+                [
+                    'file' => $serializedFile
+                ],
+                JsonResponse::HTTP_OK
+            );
         } else {
             return new Response('', 200);
         }

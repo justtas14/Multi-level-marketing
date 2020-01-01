@@ -57,7 +57,7 @@ class AddAdminRoleCommandTest extends WebTestCase
 
         $em->refresh($user);
 
-        $this->assertContains('Admin role successfully added', $output);
+        $this->assertStringContainsString('Admin role successfully added', $output);
 
         $this->assertContains('ROLE_ADMIN', $user->getRoles());
 
@@ -70,7 +70,7 @@ class AddAdminRoleCommandTest extends WebTestCase
             ]
         )->getDisplay();
 
-        $this->assertContains('User not found', $output);
+        $this->assertStringContainsString('User not found', $output);
 
         $email = 'admin@plumtreesystems.com';
 
@@ -87,6 +87,6 @@ class AddAdminRoleCommandTest extends WebTestCase
             ]
         )->getDisplay();
 
-        $this->assertContains('User is already admin!', $output);
+        $this->assertStringContainsString('User is already admin!', $output);
     }
 }

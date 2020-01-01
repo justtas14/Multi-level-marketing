@@ -142,6 +142,7 @@ export default {
         this.isLoading = true;
         await this.associateInfo(formData);
         this.isLoading = false;
+        document.title = this.stateAssociate.fullName;
     },
 };
 </script>

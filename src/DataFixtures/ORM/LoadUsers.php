@@ -14,15 +14,6 @@ use Exception;
 
 class LoadUsers extends Fixture
 {
-
-    /** @var AssociateManager $associateManagers */
-    private $associateManager;
-
-    public function __construct(AssociateManager $associateManager)
-    {
-        $this->associateManager = $associateManager;
-    }
-
     public function load(ObjectManager $manager)
     {
         $user1 = $this->createUser(
@@ -284,11 +275,13 @@ class LoadUsers extends Fixture
          *  Assign 404 id for user 1 for testing purposes.
          */
 
-        $metadata = $manager->getClassMetadata(User::class);
-        $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
-        $metadata->setIdGenerator(new AssignedGenerator());
-
-        $user1->setId('404');
+//        $metadata = $manager->getClassMetadata(User::class);
+//        $metadata->setIdGeneratorType(ClassMetadata::GENERATOR_TYPE_NONE);
+//        $metadata->setIdGenerator(new AssignedGenerator());
+//
+//        $user1->setId('404');
+//
+//        $this->setReference('user1', $user1);
 
         $manager->flush();
     }
@@ -330,7 +323,7 @@ class LoadUsers extends Fixture
             $associate = new Associate();
             $associate->setId($nr);
             $associate->setFullName($fullName);
-            $invitationUserName = $this->associateManager->createUniqueUserNameInvitation($fullName);
+            $invitationUserName = strtolower($fullName).$nr.($nr+1).($nr+2);
             $associate->setInvitationUserName($invitationUserName);
             $associate->setEmail($email);
             $associate->setDateOfBirth(new DateTime($birthDate));

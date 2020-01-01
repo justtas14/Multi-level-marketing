@@ -1,15 +1,17 @@
 <?php
 
-
 namespace App\Tests\Controller;
 
 use App\Entity\User;
+use App\Tests\Reusables\LoginOperations;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class PureAdminTest extends WebTestCase
 {
+    use LoginOperations;
+
     /**
      * @var ReferenceRepository
      */
@@ -26,129 +28,6 @@ class PureAdminTest extends WebTestCase
             "App\DataFixtures\ORM\LoadEmailTemplates",
             "App\DataFixtures\ORM\LoadBlackListEmails"
         ])->getReferenceRepository();
-    }
-
-    /**
-     *  Testincg end prelaunch feature whith pure admin with no associate logged in
-     *
-     *  - Login as pure admin and go to end prelaunch form, set end prelaunch to false and submit. Then login with
-     * different not admin user.
-     *  - Expected to be redirected in associate page after requests to '/' and '/associate' pages. Also expected
-     * redirection then requested to '/landingpage' because landing page is not ended.
-     *
-     *  - Login as pure admin and go to end prelaunch form, set end prelaunch to true and submit. Admin isn't redirected
-     * to landing page. Then login with different not admin user.
-     *  - Expected to be redirected in landing page after requests to '/' and '/associate' pages and
-     * expected appropriate set landing page content. Also expected not to be redirected then requested
-     * to '/landingpage' because prelaunch is ended.
-     */
-    public function testPureAdminEndPrelaunch()
-    {
-        /** @var EntityManager $em */
-        $em = $this->fixtures->getManager();
-
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user23');
-
-        $em->refresh($user);
-
-        $this->loginAs($user, 'main');
-
-        $client = $this->makeClient();
-
-        $crawler = $client->request('GET', '/admin/endprelaunch');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $form = $crawler->selectButton('Save')->form();
-
-        $form->get('end_prelaunch')['prelaunchEnded']->setValue(false);
-        $form->get('end_prelaunch')['landingContent']->setValue("<h1>Prelaunch has ended!!!</h1>");
-
-        $client->submit($form);
-
-        $client->request('GET', '/logout');
-
-        $client->enableProfiler();
-
-        $client->request(
-            'POST',
-            '/login',
-            ['submit' => true, '_username' => 'associate@example.com', '_password' => '1234']
-        );
-
-        $client->request('GET', '/');
-
-        $targetUrl = $client->getResponse()->isRedirect("/associate");
-
-        $this->assertTrue($targetUrl);
-
-        $client->request('GET', '/associate');
-
-        $isRedirection = $client->getResponse()->isRedirection();
-
-        $this->assertFalse($isRedirection);
-
-        $client->request('GET', '/landingpage');
-
-        $targetUrl = $client->getResponse()->isRedirect("/");
-
-        $this->assertTrue($targetUrl);
-
-        $client->request('GET', '/logout');
-
-        $client->request(
-            'POST',
-            '/login',
-            ['submit' => true, '_username' => 'PureAdmin@example.com', '_password' => 'admin']
-        );
-
-        $crawler = $client->request('GET', '/admin/endprelaunch');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $form = $crawler->selectButton('Save')->form();
-
-        $form->get('end_prelaunch')['prelaunchEnded']->setValue(true);
-
-        $client->submit($form);
-
-        $client->request('GET', '/');
-
-        $targetUrl = $client->getResponse()->isRedirect("/admin");
-
-        $this->assertTrue($targetUrl);
-
-        $client->request('GET', '/logout');
-
-        $client->request(
-            'POST',
-            '/login',
-            ['submit' => true, '_username' => 'associate@example.com', '_password' => '1234']
-        );
-
-        $client->request('GET', '/');
-
-        $client->getResponse()->isRedirect("/landingpage");
-
-        $client->followRedirect();
-
-        $this->assertContains(
-            "<h1>Prelaunch has ended!!!</h1>",
-            $client->getResponse()->getContent()
-        );
-
-        $client->request('GET', '/associate');
-
-        $targetUrl = $client->getResponse()->isRedirect("/landingpage");
-
-        $this->assertTrue($targetUrl);
-
-        $client->request('GET', '/landingpage');
-
-        $targetUrl = $client->getResponse()->isRedirection();
-
-        $this->assertFalse($targetUrl);
     }
 
     /**
@@ -175,7 +54,17 @@ class PureAdminTest extends WebTestCase
 
         $client = $this->makeClient();
 
-        $client->request('GET', '/admin/api/explorer');
+        $jwtManager = $client->getContainer()->get('pts_user.jwt.manager');
+
+        $token = $this->getToken($jwtManager, $user);
+
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/explorer',
+            [],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -188,7 +77,13 @@ class PureAdminTest extends WebTestCase
         $this->assertEquals('-2', $responseArr['parentId']);
         $this->assertEquals('1', $responseArr['numberOfChildren']);
 
-        $client->request('GET', '/admin/api/explorer', ['id' => '3']);
+        $client->xmlHttpRequest(
+            'GET',
+            '/api/admin/explorer',
+            ['id' => '3'],
+            [],
+            ['HTTP_AUTHORIZATION' => 'Bearer '.$token]
+        );
 
         $jsonResponse = $client->getResponse()->getContent();
 
@@ -222,147 +117,6 @@ class PureAdminTest extends WebTestCase
         $this->assertContains(
             $usersArray[1],
             $responseArr
-        );
-    }
-
-    /**
-     *  Testing admin main page when logged in as pure admin with no associate
-     *
-     *  - Request to '/' main page and logged in as pure admin.
-     *  - Expected to get redirection status code and then redirected to admin main page. Also expected to get
-     * appropriate number of sidebar items in menu.
-     */
-    public function testPureAdminMainPage()
-    {
-        /** @var EntityManager $em */
-        $em = $this->fixtures->getManager();
-
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user23');
-
-        $em->refresh($user);
-
-        $this->loginAs($user, 'main');
-
-        $client = $this->makeClient();
-
-        $client->request('GET', '/');
-
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
-
-        $crawler = $client->followRedirect();
-
-        $this->assertEquals('/admin', $client->getRequest()->getRequestUri());
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->assertEquals(
-            11,
-            $crawler->filter('div.sidebar-item')->count()
-        );
-    }
-
-
-    /**
-     *  Testing /associate/info api whether it returns empty response when logged in as admin without associate.
-     */
-    public function testGetBrokenAssociateWithPureAdmin()
-    {
-        /** @var EntityManager $em */
-        $em = $this->fixtures->getManager();
-
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user23');
-
-        $em->refresh($user);
-        $this->loginAs($user, 'main');
-
-        $client = $this->makeClient();
-
-        $client->request('GET', '/associate/info');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->assertEquals(
-            '',
-            $client->getResponse()->getContent()
-        );
-    }
-
-    /**
-     *  Testing get associate api when logged in as admin without associate
-     *
-     *  - Request to /associate/info/2 api.
-     *  - Expect to go to information page about associate 2.
-     *
-     *  - Request to /associate/info/3 api.
-     *  - Expect to go to information page about associate 3.
-     *
-     *  - Request to /associate/info/-1 api.
-     *  - Expect to go to information page about company because associate with id -1 was not found.
-     *
-     *  - Request to /associate/info/700 api.
-     *  - Expect to go to information page about company because associate with id 700 was not found.
-     */
-    public function testGetAssociateWithPureAdmin()
-    {
-        /** @var EntityManager $em */
-        $em = $this->fixtures->getManager();
-
-        /** @var User $user */
-        $user = $this->fixtures->getReference('user23');
-
-        $em->refresh($user);
-        $this->loginAs($user, 'main');
-
-        $client = $this->makeClient();
-
-        $crawler = $client->request('GET', '/associate/info/2');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $user = $this->fixtures->getReference('user2');
-
-        $this->assertContains(
-            $user->getAssociate()->getFullName(),
-            $crawler->filter('div > div')->eq(1)->filter('p')->eq(0)->html()
-        );
-
-        $this->assertContains(
-            $user->getAssociate()->getEmail(),
-            $crawler->filter('div > div')->eq(1)->filter('p')->eq(1)->html()
-        );
-
-        $crawler = $client->request('GET', '/associate/info/3');
-
-        $user = $this->fixtures->getReference('user3');
-
-        $this->assertContains(
-            $user->getAssociate()->getFullName(),
-            $crawler->filter('div > div')->eq(1)->filter('p')->eq(0)->html()
-        );
-
-        $this->assertContains(
-            $user->getAssociate()->getEmail(),
-            $crawler->filter('div > div')->eq(1)->filter('p')->eq(1)->html()
-        );
-
-        $client->request('GET', '/associate/info/-1');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->assertContains(
-            '<b>Title</b>: Company',
-            $client->getResponse()->getContent()
-        );
-
-        $client->request('GET', '/associate/info/700');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
-        $this->assertContains(
-            '<b>Title</b>: Company',
-            $client->getResponse()->getContent()
         );
     }
 }

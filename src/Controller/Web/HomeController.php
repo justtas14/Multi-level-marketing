@@ -2,7 +2,6 @@
 
 namespace App\Controller\Web;
 
-use App\CustomNormalizer\AssociateNormalizer;
 use App\CustomNormalizer\ConfigurationNormalizer;
 use App\Entity\Associate;
 use App\Entity\Configuration;
@@ -42,35 +41,38 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class HomeController extends AbstractController
 {
-//    /**
-//     * @Route("/{vueRouting}", requirements={"vueRouting"="^(?!api|_(profiler|wdt)).*"}, name="index")
-//     * @return Response
-//     */
-//    public function indexAction(): Response
-//    {
-//        return $this->render('main.html.twig', []);
-//    }
-
     /**
-     * @Route("/authenticateFlow", name="authentication")
+     * @Route("/authenticateFlow/{logout}", name="authentication")
+     * @param $logout
      * @param JWTManager $jwtManager
+     * @param string $mainUrl
      * @return JsonResponse|RedirectResponse
      */
-    public function authenticateFlow(JWTManager $jwtManager)
+    public function authenticateFlow($logout, JWTManager $jwtManager, string $mainUrl)
     {
         /** @var User $user */
         $user = $this->getUser();
+        if ($logout == "true" && $user) {
+            return $this->redirectToRoute('logout');
+        }
         if ($user) {
             $token = $jwtManager->createToken($user);
-            return $this->redirect('http://localhost:8080?token='.$token);
+            return $this->redirect($mainUrl.'?token='.$token);
         } else {
             return $this->redirectToRoute('login');
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/configuration",
+     *     @OA\Response(response="200",
+     *     description="Returns configuration object)
+     * )
+     */
 
     /**
-     * @Route("/api/configuration", name="configuration")
+     * @Rest\Get("/api/configuration", name="configuration")
      * @param Request $request
      * @param ConfigurationNormalizer $configurationNormalizer
      * @return Response
@@ -130,23 +132,6 @@ class HomeController extends AbstractController
         return $response;
     }
 
-//    /**
-//     * @Route("/", name="home")
-//     */
-//    public function index()
-//    {
-//        $user = $this->getUser();
-//        /**
-//         * @var User $user
-//         */
-//        if (!$user) {
-//            return $this->redirectToRoute('login');
-//        } elseif (in_array('ROLE_ADMIN', $user->getRoles())) {
-//            return $this->redirectToRoute('admin');
-//        } else {
-//            return $this->redirectToRoute('associate');
-//        }
-//    }
 
     /**
      * @Route("/register/{code}", name="registration")
@@ -244,7 +229,7 @@ class HomeController extends AbstractController
 
                 $databaseLogger->info($associate->getFullName(). ' registered');
 
-                $this->addFlash('success', 'Registered!');
+                return $this->redirect('http://localhost:8080');
             }
         }
 
@@ -265,8 +250,7 @@ class HomeController extends AbstractController
         $url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($secretKey) .
             '&response=' . urlencode($recaptchaResponse);
         $response = file_get_contents($url);
-        $responseKeys = json_decode($response, true);
-        return $responseKeys;
+        return json_decode($response, true);
     }
 
     /**
@@ -470,7 +454,7 @@ class HomeController extends AbstractController
                 $this->addFlash('success', 'Password has been restored!');
 
                 $databaseLogger->info('Password has been restored for '.$user->getEmail(). 'email, ');
-                return $this->redirectToRoute('home');
+                return $this->redirectToRoute('login');
             }
         }
         return $this->render('home/newPassword.html.twig', [

@@ -44,6 +44,13 @@
   width: 34px;
   height: 34px;
   font-weight: bold;
+  transition: ease-in 0.2s;
+}
+
+#closeBtn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 
 .close:hover,
@@ -66,5 +73,10 @@
 @media screen and (max-width: 800px) {
   .modal-content {
     margin: 2.5em auto auto auto;
+  }
+  #closeBtn {
+    position: absolute;
+    top: 90px;
+    right: 0;
   }
 }

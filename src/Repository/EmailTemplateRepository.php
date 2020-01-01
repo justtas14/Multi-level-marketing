@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\EmailTemplate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry as RegistryInterface;
 
 /**
  * @method EmailTemplate|null find($id, $lockMode = null, $lockVersion = null)

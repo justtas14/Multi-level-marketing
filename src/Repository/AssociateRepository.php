@@ -6,7 +6,7 @@ use App\Entity\Associate;
 use App\Filter\AssociateFilter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry as RegistryInterface;
 
 /**
  * @method Associate|null find($id, $lockMode = null, $lockVersion = null)

@@ -39,6 +39,8 @@ export default {
         ]),
         ...mapMutations('Security', [
             'authenticatingSuccess',
+            'logoutAction',
+            'setLogout',
         ]),
     },
     mounted() {
@@ -51,6 +53,7 @@ export default {
         ]),
         ...mapState('Security', [
             'isLoading',
+            'logout',
         ]),
     },
     async created() {
@@ -60,6 +63,9 @@ export default {
         const url = new URL(urlString);
         const token = url.searchParams.get('token');
 
+        if (this.logout) {
+            this.logoutAction();
+        }
         if (token) {
             this.authenticatingSuccess(token);
             await this.setCookie();
@@ -70,9 +76,9 @@ export default {
                 this.$router.push({ path: '/associate' });
             }
         }
-
         if (!this.isAuthenticated) {
-            window.location.href = `${Parameters.API_HOST_URL}/authenticateFlow`;
+            window.location.href = `${Parameters.API_HOST_URL}/authenticateFlow/${this.logout}`;
+            this.setLogout(false);
         }
     },
 };

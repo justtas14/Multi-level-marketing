@@ -2,7 +2,7 @@
     <div class="admin-contentContainer">
         <div class="card" v-if="checkEndPrelaunch">
             <div class="card-content">
-                <div class="landingContent" v-html="configuration.landingContent">
+                <div class="landingContent" v-html="this.getLandingContent">
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                     class="associate-enrollerPictureContainer sidebarProfile__pictureContainer"
                     >
                         <img v-if="parent.filePath"
-                        class="associate-enrollerPicture sidebar-picture" :src="parent.filePath" />
+                        class="associate-enrollerPicture sidebar-picture" :src="getPicture()" />
                         <img v-else class="associate-enrollerPicture sidebar-picture"
                          :src="profilePicture" />
                     </div>
@@ -113,6 +113,7 @@ import {
 } from 'vuex';
 import BusinessShape from '../../../components/BusinessShape/BusinessShape.vue';
 import profilePicture from '../../../../public/img/profile.jpg';
+import Parameters from '../../../../parameters';
 
 export default {
     name: 'AssociateHome',
@@ -134,6 +135,9 @@ export default {
         goToRoute(path) {
             this.setCurrentPath(path);
             this.$router.push({ path });
+        },
+        getPicture() {
+            return `${Parameters.API_HOST_URL}${this.parent.filePath}`;
         },
         ...mapActions('AssociateHome', [
             'associateHomeApi',
@@ -157,15 +161,13 @@ export default {
         ]),
         ...mapGetters('Sidebar', [
             'checkEndPrelaunch',
+            'getLandingContent',
         ]),
         ...mapGetters('AssociateHome', [
             'getAssociateInLevels',
             'getDirectAssociates',
             'getLevels',
             'getMaxLevel',
-        ]),
-        ...mapState('Sidebar', [
-            'configuration',
         ]),
     },
     async created() {

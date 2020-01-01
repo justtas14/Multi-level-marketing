@@ -213,6 +213,7 @@ export default {
         this.isLoading = false;
         this.formData.emailSubject = this.emailTemplate.emailSubject;
         this.formData.configurationContent = this.emailTemplate.emailBody;
+        document.title = this.title;
     },
 };
 </script>

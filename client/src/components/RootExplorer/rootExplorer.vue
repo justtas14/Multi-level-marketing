@@ -2,38 +2,58 @@
     <div>
         <div id="rootExplorer"
                 :data-source="getPath()"
-                data-details="">
+                data-details=""
+                >
         </div>
     </div>
 </template>
 
 <script>
-// import explorer2 from '../../assets/js/explorer_2';
-// import explorerRuntimeMain from '../../assets/js/explorer_runtime_main';
-// import explorerMain from '../../assets/js/explorer_main';
 import './css/explorer_main.css';
 import Parameters from '../../../parameters';
-
-// Vue.use(explorer2);
-// Vue.use(explorerRuntimeMain);
 
 export default {
     name: 'RootExplorer',
     components: {
 
     },
-    props: [],
+    props: ['path'],
     methods: {
         getPath() {
-            return `${Parameters.API_HOST_URL}/api/admin/explorer`;
+            return `${Parameters.API_HOST_URL}${this.path}`;
         },
+        hideViewer(node) {
+            const ua = window.navigator.userAgent;
+            const msie = ua.indexOf('MSIE ');
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv:11./)) {
+                if (node) {
+                    node.id = 'no';
+                    node.innerHTML = 'Downline explorer not supported in Internet explorer.';
+                }
+            }
+        },
+        appendAndRemoveScript(src) {
+            const explorerScript = document.createElement('script');
+            explorerScript.setAttribute('src', src);
+            const contains = document.querySelector(`script[src="${src}"]`);
+            if (contains) {
+                contains.remove();
+            }
+            document.head.appendChild(explorerScript);
+        },
+
     },
     computed: {
 
     },
     mounted() {
+        const node = document.querySelector('div#rootExplorer');
+        this.hideViewer(node);
+        this.appendAndRemoveScript('/assets/js/explorer_main.js');
     },
     created() {
+        this.appendAndRemoveScript('/assets/js/explorer_2.js');
+        this.appendAndRemoveScript('/assets/js/explorer_runtime_main.js');
     },
 };
 </script>

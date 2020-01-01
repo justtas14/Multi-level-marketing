@@ -25,21 +25,4 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js"></script>
   <script src="https://kit.fontawesome.com/8f7af2e175.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="/assets/js/explorer_2.js" async></script>
-  <script src="/assets/js/explorer_runtime_main.js" async></script>
-  <script>
-    function hideViewer(node) {
-        var ua = window.navigator.userAgent;
-        var msie = ua.indexOf("MSIE ");
-        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-            if (node) {
-                node.id = 'no';
-                node.innerHTML = 'Downline explorer not supported in Internet explorer.';
-            }
-        }
-    }
-    var node = document.querySelector('div#rootExplorer');
-    hideViewer(node);
-</script>
-<script src="/assets/js/explorer_main.js" async></script>
 </html>

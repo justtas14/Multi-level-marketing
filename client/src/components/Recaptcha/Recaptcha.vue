@@ -1,6 +1,9 @@
 <template>
     <div class="recaptcha-container">
         <VueRecaptcha
+        style="transform:scale(0.77);
+        -webkit-transform:scale(0.77);
+        transform-origin:0 0;-webkit-transform-origin:0 0;"
         ref="recaptcha"
         :loadRecaptchaScript="true"
         @verify="onVerify"
@@ -33,7 +36,11 @@ export default {
         },
         ...mapMutations('Invitation', [
             'changeRecaptchaKey',
+            'recaptchaReset',
         ]),
+    },
+    created() {
+        this.recaptchaReset(() => this.$refs.recaptcha.reset());
     },
 };
 
