@@ -18,7 +18,7 @@ class CreateAdmin
     public function __construct(EntityManagerInterface $entityManager, AssociateManager $associateManager)
     {
         $this->em = $entityManager;
-        $this->associateManager =$associateManager;
+        $this->associateManager = $associateManager;
     }
 
     public function createAdmin($email, $password, $fullName, $mobilePhone)
