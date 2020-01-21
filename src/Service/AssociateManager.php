@@ -8,7 +8,9 @@ use App\Entity\Invitation;
 use App\Entity\User;
 use App\Exception\NotAncestorException;
 use App\Repository\AssociateRepository;
+use Doctrine\Instantiator\Exception\ExceptionInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use PlumTreeSystems\FileBundle\Service\GaufretteFileManager;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Container;
@@ -35,20 +37,28 @@ class AssociateManager
     private $databaseLogger;
 
     /**
+     * @var GaufretteFileManager $gaufretterFileManager
+     */
+    private $gaufretteFileManager;
+
+    /**
      * AssociateManager constructor.
      * @param EntityManagerInterface $entityManager
      * @param TokenStorageInterface $tokenStorage
      * @param LoggerInterface $databaseLogger
+     * @param GaufretteFileManager $gaufretteFileManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         TokenStorageInterface $tokenStorage,
-        LoggerInterface $databaseLogger
+        LoggerInterface $databaseLogger,
+        GaufretteFileManager $gaufretteFileManager
     ) {
         $this->em = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->associateRepository = $this->em->getRepository(Associate::class);
         $this->databaseLogger = $databaseLogger;
+        $this->gaufretteFileManager = $gaufretteFileManager;
     }
 
     /**
@@ -170,6 +180,7 @@ class AssociateManager
     public function getDirectDownlineAssociates($parentId = null)
     {
         $user = $this->tokenStorage->getToken()->getUser();
+        /** @var Associate $associate */
         $associate = $user->getAssociate();
 
         $userAssociateId = ($associate)?($associate->getId()):(-1);
@@ -179,7 +190,9 @@ class AssociateManager
                 'id' => $userAssociateId,
                 'title' => $user->getAssociate()->getFullName(),
                 'parentId' => $user->getAssociate()->getParentId(),
-                'numberOfChildren' => $this->associateRepository->findAllDirectAssociatesCount($userAssociateId)
+                'numberOfChildren' => $this->associateRepository->findAllDirectAssociatesCount($userAssociateId),
+                'filePath' => $associate->getProfilePicture() ?
+                    $this->gaufretteFileManager->generateDownloadUrl($associate->getProfilePicture()) : ''
             ];
         } elseif (!$user->isAdmin() && !$this->isAncestor($parentId, $userAssociateId, false)) {
             throw new NotAncestorException(
@@ -192,11 +205,14 @@ class AssociateManager
 
         return array_map(
             function ($downlineNode) use ($associateRepo, $parentId) {
+                $thisAssociate = $associateRepo->find($downlineNode['id']);
                 return [
                     'id' => $downlineNode['id'],
                     'title' => $downlineNode['fullName'],
                     'parentId' => $parentId,
-                    'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($downlineNode['id'])
+                    'numberOfChildren' => $associateRepo->findAllDirectAssociatesCount($downlineNode['id']),
+                    'filePath' => $thisAssociate->getProfilePicture() ?
+                        $this->gaufretteFileManager->generateDownloadUrl($thisAssociate->getProfilePicture()) : ''
                 ];
             },
             $directAssociates

@@ -19,6 +19,7 @@ import AssociateDetails from './store/modules/associateDetails';
 import EndPrelaunch from './store/modules/endprelaunch';
 import ChangeContent from './store/modules/changecontent';
 import EmailTemplates from './store/modules/emailTemplates';
+import NodeExplorer from './store/modules/nodeExplorer';
 
 store.registerModule('UserSearch', UserSearch);
 store.registerModule('Security', Security);
@@ -33,6 +34,7 @@ store.registerModule('AssociateDetails', AssociateDetails);
 store.registerModule('EndPrelaunch', EndPrelaunch);
 store.registerModule('ChangeContent', ChangeContent);
 store.registerModule('EmailTemplates', EmailTemplates);
+store.registerModule('NodeExplorer', NodeExplorer);
 
 VuexPersist(store);
 

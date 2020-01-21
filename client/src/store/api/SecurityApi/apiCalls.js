@@ -216,4 +216,22 @@ export default class SecurityApiCalls {
         }
         return false;
     }
+
+    getAssociates(url, id, token) {
+        const scope = this;
+        try {
+            return axios.get(url, {
+                params: {
+                    id,
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+        } catch (e) {
+            scope.unAuthenticate();
+        }
+        return false;
+    }
 }

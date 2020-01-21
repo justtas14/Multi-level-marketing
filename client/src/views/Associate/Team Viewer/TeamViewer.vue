@@ -6,12 +6,13 @@
                 <rootExplorer v-bind:path="'/api/associate/downline'"></rootExplorer>
             </div>
         </div>
+        <NodeExplorer></NodeExplorer>
     </div>
 </template>
 
 <script>
 import rootExplorer from '../../../components/RootExplorer/rootExplorer.vue';
-
+import NodeExplorer from '../../../components/NodeExplorer/Main.vue';
 
 export default {
     name: 'TeamViewer',
@@ -22,6 +23,7 @@ export default {
     },
     components: {
         rootExplorer,
+        NodeExplorer,
     },
     methods: {
     },
