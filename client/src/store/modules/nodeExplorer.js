@@ -13,16 +13,21 @@ const initialState = {
 
         },
     },
+    container: {
+        beginX: null,
+        middleX: null,
+        width: null,
+    },
+    minValueX: 9999,
     address: [],
-    containerWidth: null,
-    containerX: null,
+    currentFocusNumber: null,
 };
 
 const getters = {
 };
 
 const actions = {
-    async getAssociates({ dispatch, commit, rootState }, addresses) {
+    async getAllAssociates({ dispatch, commit, rootState }, addresses) {
         const apiCallsObj = new ApiCalls();
         const id = addresses.length > 0 ? addresses[addresses.length - 1] : null;
         const res = await apiCallsObj.getAssociates(
@@ -30,18 +35,28 @@ const actions = {
             id,
             rootState.Security.token,
         );
+        // console.log(addresses);
         if (res.data.length === 0) {
             return;
         }
         if (addresses.length === 0) {
             commit('setRootNode', res.data);
-            dispatch('getAssociates', [res.data.id]);
+            dispatch('getAllAssociates', [res.data.id]);
         } else {
             commit('setNodeChildren', { address: addresses, children: res.data });
             res.data.forEach((element) => {
-                dispatch('getAssociates', [...addresses, element.id]);
+                dispatch('getAllAssociates', [...addresses, element.id.toString()]);
             });
         }
+    },
+    async getAssociates({ rootState }, id) {
+        const apiCallsObj = new ApiCalls();
+        const res = await apiCallsObj.getAssociates(
+            '/api/associate/downline',
+            id,
+            rootState.Security.token,
+        );
+        return res.data;
     },
 };
 
@@ -72,11 +87,16 @@ const mutations = {
     popAddress: (state) => {
         state.address.pop();
     },
-    setContainerWidth: (state, containerWidth) => {
-        state.containerWidth = containerWidth;
+    setContainerParams: (state, { beginX, middleX, width }) => {
+        state.container.beginX = beginX;
+        state.container.middleX = middleX;
+        state.container.width = width;
     },
-    setContainerX: (state, containerX) => {
-        state.containerX = containerX;
+    setMinValueX: (state, value) => {
+        state.minValueX = value;
+    },
+    setCurrentFocusNumber: (state, focusNumber) => {
+        state.currentFocusNumber = focusNumber;
     },
 };
 

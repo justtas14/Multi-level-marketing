@@ -413,6 +413,11 @@ select {
   font-size: 100%;
 }
 
+.contentLoader {
+  height: 100%;
+  width: 100%;
+}
+
 @media screen and (max-width: 668px) {
   .invitation-container {
       width: 80%;

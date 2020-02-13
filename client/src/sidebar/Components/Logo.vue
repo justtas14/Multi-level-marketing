@@ -21,6 +21,7 @@ import {
 import PlumTreeSystemsLogo from '../../../public/img/plum_tree_logo.png';
 import Parameters from '../../../parameters';
 
+
 export default {
     name: 'Logo',
     components: {

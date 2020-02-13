@@ -1,31 +1,33 @@
 <template>
-    <div v-bind:style="{ 'padding-right': getPadding() }">
+    <div v-bind:style="{ 'padding-right': getPadding() }"
+      ref="associate">
+        <div id="associateId">{{associate.id}}</div>
         <div v-if="!associate" class="associate empty"></div>
         <div v-else class="associate"
-        v-bind:class="{'firstAssociate': (index === 0)}"
-        @click="focus">
+        v-bind:class="{'firstAssociate': (index === 0)}">
             <div id="associatePicture">
                 <img class="picture"
                         v-if="associate.filePath" :src="getPicture()"
                         v-bind:class="{ focusProfilePicture:
-                        (this.address.includes(associate.id.toString())) }">
+                        isInMiddle() }">
                     <img class="picture"
                         v-else :src="defaultPicture"
                         v-bind:class="{ focusProfilePicture:
-                        (this.address.includes(associate.id.toString())) }">
+                        isInMiddle() }">
             </div>
             <div id="associateName">
-                <div id="fullName"
-                v-bind:class="{ focusAssociate: (this.address.includes(associate.id.toString())) }">
+                <div id="fullName" v-bind:class="{ focusAssociate:
+                        isInMiddle() }">
                 <p>{{ associate.title }}</p>
                 </div>
-                <div id="actions">
+                <div id="actions" v-bind:class="{twoColumns:
+                      (!this.isFocused)}">
                     <div id="numberOfChildren">
                         {{ associate.numberOfChildren }}
                     </div>
                     <i class="material-icons actionIcons" @click="moveToMiddle"
                      v-bind:class="{notActiveZoomIn:
-                      (this.associate.id === this.rootAssociate.id)}">
+                      (!this.isFocused)}">
                         zoom_in
                     </i>
                     <i class="material-icons actionIcons">
@@ -43,11 +45,10 @@ import {
 } from 'vuex';
 import defaultPicture from '../../../public/img/profile.jpg';
 import Parameters from '../../../parameters';
-import getChildrenFromAddress, { getChildren } from './services/nodeExplorerMethods';
 
 export default {
     name: 'Associate',
-    props: ['associate', 'slotNumber', 'index', 'associateLenght'],
+    props: ['associate', 'isFocused', 'index', 'associateLenght', 'slotContainer'],
     data() {
         return {
             defaultPicture,
@@ -59,51 +60,30 @@ export default {
         ...mapState('NodeExplorer', [
             'address',
             'rootAssociate',
-            'containerWidth',
+            'container',
+            'minValueX',
         ]),
     },
     methods: {
+        isInMiddle() {
+            return this.associate.id.toString() === this.address[this.address.length - 1];
+        },
         getPadding() {
             return (this.index === this.associateLenght - 1 && this.index !== 0)
-                ? (`${this.containerWidth / 2}px`) : ('0');
+                ? (`${this.container.width / 2}px`) : ('0');
         },
         getPicture() {
             return `${Parameters.API_HOST_URL}${this.associate.filePath}`;
         },
         moveToMiddle() {
-            if (this.slotNumber === 'first') {
-                if (this.address.length > 2) {
-                    this.popAddress();
-                    this.popAddress();
-                    this.pushAddress(this.associate.id.toString());
-                    console.log(this.address);
-                }
-            }
-        },
-        focus() {
-            if (!this.address.includes(this.associate.id.toString())) {
-                if (this.slotNumber === 'first') {
-                    this.popAddress();
-                    this.popAddress();
-                    this.pushAddress(this.associate.id.toString());
-                    const addressToAncestor = this.address.slice(0, this.address.length);
-                    const node = getChildrenFromAddress(addressToAncestor, this.rootAssociate);
-                    if (getChildren(node).length > 0) {
-                        this.pushAddress(getChildren(node)[0].id.toString());
-                    }
-                }
-                if (this.slotNumber === 'second') {
-                    if (this.address.length === 2) {
-                        this.setAddress([this.address[0], this.associate.id.toString()]);
-                    } else {
-                        this.popAddress();
-                        this.pushAddress(this.associate.id.toString());
-                    }
-                }
-                if (this.slotNumber === 'third') {
-                    this.pushAddress(this.associate.id.toString());
-                }
-                console.log(this.address);
+            if (!this.address.includes(this.associate.id)) {
+                const { associate } = this.$refs;
+                const associateRect = associate.getBoundingClientRect();
+                const slotContainerRect = this.slotContainer.getBoundingClientRect();
+                this.slotContainer.scrollTo(
+                    this.index * associateRect.width,
+                    slotContainerRect.top,
+                );
             }
         },
 

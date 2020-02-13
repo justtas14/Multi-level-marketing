@@ -29,7 +29,6 @@ export default {
         };
     },
     methods: {
-
         ...mapActions('Security', [
             'setCookie',
             'loadAssociate',
@@ -63,9 +62,6 @@ export default {
         const url = new URL(urlString);
         const token = url.searchParams.get('token');
 
-        if (this.logout) {
-            this.logoutAction();
-        }
         if (token) {
             this.authenticatingSuccess(token);
             await this.setCookie();
@@ -77,8 +73,8 @@ export default {
             }
         }
         if (!this.isAuthenticated) {
-            window.location.href = `${Parameters.API_HOST_URL}/authenticateFlow/${this.logout}`;
-            this.setLogout(false);
+            console.log('came back');
+            window.location.href = `${Parameters.API_HOST_URL}/authenticateFlow?redirect_uri=${url.origin}&client_id=${Parameters.CLIENT_ID}`;
         }
     },
 };

@@ -51,6 +51,7 @@ import {
 import adminRoutes from '../../router/Routes/adminRoutes';
 import associateRoutes from '../../router/Routes/associateRoutes';
 import Parameters from '../../../parameters';
+import SecurityAPI from '../../store/api/SecurityApi/apiCalls';
 
 export default {
     name: 'MenuItems',
@@ -91,8 +92,8 @@ export default {
             return this.currentPath === path || isSubPath;
         },
         loggingOut() {
-            this.setLogout(true);
-            window.location.href = '/';
+            const securityApiObj = new SecurityAPI();
+            securityApiObj.unAuthenticate();
         },
         ...mapMutations('Security', [
             'logoutAction',

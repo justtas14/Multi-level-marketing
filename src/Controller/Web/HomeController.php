@@ -30,37 +30,62 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class HomeController extends AbstractController
 {
     /**
-     * @Route("/authenticateFlow/{logout}", name="authentication")
-     * @param $logout
+     * @Route("/", name="home")
+     * @return RedirectResponse|void
+     */
+    public function home()
+    {
+        return $this->redirectToRoute('authentication');
+    }
+
+    /**
+     * @Route("/authenticateFlow", name="authentication")
+     * @param string $clientId
+     * @param Request $request
      * @param JWTManager $jwtManager
-     * @param string $mainUrl
      * @return JsonResponse|RedirectResponse
      */
-    public function authenticateFlow($logout, JWTManager $jwtManager, string $mainUrl)
+    public function authenticateFlow(string $clientId, Request $request, JWTManager $jwtManager)
     {
         /** @var User $user */
         $user = $this->getUser();
-        if ($logout == "true" && $user) {
-            return $this->redirectToRoute('logout');
+        $redirectUri= $request->query->get('redirect_uri');
+        $frontClientId= $request->query->get('client_id');
+        if (!$redirectUri) {
+            $redirectUri = $this->get('session')->get($redirectUri);
+        } else {
+            $this->get('session')->set('redirect_uri', $redirectUri);
         }
         if ($user) {
+            if ($clientId !== $frontClientId) {
+                throw new HttpException(403, 'Cannot access to server');
+            }
             $token = $jwtManager->createToken($user);
-            return $this->redirect($mainUrl.'?token='.$token);
+            return $this->redirect($redirectUri.'?token='.$token);
         } else {
             return $this->redirectToRoute('login');
         }
+    }
+
+    /**
+     * @Route("/authenticateLogout", name="authenticationLogout")
+     * @return RedirectResponse
+     */
+    public function authenticateLogout()
+    {
+        return $this->redirectToRoute('logout');
     }
 
     /**

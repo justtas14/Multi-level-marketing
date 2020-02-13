@@ -22,6 +22,7 @@
     "vue-clipboards": "^1.3.0",
     "vue-content-loader": "^0.2.2",
     "vue-highlightjs": "^1.3.3",
+    "vue-infinite-scroll": "^2.0.2",
     "vue-material": "^1.0.0-beta-11",
     "vue-quill": "^1.5.1",
     "vue-recaptcha": "^1.2.0",

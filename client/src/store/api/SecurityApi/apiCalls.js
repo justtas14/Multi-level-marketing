@@ -1,11 +1,26 @@
 import axios from 'axios';
 import store from '../..';
+import Parameters from '../../../../parameters';
 
 export default class SecurityApiCalls {
     unAuthenticate() {
-        store.commit('setLogout', true);
-        window.location.href = '/';
+        store.commit('Security/logoutAction');
+        window.location.href = `${Parameters.API_HOST_URL}/authenticateLogout`;
     }
+
+    // async isFileAuthorized(token, filePath) {
+    //     try {
+    //         await axios.get(`${Parameters.API_HOST_URL}${filePath}`,
+    //             {
+    //                 headers: { Authorization: `Bearer ${token}` },
+    //             });
+    //         return `${Parameters.API_HOST_URL}${filePath}`;
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+
+    //     return `${Parameters.API_HOST_URL}${filePath}`;
+    // }
 
     setCookie(token) {
         const scope = this;

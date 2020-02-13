@@ -35,4 +35,4 @@ var adminMenu = function adminMenu()
     //burger.classList.toggle('toggle');
 };
 
-adminMenu();
+// adminMenu();

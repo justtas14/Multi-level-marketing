@@ -63,6 +63,9 @@ export default {
         ...mapState('Sidebar', [
             'hamburgerClicked',
         ]),
+        ...mapState('Security', [
+            'token',
+        ]),
     },
     created() {
     },

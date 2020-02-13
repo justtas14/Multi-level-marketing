@@ -1,50 +1,47 @@
 .associate {
     width: 100px;
     height: 140px;
-    box-shadow: 1px 0 1.5px 0 #7f06c4;
+    box-shadow: 1px 0 1px 0 #000000;
     display: grid;
     grid-template-columns: 1fr;
     scroll-snap-align: center;
     scroll-padding: 50%;
 }
 .firstAssociate {
-    box-shadow: 1px 0 1.5px 0 #7f06c4, -1px 0 1.5px 0 #7f06c4 !important;
+    box-shadow: 1px 0 1px 0 #000000, -1px 0 1px 0 #000000 !important;
+}
+#associateId {
+    display: none;
+}
+
+.middleAssociate {
+    position: absolute;
+    width: 120px;
+    height: 160px;
+    transform: translateX(-50%);
+    left: 50%;
+    z-index: 20;
+    background-color: #fffafafb;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23) !important;
+    margin-top: -10px;
 }
 
 .empty {
     box-shadow: none !important;
 }
 .notActiveZoomIn {
-    opacity: 0.5;
+    display: none;
 }
 
 .focusProfilePicture { 
-    box-shadow: 0 0 3px 0px #7f06c4 !important;
+    box-shadow: 0 0 3px .5px #e90000, 1px 1px 0px #e90000 !important;
 }
 .focusAssociate {
-    color: #fff;
-    -webkit-animation: glow .08s  ease-in-out infinite alternate;
-    -moz-animation: glow .08s  ease-in-out infinite alternate;
-    animation: glow .08s  ease-in-out infinite alternate;
-    font-style: italic;;
-}
-@-webkit-keyframes glow {
-    from {
-        text-shadow: 0 0 1px #7f06c4, 0 0 2px #7f06c4, 0 0 3px #7f06c4, 0 0 4px #ff4da6;
-    }
-    
-    to {
-        text-shadow: 0 0 1.25px #7f06c4, 0 0 2.25px #7f06c4, 0 0 3.25px #7f06c4, 0 0 4.25px #ff4da6;
-    }
-    }
-@keyframes glow {
-from {
-    text-shadow: 0 0 1px #7f06c4, 0 0 2px #7f06c4, 0 0 3px #7f06c4, 0 0 4px #ff4da6;
-}
-
-to {
-    text-shadow: 0 0 1.25px #7f06c4, 0 0 2.25px #7f06c4, 0 0 3.25px #7f06c4, 0 0 4.25px #ff4da6;
-}
+    color: #e90000;
+    font-weight: 440;
+    text-shadow: 0px 1px 2px rgba(0,0,0,0.4),
+             0px 2px 3px rgba(0,0,0,0.1),
+             0px 2px 3px rgba(0,0,0,0.1);
 }
 
 
@@ -83,6 +80,10 @@ to {
     height: 40%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+}
+
+.twoColumns {
+    grid-template-columns: 1fr 1fr !important;
 }
 
 .actionIcons {

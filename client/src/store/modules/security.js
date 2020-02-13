@@ -102,9 +102,6 @@ const mutations = {
         state.associate = null;
         state.isLoggedIn = false;
     },
-    setLogout(state, flag) {
-        state.logout = flag;
-    },
     setAssociate(state, associate) {
         state.associate = associate;
     },
