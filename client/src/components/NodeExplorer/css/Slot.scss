@@ -1,12 +1,8 @@
 .slot {
-    scroll-snap-align: center;
     height: 142px;
     width: 100%;
     display: flex;
-    overflow-x: hidden;
-    scroll-snap-type: x mandatory;
-    box-shadow: 0px 0px 2px 1px #000000;
-    scroll-behavior: smooth;
+    transition: transform 0.5s ease-out;
 }
 
 .root {

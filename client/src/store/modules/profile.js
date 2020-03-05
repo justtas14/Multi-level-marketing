@@ -4,7 +4,6 @@ const initialState = {
     formErrors: null,
     formUpdated: false,
     profilePicture: null,
-    handeFilesFunc: () => {},
 };
 const getters = {
 
@@ -50,9 +49,6 @@ const mutations = {
     },
     profileUpdate: (state, flag) => {
         state.formUpdated = flag;
-    },
-    changeHandeFilesFunc: (state, func) => {
-        state.handeFilesFunc = func;
     },
     setProfilePicture: (state, file) => {
         state.profilePicture = file;

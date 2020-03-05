@@ -1,11 +1,13 @@
 .associate {
     width: 100px;
-    height: 140px;
+    height: 142px;
     box-shadow: 1px 0 1px 0 #000000;
     display: grid;
     grid-template-columns: 1fr;
     scroll-snap-align: center;
     scroll-padding: 50%;
+    pointer-events: none;
+    user-select: none;
 }
 .firstAssociate {
     box-shadow: 1px 0 1px 0 #000000, -1px 0 1px 0 #000000 !important;
@@ -77,6 +79,8 @@
 }
 
 #actions {
+    pointer-events: all;
+    user-select: all;
     height: 40%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;

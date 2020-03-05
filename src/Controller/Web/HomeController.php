@@ -81,10 +81,17 @@ class HomeController extends AbstractController
 
     /**
      * @Route("/authenticateLogout", name="authenticationLogout")
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function authenticateLogout()
+    public function authenticateLogout(Request $request)
     {
+        $redirectUri = $request->query->get('redirect_uri');
+
+        if (!$this->get('session')->get($redirectUri)) {
+            $this->get('session')->set('redirect_uri', $redirectUri);
+        }
+
         return $this->redirectToRoute('logout');
     }
 

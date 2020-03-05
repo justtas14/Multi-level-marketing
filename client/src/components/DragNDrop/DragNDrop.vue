@@ -88,12 +88,10 @@ export default {
         },
 
         ...mapMutations('Profile', [
-            'changeHandeFilesFunc',
             'setProfilePicture',
         ]),
     },
     created() {
-        this.changeHandeFilesFunc(this.handleFiles);
     },
 };
 </script>

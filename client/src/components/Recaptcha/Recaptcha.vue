@@ -36,11 +36,9 @@ export default {
         },
         ...mapMutations('Invitation', [
             'changeRecaptchaKey',
-            'recaptchaReset',
         ]),
     },
     created() {
-        this.recaptchaReset(() => this.$refs.recaptcha.reset());
     },
 };
 

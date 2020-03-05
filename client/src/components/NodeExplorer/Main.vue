@@ -1,19 +1,20 @@
 <template>
-    <div id="slots__container" ref="container" @scroll="scrollSlot">
-    <!-- <div class="middleFocusRuler parentRight"></div>
-    <div class="middleFocusRuler parentLeft"></div>
-    <div class="middleFocusRuler top"></div>
-    <div class="middleFocusRuler bottom"></div>
-    <div class="middleFocusRuler left"></div>
-    <div class="middleFocusRuler right"></div> -->
-    <div v-show="!isLoading" ref="scrollContainer">
-         <SlotComponent
-            v-for="(associates, index) in getAssociatesInSlots" v-bind:key="index"
-            @slot="assignSlot"
-            v-bind:associates="associates"
-            v-bind:slotNumber="index"
-        ></SlotComponent>
-    </div>
+    <div id="slots__container" ref="container"
+        @mousedown="lock"
+        @touchStart="lock"
+        @mouseup="move"
+        @touchend="move"
+        @touchmove="touchMove"
+    >
+        <!-- <div class="middleBorderContainer"></div> -->
+        <div v-show="!isLoading" ref="scrollContainer">
+            <SlotComponent
+                v-for="(associates, index) in getAssociatesInSlots" v-bind:key="index"
+                @slot="assignSlot"
+                v-bind:associates="associates"
+                v-bind:slotNumber="index"
+            ></SlotComponent>
+        </div>
     </div>
 </template>
 
@@ -37,6 +38,9 @@ export default {
             lastContainerY: null,
             firstScroll: true,
             slotAmount: 4,
+            y0: null,
+            x0: null,
+            scrollContainer: null,
         };
     },
     components: {
@@ -64,6 +68,40 @@ export default {
         ]),
     },
     methods: {
+        unify(e) {
+            return e.changedTouches ? e.changedTouches[0] : e;
+        },
+        lock(e) {
+            this.y0 = this.unify(e).clientY;
+            this.x0 = this.unify(e).clientX;
+        },
+        move(e) {
+            if ((this.y0 || this.y0 === 0) && (this.x0 === 0 || this.x0)) {
+                const dy = this.unify(e).clientY - this.y0;
+                const dx = this.unify(e).clientX - this.x0;
+                if (Math.abs(dy) > Math.abs(dx)) {
+                    const s = Math.sign(dy);
+                    if (s === -1) {
+                        this.scrollContainer.style.transform = `translateY(${(-142 * this.address.length)}px)`;
+                        const addressToAncestor = this.address.slice(0, this.address.length);
+                        const node = getChildrenFromAddress(addressToAncestor, this.rootAssociate);
+                        this.pushAddress(getChildren(node)[0].id.toString());
+                        this.slotAmount++;
+                    } else if (s === 1) {
+                        if (this.address.length > 1) {
+                            this.popAddress();
+                            this.slotAmount--;
+                            this.scrollContainer.style.transform = `translateY(${(-142 * (this.address.length - 1))}px)`;
+                        }
+                    }
+                }
+                this.y0 = null;
+                this.x0 = null;
+            }
+        },
+        touchMove(e) {
+            e.preventDefault();
+        },
         getSlotAssociates(number) {
             if (number === 0) {
                 return [];
@@ -102,41 +140,41 @@ export default {
             slot.style.padding = `0 0 0 ${container.offsetWidth / 2 - 50}px`;
             this.slots.push(slot);
         },
-        scrollSlot() {
-            const { scrollContainer } = this.$refs;
-            let rect = scrollContainer.getBoundingClientRect();
-            if (this.firstScroll) {
-                this.lastContainerY = rect.top;
-                this.firstScroll = false;
-            }
-            if (this.timer !== null) {
-                clearTimeout(this.timer);
-            }
-            this.timer = setTimeout(() => {
-                rect = scrollContainer.getBoundingClientRect();
-                if (Math.abs(this.lastContainerY - rect.top) < 10) {
-                    console.log('same');
-                } else if (this.lastContainerY > rect.top) {
-                    const addressToAncestor = this.address.slice(0, this.address.length);
-                    const node = getChildrenFromAddress(addressToAncestor, this.rootAssociate);
-                    this.pushAddress(getChildren(node)[0].id.toString());
-                    this.slotAmount++;
-                } else {
-                    let popCount = Math.round(
-                        Math.abs(Math.abs(this.lastContainerY)
-                         - Math.abs(rect.top > 0 ? rect.top - 140 : rect.top)) / 140,
-                    );
-                    if (rect.top > 0) {
-                        popCount++;
-                    }
-                    for (let i = 0; i < popCount; i++) {
-                        this.popAddress();
-                        this.slotAmount--;
-                    }
-                }
-                this.lastContainerY = rect.top;
-            }, 500);
-        },
+        // scrollSlot() {
+        //     const { scrollContainer } = this.$refs;
+        //     let rect = scrollContainer.getBoundingClientRect();
+        //     if (this.firstScroll) {
+        //         this.lastContainerY = rect.top;
+        //         this.firstScroll = false;
+        //     }
+        //     if (this.timer !== null) {
+        //         clearTimeout(this.timer);
+        //     }
+        //     this.timer = setTimeout(() => {
+        //         rect = scrollContainer.getBoundingClientRect();
+        //         if (Math.abs(this.lastContainerY - rect.top) < 10) {
+        //             console.log('same');
+        //         } else if (this.lastContainerY > rect.top) {
+        //             const addressToAncestor = this.address.slice(0, this.address.length);
+        //             const node = getChildrenFromAddress(addressToAncestor, this.rootAssociate);
+        //             this.pushAddress(getChildren(node)[0].id.toString());
+        //             this.slotAmount++;
+        //         } else {
+        //             let popCount = Math.round(
+        //                 Math.abs(Math.abs(this.lastContainerY)
+        //                  - Math.abs(rect.top > 0 ? rect.top - 140 : rect.top)) / 140,
+        //             );
+        //             if (rect.top > 0) {
+        //                 popCount++;
+        //             }
+        //             for (let i = 0; i < popCount; i++) {
+        //                 this.popAddress();
+        //                 this.slotAmount--;
+        //             }
+        //         }
+        //         this.lastContainerY = rect.top;
+        //     }, 500);
+        // },
         ...mapActions('NodeExplorer', [
             'getAllAssociates',
         ]),
@@ -149,7 +187,7 @@ export default {
     },
     mounted() {
         const { container, scrollContainer } = this.$refs;
-        this.lastContainerY = scrollContainer.getBoundingClientRect().top;
+        this.scrollContainer = scrollContainer;
         let rect = container.getBoundingClientRect();
         let containerData = {
             beginX: rect.left,

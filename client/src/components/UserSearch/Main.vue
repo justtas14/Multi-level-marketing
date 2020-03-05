@@ -107,6 +107,7 @@ export default {
             'loadData',
             'updateSearchVal',
             'changePage',
+            'clearFilters',
         ]),
     },
     mounted() {
@@ -124,6 +125,7 @@ export default {
         }),
     },
     created() {
+        this.clearFilters();
         this.isLoading = true;
         findAll(this.token).then((response) => {
             this.isLoading = false;

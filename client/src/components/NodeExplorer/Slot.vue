@@ -1,17 +1,24 @@
 <template>
     <div v-show="associates!==null"
-    class="slot" ref="slot" @scroll="scrollSlot" :class="{root: (slotNumber === 0)}">
+    class="slot" ref="slot" :class="{root: (slotNumber === 0)}"
+        @mousedown="lock"
+        @touchStart="lock"
+        @mouseup="move"
+        @touchend="move"
+        @touchmove="touchMove"
+    >
         <div id="firstElement" v-if="slotNumber === 0"><i class="material-icons rootIcon">
             device_hub
         </i></div>
         <div v-else
         v-for="(associate, index) in associates" v-bind:key="associate.id" ref="allAssociates">
             <Associate
-            v-bind:associate="associate"
-            v-bind:associateLenght="associates.length"
-            v-bind:index="index"
-            v-bind:slotContainer="$refs.slot"
-            v-bind:isFocused="isFocused"
+                v-bind:associate="associate"
+                v-bind:associateLenght="associates.length"
+                v-bind:index="index"
+                v-bind:slotContainer="$refs.slot"
+                v-bind:isFocused="isFocused"
+                v-bind:focus="focus"
             ></Associate>
         </div>
     </div>
@@ -30,6 +37,12 @@ export default {
         return {
             timer: null,
             isFocused: false,
+            x0: null,
+            y0: null,
+            currentFocus: {
+                index: 0,
+                id: 0,
+            },
         };
     },
     components: {
@@ -52,16 +65,18 @@ export default {
     },
     watch: {
         currentFocusedId(newValue) {
-            const { slot } = this.$refs;
-            this.isFocused = false; slot.style.overflowX = 'hidden';
+            this.isFocused = false;
+            // slot.style.overflowX = 'hidden';
             if (this.associates) {
-                this.associates.forEach(async (element) => {
+                this.associates.forEach(async (element, index) => {
                     if (element.id.toString() === newValue) {
-                        // const loadedAssociates = await this.getAssociates(element.id);
-                        // console.log(loadedAssociates);
                         this.isFocused = true;
                         this.setCurrentFocusNumber(this.slotNumber);
-                        slot.style.overflowX = 'scroll';
+                        this.currentFocus = {
+                            index,
+                            id: element.id.toString(),
+                        };
+                        // slot.style.overflowX = 'scroll';
                     }
                 });
             }
@@ -71,7 +86,7 @@ export default {
             setTimeout(() => {
                 if (newValue < oldValue) {
                     if (this.currentFocusNumber < this.slotNumber) {
-                        slot.scrollTo(0, 0);
+                        slot.style.transform = 'translateX(0px)';
                     }
                 }
             }, 25);
@@ -87,12 +102,46 @@ export default {
             });
             const { slot } = this.$refs;
             if (this.isFocused) {
-                slot.style.overflowX = 'scroll';
+                // slot.style.overflowX = 'scroll';
             }
             this.$emit('slot', slot);
         }
     },
     methods: {
+        unify(e) {
+            return e.changedTouches ? e.changedTouches[0] : e;
+        },
+        lock(e) {
+            this.y0 = this.unify(e).clientY;
+            this.x0 = this.unify(e).clientX;
+        },
+        move(e) {
+            if ((this.y0 || this.y0 === 0) && (this.x0 === 0 || this.x0) && this.isFocused) {
+                const dy = this.unify(e).clientY - this.y0;
+                const dx = this.unify(e).clientX - this.x0;
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    const s = Math.sign(dx);
+                    if (s === -1) {
+                        if (this.currentFocus.index < this.associates.length - 1) {
+                            this.$refs.slot.style.transform = `translateX(${(-100 * (this.currentFocus.index + 1))}px)`;
+                            this.focus(this.associates[this.currentFocus.index + 1].id);
+                            console.log('right', this.associates[this.currentFocus.index + 1]);
+                        }
+                    } else if (s === 1) {
+                        if (this.currentFocus.index > 0) {
+                            this.$refs.slot.style.transform = `translateX(${(-100 * (this.currentFocus.index - 1))}px)`;
+                            this.focus(this.associates[this.currentFocus.index - 1].id);
+                            console.log('left');
+                        }
+                    }
+                }
+                this.y0 = null;
+                this.x0 = null;
+            }
+        },
+        touchMove(e) {
+            e.preventDefault();
+        },
         focus(id) {
             if (!this.address.includes(id)) {
                 if (this.isFocused) {
@@ -105,24 +154,24 @@ export default {
                 }
             }
         },
-        scrollSlot() {
-            if (this.timer !== null) {
-                clearTimeout(this.timer);
-            }
-            this.timer = setTimeout(() => {
-                this.setMinValueX(9999);
-                const associateArray = this.$refs.allAssociates;
-                associateArray.forEach((element) => {
-                    const elementId = element.querySelector('#associateId').innerHTML;
-                    const rect = element.getBoundingClientRect();
-                    const xValue = rect.right - (this.container.beginX + this.container.middleX);
-                    if (this.minValueX > xValue && xValue > 0) {
-                        this.focus(parseInt(elementId, 10));
-                        this.setMinValueX(xValue);
-                    }
-                });
-            }, 300);
-        },
+        // scrollSlot() {
+        //     if (this.timer !== null) {
+        //         clearTimeout(this.timer);
+        //     }
+        //     this.timer = setTimeout(() => {
+        //         this.setMinValueX(9999);
+        //         const associateArray = this.$refs.allAssociates;
+        //         associateArray.forEach((element) => {
+        //             const elementId = element.querySelector('#associateId').innerHTML;
+        //             const rect = element.getBoundingClientRect();
+        //             const xValue = rect.right - (this.container.beginX + this.container.middleX);
+        //             if (this.minValueX > xValue && xValue > 0) {
+        //                 this.focus(parseInt(elementId, 10));
+        //                 this.setMinValueX(xValue);
+        //             }
+        //         });
+        //     }, 300);
+        // },
         ...mapActions('NodeExplorer', [
             'getAssociates',
         ]),

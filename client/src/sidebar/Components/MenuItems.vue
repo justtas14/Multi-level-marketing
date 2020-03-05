@@ -75,7 +75,7 @@ export default {
         },
         goToRoute(path) {
             this.setCurrentPath(path);
-            this.$router.push({ path });
+            this.$router.push({ path }).catch(() => {});
             if (this.hamburgerClicked) {
                 this.setHamburgerClicked(false);
             }

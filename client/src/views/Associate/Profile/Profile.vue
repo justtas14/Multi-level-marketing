@@ -186,6 +186,7 @@
                 ref="originalProfilePictureUpload"
               ></div>
               <DragAndDrop
+              ref="dragAndDrop"
                v-bind:originalProfilePictureUpload="this.$refs.originalProfilePictureUpload"
                >
                </DragAndDrop>
@@ -324,8 +325,9 @@ export default {
             window.scrollTo(0, 0);
         },
         readUrl(e) {
+            console.log(e);
             const files = e.target.files || e.dataTransfer.files;
-            this.handeFilesFunc(files);
+            this.$refs.dragAndDrop.handleFiles(files);
         },
         isEmptyRequiredFields() {
             return this.formData.email === '' || this.formData.associate.fullName === '' || this.formData.oldPassword === ''
@@ -363,7 +365,6 @@ export default {
         ...mapState('Profile', [
             'formErrors',
             'formUpdated',
-            'handeFilesFunc',
             'profilePicture',
         ]),
         ...mapState('Security', [

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import SecurityAPI from '../api/SecurityApi/apiCalls';
+import Parameters from '../../../parameters';
 
 const initialState = {
     isLoading: false,
@@ -50,6 +51,12 @@ const actions = {
             commit('authenticatingError', error);
             return null;
         }
+    },
+    logout({ commit }) {
+        const url = window.location.href;
+        const redirectUri = new URL(url);
+        commit('logoutAction');
+        window.location.href = `${Parameters.API_HOST_URL}/authenticateLogout?redirect_uri=${redirectUri.origin}`;
     },
     async setCookie({ state }) {
         const securityApiObj = new SecurityAPI();

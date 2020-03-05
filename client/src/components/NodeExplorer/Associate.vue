@@ -48,7 +48,7 @@ import Parameters from '../../../parameters';
 
 export default {
     name: 'Associate',
-    props: ['associate', 'isFocused', 'index', 'associateLenght', 'slotContainer'],
+    props: ['associate', 'isFocused', 'index', 'associateLenght', 'slotContainer', 'focus'],
     data() {
         return {
             defaultPicture,
@@ -77,13 +77,8 @@ export default {
         },
         moveToMiddle() {
             if (!this.address.includes(this.associate.id)) {
-                const { associate } = this.$refs;
-                const associateRect = associate.getBoundingClientRect();
-                const slotContainerRect = this.slotContainer.getBoundingClientRect();
-                this.slotContainer.scrollTo(
-                    this.index * associateRect.width,
-                    slotContainerRect.top,
-                );
+                this.slotContainer.style.transform = `translateX(${(-100 * (this.index))}px)`;
+                this.focus(this.associate.id);
             }
         },
 

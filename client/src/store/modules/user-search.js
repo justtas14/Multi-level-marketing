@@ -46,6 +46,11 @@ const mutations = {
             state.paginationInfo.currentPage = Number(state.paginationInfo.currentPage) - 1;
         }
     },
+    clearFilters: (state) => {
+        state.nameSearchVal = '';
+        state.phoneSearchVal = '';
+        state.emailSearchVal = '';
+    },
 };
 
 export default {

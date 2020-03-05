@@ -67,9 +67,9 @@ export default {
             await this.setCookie();
             await this.loadAssociate();
             if (this.isAdmin) {
-                this.$router.push({ path: '/admin' });
+                this.$router.push({ path: '/admin' }).catch(() => {});
             } else {
-                this.$router.push({ path: '/associate' });
+                this.$router.push({ path: '/associate' }).catch(() => {});
             }
         }
         if (!this.isAuthenticated) {

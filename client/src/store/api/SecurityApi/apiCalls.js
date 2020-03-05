@@ -1,11 +1,9 @@
 import axios from 'axios';
 import store from '../..';
-import Parameters from '../../../../parameters';
 
 export default class SecurityApiCalls {
     unAuthenticate() {
-        store.commit('Security/logoutAction');
-        window.location.href = `${Parameters.API_HOST_URL}/authenticateLogout`;
+        store.dispatch('Security/logout');
     }
 
     // async isFileAuthorized(token, filePath) {

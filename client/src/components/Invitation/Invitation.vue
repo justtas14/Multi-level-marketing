@@ -30,7 +30,7 @@
                     <label for="invitation_email" class="required">Email</label>
                 </div>
             </div>
-            <Recaptcha v-if="siteKey" v-bind:siteKey="siteKey"/>
+            <Recaptcha v-if="siteKey" v-bind:siteKey="siteKey" ref="recaptcha"/>
             <div class="invitation-buttonWrap">
                 <button
                     id="invitation_submit"
@@ -89,7 +89,7 @@ export default {
             this.isLoadingForm = true;
             await this.submitInvitationForm(payload);
             this.isLoadingForm = false;
-            this.recaptchaResetFunc();
+            this.$refs.recaptcha.$refs.recaptcha.reset();
             this.changeRecaptchaKey(null);
         },
         ...mapActions('Invitation', [
@@ -103,7 +103,6 @@ export default {
         ...mapState('Invitation', [
             'formErrors',
             'verifyResponseKey',
-            'recaptchaResetFunc',
         ]),
     },
     created() {
