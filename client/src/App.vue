@@ -73,7 +73,6 @@ export default {
             }
         }
         if (!this.isAuthenticated) {
-            console.log('came back');
             window.location.href = `${Parameters.API_HOST_URL}/authenticateFlow?redirect_uri=${url.origin}&client_id=${Parameters.CLIENT_ID}`;
         }
     },
